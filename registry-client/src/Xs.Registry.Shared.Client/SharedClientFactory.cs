@@ -3,20 +3,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Shared.Client
 {
-    internal class SharedClientFactory : ISharedClientFactory
+    public class SharedClientFactory
     {
         private readonly IServiceProvider provider;
 
-        public SharedClientFactory(
+        internal SharedClientFactory(
             IServiceProvider provider
         )
         {
             this.provider = provider;
         }
 
-        public ISharedClient Create(Uri uri)
+        public SharedClient Create(Uri uri)
         {
-            var client = provider.GetRequiredService<ISharedClient>();
+            var client = provider.GetRequiredService<SharedClient>();
 
             client.SetUri(uri);
 

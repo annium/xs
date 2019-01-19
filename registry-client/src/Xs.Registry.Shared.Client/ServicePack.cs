@@ -9,8 +9,8 @@ namespace Xs.Registry.Shared.Client
     {
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
-            services.AddTransient<ISharedClient, SharedClient>();
-            services.AddSingleton<ISharedClientFactory, SharedClientFactory>();
+            services.AddSingleton<SharedClient>();
+            services.AddSingleton<SharedClientFactory>();
             services.AddTransient<HttpClient>();
         }
     }

@@ -12,10 +12,10 @@ namespace Xs.Cli.Main.Commands.Registry.User
 
         public override string Description { get; } = "show user information from registry";
 
-        private readonly ISharedClientFactory sharedClientFactory;
+        private readonly SharedClientFactory sharedClientFactory;
 
         public ShowCommand(
-            ISharedClientFactory sharedClientFactory
+            SharedClientFactory sharedClientFactory
         )
         {
             this.sharedClientFactory = sharedClientFactory;
@@ -32,7 +32,7 @@ namespace Xs.Cli.Main.Commands.Registry.User
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            await client.LoginUserAsync(name, password);
+            await client.User.LoginAsync(name, password);
             Console.WriteLine($"User {name} exists");
         }
     }

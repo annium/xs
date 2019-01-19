@@ -17,11 +17,11 @@ namespace Xs.Cli.Main.Commands.Remote
 
         private readonly IConfigurationManager configurationManager;
 
-        private readonly ISharedClientFactory sharedClientFactory;
+        private readonly SharedClientFactory sharedClientFactory;
 
         public AddCommand(
             IConfigurationManager configurationManager,
-            ISharedClientFactory sharedClientFactory
+            SharedClientFactory sharedClientFactory
         )
         {
             this.configurationManager = configurationManager;
@@ -44,7 +44,7 @@ namespace Xs.Cli.Main.Commands.Remote
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            var userToken = await client.LoginUserAsync(user, password);
+            var userToken = await client.User.LoginAsync(user, password);
             var data = await client.GetRegistryInfoAsync(userToken);
 
             var registry = new Core.Models.Registry

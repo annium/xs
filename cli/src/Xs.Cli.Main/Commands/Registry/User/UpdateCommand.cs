@@ -12,10 +12,10 @@ namespace Xs.Cli.Main.Commands.Registry.User
 
         public override string Description { get; } = "update user in registry";
 
-        private readonly ISharedClientFactory sharedClientFactory;
+        private readonly SharedClientFactory sharedClientFactory;
 
         public UpdateCommand(
-            ISharedClientFactory sharedClientFactory
+            SharedClientFactory sharedClientFactory
         )
         {
             this.sharedClientFactory = sharedClientFactory;
@@ -32,12 +32,12 @@ namespace Xs.Cli.Main.Commands.Registry.User
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            var userToken = await client.LoginUserAsync(name, password);
+            var userToken = await client.User.LoginAsync(name, password);
 
             Console.Write("New password: ");
             var newPassword = Console.ReadLine();
 
-            await client.UpdateUserAsync(userToken, newPassword);
+            await client.User.UpdateAsync(userToken, newPassword);
 
             Console.WriteLine($"User {name} password changed");
         }

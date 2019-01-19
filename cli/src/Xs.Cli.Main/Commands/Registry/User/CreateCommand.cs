@@ -12,10 +12,10 @@ namespace Xs.Cli.Main.Commands.Registry.User
 
         public override string Description { get; } = "create user in registry";
 
-        private readonly ISharedClientFactory sharedClientFactory;
+        private readonly SharedClientFactory sharedClientFactory;
 
         public CreateCommand(
-            ISharedClientFactory sharedClientFactory
+            SharedClientFactory sharedClientFactory
         )
         {
             this.sharedClientFactory = sharedClientFactory;
@@ -32,7 +32,7 @@ namespace Xs.Cli.Main.Commands.Registry.User
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            await client.CreateUserAsync(name, password);
+            await client.User.CreateAsync(name, password);
             Console.WriteLine($"User {name} created");
         }
     }
