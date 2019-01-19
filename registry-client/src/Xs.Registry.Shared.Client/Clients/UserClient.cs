@@ -1,22 +1,12 @@
 using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Annium.Extensions.Net.Http;
 
 namespace Xs.Registry.Shared.Client
 {
     public class UserClient
     {
         private Uri uri;
-
-        private readonly HttpClient httpClient;
-
-        internal UserClient(HttpClient httpClient)
-        {
-            this.httpClient = httpClient;
-        }
 
         internal void SetUri(Uri uri)
         {
@@ -26,62 +16,42 @@ namespace Xs.Registry.Shared.Client
             this.uri = uri;
         }
 
-        public async Task<string> CreateAsync(string name, string password)
+        public Task<string> CreateAsync(string name, string password)
         {
-            var message = new HttpRequestMessage();
-            message.Method = HttpMethod.Put;
-            message.RequestUri = new Uri(this.uri, "user");
-            message.Content = new StringContent(JsonConvert.SerializeObject(new { name, password }), Encoding.UTF8, "application/json");
-
-            var result = await httpClient.SendAsync(message);
-            var response = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
-                throw new InvalidOperationException($"User creation failed with: {response}");
-
-            return response;
+            return Http.Open(this.uri)
+                .Put("user")
+                .JsonContent(new { name, password })
+                .EnsureSuccessStatusCode(response => $"User create failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .AsStringAsync();
         }
 
-        public async Task<string> UpdateAsync(string token, string newPassword)
+        public Task<string> UpdateAsync(string token, string newPassword)
         {
-            var message = new HttpRequestMessage();
-            message.Method = HttpMethod.Post;
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            message.RequestUri = new Uri(this.uri, "user");
-            message.Content = new StringContent(JsonConvert.SerializeObject(new { newPassword }), Encoding.UTF8, "application/json");
-
-            var result = await httpClient.SendAsync(message);
-            var response = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
-                throw new InvalidOperationException($"User update failed with: {response}");
-
-            return response;
+            return Http.Open(this.uri)
+                .Post("user")
+                .BearerAuthorization(token)
+                .JsonContent(new { newPassword })
+                .EnsureSuccessStatusCode(response => $"User update failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .AsStringAsync();
         }
 
-        public async Task<string> LoginAsync(string name, string password)
+        public Task<string> LoginAsync(string name, string password)
         {
-            var message = new HttpRequestMessage();
-            message.Method = HttpMethod.Get;
-            message.RequestUri = new Uri(this.uri, $"user?name={name}&password={password}");
-
-            var result = await httpClient.SendAsync(message);
-            var response = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
-                throw new InvalidOperationException($"User login failed with: {response}");
-
-            return response;
+            return Http.Open(this.uri)
+                .Get("user")
+                .Param("name", name)
+                .Param("password", password)
+                .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .AsStringAsync();
         }
 
-        public async Task DeleteAsync(string token)
+        public Task DeleteAsync(string token)
         {
-            var message = new HttpRequestMessage();
-            message.Method = HttpMethod.Delete;
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            message.RequestUri = new Uri(this.uri, "user");
-
-            var result = await httpClient.SendAsync(message);
-            var response = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
-                throw new InvalidOperationException($"User delete failed with: {response}");
+            return Http.Open(this.uri)
+                .Get("user")
+                .BearerAuthorization(token)
+                .EnsureSuccessStatusCode(response => $"User delete failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .AsStringAsync();
         }
     }
 }

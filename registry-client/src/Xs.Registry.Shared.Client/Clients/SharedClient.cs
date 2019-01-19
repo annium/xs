@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Annium.Extensions.Net.Http;
 
 namespace Xs.Registry.Shared.Client
 {
@@ -11,17 +9,13 @@ namespace Xs.Registry.Shared.Client
     {
         public UserClient User { get; }
 
-        private readonly HttpClient httpClient;
-
         private Uri uri;
 
-        internal SharedClient(
-            UserClient userClient,
-            HttpClient httpClient
+        public SharedClient(
+            UserClient userClient
         )
         {
             this.User = userClient;
-            this.httpClient = httpClient;
         }
 
         internal void SetUri(Uri uri)
@@ -33,19 +27,13 @@ namespace Xs.Registry.Shared.Client
             this.uri = uri;
         }
 
-        public async Task<Dictionary<string, Uri>> GetRegistryInfoAsync(string token)
+        public Task<Dictionary<string, Uri>> GetRegistryInfoAsync(string token)
         {
-            var message = new HttpRequestMessage();
-            message.Method = HttpMethod.Get;
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            message.RequestUri = new Uri(this.uri, "registry");
-
-            var result = await httpClient.SendAsync(message);
-            var response = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
-                throw new InvalidOperationException($"Registry information fetch failed with: {response}");
-
-            return JsonConvert.DeserializeObject<Dictionary<string, Uri>>(response);
+            return Http.Open(this.uri)
+                .Get("registry")
+                .BearerAuthorization(token)
+                .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .AsAsync<Dictionary<string, Uri>>();
         }
     }
 }

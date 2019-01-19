@@ -7,7 +7,7 @@ namespace Xs.Registry.Shared.Client
     {
         private readonly IServiceProvider provider;
 
-        internal SharedClientFactory(
+        public SharedClientFactory(
             IServiceProvider provider
         )
         {
