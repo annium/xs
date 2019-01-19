@@ -39,7 +39,8 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var name = cfg.Dependency.ToLowerInvariant();
+            var name = cfg.Dependency;
+            var nameLow = name.ToLowerInvariant();
             var version = cfg.Version;
 
             var allProjects = await discoverTask.RunAsync(cwdCfg.Cwd);
@@ -54,7 +55,7 @@ namespace Xs.Cli.Main.Commands
 
             logger.LogDebug($"Try add dependency {name} to {targets.Length} projects.");
 
-            var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == name).ToArray();
+            var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == nameLow).ToArray();
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
@@ -69,7 +70,7 @@ namespace Xs.Cli.Main.Commands
             logger.LogDebug($"Assume dependency {name} as package.");
             var packages = ProjectType.List().ToDictionary(
                 e => e,
-                e => dependencies.FirstOrDefault(d => d.Type == e && d.Name.ToLowerInvariant() == name)
+                e => dependencies.FirstOrDefault(d => d.Type == e && d.Name.ToLowerInvariant() == nameLow)
             );
 
             // if at least one package not found

@@ -38,7 +38,8 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var name = cfg.Dependency.ToLowerInvariant();
+            var name = cfg.Dependency;
+            var nameLow = name.ToLowerInvariant();
 
             var allProjects = await discoverTask.RunAsync(cwdCfg.Cwd);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
@@ -52,7 +53,7 @@ namespace Xs.Cli.Main.Commands
 
             logger.LogDebug($"Try delete dependency {name} from {targets.Length} projects");
 
-            var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == name).ToArray();
+            var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == nameLow).ToArray();
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
@@ -64,7 +65,7 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            var packages = dependencies.Where(e => e.Name.ToLowerInvariant() == name).Distinct().ToArray();
+            var packages = dependencies.Where(e => e.Name.ToLowerInvariant() == nameLow).Distinct().ToArray();
 
             // if no packages found
             if (packages.Length == 0)
