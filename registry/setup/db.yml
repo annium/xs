@@ -1,0 +1,17 @@
+version: "3.4"
+services:
+  db:
+    image: "mongo:latest"
+    container_name: registry_db
+    restart: always
+    ports:
+      - "9911:27017"
+    volumes:
+      - "db:/data/db"
+    env_file: ../run/db.env
+networks:
+  default:
+    external:
+      name: registry
+volumes:
+  db:

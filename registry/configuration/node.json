@@ -1,0 +1,7 @@
+{
+    "database": {
+        "name": "registryNode"
+    },
+    "location": "http://localhost:9903",
+    "sharedLocation": "http://localhost:9901"
+}

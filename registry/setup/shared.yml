@@ -1,0 +1,22 @@
+version: "3.4"
+services:
+  shared:
+    build:
+      context: ../src
+      dockerfile: Xs.Registry.Shared/Dockerfile
+    image: registry_shared
+    container_name: registry_shared
+    restart: always
+    ports:
+      - "9901:9901"
+    volumes:
+      - "../run:/app/data"
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: "1"
+networks:
+  default:
+    external:
+      name: registry

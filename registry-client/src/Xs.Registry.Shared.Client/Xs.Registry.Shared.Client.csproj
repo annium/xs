@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <DebugType>Portable</DebugType>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../../core/src/Xs.Core/Xs.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
+    </ItemGroup>
+</Project>

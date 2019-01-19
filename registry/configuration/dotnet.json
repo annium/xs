@@ -1,0 +1,7 @@
+{
+    "database": {
+        "name": "registryDotnet"
+    },
+    "location": "http://localhost:9902",
+    "sharedLocation": "http://localhost:9901"
+}

@@ -1,0 +1,10 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 9911,
+        "name": "registryShared",
+        "user": "registryUser",
+        "pass": "registryUserPass$$",
+        "logQueries": true
+    }
+}

@@ -1,0 +1,59 @@
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Logging;
+using Xs.Cli.Core.Projects;
+using Xs.Cli.Main.Tasks;
+using Xs.Cli.Main.Tools;
+
+namespace Xs.Cli.Main.Commands
+{
+    internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, CwdCommandConfiguration>
+    {
+        public override string Id { get; } = "install";
+
+        public override string Description { get; } = "install dependencies in projects";
+
+        private readonly DiscoverProjectsTask discoverTask;
+
+        private readonly FilterProjectsTask filterTask;
+
+        private readonly ProjectsRunner runner;
+
+        private readonly ILogger logger;
+
+        public InstallCommand(
+            DiscoverProjectsTask discoverTask,
+            FilterProjectsTask filterTask,
+            ProjectsRunner runner,
+            ILogger logger
+        )
+        {
+            this.discoverTask = discoverTask;
+            this.filterTask = filterTask;
+            this.runner = runner;
+            this.logger = logger;
+        }
+
+        public override async Task HandleAsync(
+            InstallCommandConfiguration cfg,
+            CwdCommandConfiguration cwdCfg,
+            CancellationToken token
+        )
+        {
+            var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
+                .OfType<IInstallableProject>()
+                .ToArray();
+            logger.LogDebug($"Installing {projects.Length} projects");
+            await runner.RunAsync(projects, (project, tkn) => project.InstallAsync(tkn), token);
+        }
+    }
+
+    internal class InstallCommandConfiguration
+    {
+        [Position(1, isRequired : false)]
+        [Help("Projects mask")]
+        public string Mask { get; set; } = "*";
+    }
+}

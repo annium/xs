@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <DebugType>Portable</DebugType>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Xs.Cli.Dotnet/Xs.Cli.Dotnet.csproj" />
+        <ProjectReference Include="../../../registry-client/src/Xs.Registry.Node.Client/Xs.Registry.Node.Client.csproj" />
+        <ProjectReference Include="../../../registry-client/src/Xs.Registry.Shared.Client/Xs.Registry.Shared.Client.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.Entrypoint" Version="0.1.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    </ItemGroup>
+</Project>

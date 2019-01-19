@@ -1,0 +1,166 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
+using Xs.Cli.Core.Models;
+using Xs.Cli.Dotnet.Models;
+
+namespace Xs.Cli.Dotnet.Projects
+{
+    internal class ProjectMapper
+    {
+        private static readonly IEnumerable<string> outputTypes = new [] { "Exe", "Library" };
+
+        public RawProject Load(string path)
+        {
+            var project = new RawProject();
+            var file = new FileInfo(path);
+
+            var info = XElement.Load(file.OpenRead());
+
+            var properties = info.Element(El.PropertyGroup);
+            ValidateProperties(path, properties);
+
+            project.Name = Path.GetFileNameWithoutExtension(file.Name);
+            project.TargetFramework = TargetFrameworkParser.Parse(properties.Element(El.TargetFramework).Value);
+            project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
+
+            project.ProjectDependencies = GetReferenceElements(El.ProjectReference)
+                .Select(reference => ReadProjectDependency(project.Name, file, reference))
+                .ToArray();
+
+            project.PackageDependencies = GetReferenceElements(El.PackageReference)
+                .Select(reference => ReadPackageDependency(project.Name, reference))
+                .ToArray();
+
+            return project;
+
+            IEnumerable<XElement> GetReferenceElements(string referenceType) => info
+                .Elements(El.ItemGroup)
+                .SelectMany(group => group.Elements(referenceType));
+        }
+
+        public void Save(string path, ISpecialProject project)
+        {
+            var info = XElement.Parse(File.ReadAllText(path));
+
+            // remove project references group
+            info.Elements(El.ItemGroup).Where(e => e.Elements(El.ProjectReference).Count() > 0).Remove();
+
+            // remove package references group
+            info.Elements(El.ItemGroup).Where(e => e.Elements(El.PackageReference).Count() > 0).Remove();
+
+            // add project references group
+            if (project.ProjectDependencies.Count > 0)
+                info.Add(new XElement(
+                    El.ItemGroup,
+                    project.ProjectDependencies.OrderBy(e => e.Name).Select(e => new XElement(
+                        El.ProjectReference,
+                        new XAttribute(El.Include, Path.GetRelativePath(Directory.GetParent(path).FullName, e.File.FullName))
+                    ))
+                ));
+
+            // add package references group
+            if (project.PackageDependencies.Count > 0)
+                info.Add(new XElement(
+                    El.ItemGroup,
+                    project.PackageDependencies.OrderBy(e => e.Name).Select(e => new XElement(
+                        El.PackageReference,
+                        new XAttribute(El.Include, e.Name),
+                        new XAttribute(El.Version, e.Version)
+                    ))
+                ));
+
+            var xws = new XmlWriterSettings()
+            {
+                Indent = true,
+                IndentChars = new string(' ', 4),
+                OmitXmlDeclaration = true,
+                Encoding = new UTF8Encoding(false),
+            };
+            using(var fs = new FileStream(path, FileMode.Truncate))
+            using(var xw = XmlWriter.Create(fs, xws))
+            {
+                info.Save(xw);
+            }
+        }
+
+        private void ValidateProperties(string path, XElement properties)
+        {
+            if (properties == null)
+                throw new InvalidOperationException($"Project {path} has no properties defined");
+
+            if (properties.Element(El.PackageId) != null)
+                throw new InvalidOperationException($"Project {path} has {El.PackageId} defined");
+
+            if (properties.Element(El.Version) != null)
+                throw new InvalidOperationException($"Project {path} has {El.Version} defined");
+
+            if (properties.Element(El.TargetFramework) == null)
+                throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined");
+
+            if (properties.Element(El.DebugType)?.Value != "Portable")
+                throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not Portable");
+
+            var outputType = properties.Element(El.OutputType)?.Value;
+            if (!outputTypes.Contains(outputType))
+                throw new InvalidOperationException($"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}");
+        }
+
+        private string ReadProjectDependency(
+            string project,
+            FileInfo location,
+            XElement reference
+        )
+        {
+            var relativePath = reference.Attribute(El.Include)?.Value ??
+                throw new InvalidOperationException($"Project {project} has empty project dependency");
+
+            var path = Path.Combine(location.DirectoryName, relativePath);
+            if (!File.Exists(path))
+                throw new InvalidOperationException($"Project {project} has broken project dependency {relativePath}");
+
+            return path;
+        }
+
+        private static Dependency ReadPackageDependency(
+            string project,
+            XElement reference
+        )
+        {
+            var name = reference.Attribute(El.Include)?.Value ??
+                throw new InvalidOperationException($"Project {project} has empty project dependency");
+
+            var version = new Core.Models.Version(reference.Attribute(El.Version)?.Value ??
+                throw new InvalidOperationException($"Project {project} has empty project dependency version"));
+
+            return new Dependency(Constants.ProjectType, name, version);
+        }
+
+        private static class El
+        {
+            public const string PackageId = "PackageId";
+
+            public const string Version = "Version";
+
+            public const string TargetFramework = "TargetFramework";
+
+            public const string DebugType = "DebugType";
+
+            public const string OutputType = "OutputType";
+
+            public const string PropertyGroup = "PropertyGroup";
+
+            public const string ItemGroup = "ItemGroup";
+
+            public const string PackageReference = "PackageReference";
+
+            public const string ProjectReference = "ProjectReference";
+
+            public const string Include = "Include";
+        }
+    }
+}
