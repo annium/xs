@@ -1,7 +1,7 @@
 FROM microsoft/dotnet:2.2-sdk-alpine as builder
 COPY . /src
-RUN mv /src/nuget.docker.config /src/nuget.config
-RUN dotnet publish -c release -o /app /src/Xs.Registry.Node
+RUN mv /src/registry/src/nuget.docker.config /src/nuget.config
+RUN dotnet publish -c release -o /app /src/registry/src/Xs.Registry.Node
 
 FROM microsoft/dotnet:2.2-runtime-alpine
 WORKDIR /app/data

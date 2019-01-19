@@ -31,7 +31,10 @@ define up
 	@$(eval components := $(1))
 	@$(eval files := $(foreach component,$(components),-f setup/$(env)/$(component).yml))
 	$(call net-up)
+	rm -rf ../packages
+	cp -rf /projects/annium/packages ../packages
 	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p registry $(files) up --build -d --force-recreate
+	rm -rf ../packages
 endef
 
 define down

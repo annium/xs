@@ -1,6 +1,7 @@
 # editors
 .vscode/
 
+
 # artifacts
 data/
 src/packages/
@@ -12,9 +13,7 @@ src/packages/
 # .NET
 bin/
 obj/
+coverage.json
 
 # local run folder
 /run
-
-# configuration
-configuration/*.override.json

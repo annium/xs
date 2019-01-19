@@ -2,8 +2,8 @@ version: "3.4"
 services:
   shared:
     build:
-      context: ../src
-      dockerfile: Xs.Registry.Shared/Dockerfile
+      context: ../..
+      dockerfile: registry/src/Xs.Registry.Shared/Dockerfile
     image: registry_shared
     container_name: registry_shared
     restart: always

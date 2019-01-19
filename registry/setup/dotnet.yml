@@ -2,8 +2,8 @@ version: "3.4"
 services:
   dotnet:
     build:
-      context: ../src
-      dockerfile: Xs.Registry.Dotnet/Dockerfile
+      context: ../..
+      dockerfile: registry/src/Xs.Registry.Dotnet/Dockerfile
     image: registry_dotnet
     container_name: registry_dotnet
     restart: always

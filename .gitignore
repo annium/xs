@@ -4,44 +4,14 @@
 
 # artifacts
 data/
-src/packages/
+packages/
 
 # OS & misc
 .DS_STORE
 *.log
+xs.json
 
 # .NET
 bin/
 obj/
 coverage.json
-
-# Web
-dist/
-node_modules/
-*.css
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-
-# Terraform
-vars*.json
-.terraform/
-
-# Ansible
-ansible.cfg
-ansible_inventory
-inventory.*.cache
-*.retry
-
-# local run folder
-/run
-
-# secrets
-*secret
-*secret.json
-
-
-# configuration
-configuration/*.override.json
-.env*.local
