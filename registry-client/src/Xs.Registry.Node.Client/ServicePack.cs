@@ -8,8 +8,8 @@ namespace Xs.Registry.Node.Client
     {
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
-            services.AddTransient<INodeClient, NodeClient>();
-            services.AddSingleton<INodeClientFactory, NodeClientFactory>();
+            services.AddSingleton<NodeClientFactory>();
+            services.AddSingleton<NodeClient>();
         }
     }
 }

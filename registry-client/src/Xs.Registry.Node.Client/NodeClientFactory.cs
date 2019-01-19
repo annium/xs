@@ -1,12 +1,26 @@
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Node.Client
 {
-    internal class NodeClientFactory : INodeClientFactory
+    public class NodeClientFactory
     {
-        public INodeClient Create(Uri uri)
+        private readonly IServiceProvider provider;
+
+        public NodeClientFactory(
+            IServiceProvider provider
+        )
         {
-            throw new NotImplementedException();
+            this.provider = provider;
+        }
+
+        public NodeClient Create(Uri uri)
+        {
+            var client = provider.GetRequiredService<NodeClient>();
+
+            client.SetUri(uri);
+
+            return client;
         }
     }
 }
