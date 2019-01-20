@@ -3,9 +3,10 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using Xs.Core.Models;
+using Xs.Execution;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
-using Xs.Core.Models;
 using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Tools;
 using Xs.Registry.Node.Models;
@@ -77,19 +78,26 @@ namespace Xs.Registry.Node.Controllers
                 await packageRepository.DeleteByNameVersionAsync(name, version);
             }
 
+            var executor = Exec.Staged();
+
             // persist to storage
-            await packageStorage.SaveAsync(
-                name,
-                version,
-                packageStream
+            executor.Stage(
+                () => packageStorage.SaveAsync(name, version, packageStream),
+                () => packageStorage.DeleteAsync(name, version)
             );
 
             // if no metadata - generate and save
             if (metadata == null)
-                await metadataRepository.SaveAsync(metadataManager.Generate(user, Constants.ProjectType, name));
+                executor.Stage(
+                    () => metadataRepository.SaveAsync(metadataManager.Generate(user, Constants.ProjectType, name)),
+                    () => metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, name)
+                );
 
             // persist to db
-            await packageRepository.SaveAsync(package);
+            executor.Stage(
+                () => packageRepository.SaveAsync(package),
+                () => packageRepository.DeleteByNameVersionAsync(name, version)
+            );
 
             return Created(new { Ok = "Done", Success = true });
         }
