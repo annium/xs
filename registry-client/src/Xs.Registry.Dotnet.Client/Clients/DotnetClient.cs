@@ -1,12 +1,12 @@
 using Xs.Registry.Core.Client;
 
-namespace Xs.Registry.Node.Client
+namespace Xs.Registry.Dotnet.Client
 {
-    public class NodeClient : ClientBase, IProjectClient
+    public class DotnetClient : ClientBase, IProjectClient
     {
         public IInfoClient Info { get; }
 
-        public NodeClient(
+        public DotnetClient(
             InfoClient infoClient
         ) : base(infoClient)
         {

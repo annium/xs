@@ -5,7 +5,7 @@
         <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../core/src/Xs.Core/Xs.Core.csproj" />
+        <ProjectReference Include="../Xs.Registry.Core.Client/Xs.Registry.Core.Client.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />

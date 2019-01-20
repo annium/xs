@@ -1,21 +1,11 @@
-using System;
 using System.Threading.Tasks;
 using Annium.Extensions.Net.Http;
+using Xs.Registry.Core.Client;
 
 namespace Xs.Registry.Shared.Client
 {
-    public class UserClient
+    public class UserClient : ClientBase
     {
-        private Uri uri;
-
-        internal void SetUri(Uri uri)
-        {
-            if (this.uri != null)
-                throw new InvalidOperationException($"Uri already assigned");
-
-            this.uri = uri;
-        }
-
         public Task<string> CreateAsync(string name, string password)
         {
             return Http.Open(this.uri)

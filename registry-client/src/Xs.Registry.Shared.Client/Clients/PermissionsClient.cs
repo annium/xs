@@ -3,21 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Extensions.Net.Http;
 using Xs.Core.Models;
+using Xs.Registry.Core.Client;
 
 namespace Xs.Registry.Shared.Client
 {
-    public class PermissionsClient
+    public class PermissionsClient : ClientBase
     {
-        private Uri uri;
-
-        internal void SetUri(Uri uri)
-        {
-            if (this.uri != null)
-                throw new InvalidOperationException($"Uri already assigned");
-
-            this.uri = uri;
-        }
-
         public Task GrantAsync(
             ProjectType type,
             string name,

@@ -3,14 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Xs.Core.Models;
 using Xs.Registry.Core.Client;
 
-namespace Xs.Registry.Node.Client
+namespace Xs.Registry.Dotnet.Client
 {
-    public class NodeClientFactory : IProjectClientFactory
+    public class DotnetClientFactory : IProjectClientFactory
     {
-        public ProjectType ProjectType { get; } = ProjectType.Get("node");
+        public ProjectType ProjectType { get; } = ProjectType.Get("dotnet");
         private readonly IServiceProvider provider;
 
-        public NodeClientFactory(
+        public DotnetClientFactory(
             IServiceProvider provider
         )
         {
@@ -19,7 +19,7 @@ namespace Xs.Registry.Node.Client
 
         public IProjectClient Create(Uri uri)
         {
-            var client = provider.GetRequiredService<NodeClient>();
+            var client = provider.GetRequiredService<DotnetClient>();
 
             client.SetUri(uri);
 

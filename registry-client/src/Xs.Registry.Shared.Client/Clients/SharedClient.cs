@@ -2,34 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Extensions.Net.Http;
+using Xs.Registry.Core.Client;
 
 namespace Xs.Registry.Shared.Client
 {
-    public class SharedClient
+    public class SharedClient : ClientBase
     {
         public PermissionsClient Permissions { get; }
 
         public UserClient User { get; }
 
-        private Uri uri;
-
         public SharedClient(
             PermissionsClient permissionsClient,
             UserClient userClient
-        )
+        ) : base(permissionsClient, userClient)
         {
             Permissions = permissionsClient;
-            this.User = userClient;
-        }
-
-        internal void SetUri(Uri uri)
-        {
-            if (this.uri != null)
-                throw new InvalidOperationException($"Uri already assigned");
-
-            Permissions.SetUri(uri);
-            User.SetUri(uri);
-            this.uri = uri;
+            User = userClient;
         }
 
         public Task<Dictionary<string, Uri>> GetRegistryInfoAsync(string token)
