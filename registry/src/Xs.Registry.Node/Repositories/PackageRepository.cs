@@ -25,10 +25,23 @@ namespace Xs.Registry.Node.Repositories
             this.getTime = getTime;
         }
 
+        public async Task<Package[]> FindAllByQueryAsync(string query)
+        {
+            query = query.ToLowerInvariant();
+
+            var models = await collection
+                .Find(e => e.Name.ToLowerInvariant().Contains(query))
+                .ToListAsync();
+
+            return models.Select(e => (Package) e).ToArray();
+        }
+
         public async Task<Package[]> FindAllByNameAsync(string name)
         {
+            name = name.ToLowerInvariant();
+
             var models = await collection
-                .Find(e => e.Name == name)
+                .Find(e => e.Name.ToLowerInvariant() == name)
                 .ToListAsync();
 
             return models.Select(e => (Package) e).ToArray();
@@ -36,8 +49,11 @@ namespace Xs.Registry.Node.Repositories
 
         public async Task<Package> FindByNameVersionAsync(string name, string version)
         {
+            name = name.ToLowerInvariant();
+            version = version.ToLowerInvariant();
+
             var model = await collection
-                .Find(e => e.Name == name && e.Version == version)
+                .Find(e => e.Name.ToLowerInvariant() == name && e.Version.ToLowerInvariant() == version)
                 .FirstOrDefaultAsync();
 
             return (Package) model;
@@ -52,12 +68,18 @@ namespace Xs.Registry.Node.Repositories
 
         public Task DeleteAllByNameAsync(string name)
         {
-            return collection.DeleteManyAsync(e => e.Name == name);
+            name = name.ToLowerInvariant();
+
+            return collection.DeleteManyAsync(e => e.Name.ToLowerInvariant() == name);
         }
 
         public Task DeleteByNameVersionAsync(string name, string version)
         {
-            return collection.DeleteOneAsync(e => e.Name == name && e.Version == version);
+            name = name.ToLowerInvariant();
+            version = version.ToLowerInvariant();
+
+            return collection
+                .DeleteOneAsync(e => e.Name.ToLowerInvariant() == name && e.Version.ToLowerInvariant() == version);
         }
     }
 }

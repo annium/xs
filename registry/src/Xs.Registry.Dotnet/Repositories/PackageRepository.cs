@@ -25,9 +25,21 @@ namespace Xs.Registry.Dotnet.Repositories
             this.getTime = getTime;
         }
 
+        public async Task<Package[]> FindAllByQueryAsync(string query)
+        {
+            query = query.ToLowerInvariant();
+
+            var models = await collection
+                .Find(e => e.Name.ToLowerInvariant().Contains(query))
+                .ToListAsync();
+
+            return models.Select(e => (Package) e).ToArray();
+        }
+
         public async Task<Package[]> FindAllByNameAsync(string name)
         {
             name = name.ToLowerInvariant();
+
             var models = await collection
                 .Find(e => e.Name.ToLowerInvariant() == name)
                 .ToListAsync();
@@ -39,6 +51,7 @@ namespace Xs.Registry.Dotnet.Repositories
         {
             name = name.ToLowerInvariant();
             version = version.ToLowerInvariant();
+
             var model = await collection
                 .Find(e => e.Name.ToLowerInvariant() == name && e.Version.ToLowerInvariant() == version)
                 .FirstOrDefaultAsync();
@@ -56,12 +69,17 @@ namespace Xs.Registry.Dotnet.Repositories
         public async Task DeleteAllByNameAsync(string name)
         {
             name = name.ToLowerInvariant();
+
             await collection.DeleteManyAsync(e => e.Name.ToLowerInvariant() == name);
         }
 
         public async Task DeleteByNameVersionAsync(string name, string version)
         {
-            await collection.DeleteOneAsync(e => e.Name == name && e.Version == version);
+            name = name.ToLowerInvariant();
+            version = version.ToLowerInvariant();
+
+            await collection
+                .DeleteOneAsync(e => e.Name.ToLowerInvariant() == name && e.Version.ToLowerInvariant() == version);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace Xs.Registry.Node.Repositories
 {
     public interface IPackageRepository
     {
+        Task<Package[]> FindAllByQueryAsync(string query);
+
         Task<Package[]> FindAllByNameAsync(string name);
 
         Task<Package> FindByNameVersionAsync(string name, string version);
