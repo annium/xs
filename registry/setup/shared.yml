@@ -10,7 +10,8 @@ services:
     ports:
       - "9901:9901"
     volumes:
-      - "../run:/app/data"
+      - "../run/configuration:/app/configuration"
+      - "../run/data:/app/data"
     logging:
       driver: json-file
       options:
