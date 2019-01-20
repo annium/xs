@@ -19,15 +19,6 @@ namespace Xs.Cli.Dotnet.Tools
 
         private readonly Uri defaultUri = new Uri("https://api.nuget.org/v3/index.json");
 
-        private readonly IShell shell;
-
-        public SpecialConfigurationManager(
-            IShell shell
-        )
-        {
-            this.shell = shell;
-        }
-
         public void Save(string folder, IEnumerable<ValueTuple<string, Uri, string>> registries)
         {
             var sources = new XElement(El.PackageSources);
@@ -39,12 +30,6 @@ namespace Xs.Cli.Dotnet.Tools
             sources.Add(GetAddRule(defaultName, defaultUri));
 
             Save(folder, new XElement(El.Configuration, sources));
-
-            // save tokens after file written
-            foreach (var(name, uri, token) in registries)
-                shell.RunAsync(
-                    $"nuget setApiKey {token} -Source {uri.ToString()} -ConfigFile {FilePath(folder)} -NonInteractive"
-                ).GetAwaiter().GetResult();
         }
 
         private void Save(string folder, XElement info)
