@@ -27,7 +27,7 @@ namespace Xs.Registry.Core.Tools
             return metadata.Permissions[GetPermissionCategory(user, metadata)].HasFlag(permission);
         }
 
-        public Metadata AddPermission(Metadata metadata, PermissionCategory category, Permission permission)
+        public Metadata GrantPermission(Metadata metadata, PermissionCategory category, Permission permission)
         {
             var permissions = metadata.Permissions.ToDictionary(
                 e => e.Key,
@@ -37,7 +37,7 @@ namespace Xs.Registry.Core.Tools
             return new Metadata(metadata.UserId, metadata.ProjectType, metadata.PackageName, permissions);
         }
 
-        public Metadata DeletePermission(Metadata metadata, PermissionCategory category, Permission permission)
+        public Metadata RevokePermission(Metadata metadata, PermissionCategory category, Permission permission)
         {
             var permissions = metadata.Permissions.ToDictionary(
                 e => e.Key,

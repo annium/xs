@@ -5,6 +5,7 @@ using System.Linq;
 using Annium.Extensions.Configuration;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
+using Xs.Core.Models;
 
 namespace Xs.Cli.Core.Tools
 {

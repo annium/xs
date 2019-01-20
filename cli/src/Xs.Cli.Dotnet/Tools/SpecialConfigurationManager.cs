@@ -4,8 +4,8 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
+using Xs.Core.Models;
 
 namespace Xs.Cli.Dotnet.Tools
 {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Xs.Core.Models;
 
 namespace Xs.Cli.Core.Models
 {

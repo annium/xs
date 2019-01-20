@@ -1,4 +1,4 @@
-using Xs.Cli.Core.Models;
+using Xs.Core.Models;
 
 namespace Xs.Cli.Dotnet
 {

@@ -10,8 +10,8 @@ namespace Xs.Registry.Core.Tools
 
         bool CheckPermission(User user, Metadata metadata, Permission permission);
 
-        Metadata AddPermission(Metadata metadata, PermissionCategory category, Permission permission);
+        Metadata GrantPermission(Metadata metadata, PermissionCategory category, Permission permission);
 
-        Metadata DeletePermission(Metadata metadata, PermissionCategory category, Permission permission);
+        Metadata RevokePermission(Metadata metadata, PermissionCategory category, Permission permission);
     }
 }

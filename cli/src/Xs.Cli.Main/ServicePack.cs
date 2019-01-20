@@ -79,6 +79,7 @@ namespace Xs.Cli.Main
         private void RegisterConversions()
         {
             Converter.Register<string, Core.Models.Version>(e => new Core.Models.Version(e));
+            Converter.Register<string, Xs.Core.Models.ProjectType>(Xs.Core.Models.ProjectType.Get);
         }
     }
 }
