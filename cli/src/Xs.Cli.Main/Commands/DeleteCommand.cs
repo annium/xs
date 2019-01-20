@@ -3,9 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
-using Xs.Cli.Core.Models;
-using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
+using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
@@ -19,16 +18,28 @@ namespace Xs.Cli.Main.Commands
 
         private readonly FilterProjectsTask filterTask;
 
+        private readonly FilterProjectTypeTask filterTypeTask;
+
+        private readonly DeletePackageDependencyTask deletePackageDependencyTask;
+
+        private readonly DeleteProjectDependencyTask deleteProjectDependencyTask;
+
         private readonly ILogger logger;
 
         public DeleteCommand(
             DiscoverProjectsTask discoverTask,
             FilterProjectsTask filterTask,
+            FilterProjectTypeTask filterTypeTask,
+            DeletePackageDependencyTask deletePackageDependencyTask,
+            DeleteProjectDependencyTask deleteProjectDependencyTask,
             ILogger logger
         )
         {
             this.discoverTask = discoverTask;
             this.filterTask = filterTask;
+            this.filterTypeTask = filterTypeTask;
+            this.deletePackageDependencyTask = deletePackageDependencyTask;
+            this.deleteProjectDependencyTask = deleteProjectDependencyTask;
             this.logger = logger;
         }
 
@@ -57,10 +68,7 @@ namespace Xs.Cli.Main.Commands
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
-                    DeleteProjectDependency(
-                        targets.Where(e => e.Type == project.Type && e.ProjectDependencies.Contains(project)).ToArray(),
-                        project
-                    );
+                    deleteProjectDependencyTask.Run(filterTypeTask.Run(targets, project.Type), project);
 
                 return;
             }
@@ -75,32 +83,7 @@ namespace Xs.Cli.Main.Commands
             }
 
             foreach (var package in packages)
-                DeletePackageDependency(
-                    targets.Where(e => e.Type == package.Type && e.PackageDependencies.Contains(package)).ToArray(),
-                    package
-                );
-        }
-
-        private void DeleteProjectDependency(IProject[] targets, IProject project)
-        {
-            logger.LogDebug($"Resolved to project {project}. Delete it from {targets.Length} projects.");
-            foreach (var target in targets)
-            {
-                logger.LogDebug($"Delete project {project} from dependencies of {target}.");
-                target.ProjectDependencies.Remove(project);
-                target.Save();
-            }
-        }
-
-        private void DeletePackageDependency(IProject[] targets, Dependency package)
-        {
-            logger.LogDebug($"Resolved to package {package}. Delete it from {targets.Length} projects");
-            foreach (var target in targets)
-            {
-                logger.LogDebug($"Delete package {package} from dependencies of {target}.");
-                target.PackageDependencies.Remove(package);
-                target.Save();
-            }
+                deletePackageDependencyTask.Run(filterTypeTask.Run(targets, package.Type), package);
         }
     }
 

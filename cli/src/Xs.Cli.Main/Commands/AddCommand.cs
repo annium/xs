@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
-using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
+using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
@@ -20,16 +20,28 @@ namespace Xs.Cli.Main.Commands
 
         private readonly FilterProjectsTask filterTask;
 
+        private readonly FilterProjectTypeTask filterTypeTask;
+
+        private readonly AddPackageDependencyTask addPackageDependencyTask;
+
+        private readonly AddProjectDependencyTask addProjectDependencyTask;
+
         private readonly ILogger logger;
 
         public AddCommand(
             DiscoverProjectsTask discoverTask,
             FilterProjectsTask filterTask,
+            FilterProjectTypeTask filterTypeTask,
+            AddPackageDependencyTask addPackageDependencyTask,
+            AddProjectDependencyTask addProjectDependencyTask,
             ILogger logger
         )
         {
+            this.addPackageDependencyTask = addPackageDependencyTask;
+            this.addProjectDependencyTask = addProjectDependencyTask;
             this.discoverTask = discoverTask;
             this.filterTask = filterTask;
+            this.filterTypeTask = filterTypeTask;
             this.logger = logger;
         }
 
@@ -59,10 +71,7 @@ namespace Xs.Cli.Main.Commands
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
-                    AddProjectDependency(
-                        targets.Where(e => e.Type == project.Type && !e.ProjectDependencies.Contains(project)).ToArray(),
-                        project
-                    );
+                    addProjectDependencyTask.Run(filterTypeTask.Run(targets, project.Type), project);
 
                 return;
             }
@@ -89,32 +98,7 @@ namespace Xs.Cli.Main.Commands
                 throw new ArgumentException($"Package {name} is already used with different version. Specify already used version, or narrow projects mask.");
 
             foreach (var package in packages.Values)
-                AddPackageDependency(
-                    targets.Where(e => e.Type == package.Type && !e.PackageDependencies.Contains(package)).ToArray(),
-                    package
-                );
-        }
-
-        private void AddProjectDependency(IProject[] targets, IProject project)
-        {
-            logger.LogDebug($"Resolved to project {project}. Add it to {targets.Length} projects.");
-            foreach (var target in targets)
-            {
-                logger.LogDebug($"Add project {project} as dependency of {target}.");
-                target.ProjectDependencies.Add(project);
-                target.Save();
-            }
-        }
-
-        private void AddPackageDependency(IProject[] targets, Dependency package)
-        {
-            logger.LogDebug($"Resolved to package {package}. Add it to {targets.Length} projects.");
-            foreach (var target in targets)
-            {
-                logger.LogDebug($"Add package {package} as dependency of {target}.");
-                target.PackageDependencies.Add(package);
-                target.Save();
-            }
+                addPackageDependencyTask.Run(filterTypeTask.Run(targets, package.Type), package);
         }
     }
 

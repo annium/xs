@@ -4,27 +4,33 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
-using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
+using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
     internal class UseCommand : AsyncCommand<UseCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "use";
-
         public override string Description { get; } = "set global dependency to specific version";
-
         private readonly DiscoverProjectsTask discoverTask;
-
+        private readonly FilterProjectTypeTask filterTypeTask;
+        private readonly AddPackageDependencyTask addPackageDependencyTask;
+        private readonly DeletePackageDependencyTask deletePackageDependencyTask;
         private readonly ILogger logger;
 
         public UseCommand(
             DiscoverProjectsTask discoverTask,
+            FilterProjectTypeTask filterTypeTask,
+            AddPackageDependencyTask addPackageDependencyTask,
+            DeletePackageDependencyTask deletePackageDependencyTask,
             ILogger logger
         )
         {
             this.discoverTask = discoverTask;
+            this.filterTypeTask = filterTypeTask;
+            this.addPackageDependencyTask = addPackageDependencyTask;
+            this.deletePackageDependencyTask = deletePackageDependencyTask;
             this.logger = logger;
         }
 
@@ -54,20 +60,12 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            foreach (var dependency in updatedDependencies.Select(d => new Dependency(d.Type, d.Name, version)))
-                UsePackageDependency(targets.Where(e => e.Type == dependency.Type).ToArray(), dependency);
-        }
-
-        private void UsePackageDependency(IProject[] targets, Dependency dependency)
-        {
-            logger.LogDebug($"Use {dependency} in {targets.Length} projects");
-            foreach (var target in targets)
+            foreach (var old in updatedDependencies)
             {
-                var current = target.PackageDependencies.First(e => e.Name == dependency.Name);
-                logger.LogDebug($"Use in {target}: {current} -> {dependency}");
-                target.PackageDependencies.Remove(current);
-                target.PackageDependencies.Add(dependency);
-                target.Save();
+                var dependency = new Dependency(old.Type, old.Name, version);
+                var subset = filterTypeTask.Run(targets, dependency.Type);
+                deletePackageDependencyTask.Run(subset, old);
+                addPackageDependencyTask.Run(subset, dependency);
             }
         }
     }

@@ -14,12 +14,10 @@ namespace Xs.Cli.Main
         {
             RegisterCommands(services);
 
-            // tasks
-            services.AddSingleton<DiscoverProjectsTask>();
-            services.AddSingleton<FilterProjectsTask>();
-            services.AddSingleton<ProjectsRunner>();
+            RegisterTasks(services);
 
             // tools
+            services.AddSingleton<ProjectsRunner>();
             services.AddSingleton<Watcher>();
 
             RegisterConversions();
@@ -62,6 +60,20 @@ namespace Xs.Cli.Main
             services.AddSingleton<UpdateCommand>();
             services.AddSingleton<UseCommand>();
             services.AddSingleton<WatchCommand>();
+        }
+
+        private void RegisterTasks(IServiceCollection services)
+        {
+            // dependencies
+            services.AddSingleton<Tasks.Dependencies.AddPackageDependencyTask>();
+            services.AddSingleton<Tasks.Dependencies.AddProjectDependencyTask>();
+            services.AddSingleton<Tasks.Dependencies.DeletePackageDependencyTask>();
+            services.AddSingleton<Tasks.Dependencies.DeleteProjectDependencyTask>();
+
+            // root
+            services.AddSingleton<DiscoverProjectsTask>();
+            services.AddSingleton<FilterProjectsTask>();
+            services.AddSingleton<FilterProjectTypeTask>();
         }
 
         private void RegisterConversions()
