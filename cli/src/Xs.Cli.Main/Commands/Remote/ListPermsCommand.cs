@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Tools;
-using Xs.Core.Helpers;
 using Xs.Core.Models;
 using Xs.Registry.Shared.Client;
 
