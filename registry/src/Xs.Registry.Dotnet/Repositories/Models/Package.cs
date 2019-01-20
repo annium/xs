@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Xs.Registry.Core.Helpers;
 
 namespace Xs.Registry.Dotnet.Repositories.Models
 {
@@ -21,7 +21,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
         public string Description { get; set; }
 
         [BsonElement("deps")]
-        public Dictionary<string, List<ValueTuple<string, string>>> Dependencies { get; set; }
+        public List<PackageDependencies> Dependencies { get; set; }
 
         public static implicit operator Dotnet.Models.Package(Package src)
         {
@@ -33,8 +33,8 @@ namespace Xs.Registry.Dotnet.Repositories.Models
                 NuGet.Versioning.NuGetVersion.Parse(src.Version),
                 src.Description,
                 src.Dependencies.ToDictionary(
-                    e => NuGet.Frameworks.NuGetFramework.Parse(e.Key),
-                    e => e.Value.Select(d => (d.Item1, NuGet.Versioning.VersionRange.Parse(d.Item2))).ToArray().AsEnumerable()
+                    e => NuGet.Frameworks.NuGetFramework.Parse(e.Framework),
+                    e => e.Dependencies.ToDictionary(d => d.Key, d => NuGet.Versioning.VersionRange.Parse(d.Value)).ToReadOnly()
                 )
             );
         }
@@ -49,10 +49,13 @@ namespace Xs.Registry.Dotnet.Repositories.Models
             model.Name = src.Name;
             model.Version = src.Version.ToString();
             model.Description = src.Description;
-            model.Dependencies = src.Dependencies.ToDictionary(
-                e => e.Key.GetShortFolderName(),
-                e => e.Value.Select(d => (d.Item1, d.Item2.ToString())).ToList()
-            );
+            model.Dependencies = src.Dependencies
+                .Select(e => new PackageDependencies()
+                {
+                    Framework = e.Key.GetShortFolderName(),
+                    Dependencies = e.Value.ToDictionary(d => d.Key, d => d.Value.ToString())
+                })
+                .ToList();
 
             return model;
         }

@@ -127,7 +127,7 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             var dependencyGroups = reader.GetDependencyGroups().ToDictionary(
                 e => e.TargetFramework,
-                e => e.Packages.Select(p => (p.Id, p.VersionRange)).ToArray().AsEnumerable()
+                e => e.Packages.ToDictionary(p => p.Id, p=>p.VersionRange).ToReadOnly()
             );
 
             return new Package(
