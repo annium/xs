@@ -6,6 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Xs.Cli.Dotnet/Xs.Cli.Dotnet.csproj" />
+        <ProjectReference Include="../../../registry-client/src/Xs.Registry.Dotnet.Client/Xs.Registry.Dotnet.Client.csproj" />
         <ProjectReference Include="../../../registry-client/src/Xs.Registry.Node.Client/Xs.Registry.Node.Client.csproj" />
         <ProjectReference Include="../../../registry-client/src/Xs.Registry.Shared.Client/Xs.Registry.Shared.Client.csproj" />
     </ItemGroup>

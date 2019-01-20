@@ -18,6 +18,7 @@ namespace Xs.Cli.Main
 
         public static int Main(string[] args) => new Entrypoint()
             .UseServicePack<Annium.Extensions.Arguments.ServicePack>()
+            .UseServicePack<Xs.Registry.Dotnet.Client.ServicePack>()
             .UseServicePack<Xs.Registry.Shared.Client.ServicePack>()
             .UseServicePack<Core.ServicePack>()
             .UseServicePack<Dotnet.ServicePack>()
