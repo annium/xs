@@ -12,8 +12,6 @@ namespace Xs.Registry.Dotnet.Auth
 
         public ValueTuple<string, IActionResult> GetToken(HttpRequest request)
         {
-            Console.WriteLine($"HEADERS: {string.Join("; ", request.Headers.Keys)}");
-            Console.WriteLine($"QUERY: {request.QueryString.ToString()}");
             if (!request.Headers.ContainsKey(TokenHeader))
                 return fail(HttpStatusCode.Unauthorized, "ApiKey authorization required");
 
