@@ -2,9 +2,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Xs.Core.Models;
+using Xs.Execution;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
-using Xs.Core.Models;
 using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Tools;
 using Xs.Registry.Dotnet.Helpers;
@@ -73,20 +74,33 @@ namespace Xs.Registry.Dotnet.Controllers
                         await packageRepository.DeleteByNameVersionAsync(name, version);
                     }
 
+                    var executor = Exec.Staged();
+
                     // persist to storage
-                    await packageStorage.SaveAsync(
-                        name,
-                        version,
-                        packageStream,
-                        await packageReader.GetNuspecAsync(token)
+                    executor.Stage(
+                        async() => await packageStorage.SaveAsync(
+                            name,
+                            version,
+                            packageStream,
+                            await packageReader.GetNuspecAsync(token)
+                        ),
+                        () => packageStorage.DeleteAsync(name, version)
                     );
 
                     // if no metadata - generate and save
                     if (metadata == null)
-                        await metadataRepository.SaveAsync(metadataManager.Generate(user, Constants.ProjectType, name));
+                        executor.Stage(
+                            () => metadataRepository.SaveAsync(metadataManager.Generate(user, Constants.ProjectType, name)),
+                            () => metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, name)
+                        );
 
                     // persist to db
-                    await packageRepository.SaveAsync(package);
+                    executor.Stage(
+                        () => packageRepository.SaveAsync(package),
+                        () => packageRepository.DeleteByNameVersionAsync(name, version)
+                    );
+
+                    await executor.RunAsync();
                 }
 
                 return NoContent();
@@ -110,15 +124,19 @@ namespace Xs.Registry.Dotnet.Controllers
             if (!metadataManager.CheckPermission(user, metadata, Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package");
 
+            var executor = Exec.Batch();
+
             // delete from storage
-            await packageStorage.DeleteAsync(name, version);
+            executor.With(() => packageStorage.DeleteAsync(name, version));
 
             // if it was last package - delete metadata
             if (allExisting.Length == 1)
-                await metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, name);
+                executor.With(() => metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, name));
 
             // delete from db
-            await packageRepository.DeleteByNameVersionAsync(name, version);
+            executor.With(() => packageRepository.DeleteByNameVersionAsync(name, version));
+
+            await executor.RunAsync();
 
             return NoContent();
         }
@@ -127,7 +145,7 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             var dependencyGroups = reader.GetDependencyGroups().ToDictionary(
                 e => e.TargetFramework,
-                e => e.Packages.ToDictionary(p => p.Id, p=>p.VersionRange).ToReadOnly()
+                e => e.Packages.ToDictionary(p => p.Id, p => p.VersionRange).ToReadOnly()
             );
 
             return new Package(
