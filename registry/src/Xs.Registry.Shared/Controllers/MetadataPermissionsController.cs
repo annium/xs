@@ -42,7 +42,7 @@ namespace Xs.Registry.Shared.Controllers
 
         [HttpPut("{type}/{name}/permissions/{category}/{permission}")]
         [Authorize]
-        public async Task<IActionResult> AddPermissionAsync(
+        public async Task<IActionResult> GrantPermissionAsync(
             string type,
             string name,
             PermissionCategory category,
@@ -53,7 +53,7 @@ namespace Xs.Registry.Shared.Controllers
             if (readResult != null)
                 return readResult;
 
-            metadata = metadataManager.AddPermission(metadata, category, permission);
+            metadata = metadataManager.GrantPermission(metadata, category, permission);
 
             await metadataRepository.SaveAsync(metadata);
 
@@ -62,7 +62,7 @@ namespace Xs.Registry.Shared.Controllers
 
         [HttpDelete("{type}/{name}/permissions/{category}/{permission}")]
         [Authorize]
-        public async Task<IActionResult> DeletePermissionAsync(
+        public async Task<IActionResult> RevokePermissionAsync(
             string type,
             string name,
             PermissionCategory category,
@@ -73,7 +73,7 @@ namespace Xs.Registry.Shared.Controllers
             if (readResult != null)
                 return readResult;
 
-            metadata = metadataManager.DeletePermission(metadata, category, permission);
+            metadata = metadataManager.RevokePermission(metadata, category, permission);
 
             await metadataRepository.SaveAsync(metadata);
 

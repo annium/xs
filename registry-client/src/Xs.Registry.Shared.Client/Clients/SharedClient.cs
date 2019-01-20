@@ -7,14 +7,18 @@ namespace Xs.Registry.Shared.Client
 {
     public class SharedClient
     {
+        public PermissionsClient Permissions { get; }
+
         public UserClient User { get; }
 
         private Uri uri;
 
         public SharedClient(
+            PermissionsClient permissionsClient,
             UserClient userClient
         )
         {
+            Permissions = permissionsClient;
             this.User = userClient;
         }
 
@@ -23,6 +27,7 @@ namespace Xs.Registry.Shared.Client
             if (this.uri != null)
                 throw new InvalidOperationException($"Uri already assigned");
 
+            Permissions.SetUri(uri);
             User.SetUri(uri);
             this.uri = uri;
         }
