@@ -19,6 +19,17 @@ namespace Xs.Cli.Core.Models
             Version = version;
         }
 
+        public void Deconstruct(
+            out ProjectType type,
+            out string name,
+            out Version version
+        )
+        {
+            type = Type;
+            name = Name;
+            version = Version;
+        }
+
         public override string ToString() => $"{Name} {Version}";
 
         public override bool Equals(object obj) => GetType() == obj.GetType() && GetHashCode() == obj.GetHashCode();
