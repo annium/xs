@@ -144,12 +144,13 @@ namespace Xs.Cli.Dotnet.Projects
             var result = await shell.RunAsync(
                 $"dotnet nuget push {packageFile} --source {registry} --api-key {accessToken}",
                 token);
-            //TODO: delete package file after publish
 
             if (result.Code == 0)
                 logger.LogInfo($"Published {Name}");
             else
                 throw new Exception($"Failed to publish {Name}:{Environment.NewLine}{result.Output}");
+
+            System.IO.File.Delete(packageFile);
         }
 
         public async Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
