@@ -42,7 +42,8 @@ namespace Xs.Cli.Dotnet.Tools
                 OmitXmlDeclaration = false,
                 Encoding = new UTF8Encoding(false),
             };
-            using(var fs = new FileStream(path, FileMode.Truncate))
+
+            using(var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
             using(var xw = XmlWriter.Create(fs, xws))
             {
                 info.Save(xw);
