@@ -6,6 +6,7 @@ using Xs.Registry.Core.Helpers;
 using Xs.Core.Models;
 using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Tools;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Shared.Controllers
 {

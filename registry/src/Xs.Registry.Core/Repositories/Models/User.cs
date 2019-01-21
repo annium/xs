@@ -17,7 +17,7 @@ namespace Xs.Registry.Core.Repositories.Models
         [BsonElement("token")]
         public string Token { get; set; }
 
-        public static implicit operator User(Xs.Core.Models.User src)
+        public static implicit operator User(Core.Models.User src)
         {
             if (src == null)
                 return null;
@@ -33,12 +33,12 @@ namespace Xs.Registry.Core.Repositories.Models
             return model;
         }
 
-        public static implicit operator Xs.Core.Models.User(User src)
+        public static implicit operator Core.Models.User(User src)
         {
             if (src == null)
                 return null;
 
-            return new Xs.Core.Models.User(
+            return new Core.Models.User(
                 src.Id,
                 src.Name,
                 src.PasswordHash,

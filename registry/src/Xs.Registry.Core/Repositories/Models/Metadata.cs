@@ -24,7 +24,7 @@ namespace Xs.Registry.Core.Repositories.Models
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<PermissionCategory, Permission> Permissions { get; set; }
 
-        public static implicit operator Metadata(Xs.Core.Models.Metadata src)
+        public static implicit operator Metadata(Core.Models.Metadata src)
         {
             if (src == null)
                 return null;
@@ -39,12 +39,12 @@ namespace Xs.Registry.Core.Repositories.Models
             return model;
         }
 
-        public static implicit operator Xs.Core.Models.Metadata(Metadata src)
+        public static implicit operator Core.Models.Metadata(Metadata src)
         {
             if (src == null)
                 return null;
 
-            return new Xs.Core.Models.Metadata(
+            return new Core.Models.Metadata(
                 src.UserId,
                 Xs.Core.Models.ProjectType.Get(src.ProjectType),
                 src.PackageName,

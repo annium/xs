@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Xs.Core.Models;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Core.Repositories
 {

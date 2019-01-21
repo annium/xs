@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Xs.Core.Models;
 
-namespace Xs.Core.Models
+namespace Xs.Registry.Core.Models
 {
     public class Metadata
     {

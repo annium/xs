@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
-using Xs.Core.Models;
 using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Security;
 using Xs.Registry.Shared.Payloads;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Shared.Controllers
 {

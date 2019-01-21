@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Core.Models;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Core.Helpers
 {

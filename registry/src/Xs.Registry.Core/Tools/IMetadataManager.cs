@@ -1,4 +1,5 @@
 using Xs.Core.Models;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Core.Tools
 {

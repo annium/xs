@@ -1,4 +1,4 @@
-namespace Xs.Core.Models
+namespace Xs.Registry.Core.Models
 {
     public class User
     {
