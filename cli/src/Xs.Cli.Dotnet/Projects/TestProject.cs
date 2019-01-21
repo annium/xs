@@ -35,10 +35,7 @@ namespace Xs.Cli.Dotnet.Projects
             logger
         ) { }
 
-        public async Task TestAsync(
-            Env env,
-            CancellationToken token
-        )
+        public async Task TestAsync(Env env, CancellationToken token)
         {
             logger.LogInfo($"Testing {Name}");
 

@@ -13,5 +13,7 @@ namespace Xs.Cli.Core.Models
         public string Token { get; set; }
 
         public Dictionary<ProjectType, Uri> Servers { get; set; } = new Dictionary<ProjectType, Uri>();
+
+        public override string ToString() => Name;
     }
 }

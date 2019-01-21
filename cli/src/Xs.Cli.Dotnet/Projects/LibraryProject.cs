@@ -13,7 +13,7 @@ using Xs.Core.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class LibraryProject : ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject
+    internal class LibraryProject : ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
         public ProjectType Type { get; } = Constants.ProjectType;
 
@@ -100,10 +100,7 @@ namespace Xs.Cli.Dotnet.Projects
                 throw new Exception($"Failed to install {Name}:{Environment.NewLine}{result.Output}");
         }
 
-        public async Task BuildAsync(
-            Env env,
-            CancellationToken token
-        )
+        public async Task BuildAsync(Env env, CancellationToken token)
         {
             logger.LogInfo($"Building {Name}");
 
@@ -116,6 +113,57 @@ namespace Xs.Cli.Dotnet.Projects
                 logger.LogInfo($"Built {Name}");
             else
                 throw new Exception($"Failed to build {Name}:{Environment.NewLine}{result.Output}");
+        }
+
+        public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
+        {
+            logger.LogInfo($"Packing {Name}");
+
+            var file = Path.Combine(File.DirectoryName, $"{Name}.{version}.nupkg");
+            if (System.IO.File.Exists(file))
+                System.IO.File.Delete(file);
+
+            var result = await shell.RunAsync(
+                $"dotnet pack {File.FullName} --output . -p:PackageVersion={version} -p:SymbolPackageFormat=snupkg",
+                token);
+
+            if (result.Code == 0)
+                logger.LogInfo($"Packed {Name}");
+            else
+                throw new Exception($"Failed to pack {Name}:{Environment.NewLine}{result.Output}");
+
+            return file;
+        }
+
+        public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
+        {
+            var packageFile = await PackAsync(version, token);
+
+            logger.LogInfo($"Publishing {Name}");
+
+            var result = await shell.RunAsync(
+                $"dotnet nuget push {packageFile} --source {registry} --api-key {accessToken}",
+                token);
+            //TODO: delete package file after publish
+
+            if (result.Code == 0)
+                logger.LogInfo($"Published {Name}");
+            else
+                throw new Exception($"Failed to publish {Name}:{Environment.NewLine}{result.Output}");
+        }
+
+        public async Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
+        {
+            logger.LogInfo($"Unpublishing {Name}");
+
+            var result = await shell.RunAsync(
+                $"dotnet nuget delete {Name} {version} --source {registry} --api-key {accessToken} --non-interactive",
+                token);
+
+            if (result.Code == 0)
+                logger.LogInfo($"Unpublished {Name}");
+            else
+                throw new Exception($"Failed to unpublish {Name}:{Environment.NewLine}{result.Output}");
         }
 
         public bool IsRelated(string path)
