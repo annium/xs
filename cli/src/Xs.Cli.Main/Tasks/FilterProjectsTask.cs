@@ -19,15 +19,19 @@ namespace Xs.Cli.Main.Tasks
 
         public IEnumerable<IProject> Run(IEnumerable<IProject> projects, string mask)
         {
-            if (mask == "*")
+            if (mask == "all")
+            {
+                logger.LogDebug($"Mask {mask} skipped filtering of projects.");
+
                 return projects;
+            }
 
             var pattern = Regex.Escape(mask).Replace(@"\*", ".*").Replace(@"\?", ".");
             var regex = new Regex($"^{pattern}$", RegexOptions.IgnoreCase);
 
             var result = projects.Where(p => regex.IsMatch(p.Name)).OrderBy(p => p.Name).ToArray();
 
-            logger.LogDebug($"Mask {regex} filtered {projects.Count()} projects to {result.Length} projects");
+            logger.LogDebug($"Mask {regex} filtered {projects.Count()} projects to {result.Length} projects.");
 
             return result;
         }

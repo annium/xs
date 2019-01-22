@@ -55,7 +55,7 @@ namespace Xs.Cli.Main.Commands
     {
         [Position(1, isRequired : false)]
         [Help("Projects mask")]
-        public string Mask { get; set; } = "*";
+        public string Mask { get; set; } = "all";
 
         [Position(2, isRequired : false)]
         [Help("Environment")]
