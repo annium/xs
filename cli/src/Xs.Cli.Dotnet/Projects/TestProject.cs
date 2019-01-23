@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -16,38 +15,33 @@ namespace Xs.Cli.Dotnet.Projects
         public TestProject(
             string name,
             FileInfo file,
-            TargetFramework targetFramework,
-            OutputType outputType,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
             ProjectMapper mapper,
             IShell shell,
-            ILogger logger
+            ILogger logger,
+            TargetFramework targetFramework,
+            OutputType outputType
         ) : base(
             name,
             file,
-            targetFramework,
-            outputType,
             projectDependencies,
             packageDependencies,
             mapper,
             shell,
-            logger
+            logger,
+            targetFramework,
+            outputType
         ) { }
 
-        public async Task TestAsync(Env env, CancellationToken token)
+        public Task TestAsync(Env env, CancellationToken token)
         {
-            logger.LogInfo($"Testing {Name}.");
-
             var configuration = env == Env.Development ? "Debug" : "Release";
-            var result = await shell.RunAsync(
+
+            return RunAsync(
+                "test",
                 $"dotnet test --configuration {configuration} --no-build {File.FullName}",
                 token);
-
-            if (result.Code == 0)
-                logger.LogInfo($"Tested {Name}.");
-            else
-                throw new Exception($"Failed to test {Name}:{Environment.NewLine}{result.Output}.");
         }
     }
 }

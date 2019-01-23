@@ -13,21 +13,21 @@ using Xs.Core.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class LibraryProject : ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
+    internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
-        public ProjectType Type { get; } = Constants.ProjectType;
+        public override ProjectType Type { get; } = Constants.ProjectType;
 
-        public string Name { get; }
+        public override string Name { get; }
 
-        public FileInfo File { get; }
+        public override FileInfo File { get; }
+
+        public override HashSet<IProject> ProjectDependencies { get; }
+
+        public override HashSet<Dependency> PackageDependencies { get; }
 
         public TargetFramework TargetFramework { get; }
 
         public OutputType OutputType { get; }
-
-        public HashSet<IProject> ProjectDependencies { get; }
-
-        public HashSet<Dependency> PackageDependencies { get; }
 
         protected readonly ILogger logger;
 
@@ -38,21 +38,21 @@ namespace Xs.Cli.Dotnet.Projects
         public LibraryProject(
             string name,
             FileInfo file,
-            TargetFramework targetFramework,
-            OutputType outputType,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
             ProjectMapper mapper,
             IShell shell,
-            ILogger logger
-        )
+            ILogger logger,
+            TargetFramework targetFramework,
+            OutputType outputType
+        ) : base(shell, logger)
         {
             this.Name = name;
             this.File = file;
-            this.TargetFramework = targetFramework;
-            this.OutputType = outputType;
             this.ProjectDependencies = projectDependencies;
             this.PackageDependencies = packageDependencies;
+            this.TargetFramework = targetFramework;
+            this.OutputType = outputType;
             this.mapper = mapper;
             this.shell = shell;
             this.logger = logger;
@@ -60,7 +60,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         public Task CleanAsync(CancellationToken token)
         {
-            logger.LogInfo($"Cleaning {Name}.");
+            logger.LogInfo($"Start {Name} clean.");
 
             DeleteDirectory("bin");
             DeleteDirectory("obj");
@@ -68,7 +68,7 @@ namespace Xs.Cli.Dotnet.Projects
             DeleteFiles("*.nupkg");
             DeleteFiles("*.snupkg");
 
-            logger.LogInfo($"Cleaned {Name}.");
+            logger.LogInfo($"Finished {Name} clean.");
 
             return Task.CompletedTask;
 
@@ -86,51 +86,29 @@ namespace Xs.Cli.Dotnet.Projects
             }
         }
 
-        public async Task InstallAsync(CancellationToken token)
+        public Task InstallAsync(CancellationToken token) =>
+            RunAsync("install", $"dotnet restore --no-dependencies {File.FullName}", token);
+
+        public Task BuildAsync(Env env, CancellationToken token)
         {
-            logger.LogInfo($"Installing {Name}.");
-
-            var result = await shell.RunAsync(
-                $"dotnet restore --no-dependencies {File.FullName}",
-                token);
-
-            if (result.Code == 0)
-                logger.LogInfo($"Installed {Name}.");
-            else
-                throw new Exception($"Failed to install {Name}:{Environment.NewLine}{result.Output}.");
-        }
-
-        public async Task BuildAsync(Env env, CancellationToken token)
-        {
-            logger.LogInfo($"Building {Name}.");
-
             var configuration = env == Env.Development ? "Debug" : "Release";
-            var result = await shell.RunAsync(
+
+            return RunAsync(
+                "build",
                 $"dotnet build --configuration {configuration} --no-dependencies {File.FullName}",
                 token);
-
-            if (result.Code == 0)
-                logger.LogInfo($"Built {Name}.");
-            else
-                throw new Exception($"Failed to build {Name}:{Environment.NewLine}{result.Output}");
         }
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
-            logger.LogInfo($"Packing {Name}.");
-
             var file = Path.Combine(File.DirectoryName, $"{Name}.{version}.nupkg");
             if (System.IO.File.Exists(file))
                 System.IO.File.Delete(file);
 
-            var result = await shell.RunAsync(
+            await RunAsync(
+                "pack",
                 $"dotnet pack {File.FullName} --output . -p:PackageVersion={version} -p:SymbolPackageFormat=snupkg",
                 token);
-
-            if (result.Code == 0)
-                logger.LogInfo($"Packed {Name}.");
-            else
-                throw new Exception($"Failed to pack {Name}:{Environment.NewLine}{result.Output}.");
 
             return file;
         }
@@ -139,35 +117,21 @@ namespace Xs.Cli.Dotnet.Projects
         {
             var packageFile = await PackAsync(version, token);
 
-            logger.LogInfo($"Publishing {Name}.");
-
-            var result = await shell.RunAsync(
+            await RunAsync(
+                "publish",
                 $"dotnet nuget push {packageFile} --source {registry} --api-key {accessToken}",
                 token);
-
-            if (result.Code == 0)
-                logger.LogInfo($"Published {Name}.");
-            else
-                throw new Exception($"Failed to publish {Name}:{Environment.NewLine}{result.Output}.");
 
             System.IO.File.Delete(packageFile);
         }
 
-        public async Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
-        {
-            logger.LogInfo($"Unpublishing {Name}.");
-
-            var result = await shell.RunAsync(
+        public Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token) =>
+            RunAsync(
+                "unpublish",
                 $"dotnet nuget delete {Name} {version} --source {registry} --api-key {accessToken} --non-interactive",
                 token);
 
-            if (result.Code == 0)
-                logger.LogInfo($"Unpublished {Name}.");
-            else
-                throw new Exception($"Failed to unpublish {Name}:{Environment.NewLine}{result.Output}.");
-        }
-
-        public bool IsRelated(string path)
+        public override bool IsRelated(string path)
         {
             if (!path.StartsWith(File.DirectoryName))
                 return false;
@@ -177,7 +141,7 @@ namespace Xs.Cli.Dotnet.Projects
                 IsRelatedFile(new FileInfo(path));
         }
 
-        public void Save() => mapper.Save(this.File.FullName, this);
+        public override void Save() => mapper.Save(this.File.FullName, this);
 
         public override string ToString() => Name;
 
