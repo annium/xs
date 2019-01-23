@@ -76,7 +76,7 @@ namespace Xs.Cli.Main.Tasks
 
             logger.LogDebug($"Discovery finished. Found {projects.Count} projects.");
 
-            return projects;
+            return projects.OrderBy(e => e.Name).ToArray();
         }
 
         private ValueTuple<IProject, Exception> TryCreateProject(
