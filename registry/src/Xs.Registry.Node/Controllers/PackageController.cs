@@ -78,7 +78,7 @@ namespace Xs.Registry.Node.Controllers
                 await packageRepository.DeleteByNameVersionAsync(name, version);
             }
 
-            var executor = Exec.Staged();
+            var executor = Executor.Staged();
 
             // persist to storage
             executor.Stage(
@@ -117,15 +117,19 @@ namespace Xs.Registry.Node.Controllers
             if (!metadataManager.CheckPermission(user, metadata, Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package.");
 
+            var executor = Executor.Batch();
+
             // delete from storage
-            await packageStorage.DeleteAsync(name, version);
+            executor.With(() => packageStorage.DeleteAsync(name, version));
 
             // if it was last package - delete metadata
             if (allExisting.Length == 1)
-                await metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, (string) name);
+                executor.With(() => metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, (string) name));
 
             // delete from db
-            await packageRepository.DeleteByNameVersionAsync((string) name, (string) version);
+            executor.With(() => packageRepository.DeleteByNameVersionAsync((string) name, (string) version));
+
+            await executor.RunAsync();
 
             return NoContent();
         }

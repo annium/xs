@@ -74,7 +74,7 @@ namespace Xs.Registry.Dotnet.Controllers
                         await packageRepository.DeleteByNameVersionAsync(name, version);
                     }
 
-                    var executor = Exec.Staged();
+                    var executor = Executor.Staged();
 
                     // persist to storage
                     executor.Stage(
@@ -124,7 +124,7 @@ namespace Xs.Registry.Dotnet.Controllers
             if (!metadataManager.CheckPermission(user, metadata, Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package.");
 
-            var executor = Exec.Batch();
+            var executor = Executor.Batch();
 
             // delete from storage
             executor.With(() => packageStorage.DeleteAsync(name, version));

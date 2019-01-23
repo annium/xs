@@ -1,6 +1,6 @@
 namespace Xs.Execution
 {
-    public static class Exec
+    public static class Executor
     {
         public static StageExecutor Staged() => new StageExecutor();
 
