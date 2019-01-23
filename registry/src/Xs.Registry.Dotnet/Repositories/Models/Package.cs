@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Xs.Registry.Core.Helpers;
+using Xs.Core.Helpers;
 
 namespace Xs.Registry.Dotnet.Repositories.Models
 {

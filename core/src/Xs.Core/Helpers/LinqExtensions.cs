@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Xs.Registry.Core.Helpers
+namespace Xs.Core.Helpers
 {
     public static class LinqExtensions
     {
