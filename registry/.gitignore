@@ -3,7 +3,6 @@
 
 # artifacts
 data/
-src/packages/
 
 # OS & misc
 .DS_STORE
@@ -13,8 +12,13 @@ src/packages/
 bin/
 obj/
 
+# node
+node_modules/
+*.css
+
 # local run folder
 /run
 
 # configuration
 configuration/*.override.json
+.env*.local
