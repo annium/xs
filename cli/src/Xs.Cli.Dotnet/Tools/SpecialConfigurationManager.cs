@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -21,10 +22,19 @@ namespace Xs.Cli.Dotnet.Tools
 
         public void Save(string folder, IEnumerable<ValueTuple<string, Uri, string>> registries)
         {
+            // if no registries - delete file
+            if (registries.Count() == 0)
+            {
+                var path = FilePath(folder);
+                if (File.Exists(path))
+                    File.Delete(path);
+                return;
+            }
+
             var sources = new XElement(El.PackageSources);
             sources.Add(new XElement(El.Clear));
 
-            foreach (var(name, uri, token) in registries)
+            foreach (var(name, uri, _) in registries)
                 sources.Add(GetAddRule(name, uri));
 
             sources.Add(GetAddRule(defaultName, defaultUri));
