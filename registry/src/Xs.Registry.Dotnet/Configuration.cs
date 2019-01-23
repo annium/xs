@@ -5,7 +5,7 @@ namespace Xs.Registry.Dotnet
 {
     public class Configuration
     {
-        public readonly string PackagesFolder = Path.Combine("data", "dotnet", "packages");
+        public readonly string PackagesFolder = Path.Combine("data", Constants.ProjectType.ToString(), "packages");
 
         public DatabaseConfiguration Database { get; set; }
 

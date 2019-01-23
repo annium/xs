@@ -7,7 +7,7 @@ namespace Xs.Registry.Node
     {
         public const string DateFormat = "yyyy-MM-ddTHH:mm:ss.fffK";
 
-        public readonly string PackagesFolder = Path.Combine("data", "node", "packages");
+        public readonly string PackagesFolder = Path.Combine("data", Constants.ProjectType.ToString(), "packages");
 
         public DatabaseConfiguration Database { get; set; }
 
