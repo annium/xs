@@ -9,14 +9,14 @@ using Xs.Registry.Shared.Client;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class ListPermsCommand : AsyncCommand<ListPermsCommandConfiguration, CwdCommandConfiguration>
+    internal class ShowPermsCommand : AsyncCommand<ShowPermsCommandConfiguration, CwdCommandConfiguration>
     {
-        public override string Id { get; } = "list-perms";
-        public override string Description { get; } = "list package permissions";
+        public override string Id { get; } = "show-perms";
+        public override string Description { get; } = "Show permissions for package in registry.";
         private readonly IConfigurationManager configurationManager;
         private readonly SharedClientFactory sharedClientFactory;
 
-        public ListPermsCommand(
+        public ShowPermsCommand(
             IConfigurationManager configurationManager,
             SharedClientFactory sharedClientFactory
         )
@@ -26,15 +26,15 @@ namespace Xs.Cli.Main.Commands.Remote
         }
 
         public override async Task HandleAsync(
-            ListPermsCommandConfiguration cfg,
+            ShowPermsCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
             var registry = configurationManager.Load(cwdCfg.Cwd).Registries
-                .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Server.ToLowerInvariant());
+                .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Registry.ToLowerInvariant());
             if (registry == null)
-                throw new InvalidOperationException($"Registry {cfg.Server} is not tracked. Track it to manipulate permissions");
+                throw new InvalidOperationException($"Registry {cfg.Registry} is not tracked. Track it to manipulate permissions.");
 
             var client = sharedClientFactory.Create(registry.Location);
 
@@ -44,11 +44,11 @@ namespace Xs.Cli.Main.Commands.Remote
         }
     }
 
-    internal class ListPermsCommandConfiguration
+    internal class ShowPermsCommandConfiguration
     {
         [Position(1)]
-        [Help("Server to get permissions from.")]
-        public string Server { get; set; }
+        [Help("Tracked registry name to show permissions from.")]
+        public string Registry { get; set; }
 
         [Position(2)]
         [Help("Package project type.")]

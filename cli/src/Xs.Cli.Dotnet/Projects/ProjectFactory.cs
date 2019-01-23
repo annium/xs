@@ -72,7 +72,7 @@ namespace Xs.Cli.Dotnet.Projects
 
             // check TargetFramework consistency
             if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
-                throw new InvalidOperationException($"Project {name} uses different target framework");
+                throw new InvalidOperationException($"Project {name} uses different target framework.");
 
             var projectDeps = projectDependencies
                 .Select(e => ResolveProjectDependency(name, file, e, projects))
@@ -101,7 +101,7 @@ namespace Xs.Cli.Dotnet.Projects
                 .FirstOrDefault(e => e.File.DirectoryName == directory);
 
             if (dependency == null)
-                throw new InvalidOperationException($"Project {project} has unresolved project dependency {reference}");
+                throw new InvalidOperationException($"Project {project} has unresolved project dependency {reference}.");
 
             return dependency;
         }
@@ -116,10 +116,10 @@ namespace Xs.Cli.Dotnet.Projects
                 raw;
 
             if (raw.Name != dependency.Name)
-                throw new InvalidOperationException($"Project {project} uses different dependency naming: {raw.Name} -> {dependency.Name}");
+                throw new InvalidOperationException($"Project {project} uses different dependency naming: {raw.Name} -> {dependency.Name}.");
 
             if (!raw.Version.Equals(dependency.Version))
-                throw new InvalidOperationException($"Project {project} uses different dependency {raw.Name} version: {raw.Version} -> {dependency.Version}");
+                throw new InvalidOperationException($"Project {project} uses different dependency {raw.Name} version: {raw.Version} -> {dependency.Version}.");
 
             return dependency;
         }

@@ -26,7 +26,7 @@ namespace Xs.Registry.Shared.Client
             return Http.Open(this.uri)
                 .Get("registry")
                 .BearerAuthorization(token)
-                .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsAsync<Dictionary<string, Uri>>();
         }
     }

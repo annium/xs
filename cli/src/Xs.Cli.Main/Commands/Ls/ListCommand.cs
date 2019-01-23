@@ -10,7 +10,7 @@ namespace Xs.Cli.Main.Commands.Ls
     {
         public override string Id { get; } = "";
 
-        public override string Description { get; } = "list projects";
+        public override string Description { get; } = "List projects.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -42,7 +42,7 @@ namespace Xs.Cli.Main.Commands.Ls
     internal class ListCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
     }
 }

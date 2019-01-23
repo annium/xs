@@ -11,7 +11,7 @@ namespace Xs.Registry.Shared.Client
             return Http.Open(this.uri)
                 .Put("user")
                 .JsonContent(new { name, password })
-                .EnsureSuccessStatusCode(response => $"User create failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"User create failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsStringAsync();
         }
 
@@ -21,7 +21,7 @@ namespace Xs.Registry.Shared.Client
                 .Post("user")
                 .BearerAuthorization(token)
                 .JsonContent(new { newPassword })
-                .EnsureSuccessStatusCode(response => $"User update failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"User update failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsStringAsync();
         }
 
@@ -31,7 +31,7 @@ namespace Xs.Registry.Shared.Client
                 .Get("user")
                 .Param("name", name)
                 .Param("password", password)
-                .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsStringAsync();
         }
 
@@ -40,7 +40,7 @@ namespace Xs.Registry.Shared.Client
             return Http.Open(this.uri)
                 .Get("user")
                 .BearerAuthorization(token)
-                .EnsureSuccessStatusCode(response => $"User delete failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"User delete failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsStringAsync();
         }
     }

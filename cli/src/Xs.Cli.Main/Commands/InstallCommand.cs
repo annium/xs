@@ -13,7 +13,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "install";
 
-        public override string Description { get; } = "install dependencies in projects";
+        public override string Description { get; } = "Install projects' dependencies.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -45,7 +45,7 @@ namespace Xs.Cli.Main.Commands
             var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
                 .OfType<IInstallableProject>()
                 .ToArray();
-            logger.LogDebug($"Installing {projects.Length} projects");
+            logger.LogDebug($"Install {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.InstallAsync(tkn), token);
         }
     }
@@ -53,7 +53,7 @@ namespace Xs.Cli.Main.Commands
     internal class InstallCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
     }
 }

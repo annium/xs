@@ -14,7 +14,7 @@ namespace Xs.Cli.Main.Commands
     internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "search";
-        public override string Description { get; } = "search for packages in tracked registries";
+        public override string Description { get; } = "Search for packages in tracked registries.";
         private readonly IEnumerable<IProjectClientFactory> projectClientFactories;
         private readonly IConfigurationManager configurationManager;
         private readonly ILogger logger;
@@ -65,15 +65,15 @@ namespace Xs.Cli.Main.Commands
     internal class SearchCommandConfiguration
     {
         [Position(1)]
-        [Help("Search server")]
+        [Help("Tracked registry name to search packages at.")]
         public string Server { get; set; }
 
         [Position(2)]
-        [Help("Project type")]
+        [Help("Project type.")]
         public ProjectType Type { get; set; }
 
         [Position(3)]
-        [Help("Search query")]
+        [Help("Search query.")]
         public string Query { get; set; }
     }
 }

@@ -33,7 +33,7 @@ namespace Xs.Cli.Main.Tools
             var running = new List<TProject>();
             var errors = new List<Exception>();
 
-            logger.LogTrace($"Starting run with {pending.Count} project(s)");
+            logger.LogTrace($"Start run with {pending.Count} project(s).");
 
             while (pending.Count > 0)
             {
@@ -50,7 +50,7 @@ namespace Xs.Cli.Main.Tools
 
                     // if there are no projects running and nothing to start - we have a deadlock
                     if (running.Count == 0 && starting.Length == 0)
-                        throw new InvalidOperationException($"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run");
+                        throw new InvalidOperationException($"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run.");
 
                     logger.LogTrace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine,starting.Select(e => e.Name))}");
 
@@ -94,7 +94,7 @@ namespace Xs.Cli.Main.Tools
                             // remove from running ones
                             lock(locker) running.Remove(project);
 
-                            logger.LogTrace($"Finalized run for {project.Name}. Signal");
+                            logger.LogTrace($"Finalized run for {project.Name}. Signal.");
 
                             // signal for next iteration
                             gate.Set();
@@ -102,12 +102,12 @@ namespace Xs.Cli.Main.Tools
                     });
 
                 // wait for next iteration
-                logger.LogTrace("Waiting for a signal");
+                logger.LogTrace("Waiting for a signal.");
                 gate.Wait();
                 gate.Reset();
             }
 
-            logger.LogTrace($"Finished run of {projects.Count()} with {errors.Count} error(s)");
+            logger.LogTrace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
 
             if (errors.Count > 0)
                 throw new AggregateException(errors);

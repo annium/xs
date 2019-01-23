@@ -13,7 +13,7 @@ namespace Xs.Registry.Dotnet.Auth
         public ValueTuple<string, IActionResult> GetToken(HttpRequest request)
         {
             if (!request.Headers.ContainsKey(TokenHeader))
-                return fail(HttpStatusCode.Unauthorized, "ApiKey authorization required");
+                return fail(HttpStatusCode.Unauthorized, "ApiKey authorization required.");
 
             var token = request.Headers[TokenHeader].ToString();
 

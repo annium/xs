@@ -4,7 +4,7 @@ namespace Xs.Cli.Main.Commands.Ls
     {
         public override string Id { get; } = "ls";
 
-        public override string Description { get; } = "list projects and their dependencies";
+        public override string Description { get; } = "List projects and their dependencies.";
 
         public Group()
         {

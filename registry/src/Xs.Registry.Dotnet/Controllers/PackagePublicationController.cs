@@ -45,7 +45,7 @@ namespace Xs.Registry.Dotnet.Controllers
             using(var packageStream = await Request.GetUploadStreamOrNullAsync(token))
             {
                 if (packageStream == null)
-                    return BadRequest("Use multipart/form-data to upload package");
+                    return BadRequest("Use multipart/form-data to upload package.");
 
                 using(var packageReader = new NuGet.Packaging.PackageArchiveReader(packageStream, leaveStreamOpen : true))
                 {
@@ -60,12 +60,12 @@ namespace Xs.Registry.Dotnet.Controllers
                     // try load metadata; if exists - check permissions
                     var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, name);
                     if (metadata != null && !metadataManager.CheckPermission(user, metadata, Permission.Publish))
-                        return Forbidden("You need publish permission to publish new package");
+                        return Forbidden("You need publish permission to publish new package.");
 
                     // if package exists - either can rewrite if permission granted, or it's conflict
                     var exists = (await packageRepository.FindByNameVersionAsync(name, version)) != null;
                     if (exists && !metadataManager.CheckPermission(user, metadata, Permission.Republish))
-                        return Conflict($"Package {name} {version} already exists. You need republish permission to overwrite it");
+                        return Conflict($"Package {name} {version} already exists. You need republish permission to overwrite it.");
 
                     // if exists - delete old
                     if (exists)
@@ -122,7 +122,7 @@ namespace Xs.Registry.Dotnet.Controllers
             // load metadata and check permissions
             var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, name);
             if (!metadataManager.CheckPermission(user, metadata, Permission.Unpublish))
-                return Forbidden("You need unpublish permission to unpublish this package");
+                return Forbidden("You need unpublish permission to unpublish this package.");
 
             var executor = Exec.Batch();
 

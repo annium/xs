@@ -22,7 +22,7 @@ namespace Xs.Registry.Shared.Client
             return Http.Open(this.uri)
                 .Put($"metadata/{type}/{name}/permissions/{category}/{permission}")
                 .BearerAuthorization(token)
-                .EnsureSuccessStatusCode(response => $"Permission grant failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"Permission grant failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .RunAsync();
         }
 
@@ -35,7 +35,7 @@ namespace Xs.Registry.Shared.Client
             return Http.Open(this.uri)
                 .Get($"metadata/{type}/{name}/permissions")
                 .BearerAuthorization(token)
-                .EnsureSuccessStatusCode(response => $"Permissions load failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"Permissions load failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsAsync<IReadOnlyDictionary<PermissionCategory, Permission>>();
         }
 
@@ -52,7 +52,7 @@ namespace Xs.Registry.Shared.Client
             return Http.Open(this.uri)
                 .Delete($"metadata/{type}/{name}/permissions/{category}/{permission}")
                 .BearerAuthorization(token)
-                .EnsureSuccessStatusCode(response => $"Permission revoke failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"Permission revoke failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .RunAsync();
         }
 
@@ -60,7 +60,7 @@ namespace Xs.Registry.Shared.Client
         {
             var value = (int) permission;
             if (value == 0 || (value & (value - 1)) > 0)
-                throw new InvalidOperationException("Permission manipulation is allowed for single permission per operation");
+                throw new InvalidOperationException("Permission manipulation is allowed for single permission per operation.");
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Xs.Registry.Core.Helpers
             if (ControllerContext.ActionDescriptor.Properties.TryGetValue(UserProperty, out var raw))
                 return (User) raw;
 
-            throw new InvalidOperationException($"User is not authenticated");
+            throw new InvalidOperationException($"User is not authenticated.");
         }
 
         protected IActionResult Created(object result) =>

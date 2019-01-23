@@ -27,7 +27,7 @@ namespace Xs.Cli.Dotnet.Models
         public static TargetFramework Parse(string value)
         {
             if (!values.ContainsKey(value))
-                throw new ArgumentException($"Given value '{value}' is not a supported TargetFramework moniker");
+                throw new ArgumentException($"Given value '{value}' is not a supported TargetFramework moniker.");
 
             return values[value];
         }

@@ -13,7 +13,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "clean";
 
-        public override string Description { get; } = "clean projects";
+        public override string Description { get; } = "Clean projects.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -40,7 +40,7 @@ namespace Xs.Cli.Main.Commands
             var projects = (await discoverTask.RunAsync(cwdCfg.Cwd))
                 .OfType<ICleanableProject>()
                 .ToArray();
-            logger.LogDebug($"Cleaning {projects.Length} projects");
+            logger.LogDebug($"Clean {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(tkn), token);
         }
     }

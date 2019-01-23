@@ -37,7 +37,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         public async Task TestAsync(Env env, CancellationToken token)
         {
-            logger.LogInfo($"Testing {Name}");
+            logger.LogInfo($"Testing {Name}.");
 
             var configuration = env == Env.Development ? "Debug" : "Release";
             var result = await shell.RunAsync(
@@ -45,9 +45,9 @@ namespace Xs.Cli.Dotnet.Projects
                 token);
 
             if (result.Code == 0)
-                logger.LogInfo($"Tested {Name}");
+                logger.LogInfo($"Tested {Name}.");
             else
-                throw new Exception($"Failed to test {Name}:{Environment.NewLine}{result.Output}");
+                throw new Exception($"Failed to test {Name}:{Environment.NewLine}{result.Output}.");
         }
     }
 }

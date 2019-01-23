@@ -74,7 +74,7 @@ namespace Xs.Registry.Core.Storage
         private string GetPath(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException($"Given {name} is empty");
+                throw new ArgumentException($"Given {name} is empty.");
 
             return Path.GetFullPath(Path.Combine(root, name));
         }

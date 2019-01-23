@@ -55,11 +55,11 @@ namespace Xs.Cli.Main.Tools
                     gate.Reset();
                     if (tasks.Count == 0)
                     {
-                        logger.LogTrace("Wait for tasks");
+                        logger.LogTrace("Wait for tasks.");
                         gate.Wait(token);
                     }
 
-                    logger.LogTrace($"Pending {tasks.Count} task(s)");
+                    logger.LogTrace($"Pending {tasks.Count} task(s).");
                     // get and execute task
                     var(task, path) = tasks.Dequeue();
                     try
@@ -79,7 +79,7 @@ namespace Xs.Cli.Main.Tools
                         return;
 
                     var task = File.Exists(path) ? handleChange : handleDelete;
-                    logger.LogTrace($"Enqueue task for '{path}'");
+                    logger.LogTrace($"Enqueue task for {path}");
                     tasks.Enqueue((task, path));
                     gate.Set();
                 }

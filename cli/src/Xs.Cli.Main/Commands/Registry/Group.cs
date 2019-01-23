@@ -4,7 +4,7 @@ namespace Xs.Cli.Main.Commands.Registry
     {
         public override string Id { get; } = "registry";
 
-        public override string Description { get; } = "registry management";
+        public override string Description { get; } = "Registry management.";
 
         public Group()
         {

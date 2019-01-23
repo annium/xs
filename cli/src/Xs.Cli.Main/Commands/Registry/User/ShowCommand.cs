@@ -10,7 +10,7 @@ namespace Xs.Cli.Main.Commands.Registry.User
     {
         public override string Id { get; } = "show";
 
-        public override string Description { get; } = "show user information from registry";
+        public override string Description { get; } = "Show user information from registry.";
 
         private readonly SharedClientFactory sharedClientFactory;
 
@@ -40,11 +40,11 @@ namespace Xs.Cli.Main.Commands.Registry.User
     internal class ShowCommandConfiguration
     {
         [Option(isRequired: true)]
-        [Help("Registry location")]
+        [Help("Registry location.")]
         public Uri Registry { get; set; }
 
         [Option(isRequired: true)]
-        [Help("User name")]
+        [Help("User name.")]
         public string User { get; set; }
     }
 }

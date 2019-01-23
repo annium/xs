@@ -11,7 +11,7 @@ namespace Xs.Cli.Main.Commands.Remote
     {
         public override string Id { get; } = "show";
 
-        public override string Description { get; } = "show information about tracked registry";
+        public override string Description { get; } = "Show information about tracked registry.";
 
         private readonly IConfigurationManager configurationManager;
 
@@ -35,7 +35,7 @@ namespace Xs.Cli.Main.Commands.Remote
             var registry = configuration.Registries.FirstOrDefault(e => e.Name == name);
 
             if (registry == null)
-                Console.WriteLine($"Registry '{name}' is not tracked");
+                Console.WriteLine($"Registry '{name}' is not tracked.");
             else
                 Console.WriteLine(Json.Write(registry));
         }
@@ -44,7 +44,7 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class ShowCommandConfiguration
     {
         [Position(1)]
-        [Help("Registry name")]
+        [Help("Registry name.")]
         public string Name { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Xs.Cli.Main.Commands.Remote
     {
         public override string Id { get; } = "delete";
 
-        public override string Description { get; } = "stop tracking registry";
+        public override string Description { get; } = "Stop tracking registry.";
 
         private readonly IConfigurationManager configurationManager;
 
@@ -33,14 +33,14 @@ namespace Xs.Cli.Main.Commands.Remote
             configuration.Registries.RemoveAll(e => e.Name == name);
             configurationManager.Save(dir, configuration);
 
-            Console.WriteLine($"Registry '{name}' tracking stopped");
+            Console.WriteLine($"Registry '{name}' tracking stopped.");
         }
     }
 
     internal class DeleteCommandConfiguration
     {
         [Position(1)]
-        [Help("Registry name")]
+        [Help("Registry name.")]
         public string Name { get; set; }
     }
 }

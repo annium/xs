@@ -39,7 +39,7 @@ namespace Xs.Cli.Main.Tasks
             var projects = new List<IProject>();
             var dependencies = new List<Dependency>();
 
-            logger.LogDebug("Discovering");
+            logger.LogDebug("Start discovery.");
 
             var previous = 0;
             List<Exception> exceptions;
@@ -74,7 +74,7 @@ namespace Xs.Cli.Main.Tasks
             if (exceptions.Count > 0)
                 throw new AggregateException(exceptions);
 
-            logger.LogDebug($"Discovery finished. Found {projects.Count} projects");
+            logger.LogDebug($"Discovery finished. Found {projects.Count} projects.");
 
             return projects;
         }

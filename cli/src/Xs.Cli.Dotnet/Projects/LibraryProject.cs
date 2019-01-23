@@ -60,7 +60,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         public Task CleanAsync(CancellationToken token)
         {
-            logger.LogInfo($"Cleaning {Name}");
+            logger.LogInfo($"Cleaning {Name}.");
 
             DeleteDirectory("bin");
             DeleteDirectory("obj");
@@ -68,7 +68,7 @@ namespace Xs.Cli.Dotnet.Projects
             DeleteFiles("*.nupkg");
             DeleteFiles("*.snupkg");
 
-            logger.LogInfo($"Cleaned {Name}");
+            logger.LogInfo($"Cleaned {Name}.");
 
             return Task.CompletedTask;
 
@@ -88,21 +88,21 @@ namespace Xs.Cli.Dotnet.Projects
 
         public async Task InstallAsync(CancellationToken token)
         {
-            logger.LogInfo($"Installing {Name}");
+            logger.LogInfo($"Installing {Name}.");
 
             var result = await shell.RunAsync(
                 $"dotnet restore --no-dependencies {File.FullName}",
                 token);
 
             if (result.Code == 0)
-                logger.LogInfo($"Installed {Name}");
+                logger.LogInfo($"Installed {Name}.");
             else
-                throw new Exception($"Failed to install {Name}:{Environment.NewLine}{result.Output}");
+                throw new Exception($"Failed to install {Name}:{Environment.NewLine}{result.Output}.");
         }
 
         public async Task BuildAsync(Env env, CancellationToken token)
         {
-            logger.LogInfo($"Building {Name}");
+            logger.LogInfo($"Building {Name}.");
 
             var configuration = env == Env.Development ? "Debug" : "Release";
             var result = await shell.RunAsync(
@@ -110,14 +110,14 @@ namespace Xs.Cli.Dotnet.Projects
                 token);
 
             if (result.Code == 0)
-                logger.LogInfo($"Built {Name}");
+                logger.LogInfo($"Built {Name}.");
             else
                 throw new Exception($"Failed to build {Name}:{Environment.NewLine}{result.Output}");
         }
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
-            logger.LogInfo($"Packing {Name}");
+            logger.LogInfo($"Packing {Name}.");
 
             var file = Path.Combine(File.DirectoryName, $"{Name}.{version}.nupkg");
             if (System.IO.File.Exists(file))
@@ -128,9 +128,9 @@ namespace Xs.Cli.Dotnet.Projects
                 token);
 
             if (result.Code == 0)
-                logger.LogInfo($"Packed {Name}");
+                logger.LogInfo($"Packed {Name}.");
             else
-                throw new Exception($"Failed to pack {Name}:{Environment.NewLine}{result.Output}");
+                throw new Exception($"Failed to pack {Name}:{Environment.NewLine}{result.Output}.");
 
             return file;
         }
@@ -139,32 +139,32 @@ namespace Xs.Cli.Dotnet.Projects
         {
             var packageFile = await PackAsync(version, token);
 
-            logger.LogInfo($"Publishing {Name}");
+            logger.LogInfo($"Publishing {Name}.");
 
             var result = await shell.RunAsync(
                 $"dotnet nuget push {packageFile} --source {registry} --api-key {accessToken}",
                 token);
 
             if (result.Code == 0)
-                logger.LogInfo($"Published {Name}");
+                logger.LogInfo($"Published {Name}.");
             else
-                throw new Exception($"Failed to publish {Name}:{Environment.NewLine}{result.Output}");
+                throw new Exception($"Failed to publish {Name}:{Environment.NewLine}{result.Output}.");
 
             System.IO.File.Delete(packageFile);
         }
 
         public async Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
         {
-            logger.LogInfo($"Unpublishing {Name}");
+            logger.LogInfo($"Unpublishing {Name}.");
 
             var result = await shell.RunAsync(
                 $"dotnet nuget delete {Name} {version} --source {registry} --api-key {accessToken} --non-interactive",
                 token);
 
             if (result.Code == 0)
-                logger.LogInfo($"Unpublished {Name}");
+                logger.LogInfo($"Unpublished {Name}.");
             else
-                throw new Exception($"Failed to unpublish {Name}:{Environment.NewLine}{result.Output}");
+                throw new Exception($"Failed to unpublish {Name}:{Environment.NewLine}{result.Output}.");
         }
 
         public bool IsRelated(string path)

@@ -16,7 +16,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "watch";
 
-        public override string Description { get; } = "watch projects' changed and rebuild on fly";
+        public override string Description { get; } = "Watch projects' changes and install/build/test on fly.";
 
         private readonly IProjectFactory projectFactory;
 
@@ -101,7 +101,7 @@ namespace Xs.Cli.Main.Commands
             if (runTests)
                 await TestAsync(project, includeSelf : true);
 
-            logger.LogInfo($"Done");
+            logger.LogInfo($"Done.");
         }
 
         private async Task HandleDelete(string path)
@@ -128,7 +128,7 @@ namespace Xs.Cli.Main.Commands
             if (runTests)
                 await TestAsync(project, includeSelf: !isProjectFile);
 
-            logger.LogInfo($"Done!");
+            logger.LogInfo($"Done.");
         }
 
         private Task InstallAsync(IProject project, bool includeSelf) =>
@@ -177,11 +177,11 @@ namespace Xs.Cli.Main.Commands
     internal class WatchCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
         [Option("t", isRequired : false)]
-        [Help("Run tests")]
+        [Help("Run tests.")]
         public bool Test { get; set; } = false;
     }
 }

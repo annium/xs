@@ -11,7 +11,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "update";
 
-        public override string Description { get; } = "update dependencies in projects";
+        public override string Description { get; } = "Update dependencies in projects.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -41,17 +41,17 @@ namespace Xs.Cli.Main.Commands
             var targets = filterTask.Run(allProjects, cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                logger.LogInfo($"No projects found to update");
+                logger.LogInfo($"No projects found to update.");
                 return;
             }
-            logger.LogDebug($"Update dependencies in {targets.Length} projects");
+            logger.LogDebug($"Update dependencies in {targets.Length} projects.");
         }
     }
 
     internal class UpdateCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
     }
 }

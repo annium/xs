@@ -9,7 +9,7 @@ namespace Xs.Cli.Main.Commands.Remote
     {
         public override string Id { get; } = "list";
 
-        public override string Description { get; } = "list tracked registries";
+        public override string Description { get; } = "List tracked registries.";
 
         private readonly IConfigurationManager configurationManager;
 

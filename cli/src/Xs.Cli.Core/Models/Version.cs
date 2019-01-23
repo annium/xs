@@ -46,10 +46,8 @@ namespace Xs.Cli.Core.Models
                 throwException();
             }
 
-            void throwException()
-            {
-                throw new InvalidOperationException($"Version {version} doesn't follow SemVer notation");
-            }
+            void throwException() =>
+                throw new InvalidOperationException($"Version {version} doesn't follow SemVer notation.");
         }
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}{Suffix}";

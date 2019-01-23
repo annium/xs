@@ -92,7 +92,7 @@ namespace Xs.Registry.Shared.Controllers
 
             // if not owner - forbidden
             if (metadataManager.GetPermissionCategory(user, metadata) != PermissionCategory.Owner)
-                return (null, Forbidden("You need to be package owner to manage it's permissions"));
+                return (null, Forbidden("You need to be package owner to manage it's permissions."));
 
             return (metadata, null);
         }

@@ -12,7 +12,7 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class GrantCommand : AsyncCommand<GrantCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "grant";
-        public override string Description { get; } = "grant permission for package";
+        public override string Description { get; } = "Grant permission for package in registry.";
         private readonly IConfigurationManager configurationManager;
         private readonly SharedClientFactory sharedClientFactory;
 

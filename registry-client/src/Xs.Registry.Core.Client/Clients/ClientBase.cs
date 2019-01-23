@@ -16,7 +16,7 @@ namespace Xs.Registry.Core.Client
         public void SetUri(Uri uri)
         {
             if (this.uri != null)
-                throw new InvalidOperationException($"Uri already assigned");
+                throw new InvalidOperationException($"Uri already assigned.");
 
             foreach (var client in clients)
                 client.SetUri(uri);

@@ -14,7 +14,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "build";
 
-        public override string Description { get; } = "build projects";
+        public override string Description { get; } = "Build projects.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -46,7 +46,7 @@ namespace Xs.Cli.Main.Commands
             var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
                 .OfType<IBuildableProject>()
                 .ToArray();
-            logger.LogDebug($"Building {projects.Length} projects");
+            logger.LogDebug($"Build {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, tkn), token);
         }
     }
@@ -54,11 +54,11 @@ namespace Xs.Cli.Main.Commands
     internal class BuildCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
         [Position(2, isRequired : false)]
-        [Help("Environment")]
+        [Help("Environment.")]
         public Env Env { get; set; } = Env.Development;
     }
 }

@@ -49,7 +49,7 @@ namespace Xs.Cli.Main
             services.AddSingleton<Commands.Remote.DeleteCommand>();
             services.AddSingleton<Commands.Remote.GrantCommand>();
             services.AddSingleton<Commands.Remote.ListCommand>();
-            services.AddSingleton<Commands.Remote.ListPermsCommand>();
+            services.AddSingleton<Commands.Remote.ShowPermsCommand>();
             services.AddSingleton<Commands.Remote.RevokeCommand>();
             services.AddSingleton<Commands.Remote.ShowCommand>();
 

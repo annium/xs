@@ -64,12 +64,12 @@ namespace Xs.Registry.Node.Controllers
             // try load metadata; if exists - check permissions
             var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, name);
             if (metadata != null && !metadataManager.CheckPermission(user, metadata, Permission.Publish))
-                return Forbidden("You need publish permission to publish new package");
+                return Forbidden("You need publish permission to publish new package.");
 
             // if package exists - either can rewrite if permission granted, or it's conflict
             var exists = (await packageRepository.FindByNameVersionAsync(name, version)) != null;
             if (exists && !metadataManager.CheckPermission(user, metadata, Permission.Republish))
-                return Conflict($"Package {name} {version} already exists. You need republish permission to overwrite it");
+                return Conflict($"Package {name} {version} already exists. You need republish permission to overwrite it.");
 
             // if exists - delete old
             if (exists)
@@ -115,7 +115,7 @@ namespace Xs.Registry.Node.Controllers
             // load metadata and check permissions
             var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, (string) name);
             if (!metadataManager.CheckPermission(user, metadata, Permission.Unpublish))
-                return Forbidden("You need unpublish permission to unpublish this package");
+                return Forbidden("You need unpublish permission to unpublish this package.");
 
             // delete from storage
             await packageStorage.DeleteAsync(name, version);
@@ -150,7 +150,7 @@ namespace Xs.Registry.Node.Controllers
             // try load metadata; if exists - check permissions
             var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, name);
             if (metadata != null && !metadataManager.CheckPermission(user, metadata, Permission.Read))
-                return Forbidden("You need read permission to get this package");
+                return Forbidden("You need read permission to get this package.");
 
             return Ok(new PackageView(packages, url));
         }
@@ -169,7 +169,7 @@ namespace Xs.Registry.Node.Controllers
             // try load metadata; if exists - check permissions
             var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, packageName);
             if (metadata != null && !metadataManager.CheckPermission(user, metadata, Permission.Read))
-                return Forbidden("You need read permission to get this package");
+                return Forbidden("You need read permission to get this package.");
 
             var content = await packageStorage.GetAsync(packageName, version);
 

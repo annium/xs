@@ -14,7 +14,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "test";
 
-        public override string Description { get; } = "test projects";
+        public override string Description { get; } = "Test projects.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -46,7 +46,7 @@ namespace Xs.Cli.Main.Commands
             var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
                 .OfType<ITestableProject>()
                 .ToArray();
-            logger.LogDebug($"Testing {projects.Length} projects");
+            logger.LogDebug($"Test {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, tkn), token);
         }
     }
@@ -54,11 +54,11 @@ namespace Xs.Cli.Main.Commands
     internal class TestCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
         [Position(2, isRequired : false)]
-        [Help("Environment")]
+        [Help("Environment.")]
         public Env Env { get; set; } = Env.Development;
     }
 }

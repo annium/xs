@@ -10,7 +10,7 @@ namespace Xs.Cli.Main.Commands.Registry.User
     {
         public override string Id { get; } = "delete";
 
-        public override string Description { get; } = "delete user from registry";
+        public override string Description { get; } = "Delete user from registry.";
 
         private readonly SharedClientFactory sharedClientFactory;
 

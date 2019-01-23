@@ -12,7 +12,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "delete";
 
-        public override string Description { get; } = "delete dependency from project";
+        public override string Description { get; } = "Delete dependency from projects.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -58,11 +58,11 @@ namespace Xs.Cli.Main.Commands
             var targets = filterTask.Run(allProjects, cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                logger.LogInfo($"No projects found to add dependency to");
+                logger.LogInfo($"No projects found to add dependency to.");
                 return;
             }
 
-            logger.LogDebug($"Try delete dependency {name} from {targets.Length} projects");
+            logger.LogDebug($"Try delete dependency {name} from {targets.Length} projects.");
 
             var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == nameLow).ToArray();
             if (projects.Length > 0)
@@ -78,7 +78,7 @@ namespace Xs.Cli.Main.Commands
             // if no packages found
             if (packages.Length == 0)
             {
-                logger.LogInfo($"Dependency {name} is neither project nor project dependency. Nothing to do");
+                logger.LogInfo($"Dependency {name} is neither project nor project dependency. Nothing to do.");
                 return;
             }
 
@@ -90,11 +90,11 @@ namespace Xs.Cli.Main.Commands
     internal class DeleteCommandConfiguration
     {
         [Position(1)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; }
 
         [Position(2)]
-        [Help("Dependency")]
+        [Help("Dependency.")]
         public string Dependency { get; set; }
     }
 }

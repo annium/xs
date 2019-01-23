@@ -48,7 +48,7 @@ namespace Xs.Cli.Core.Tools
         private Process GetProcess(ProcessStartInfo startInfo, string command)
         {
             if (string.IsNullOrWhiteSpace(command))
-                throw new InvalidOperationException("Shell command must be non-empty");
+                throw new InvalidOperationException("Shell command must be non-empty.");
 
             var process = new Process();
 

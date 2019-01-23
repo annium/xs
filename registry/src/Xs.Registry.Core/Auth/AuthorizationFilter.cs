@@ -39,7 +39,7 @@ namespace Xs.Registry.Core.Auth
             // try to find user
             var user = await userRepository.FindByTokenAsync(token);
             if (user == null)
-                return GetForbiddenResult("No user found with this token");
+                return GetForbiddenResult("No user found with this token.");
 
             // save user
             context.ActionDescriptor.Properties[ServerController.UserProperty] = user;

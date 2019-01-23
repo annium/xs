@@ -14,7 +14,7 @@ namespace Xs.Cli.Main.Commands
     internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "unpublish";
-        public override string Description { get; } = "unpublish package to registry";
+        public override string Description { get; } = "Unpublish package from registry.";
         private readonly IConfigurationManager configurationManager;
         private readonly DiscoverProjectsTask discoverTask;
         private readonly FilterProjectsTask filterTask;
@@ -61,7 +61,7 @@ namespace Xs.Cli.Main.Commands
                 if (!registry.Servers.ContainsKey(project.Type))
                     throw new InvalidOperationException($"Registry {registry} doesn't support project type '{project.Type}'.");
 
-            logger.LogDebug($"Unpublishing {projects.Length} projects");
+            logger.LogDebug($"Unpublish {projects.Length} projects.");
             await runner.RunAsync(
                 projects,
                 (project, tkn) => project.UnpublishAsync(registry.Servers[project.Type], registry.Token, cfg.Version, tkn),
@@ -73,15 +73,15 @@ namespace Xs.Cli.Main.Commands
     internal class UnpublishCommandConfiguration
     {
         [Position(1)]
-        [Help("Registry")]
+        [Help("Registry.")]
         public string Registry { get; set; }
 
         [Position(2)]
-        [Help("Project mask")]
+        [Help("Project mask.")]
         public string Mask { get; set; }
 
         [Position(3)]
-        [Help("Version to publish")]
+        [Help("Version to publish.")]
         public Core.Models.Version Version { get; set; }
     }
 }

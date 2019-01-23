@@ -15,7 +15,7 @@ namespace Xs.Cli.Main.Commands
     {
         public override string Id { get; } = "add";
 
-        public override string Description { get; } = "add dependency to project.";
+        public override string Description { get; } = "Add dependency to projects.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -110,7 +110,7 @@ namespace Xs.Cli.Main.Commands
         public string Mask { get; set; }
 
         [Position(2)]
-        [Help("Dependency.")]
+        [Help("Dependency name.")]
         public string Dependency { get; set; }
 
         [Position(3, isRequired : false)]

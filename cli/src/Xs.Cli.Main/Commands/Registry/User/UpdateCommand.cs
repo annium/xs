@@ -10,7 +10,7 @@ namespace Xs.Cli.Main.Commands.Registry.User
     {
         public override string Id { get; } = "update";
 
-        public override string Description { get; } = "update user in registry";
+        public override string Description { get; } = "Update user in registry.";
 
         private readonly SharedClientFactory sharedClientFactory;
 
@@ -46,11 +46,11 @@ namespace Xs.Cli.Main.Commands.Registry.User
     internal class UpdateCommandConfiguration
     {
         [Option(isRequired: true)]
-        [Help("Registry location")]
+        [Help("Registry location.")]
         public Uri Registry { get; set; }
 
         [Option(isRequired: true)]
-        [Help("User name")]
+        [Help("User name.")]
         public string User { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Xs.Cli.Main.Commands.Remote
     {
         public override string Id { get; } = "add";
 
-        public override string Description { get; } = "start tracking registry";
+        public override string Description { get; } = "Start tracking registry.";
 
         private readonly IConfigurationManager configurationManager;
 
@@ -35,7 +35,7 @@ namespace Xs.Cli.Main.Commands.Remote
         )
         {
             var name = cfg.Name;
-            var location = cfg.Location;
+            var location = cfg.Registry;
             var user = cfg.User;
             var dir = cwdCfg.Cwd;
 
@@ -70,15 +70,15 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class AddCommandConfiguration
     {
         [Position(1)]
-        [Help("Registry name")]
+        [Help("Registry name.")]
         public string Name { get; set; }
 
         [Position(2)]
-        [Help("Registry location")]
-        public Uri Location { get; set; }
+        [Help("Registry location.")]
+        public Uri Registry { get; set; }
 
         [Option(isRequired: true)]
-        [Help("User name")]
+        [Help("User name.")]
         public string User { get; set; }
     }
 }

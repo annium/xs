@@ -14,7 +14,7 @@ namespace Xs.Registry.Dotnet.Client
                 .Get("info/search")
                 .Param("query", query)
                 .NuGetAuthorization(token)
-                .EnsureSuccessStatusCode(response => $"Search failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"Search failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsAsync<Dictionary<string, string>>();
 
             return result;
@@ -25,7 +25,7 @@ namespace Xs.Registry.Dotnet.Client
             var result = await Http.Open(this.uri)
                 .Get($"info/{name}")
                 .NuGetAuthorization(token)
-                .EnsureSuccessStatusCode(response => $"Versions fetch failed with {response.StatusCode} ({response.ReasonPhrase})")
+                .EnsureSuccessStatusCode(response => $"Versions fetch failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsStringAsync();
 
             return JsonConvert.SerializeObject(JsonConvert.DeserializeObject(result), Formatting.Indented);

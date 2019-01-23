@@ -44,7 +44,7 @@ namespace Xs.Registry.Dotnet.Controllers
             using(var symbolsStream = await Request.GetUploadStreamOrNullAsync(token))
             {
                 if (symbolsStream == null)
-                    return BadRequest("Use multipart/form-data to upload symbols");
+                    return BadRequest("Use multipart/form-data to upload symbols.");
 
                 using(var packageReader = new NuGet.Packaging.PackageArchiveReader(symbolsStream, leaveStreamOpen : true))
                 {
@@ -52,7 +52,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
                     var files = await GetPdbPathsOrNull(packageReader, token);
                     if (files == null)
-                        return BadRequest("Ensure symbol package is valid");
+                        return BadRequest("Ensure symbol package is valid.");
 
                     var name = packageReader.NuspecReader.GetId();
                     var version = packageReader.NuspecReader.GetVersion().ToNormalizedString();
@@ -60,7 +60,7 @@ namespace Xs.Registry.Dotnet.Controllers
                     // TODO: when applicable, add permissions usage
 
                     if ((await packageRepository.FindByNameVersionAsync(name, version)) == null)
-                        return NotFound($"Package {name} {version} doesn't exist");
+                        return NotFound($"Package {name} {version} doesn't exist.");
 
                     foreach (var file in files)
                     {

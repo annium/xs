@@ -12,7 +12,7 @@ namespace Xs.Cli.Main.Commands
     internal class UseCommand : AsyncCommand<UseCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "use";
-        public override string Description { get; } = "set global dependency to specific version";
+        public override string Description { get; } = "Set dependency in projects to specific version.";
         private readonly DiscoverProjectsTask discoverTask;
         private readonly FilterProjectTypeTask filterTypeTask;
         private readonly AddPackageDependencyTask addPackageDependencyTask;
@@ -56,7 +56,7 @@ namespace Xs.Cli.Main.Commands
 
             if (targets.Length == 0)
             {
-                logger.LogInfo($"No projects found to update");
+                logger.LogInfo($"No projects found to update.");
                 return;
             }
 
@@ -73,11 +73,11 @@ namespace Xs.Cli.Main.Commands
     internal class UseCommandConfiguration
     {
         [Position(1)]
-        [Help("Dependency name")]
+        [Help("Dependency name.")]
         public string Name { get; set; }
 
         [Position(2)]
-        [Help("Dependency version")]
+        [Help("Dependency version.")]
         public Version Version { get; set; }
     }
 }

@@ -4,7 +4,7 @@ namespace Xs.Cli.Main.Commands.Remote
     {
         public override string Id { get; } = "remote";
 
-        public override string Description { get; } = "manage tracked registries";
+        public override string Description { get; } = "Manage tracked registries.";
 
         public Group()
         {
@@ -12,7 +12,7 @@ namespace Xs.Cli.Main.Commands.Remote
             Add<DeleteCommand>();
             Add<GrantCommand>();
             Add<ListCommand>();
-            Add<ListPermsCommand>();
+            Add<ShowPermsCommand>();
             Add<RevokeCommand>();
             Add<ShowCommand>();
         }

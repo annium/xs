@@ -91,23 +91,23 @@ namespace Xs.Cli.Dotnet.Projects
         private void ValidateProperties(string path, XElement properties)
         {
             if (properties == null)
-                throw new InvalidOperationException($"Project {path} has no properties defined");
+                throw new InvalidOperationException($"Project {path} has no properties defined.");
 
             if (properties.Element(El.PackageId) != null)
-                throw new InvalidOperationException($"Project {path} has {El.PackageId} defined");
+                throw new InvalidOperationException($"Project {path} has {El.PackageId} defined.");
 
             if (properties.Element(El.Version) != null)
-                throw new InvalidOperationException($"Project {path} has {El.Version} defined");
+                throw new InvalidOperationException($"Project {path} has {El.Version} defined.");
 
             if (properties.Element(El.TargetFramework) == null)
-                throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined");
+                throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined.");
 
             if (properties.Element(El.DebugType)?.Value != "Portable")
-                throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not Portable");
+                throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not Portable.");
 
             var outputType = properties.Element(El.OutputType)?.Value;
             if (!outputTypes.Contains(outputType))
-                throw new InvalidOperationException($"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}");
+                throw new InvalidOperationException($"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}.");
         }
 
         private string ReadProjectDependency(
@@ -117,11 +117,11 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var relativePath = reference.Attribute(El.Include)?.Value ??
-                throw new InvalidOperationException($"Project {project} has empty project dependency");
+                throw new InvalidOperationException($"Project {project} has empty project dependency.");
 
             var path = Path.Combine(location.DirectoryName, relativePath);
             if (!File.Exists(path))
-                throw new InvalidOperationException($"Project {project} has broken project dependency {relativePath}");
+                throw new InvalidOperationException($"Project {project} has broken project dependency {relativePath}.");
 
             return path;
         }
@@ -132,10 +132,10 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var name = reference.Attribute(El.Include)?.Value ??
-                throw new InvalidOperationException($"Project {project} has empty project dependency");
+                throw new InvalidOperationException($"Project {project} has empty project dependency.");
 
             var version = new Core.Models.Version(reference.Attribute(El.Version)?.Value ??
-                throw new InvalidOperationException($"Project {project} has empty project dependency version"));
+                throw new InvalidOperationException($"Project {project} has empty project dependency version."));
 
             return new Dependency(Constants.ProjectType, name, version);
         }

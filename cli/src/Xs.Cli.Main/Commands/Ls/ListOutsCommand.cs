@@ -14,7 +14,7 @@ namespace Xs.Cli.Main.Commands.Ls
     {
         public override string Id { get; } = "outs";
 
-        public override string Description { get; } = "list projects and their dependants";
+        public override string Description { get; } = "List projects and their project dependents.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -87,7 +87,7 @@ namespace Xs.Cli.Main.Commands.Ls
     internal class ListOutsCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
     }
 }

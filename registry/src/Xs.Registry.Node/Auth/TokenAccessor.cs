@@ -13,15 +13,15 @@ namespace Xs.Registry.Node.Auth
         public ValueTuple<string, IActionResult> GetToken(HttpRequest request)
         {
             if (!request.Headers.ContainsKey(HeaderNames.Authorization))
-                return fail(HttpStatusCode.Unauthorized, "Bearer authorization required");
+                return fail(HttpStatusCode.Unauthorized, "Bearer authorization required.");
             var authorization = request.Headers[HeaderNames.Authorization]
                 .ToString().Split(' ').Select(e => e.Trim()).ToArray();
             if (authorization.Length != 2)
-                return fail(HttpStatusCode.Forbidden, "Authorization format is invalid");
+                return fail(HttpStatusCode.Forbidden, "Authorization format is invalid.");
 
             var(type, token) = (authorization[0], authorization[1]);
             if (type != "Bearer")
-                return fail(HttpStatusCode.Forbidden, "Bearer authorization required");
+                return fail(HttpStatusCode.Forbidden, "Bearer authorization required.");
 
             return (token, null);
 

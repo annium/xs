@@ -12,7 +12,7 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class RevokeCommand : AsyncCommand<RevokeCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "revoke";
-        public override string Description { get; } = "revoke permission for package";
+        public override string Description { get; } = "Revoke permission for package in registry.";
         private readonly IConfigurationManager configurationManager;
         private readonly SharedClientFactory sharedClientFactory;
 

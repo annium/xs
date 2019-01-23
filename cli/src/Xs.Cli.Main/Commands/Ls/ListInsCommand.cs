@@ -13,7 +13,7 @@ namespace Xs.Cli.Main.Commands.Ls
     {
         public override string Id { get; } = "ins";
 
-        public override string Description { get; } = "list projects and their dependencies";
+        public override string Description { get; } = "List projects and their dependencies.";
 
         private readonly DiscoverProjectsTask discoverTask;
 
@@ -92,11 +92,11 @@ namespace Xs.Cli.Main.Commands.Ls
     internal class ListInsCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask")]
+        [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
         [Option("p")]
-        [Help("Show only project dependencies")]
+        [Help("Show only project dependencies (without packages).")]
         public bool ProjectsOnly { get; set; }
     }
 }

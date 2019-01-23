@@ -14,7 +14,7 @@ namespace Xs.Core.Models
         }
 
         public static ProjectType Get(string name) => types.Find(e => e.name == name) ??
-            throw new Exception($"Project type {name} is not registered");
+            throw new Exception($"Project type {name} is not registered.");
 
         public static IEnumerable<ProjectType> List() => types.ToArray();
 

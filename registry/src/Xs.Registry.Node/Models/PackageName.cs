@@ -20,7 +20,7 @@ namespace Xs.Registry.Node.Models
             return new PackageName(scope, name);
 
             void fail() =>
-                throw new ArgumentException($"'{value}' is not a valid package name");
+                throw new ArgumentException($"'{value}' is not a valid package name.");
         }
 
         public string Scope { get; }
