@@ -10,7 +10,7 @@ using Xs.Core.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class ProjectFactory : ISpecialProjectFactory
+    internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
     {
         public ProjectType Type { get; } = Constants.ProjectType;
 
@@ -19,8 +19,6 @@ namespace Xs.Cli.Dotnet.Projects
         public static readonly string[] IgnoredFolders = new [] { "bin", "obj" };
 
         public const string ProjectFileExtension = ".csproj";
-
-        private const string TargetFramework = "netcoreapp2.2";
 
         private const string projectFileMask = "*.csproj";
 
@@ -86,42 +84,6 @@ namespace Xs.Cli.Dotnet.Projects
                 return new TestProject(name, file, projectDeps, packageDeps, mapper, shell, logger, targetFramework, outputType);
 
             return new LibraryProject(name, file, projectDeps, packageDeps, mapper, shell, logger, targetFramework, outputType);
-        }
-
-        private IProject ResolveProjectDependency(
-            string project,
-            FileInfo location,
-            string reference,
-            IEnumerable<IProject> projects
-        )
-        {
-            var directory = Directory.GetParent(Path.Combine(location.DirectoryName, reference)).FullName;
-
-            var dependency = projects.OfType<ISpecialProject>()
-                .FirstOrDefault(e => e.File.DirectoryName == directory);
-
-            if (dependency == null)
-                throw new InvalidOperationException($"Project {project} has unresolved project dependency {reference}.");
-
-            return dependency;
-        }
-
-        private static Dependency ResolvePackageDependency(
-            string project,
-            Dependency raw,
-            IEnumerable<Dependency> dependencies
-        )
-        {
-            var dependency = dependencies.FirstOrDefault(e => e.Name.ToLowerInvariant() == raw.Name.ToLowerInvariant()) ??
-                raw;
-
-            if (raw.Name != dependency.Name)
-                throw new InvalidOperationException($"Project {project} uses different dependency naming: {raw.Name} -> {dependency.Name}.");
-
-            if (!raw.Version.Equals(dependency.Version))
-                throw new InvalidOperationException($"Project {project} uses different dependency {raw.Name} version: {raw.Version} -> {dependency.Version}.");
-
-            return dependency;
         }
     }
 }

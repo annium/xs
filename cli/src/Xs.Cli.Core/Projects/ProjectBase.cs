@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,11 +40,26 @@ namespace Xs.Cli.Core.Projects
 
         public abstract void Save();
 
+        protected void DeleteDirectory(string path)
+        {
+            path = Path.Combine(File.DirectoryName, path);
+            if (Directory.Exists(path))
+                Directory.Delete(path, recursive : true);
+        }
+
+        protected void DeleteFiles(string mask)
+        {
+            foreach (var file in Directory.GetFiles(File.DirectoryName, mask, SearchOption.TopDirectoryOnly))
+                System.IO.File.Delete(file);
+        }
+
         protected async Task RunAsync(string operation, string command, CancellationToken token)
         {
             logger.LogInfo($"Start {Name} {operation}.");
 
-            var result = await shell.RunAsync(command, token);
+            var result = await shell.RunAsync(
+                new ProcessStartInfo() { WorkingDirectory = File.Directory.FullName },
+                command, token);
 
             if (result.Code == 0)
                 logger.LogInfo($"Finished {Name} {operation}.");

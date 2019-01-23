@@ -43,8 +43,11 @@ namespace Xs.Cli.Dotnet.Projects
                 .SelectMany(group => group.Elements(referenceType));
         }
 
-        public void Save(string path, ISpecialProject project)
+        public void Save(ISpecialProject project)
         {
+            var path = project.File.FullName;
+            var dir = Directory.GetParent(path).FullName;
+
             var info = XElement.Parse(File.ReadAllText(path));
 
             // remove project references group
@@ -59,7 +62,7 @@ namespace Xs.Cli.Dotnet.Projects
                     El.ItemGroup,
                     project.ProjectDependencies.OrderBy(e => e.Name).Select(e => new XElement(
                         El.ProjectReference,
-                        new XAttribute(El.Include, Path.GetRelativePath(Directory.GetParent(path).FullName, e.File.FullName))
+                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.File.FullName))
                     ))
                 ));
 
@@ -132,10 +135,10 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var name = reference.Attribute(El.Include)?.Value ??
-                throw new InvalidOperationException($"Project {project} has empty project dependency.");
+                throw new InvalidOperationException($"Project {project} has empty package dependency name.");
 
             var version = new Core.Models.Version(reference.Attribute(El.Version)?.Value ??
-                throw new InvalidOperationException($"Project {project} has empty project dependency version."));
+                throw new InvalidOperationException($"Project {project} has empty package dependency {name} version."));
 
             return new Dependency(Constants.ProjectType, name, version);
         }

@@ -71,19 +71,6 @@ namespace Xs.Cli.Dotnet.Projects
             logger.LogInfo($"Finished {Name} clean.");
 
             return Task.CompletedTask;
-
-            void DeleteDirectory(string path)
-            {
-                path = Path.Combine(File.DirectoryName, path);
-                if (Directory.Exists(path))
-                    Directory.Delete(path, recursive : true);
-            }
-
-            void DeleteFiles(string mask)
-            {
-                foreach (var file in Directory.GetFiles(File.DirectoryName, mask, SearchOption.TopDirectoryOnly))
-                    System.IO.File.Delete(file);
-            }
         }
 
         public Task InstallAsync(CancellationToken token) =>
@@ -141,7 +128,7 @@ namespace Xs.Cli.Dotnet.Projects
                 IsRelatedFile(new FileInfo(path));
         }
 
-        public override void Save() => mapper.Save(this.File.FullName, this);
+        public override void Save() => mapper.Save(this);
 
         public override string ToString() => Name;
 
