@@ -36,9 +36,7 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var server = cfg.Server;
             var type = cfg.Type;
-            var query = cfg.Query;
 
             var factory = projectClientFactories.FirstOrDefault(e => e.ProjectType == type);
             if (factory == null)
@@ -48,15 +46,15 @@ namespace Xs.Cli.Main.Commands
             }
 
             var registry = configurationManager.Load(cwdCfg.Cwd).Registries
-                .FirstOrDefault(e => e.Name.ToLowerInvariant() == server.ToLowerInvariant());
+                .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Registry.ToLowerInvariant());
             if (registry == null)
-                throw new InvalidOperationException($"Registry {server} is not tracked. Track it to manipulate permissions.");
+                throw new InvalidOperationException($"Registry {cfg.Registry} is not tracked. Track it to manipulate permissions.");
             if (!registry.Servers.ContainsKey(type))
-                throw new InvalidOperationException($"Registry {server} doesn't support project type '{type}'.");
+                throw new InvalidOperationException($"Registry {cfg.Registry} doesn't support project type '{type}'.");
 
             var client = factory.Create(registry.Servers[type]);
 
-            var results = await client.Info.SearchAsync(query, registry.Token);
+            var results = await client.Info.SearchAsync(cfg.Query, registry.Token);
             foreach (var(name, version) in results)
                 Console.WriteLine($"{name}: {version}");
         }
@@ -66,7 +64,7 @@ namespace Xs.Cli.Main.Commands
     {
         [Position(1)]
         [Help("Tracked registry name to search packages at.")]
-        public string Server { get; set; }
+        public string Registry { get; set; }
 
         [Position(2)]
         [Help("Project type.")]

@@ -32,9 +32,9 @@ namespace Xs.Cli.Main.Commands.Remote
         )
         {
             var registry = configurationManager.Load(cwdCfg.Cwd).Registries
-                .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Server.ToLowerInvariant());
+                .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Registry.ToLowerInvariant());
             if (registry == null)
-                throw new InvalidOperationException($"Registry {cfg.Server} is not tracked. Track it to manipulate permissions.");
+                throw new InvalidOperationException($"Registry {cfg.Registry} is not tracked. Track it to manipulate permissions.");
 
             var client = sharedClientFactory.Create(registry.Location);
 
@@ -47,8 +47,8 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class RevokeCommandConfiguration
     {
         [Position(1)]
-        [Help("Server to grant permissions at.")]
-        public string Server { get; set; }
+        [Help("Tracked registry name to revoke permissions at.")]
+        public string Registry { get; set; }
 
         [Position(2)]
         [Help("Package project type.")]
