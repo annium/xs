@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Xs.Core.Models;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
-using Xs.Core.Models;
+using Xs.Registry.Core.Models;
 using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Tools;
-using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Shared.Controllers
 {
@@ -28,7 +28,7 @@ namespace Xs.Registry.Shared.Controllers
         }
 
         [HttpGet("{type}/{name}/permissions")]
-        [Authorize]
+        [Authorize(Access.Session)]
         public async Task<IActionResult> GetPermissionsAsync(
             string type,
             string name
@@ -42,7 +42,7 @@ namespace Xs.Registry.Shared.Controllers
         }
 
         [HttpPut("{type}/{name}/permissions/{category}/{permission}")]
-        [Authorize]
+        [Authorize(Access.Session)]
         public async Task<IActionResult> GrantPermissionAsync(
             string type,
             string name,
@@ -62,7 +62,7 @@ namespace Xs.Registry.Shared.Controllers
         }
 
         [HttpDelete("{type}/{name}/permissions/{category}/{permission}")]
-        [Authorize]
+        [Authorize(Access.Session)]
         public async Task<IActionResult> RevokePermissionAsync(
             string type,
             string name,

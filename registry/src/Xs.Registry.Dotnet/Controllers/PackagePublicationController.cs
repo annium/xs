@@ -40,7 +40,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpPut("api/v2/package")]
-        [Authorize]
+        [Authorize(Access.Api)]
         public async Task<IActionResult> PublishPackageAsync(CancellationToken token)
         {
             using(var packageStream = await Request.GetUploadStreamOrNullAsync(token))
@@ -106,10 +106,25 @@ namespace Xs.Registry.Dotnet.Controllers
 
                 return NoContent();
             }
+
+            Package ReadPackage(NuGet.Packaging.NuspecReader reader)
+            {
+                var dependencyGroups = reader.GetDependencyGroups().ToDictionary(
+                    e => e.TargetFramework,
+                    e => e.Packages.ToDictionary(p => p.Id, p => p.VersionRange).ToReadOnly()
+                );
+
+                return new Package(
+                    reader.GetId(),
+                    reader.GetVersion(),
+                    reader.GetDescription(),
+                    dependencyGroups
+                );
+            }
         }
 
         [HttpDelete("api/v2/package/{name}/{version}")]
-        [Authorize]
+        [Authorize(Access.Api)]
         public async Task<IActionResult> UnpublishPackageAsync(string name, string version, CancellationToken token)
         {
             var allExisting = await packageRepository.FindAllByNameAsync(name);
@@ -140,21 +155,6 @@ namespace Xs.Registry.Dotnet.Controllers
             await executor.RunAsync();
 
             return NoContent();
-        }
-
-        private Package ReadPackage(NuGet.Packaging.NuspecReader reader)
-        {
-            var dependencyGroups = reader.GetDependencyGroups().ToDictionary(
-                e => e.TargetFramework,
-                e => e.Packages.ToDictionary(p => p.Id, p => p.VersionRange).ToReadOnly()
-            );
-
-            return new Package(
-                reader.GetId(),
-                reader.GetVersion(),
-                reader.GetDescription(),
-                dependencyGroups
-            );
         }
     }
 }

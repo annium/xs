@@ -45,7 +45,7 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpPut("{package}")]
-        [Authorize]
+        [Authorize(Access.Api)]
         public async Task<IActionResult> PublishPackageAsync([FromBody] PackagePayload packagePayload)
         {
             if (packagePayload == null)
@@ -135,12 +135,12 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpGet("{name}")]
-        [Authorize]
+        [Authorize(Access.Api)]
         public Task<IActionResult> GetPackageAsync([FromRoute] string name, [FromQuery] bool write)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
 
-            return write?UnpublishPackageAsync(packageName) : GetPackageAsync(packageName);
+            return write ? UnpublishPackageAsync(packageName) : GetPackageAsync(packageName);
         }
 
         private async Task<IActionResult> GetPackageAsync(PackageName name)
@@ -160,7 +160,7 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpGet("{name}/{version}.tgz")]
-        [Authorize]
+        [Authorize(Access.Api)]
         public async Task<IActionResult> DownloadPackageAsync([FromRoute] string name, [FromRoute] string version)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));

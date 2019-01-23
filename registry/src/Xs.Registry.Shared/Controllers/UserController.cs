@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
+using Xs.Registry.Core.Models;
 using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Security;
 using Xs.Registry.Shared.Payloads;
-using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Shared.Controllers
 {
@@ -73,7 +73,7 @@ namespace Xs.Registry.Shared.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Access.Session)]
         public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)
         {
             if (updateModel == null)
@@ -94,7 +94,7 @@ namespace Xs.Registry.Shared.Controllers
         }
 
         [HttpDelete]
-        [Authorize]
+        [Authorize(Access.Session)]
         public async Task<IActionResult> DeleteUserAsync()
         {
             var user = GetUser();

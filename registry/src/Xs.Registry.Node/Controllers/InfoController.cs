@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
 using Xs.Registry.Node.Repositories;
 
@@ -21,7 +20,6 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize]
         public async Task<IActionResult> SearchAsync(string query)
         {
             var packages = (await packageRepository.FindAllByQueryAsync(query)).OrderByDescending(e => e.Version);
@@ -36,7 +34,6 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpGet("{name}")]
-        [Authorize]
         public async Task<IActionResult> InfoAsync(string name)
         {
             var package = (await packageRepository.FindAllByNameAsync(name))

@@ -21,7 +21,6 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize]
         public async Task<IActionResult> SearchAsync(string query)
         {
             var packages = (await packageRepository.FindAllByQueryAsync(query)).OrderByDescending(e => e.Version);
@@ -36,7 +35,6 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("{name}")]
-        [Authorize]
         public async Task<IActionResult> InfoAsync(string name)
         {
             var package = (await packageRepository.FindAllByNameAsync(name))

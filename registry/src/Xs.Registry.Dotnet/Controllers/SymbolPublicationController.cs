@@ -38,7 +38,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpPut("api/v2/symbol")]
-        [Authorize]
+        [Authorize(Access.Api)]
         public async Task<IActionResult> PublishSymbolsAsync(CancellationToken token)
         {
             using(var symbolsStream = await Request.GetUploadStreamOrNullAsync(token))
