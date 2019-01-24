@@ -7,13 +7,13 @@ using Xs.Registry.Core.Repositories;
 
 namespace Xs.Registry.Core.Auth
 {
-    internal class AuthorizationFilter : IAsyncAuthorizationFilter
+    internal class ApiAuthorizationFilter : IAsyncAuthorizationFilter
     {
         private readonly ITokenAccessor tokenAccessor;
 
         private readonly IUserRepository userRepository;
 
-        public AuthorizationFilter(
+        public ApiAuthorizationFilter(
             ITokenAccessor tokenAccessor,
             IUserRepository userRepository
         )
@@ -37,7 +37,7 @@ namespace Xs.Registry.Core.Auth
                 return result;
 
             // try to find user
-            var user = await userRepository.FindByTokenAsync(token);
+            var user = await userRepository.FindByApiTokenAsync(token);
             if (user == null)
                 return GetForbiddenResult("No user found with this token.");
 

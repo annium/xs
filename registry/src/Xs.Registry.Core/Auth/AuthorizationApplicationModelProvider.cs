@@ -41,7 +41,7 @@ namespace Xs.Registry.Core.Auth
             if (attribute == null)
                 return;
 
-            var filter = authFilterFactory.CreateFilter();
+            var filter = authFilterFactory.CreateFilter(attribute.Access);
 
             actionModel.Filters.Add(filter);
         }

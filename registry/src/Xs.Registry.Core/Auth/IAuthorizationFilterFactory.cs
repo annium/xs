@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Xs.Registry.Core.Auth
 {
-    public interface IAuthorizationFilterFactory
+    internal interface IAuthorizationFilterFactory
     {
-        IAsyncAuthorizationFilter CreateFilter();
+        IAsyncAuthorizationFilter CreateFilter(Access access);
     }
 }

@@ -6,6 +6,6 @@ namespace Xs.Registry.Core.Auth
 {
     public interface ITokenAccessor
     {
-        ValueTuple<string, IActionResult> GetToken(HttpRequest request);
+        ValueTuple<Guid, IActionResult> GetToken(HttpRequest request);
     }
 }

@@ -19,6 +19,9 @@ namespace Xs.Registry.Core
 
             // auth
             services.AddSingleton<IAuthorizationFilterFactory, AuthorizationFilterFactory>();
+            services.AddSingleton<ApiAuthorizationFilter>();
+            services.AddSingleton<SessionAuthorizationFilter>();
+            services.AddSingleton<ISessionManager, SessionManager>();
 
             // helpers
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

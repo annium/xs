@@ -4,13 +4,12 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
-using Xs.Registry.Core.Auth;
 
-namespace Xs.Registry.Shared.Auth
+namespace Xs.Registry.Core.Auth
 {
-    internal class TokenAccessor : ITokenAccessor
+    public class BearerTokenAccessor : ITokenAccessor
     {
-        public ValueTuple<string, IActionResult> GetToken(HttpRequest request)
+        public ValueTuple<Guid, IActionResult> GetToken(HttpRequest request)
         {
             if (!request.Headers.ContainsKey(HeaderNames.Authorization))
                 return fail(HttpStatusCode.Unauthorized, "Bearer authorization required.");
@@ -19,14 +18,16 @@ namespace Xs.Registry.Shared.Auth
             if (authorization.Length != 2)
                 return fail(HttpStatusCode.Forbidden, "Authorization format is invalid.");
 
-            var(type, token) = (authorization[0], authorization[1]);
+            var(type, tokenString) = (authorization[0], authorization[1]);
             if (type != "Bearer")
                 return fail(HttpStatusCode.Forbidden, "Bearer authorization required.");
 
-            return (token, null);
+            return Guid.TryParse(tokenString, out var token) ?
+                (token, null) :
+                fail(HttpStatusCode.Forbidden, "Invalid token passed");
 
-            (string, IActionResult) fail(HttpStatusCode statusCode, string message) =>
-                (null, new ObjectResult(message) { StatusCode = (int) statusCode });
+            (Guid, IActionResult) fail(HttpStatusCode statusCode, string message) =>
+                (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
         }
     }
 }

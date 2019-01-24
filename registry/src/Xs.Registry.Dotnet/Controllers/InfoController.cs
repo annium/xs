@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
 using Xs.Registry.Dotnet.Repositories;
 
