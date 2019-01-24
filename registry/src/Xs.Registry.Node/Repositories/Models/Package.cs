@@ -38,7 +38,7 @@ namespace Xs.Registry.Node.Repositories.Models
         [BsonElement("intergity")]
         public string Integrity { get; set; }
 
-        public static implicit operator Node.Models.Package(Package src)
+        public static explicit operator Node.Models.Package(Package src)
         {
             if (src == null)
                 return null;
@@ -56,7 +56,7 @@ namespace Xs.Registry.Node.Repositories.Models
             );
         }
 
-        public static implicit operator Package(Node.Models.Package src)
+        public static explicit operator Package(Node.Models.Package src)
         {
             if (src == null)
                 return null;

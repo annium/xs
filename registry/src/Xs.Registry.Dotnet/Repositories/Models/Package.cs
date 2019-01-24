@@ -23,7 +23,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
         [BsonElement("deps")]
         public List<PackageDependencies> Dependencies { get; set; }
 
-        public static implicit operator Dotnet.Models.Package(Package src)
+        public static explicit operator Dotnet.Models.Package(Package src)
         {
             if (src == null)
                 return null;
@@ -39,7 +39,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
             );
         }
 
-        public static implicit operator Package(Dotnet.Models.Package src)
+        public static explicit operator Package(Dotnet.Models.Package src)
         {
             if (src == null)
                 return null;

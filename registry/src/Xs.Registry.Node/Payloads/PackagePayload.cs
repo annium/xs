@@ -36,7 +36,7 @@ namespace Xs.Registry.Node.Payloads
         [JsonIgnore]
         public DateTime Published { get; } = DateTime.UtcNow;
 
-        public static implicit operator Models.Package(PackagePayload src)
+        public static explicit operator Models.Package(PackagePayload src)
         {
             var version = src.Versions[src.Version];
 
