@@ -76,6 +76,20 @@ namespace Xs.Registry.Shared.Controllers
             return Ok(token);
         }
 
+        [HttpPost("token")]
+        [Authorize(Access.Session)]
+        public async Task<IActionResult> UpdateUserApiTokenAsync()
+        {
+            var user = GetUser();
+            var token = Guid.NewGuid();
+
+            user = new User(user.Name, user.PasswordHash, token);
+
+            await userRepository.SaveAsync(user);
+
+            return Ok(token);
+        }
+
         [HttpDelete]
         [Authorize(Access.Session)]
         public async Task<IActionResult> DeleteUserAsync()

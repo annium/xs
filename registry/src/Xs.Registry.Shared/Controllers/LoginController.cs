@@ -34,6 +34,38 @@ namespace Xs.Registry.Shared.Controllers
             this.logger = logger;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LoginUserAsync(string name, string password)
+        {
+            var(user, result) = await LoginUserInternalAsync(name, password);
+            if (result != null)
+                return result;
+
+            await sessionManager.SaveSession(user, Guid.NewGuid());
+
+            return NoContent();
+        }
+
+        [HttpGet("info")]
+        [Authorize(Access.Session)]
+        public IActionResult Info()
+        {
+            var user = GetUser();
+
+            return Ok(new { Name = user.Name });
+        }
+
+        [HttpDelete("logout")]
+        [Authorize(Access.Session)]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            var user = GetUser();
+
+            await sessionManager.DeleteSession(user);
+
+            return NoContent();
+        }
+
         [HttpPost("app")]
         public async Task<IActionResult> LoginAppAsync(string name, string password)
         {
