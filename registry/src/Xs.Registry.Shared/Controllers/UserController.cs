@@ -55,20 +55,6 @@ namespace Xs.Registry.Shared.Controllers
             return Ok(token);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> LoginUserAsync(string name, string password)
-        {
-            var user = await userRepository.FindByNameAsync(name);
-            if (user == null)
-                return NotFound();
-
-            var passwordHash = securityManager.Hash(password);
-            if (user.PasswordHash != passwordHash)
-                return Forbidden(new { general = new [] { "Invalid password" } });
-
-            return Ok(user.ApiToken);
-        }
-
         [HttpPost]
         [Authorize(Access.Session)]
         public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)

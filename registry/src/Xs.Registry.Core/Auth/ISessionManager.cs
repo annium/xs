@@ -5,7 +5,7 @@ using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Core.Auth
 {
-    internal interface ISessionManager
+    public interface ISessionManager
     {
         ValueTuple<Guid, IActionResult> GetToken();
 

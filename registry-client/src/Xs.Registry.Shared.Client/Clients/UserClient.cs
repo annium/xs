@@ -25,16 +25,6 @@ namespace Xs.Registry.Shared.Client
                 .AsStringAsync();
         }
 
-        public Task<string> LoginAsync(string name, string password)
-        {
-            return Http.Open(this.uri)
-                .Get("user")
-                .Param("name", name)
-                .Param("password", password)
-                .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase}).")
-                .AsStringAsync();
-        }
-
         public Task DeleteAsync(string token)
         {
             return Http.Open(this.uri)

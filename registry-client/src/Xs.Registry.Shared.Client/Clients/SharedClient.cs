@@ -15,10 +15,23 @@ namespace Xs.Registry.Shared.Client
         public SharedClient(
             PermissionsClient permissionsClient,
             UserClient userClient
-        ) : base(permissionsClient, userClient)
+        ) : base(
+            permissionsClient,
+            userClient
+        )
         {
             Permissions = permissionsClient;
             User = userClient;
+        }
+
+        public Task<string> LoginAsync(string name, string password)
+        {
+            return Http.Open(this.uri)
+                .Post("login/app")
+                .Param("name", name)
+                .Param("password", password)
+                .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase}).")
+                .AsStringAsync();
         }
 
         public Task<Dictionary<string, Uri>> GetRegistryInfoAsync(string token)

@@ -44,7 +44,7 @@ namespace Xs.Cli.Main.Commands.Remote
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            var userToken = await client.User.LoginAsync(user, password);
+            var userToken = await client.LoginAsync(user, password);
             var data = await client.GetRegistryInfoAsync(userToken);
 
             var registry = new Core.Models.Registry

@@ -32,7 +32,7 @@ namespace Xs.Cli.Main.Commands.Registry.User
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            var userToken = await client.User.LoginAsync(name, password);
+            var userToken = await client.LoginAsync(name, password);
 
             Console.Write("New password: ");
             var newPassword = Console.ReadLine();
