@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Xs.Registry.Core.Models;
 
@@ -7,7 +8,9 @@ namespace Xs.Registry.Core.Repositories
     {
         Task<User> FindByNameAsync(string name);
 
-        Task<User> FindByTokenAsync(string token);
+        Task<User> FindByApiTokenAsync(Guid token);
+
+        Task<User> FindBySessionTokenAsync(Guid token);
 
         Task SaveAsync(User user);
 

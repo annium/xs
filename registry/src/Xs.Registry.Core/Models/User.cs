@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Xs.Registry.Core.Models
 {
     public class User
@@ -8,27 +11,44 @@ namespace Xs.Registry.Core.Models
 
         public string PasswordHash { get; }
 
-        public string Token { get; }
+        public Guid ApiToken { get; }
+
+        public List<UserSession> Sessions { get; } = new List<UserSession>();
 
         public User(
             string id,
             string name,
             string passwordHash,
-            string token
-        ) : this(name, passwordHash, token)
+            Guid apiToken,
+            List<UserSession> sessions
+        ) : this(name, passwordHash, apiToken)
         {
             Id = id;
+            Sessions = sessions;
         }
 
         public User(
             string name,
             string passwordHash,
-            string token
+            Guid apiToken
         )
         {
             Name = name;
             PasswordHash = passwordHash;
-            Token = token;
+            ApiToken = apiToken;
+        }
+    }
+
+    public class UserSession
+    {
+        public Guid Token { get; }
+
+        public DateTime Expires { get; }
+
+        public UserSession(Guid token, DateTime expires)
+        {
+            this.Token = token;
+            this.Expires = expires;
         }
     }
 }

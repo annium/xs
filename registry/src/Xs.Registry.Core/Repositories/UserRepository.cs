@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Xs.Registry.Core.Models;
@@ -15,23 +18,14 @@ namespace Xs.Registry.Core.Repositories
             this.collection = collection;
         }
 
-        public async Task<User> FindByNameAsync(string name)
-        {
-            var m = await collection
-                .Find(e => e.Name == name)
-                .FirstOrDefaultAsync();
+        public Task<User> FindByNameAsync(string name) =>
+            FindByPredicateAsync(u => u.Name == name);
 
-            return (User) m;
-        }
+        public Task<User> FindByApiTokenAsync(Guid token) =>
+            FindByPredicateAsync(u => u.ApiToken == token);
 
-        public async Task<User> FindByTokenAsync(string token)
-        {
-            var m = await collection
-                .Find(e => e.Token == token)
-                .FirstOrDefaultAsync();
-
-            return (User) m;
-        }
+        public Task<User> FindBySessionTokenAsync(Guid token) =>
+            FindByPredicateAsync(u => u.Sessions.Any(s => s.Token == token));
 
         public async Task SaveAsync(User user)
         {
@@ -42,9 +36,10 @@ namespace Xs.Registry.Core.Repositories
                     Builders<Models.User>.Filter.Eq(e => e.Name, m.Name)
                 ),
                 Builders<Models.User>.Update
-                .Set(e => e.Name, m.Name)
-                .Set(e => e.PasswordHash, m.PasswordHash)
-                .Set(e => e.Token, m.Token),
+                .Set(u => u.Name, m.Name)
+                .Set(u => u.PasswordHash, m.PasswordHash)
+                .Set(u => u.ApiToken, m.ApiToken)
+                .Set(u => u.Sessions, m.Sessions),
                 new FindOneAndUpdateOptions<Models.User, Models.User>() { IsUpsert = true }
             );
         }
@@ -52,6 +47,13 @@ namespace Xs.Registry.Core.Repositories
         public async Task DeleteByNameAsync(string name)
         {
             await collection.DeleteOneAsync(e => e.Name == name);
+        }
+
+        private async Task<User> FindByPredicateAsync(Expression<Func<Models.User, bool>> predicate)
+        {
+            var result = await collection.Find(predicate).FirstOrDefaultAsync();
+
+            return (User) result;
         }
     }
 }

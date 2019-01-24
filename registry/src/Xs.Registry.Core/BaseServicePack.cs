@@ -30,7 +30,6 @@ namespace Xs.Registry.Core
 
             // security
             services.AddSingleton<ISecurityManager, SecurityManager>();
-            services.AddSingleton<ITokenManager, TokenManager>();
 
             // storage
             services.AddSingleton<IStorageFactory, FileStorageFactory>();

@@ -58,7 +58,7 @@ namespace Xs.Registry.Core
             provider.GetRequiredService<IMongoCollection<Repositories.Models.User>>().Indexes.CreateOne(
                 new CreateIndexModel<Repositories.Models.User>(
                     Builders<Repositories.Models.User>.IndexKeys
-                    .Ascending(nameof(Repositories.Models.User.Token))
+                    .Ascending(nameof(Repositories.Models.User.ApiToken))
                 )
             );
         }

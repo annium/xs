@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -15,9 +18,12 @@ namespace Xs.Registry.Core.Repositories.Models
         public string PasswordHash { get; set; }
 
         [BsonElement("token")]
-        public string Token { get; set; }
+        public Guid ApiToken { get; set; }
 
-        public static implicit operator User(Core.Models.User src)
+        [BsonElement("sessions")]
+        public List<UserSession> Sessions { get; set; }
+
+        public static explicit operator User(Core.Models.User src)
         {
             if (src == null)
                 return null;
@@ -28,12 +34,12 @@ namespace Xs.Registry.Core.Repositories.Models
                 model.Id = src.Id;
             model.Name = src.Name;
             model.PasswordHash = src.PasswordHash;
-            model.Token = src.Token;
+            model.ApiToken = src.ApiToken;
 
             return model;
         }
 
-        public static implicit operator Core.Models.User(User src)
+        public static explicit operator Core.Models.User(User src)
         {
             if (src == null)
                 return null;
@@ -42,7 +48,39 @@ namespace Xs.Registry.Core.Repositories.Models
                 src.Id,
                 src.Name,
                 src.PasswordHash,
-                src.Token
+                src.ApiToken,
+                src.Sessions.Select(e => (Core.Models.UserSession) e).ToList()
+            );
+        }
+    }
+
+    internal class UserSession
+    {
+        public static explicit operator UserSession(Core.Models.UserSession src)
+        {
+            var model = new UserSession();
+
+            model.Token = src.Token;
+            model.Expires = src.Expires;
+
+            return model;
+        }
+
+        [BsonElement("token")]
+        public Guid Token { get; set; }
+
+        [BsonElement("expires")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime Expires { get; set; }
+
+        public static explicit operator Core.Models.UserSession(UserSession src)
+        {
+            if (src == null)
+                return null;
+
+            return new Core.Models.UserSession(
+                src.Token,
+                src.Expires
             );
         }
     }
