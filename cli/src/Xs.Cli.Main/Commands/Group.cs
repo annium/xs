@@ -2,7 +2,7 @@ namespace Xs.Cli.Main.Commands
 {
     internal class Group : Annium.Extensions.Arguments.Group
     {
-        public override string Id { get; } = "";
+        public override string Id { get; } = "xs";
 
         public override string Description { get; } = "xs toolkit";
 
