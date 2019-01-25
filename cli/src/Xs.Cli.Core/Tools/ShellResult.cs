@@ -30,6 +30,8 @@ namespace Xs.Cli.Core.Tools
 
     public class ShellResult
     {
+        public bool IsSuccess => Code == 0;
+
         public int Code { get; }
 
         public string Output { get; }
@@ -43,8 +45,14 @@ namespace Xs.Cli.Core.Tools
             this.Error = error;
         }
 
-        public void Deconstruct(out int code, out string output, out string error)
+        public void Deconstruct(
+            out bool isSuccess,
+            out int code,
+            out string output,
+            out string error
+        )
         {
+            isSuccess = IsSuccess;
             code = Code;
             output = Output;
             error = Error;

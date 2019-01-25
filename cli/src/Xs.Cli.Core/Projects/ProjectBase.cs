@@ -61,7 +61,7 @@ namespace Xs.Cli.Core.Projects
                 new ProcessStartInfo() { WorkingDirectory = File.Directory.FullName },
                 command, token);
 
-            if (result.Code == 0)
+            if (result.IsSuccess)
                 logger.LogInfo($"Finished {Name} {operation}.");
             else
                 throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}.");
