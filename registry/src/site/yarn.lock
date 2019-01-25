@@ -5926,7 +5926,7 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libdemo@../libdemo/:
+"libdemo@file:../libdemo":
   version "0.1.0"
 
 load-json-file@^1.0.0:
