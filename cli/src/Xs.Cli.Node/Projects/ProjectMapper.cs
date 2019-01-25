@@ -100,7 +100,7 @@ namespace Xs.Cli.Node.Projects
             string location
         )
         {
-            var path = Path.Combine(file.DirectoryName, location);
+            var path = Path.Combine(file.DirectoryName, location, ProjectFactory.ProjectFileName);
             if (!File.Exists(path))
                 throw new InvalidOperationException($"Project {project} has broken project dependency {location}.");
 
