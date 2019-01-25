@@ -9,7 +9,7 @@ packages/
 # OS & misc
 .DS_STORE
 *.log
-xs.json
+.xs
 
 # .NET
 bin/

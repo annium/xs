@@ -11,7 +11,7 @@ namespace Xs.Cli.Core.Tools
 {
     internal class ConfigurationManager : IConfigurationManager
     {
-        private const string file = "xs.json";
+        private const string file = ".xs";
 
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
 
