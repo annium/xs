@@ -74,6 +74,7 @@ namespace Xs.Cli.Node.Projects
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
+            // TODO: version needs to be in package.json
             var fileName = $"{Name}-{version}.tgz";
             if (Name.StartsWith('@'))
             {
@@ -94,6 +95,7 @@ namespace Xs.Cli.Node.Projects
         {
             var packageFile = await PackAsync(version, token);
 
+            // TODO: set registry in .npmrc to publish
             await RunAsync("publish", $"npm publish {packageFile}", token);
 
             System.IO.File.Delete(packageFile);
