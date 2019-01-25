@@ -12,6 +12,6 @@ dotnet publish -c release -r osx-x64 -o $root $dir/src/Xs.Cli.Main/
 # prepare launcher
 echo "Write launcher."
 rm -f $entry
-echo '#!/usr/bin/env bash' > $entry
+echo '#!/usr/bin/env sh' > $entry
 echo $root'/Xs.Cli.Main $@' >> $entry
 chmod +x $entry

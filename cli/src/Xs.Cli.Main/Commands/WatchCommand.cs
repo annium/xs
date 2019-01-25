@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Xs.Cli.Core.Tools;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
 
@@ -28,11 +30,15 @@ namespace Xs.Cli.Main.Commands
 
         private readonly Watcher watcher;
 
+        private readonly IShell shell;
+
         private readonly ILogger logger;
 
         private string root;
 
         private string mask;
+
+        private string command;
 
         private bool runTests;
 
@@ -46,6 +52,7 @@ namespace Xs.Cli.Main.Commands
             FilterProjectsTask filterTask,
             ProjectsRunner runner,
             Watcher watcher,
+            IShell shell,
             ILogger logger
         )
         {
@@ -54,6 +61,7 @@ namespace Xs.Cli.Main.Commands
             this.filterTask = filterTask;
             this.runner = runner;
             this.watcher = watcher;
+            this.shell = shell;
             this.logger = logger;
         }
 
@@ -65,12 +73,16 @@ namespace Xs.Cli.Main.Commands
         {
             this.root = cwdCfg.Cwd;
             this.mask = cfg.Mask;
+            this.command = cfg.Command;
             this.runTests = cfg.Test;
             this.token = token;
 
             await Discover();
 
-            await watcher.WatchAsync(root, FilterChange, HandleChange, HandleDelete, token);
+            if (command != null)
+                await watcher.WatchAsync(root, FilterChange, CallCommand, CallCommand, token);
+            else
+                await watcher.WatchAsync(root, FilterChange, HandleChange, HandleDelete, token);
         }
 
         private bool FilterChange(string path) =>
@@ -166,6 +178,22 @@ namespace Xs.Cli.Main.Commands
             return list.Distinct();
         }
 
+        private Task CallCommand(string path)
+        {
+            var result = shell.Start(command.Replace("%", path));
+
+            Task.Run(() => pipe(result.Output));
+            Task.Run(() => pipe(result.Error));
+
+            return result.Result;
+
+            void pipe(StreamReader src)
+            {
+                while (!src.EndOfStream)
+                    Console.WriteLine(src.ReadLine());
+            }
+        }
+
         private async Task Discover() =>
         projects = filterTask.Run(await discoverTask.RunAsync(root, token), mask).ToArray();
 
@@ -183,5 +211,9 @@ namespace Xs.Cli.Main.Commands
         [Option("t", isRequired : false)]
         [Help("Run tests.")]
         public bool Test { get; set; } = false;
+
+        [Raw]
+        [Help("Command to execute on change.")]
+        public string Command { get; set; }
     }
 }
