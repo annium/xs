@@ -66,8 +66,12 @@ namespace Xs.Cli.Node.Projects
             return Task.CompletedTask;
         }
 
-        public Task InstallAsync(CancellationToken token) =>
-            RunAsync("install", "yarn install --force --no-emoji --no-progress", token);
+        public Task InstallAsync(bool force, CancellationToken token)
+        {
+            var forceFlag = force ? "--force" : string.Empty;
+
+            return RunAsync("install", $"yarn install {forceFlag} --no-emoji --no-progress", token);
+        }
 
         public Task BuildAsync(Env env, CancellationToken token) =>
             RunAsync("build", "yarn run build", token);

@@ -46,7 +46,7 @@ namespace Xs.Cli.Main.Commands
                 .OfType<IInstallableProject>()
                 .ToArray();
             logger.LogDebug($"Install {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.InstallAsync(tkn), token);
+            await runner.RunAsync(projects, (project, tkn) => project.InstallAsync(cfg.Force, tkn), token);
         }
     }
 
@@ -55,5 +55,9 @@ namespace Xs.Cli.Main.Commands
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Option("f", isRequired : false)]
+        [Help("Force install.")]
+        public bool Force { get; set; } = false;
     }
 }

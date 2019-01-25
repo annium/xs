@@ -5,6 +5,6 @@ namespace Xs.Cli.Core.Projects
 {
     public interface IInstallableProject : IProject
     {
-        Task InstallAsync(CancellationToken token);
+        Task InstallAsync(bool force, CancellationToken token);
     }
 }

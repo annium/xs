@@ -40,6 +40,8 @@ namespace Xs.Cli.Main.Commands
 
         private string command;
 
+        private bool force;
+
         private bool runTests;
 
         private CancellationToken token;
@@ -74,6 +76,7 @@ namespace Xs.Cli.Main.Commands
             this.root = cwdCfg.Cwd;
             this.mask = cfg.Mask;
             this.command = cfg.Command;
+            this.force = cfg.Force;
             this.runTests = cfg.Test;
             this.token = token;
 
@@ -144,7 +147,7 @@ namespace Xs.Cli.Main.Commands
         }
 
         private Task InstallAsync(IProject project, bool includeSelf) =>
-        ExecuteAsync<IInstallableProject>(project, (p, t) => p.InstallAsync(t), includeSelf);
+        ExecuteAsync<IInstallableProject>(project, (p, t) => p.InstallAsync(force, t), includeSelf);
 
         private Task BuildAsync(IProject project, bool includeSelf) =>
         ExecuteAsync<IBuildableProject>(project, (p, t) => p.BuildAsync(Env.Development, t), includeSelf);
@@ -207,6 +210,10 @@ namespace Xs.Cli.Main.Commands
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Option("f", isRequired : false)]
+        [Help("Force install.")]
+        public bool Force { get; set; } = false;
 
         [Option("t", isRequired : false)]
         [Help("Run tests.")]

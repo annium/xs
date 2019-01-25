@@ -15,6 +15,8 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
+        private static object cacheLocker = new object();
+
         public override ProjectType Type { get; } = Constants.ProjectType;
 
         public override string Name { get; }
@@ -73,8 +75,24 @@ namespace Xs.Cli.Dotnet.Projects
             return Task.CompletedTask;
         }
 
-        public Task InstallAsync(CancellationToken token) =>
-            RunAsync("install", $"dotnet restore --no-dependencies {File.FullName}", token);
+        public Task InstallAsync(bool force, CancellationToken token)
+        {
+            if (!force)
+                return RunAsync("install", $"dotnet restore --no-dependencies {File.FullName}", token);
+
+            var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
+            foreach (var(_, name, version) in PackageDependencies)
+            {
+                var cachePath = Path.Combine(cache, name.ToLowerInvariant(), version.ToString());
+                lock(cacheLocker)
+                {
+                    if (Directory.Exists(cachePath))
+                        Directory.Delete(cachePath, recursive : true);
+                }
+            }
+
+            return RunAsync("install", $"dotnet restore --no-cache --no-dependencies {File.FullName}", token);
+        }
 
         public Task BuildAsync(Env env, CancellationToken token)
         {
