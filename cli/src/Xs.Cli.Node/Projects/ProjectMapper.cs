@@ -55,12 +55,12 @@ namespace Xs.Cli.Node.Projects
             var projectDeps = project.ProjectDependencies
                 .Where(e => !currentDevDeps.ContainsKey(e.Name))
                 .OrderBy(e => e.Name)
-                .ToDictionary(e => e.Name, e => El.FilePrefix + Path.GetRelativePath(dir, e.File.FullName));
+                .ToDictionary(e => e.Name, e => El.FilePrefix + Path.GetRelativePath(dir, e.File.DirectoryName));
 
             var projectDevDeps = project.ProjectDependencies
                 .Where(e => currentDevDeps.ContainsKey(e.Name))
                 .OrderBy(e => e.Name)
-                .ToDictionary(e => e.Name, e => El.FilePrefix + Path.GetRelativePath(dir, e.File.FullName));
+                .ToDictionary(e => e.Name, e => El.FilePrefix + Path.GetRelativePath(dir, e.File.DirectoryName));
 
             var packageDeps = project.PackageDependencies
                 .Where(e => !currentDevDeps.ContainsKey(e.Name))
