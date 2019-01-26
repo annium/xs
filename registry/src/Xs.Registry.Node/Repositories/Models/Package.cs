@@ -33,6 +33,9 @@ namespace Xs.Registry.Node.Repositories.Models
         [BsonElement("published")]
         public DateTime Published { get; set; }
 
+        [BsonElement("downloads")]
+        public uint Downloads { get; set; }
+
         [BsonElement("shasum")]
         public string Shasum { get; set; }
 
@@ -52,6 +55,7 @@ namespace Xs.Registry.Node.Repositories.Models
                 src.Dependencies,
                 src.DevDependencies,
                 src.Published,
+                src.Downloads,
                 src.Shasum,
                 src.Integrity
             );
@@ -71,6 +75,7 @@ namespace Xs.Registry.Node.Repositories.Models
             model.Dependencies = new Dictionary<string, string>(src.Dependencies);
             model.DevDependencies = new Dictionary<string, string>(src.DevDependencies);
             model.Published = src.Published;
+            model.Downloads = src.Downloads;
             model.Shasum = src.Shasum;
             model.Integrity = src.Integrity;
 

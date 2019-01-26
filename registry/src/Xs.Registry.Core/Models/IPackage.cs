@@ -11,5 +11,7 @@ namespace Xs.Registry.Core.Models
         string Description { get; }
 
         DateTime Published { get; }
+
+        uint Downloads { get; set; }
     }
 }

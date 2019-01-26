@@ -29,6 +29,9 @@ namespace Xs.Registry.Dotnet.Repositories.Models
         [BsonElement("published")]
         public DateTime Published { get; set; }
 
+        [BsonElement("downloads")]
+        public uint Downloads { get; set; }
+
         public static explicit operator Dotnet.Models.Package(Package src)
         {
             if (src == null)
@@ -42,7 +45,8 @@ namespace Xs.Registry.Dotnet.Repositories.Models
                     e => NuGet.Frameworks.NuGetFramework.Parse(e.Framework),
                     e => e.Dependencies.ToDictionary(d => d.Key, d => NuGet.Versioning.VersionRange.Parse(d.Value)).ToReadOnly()
                 ),
-                src.Published
+                src.Published,
+                src.Downloads
             );
         }
 
@@ -64,6 +68,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
                 })
                 .ToList();
             model.Published = src.Published;
+            model.Downloads = src.Downloads;
 
             return model;
         }

@@ -48,6 +48,7 @@ namespace Xs.Registry.Node.Payloads
                 version.Dependencies,
                 version.DevDependencies,
                 src.Published,
+                0,
                 version.Distribution.Shasum,
                 version.Distribution.Integrity
             );

@@ -18,12 +18,15 @@ namespace Xs.Registry.Dotnet.Models
 
         public DateTime Published { get; }
 
+        public uint Downloads { get; set; }
+
         public Package(
             string name,
             NuGetVersion version,
             string description,
             IReadOnlyDictionary<NuGetFramework, IReadOnlyDictionary<string, VersionRange>> dependencies,
-            DateTime published
+            DateTime published,
+            uint downloads
         )
         {
             Name = name;
@@ -31,6 +34,7 @@ namespace Xs.Registry.Dotnet.Models
             Description = description;
             Dependencies = dependencies;
             Published = published;
+            Downloads = downloads;
         }
     }
 }

@@ -123,7 +123,8 @@ namespace Xs.Registry.Dotnet.Controllers
                     reader.GetVersion(),
                     reader.GetDescription(),
                     dependencyGroups,
-                    getTime()
+                    getTime(),
+                    0
                 );
             }
         }
