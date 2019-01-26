@@ -1,5 +1,6 @@
 using System;
 using Annium.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -24,6 +25,7 @@ namespace Xs.Registry.Core
             services.AddSingleton<ISessionManager, SessionManager>();
 
             // helpers
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper>(p =>
             {
