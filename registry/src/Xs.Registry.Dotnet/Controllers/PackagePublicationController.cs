@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackagePublicationController : ServerController
     {
+        private readonly Func<DateTime> getTime;
+
         private readonly IMetadataManager metadataManager;
 
         private readonly IMetadataRepository metadataRepository;
@@ -27,12 +30,14 @@ namespace Xs.Registry.Dotnet.Controllers
         private readonly IPackageStorage packageStorage;
 
         public PackagePublicationController(
+            Func<DateTime> getTime,
             IMetadataManager metadataManager,
             IMetadataRepository metadataRepository,
             IPackageRepository packageRepository,
             IPackageStorage packageStorage
         )
         {
+            this.getTime = getTime;
             this.metadataManager = metadataManager;
             this.metadataRepository = metadataRepository;
             this.packageRepository = packageRepository;
@@ -118,7 +123,8 @@ namespace Xs.Registry.Dotnet.Controllers
                     reader.GetId(),
                     reader.GetVersion(),
                     reader.GetDescription(),
-                    dependencyGroups
+                    dependencyGroups,
+                    getTime()
                 );
             }
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Bson;
@@ -23,6 +24,10 @@ namespace Xs.Registry.Dotnet.Repositories.Models
         [BsonElement("deps")]
         public List<PackageDependencies> Dependencies { get; set; }
 
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        [BsonElement("published")]
+        public DateTime Published { get; set; }
+
         public static explicit operator Dotnet.Models.Package(Package src)
         {
             if (src == null)
@@ -35,7 +40,8 @@ namespace Xs.Registry.Dotnet.Repositories.Models
                 src.Dependencies.ToDictionary(
                     e => NuGet.Frameworks.NuGetFramework.Parse(e.Framework),
                     e => e.Dependencies.ToDictionary(d => d.Key, d => NuGet.Versioning.VersionRange.Parse(d.Value)).ToReadOnly()
-                )
+                ),
+                src.Published
             );
         }
 
@@ -56,6 +62,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
                     Dependencies = e.Value.ToDictionary(d => d.Key, d => d.Value.ToString())
                 })
                 .ToList();
+            model.Published = src.Published;
 
             return model;
         }
