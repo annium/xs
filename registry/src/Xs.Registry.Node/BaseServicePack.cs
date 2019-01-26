@@ -2,6 +2,8 @@ using System;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Core.Auth;
+using Xs.Registry.Core.Tools;
+using Xs.Registry.Node.Models;
 using Xs.Registry.Node.Storage;
 
 namespace Xs.Registry.Node
@@ -15,6 +17,9 @@ namespace Xs.Registry.Node
 
             // storage
             services.AddSingleton<IPackageStorage, PackageStorage>();
+
+            // tools
+            services.AddSingleton<ISearchManager, SearchManager<Package>>();
         }
     }
 }

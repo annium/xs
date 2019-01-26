@@ -1,44 +1,42 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Helpers;
-using Xs.Registry.Core.Repositories;
-using Xs.Registry.Node.Models;
+using Xs.Registry.Core.Tools;
 
 namespace Xs.Registry.Node.Controllers
 {
     [Route("info")]
     public class InfoController : ServerController
     {
-        private readonly IPackageRepository<Package> packageRepository;
+        private readonly ISearchManager searchManager;
 
         public InfoController(
-            IPackageRepository<Package> packageRepository
+            ISearchManager searchManager
         )
         {
-            this.packageRepository = packageRepository;
+            this.searchManager = searchManager;
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchAsync(string query)
-        {
-            var packages = (await packageRepository.FindAllByQueryAsync(query)).OrderByDescending(e => e.Version);
-
-            var result = new Dictionary<string, string>();
-
-            foreach (var package in packages)
-                if (!result.ContainsKey(package.Name))
-                    result[package.Name] = package.Version;
-
-            return Ok(result);
-        }
+        public async Task<IActionResult> SearchAsync(string query) =>
+            Ok(await searchManager.FindPackagesAsync(query));
 
         [HttpGet("{name}")]
-        public async Task<IActionResult> InfoAsync(string name)
+        public async Task<IActionResult> GetLatestAsync(string name)
         {
-            var package = (await packageRepository.FindAllByNameAsync(name))
-                .OrderByDescending(e => e.Version).FirstOrDefault();
+            var package = await searchManager.FindLatestPackageAsync(name);
+
+            if (package == null)
+                return NotFound();
+
+            return Ok(package);
+        }
+
+        [HttpGet("{name}/{version}")]
+        public async Task<IActionResult> GetAsync(string name, string version)
+        {
+            var package = await searchManager.FindPackageAsync(name, version);
+
             if (package == null)
                 return NotFound();
 
