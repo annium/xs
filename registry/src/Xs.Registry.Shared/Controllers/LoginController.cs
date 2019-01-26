@@ -46,7 +46,7 @@ namespace Xs.Registry.Shared.Controllers
             return NoContent();
         }
 
-        [HttpGet("info")]
+        [HttpGet]
         [Authorize(Access.Session)]
         public IActionResult Info()
         {
@@ -55,7 +55,7 @@ namespace Xs.Registry.Shared.Controllers
             return Ok(new { Name = user.Name });
         }
 
-        [HttpDelete("logout")]
+        [HttpDelete]
         [Authorize(Access.Session)]
         public async Task<IActionResult> LogoutAsync()
         {
