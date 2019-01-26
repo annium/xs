@@ -59,7 +59,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
                     var package = ReadPackage(packageReader.NuspecReader);
                     var name = package.Name;
-                    var version = package.Version.ToNormalizedString();
+                    var version = package.Version;
 
                     var user = GetUser();
 
@@ -134,7 +134,7 @@ namespace Xs.Registry.Dotnet.Controllers
         public async Task<IActionResult> UnpublishPackageAsync(string name, string version, CancellationToken token)
         {
             var allExisting = await packageRepository.FindAllByNameAsync(name);
-            var exists = allExisting.Any(e => e.Version.ToNormalizedString() == version);
+            var exists = allExisting.Any(e => e.Version == version);
 
             if (!exists)
                 return NotFound();

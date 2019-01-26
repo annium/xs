@@ -31,7 +31,7 @@ namespace Xs.Registry.Dotnet.Controllers
             if (packages.Length == 0)
                 return NotFound();
 
-            var versions = packages.Select(e => e.Version.ToNormalizedString()).ToArray();
+            var versions = packages.Select(e => e.Version).ToArray();
 
             return Ok(new { versions });
         }

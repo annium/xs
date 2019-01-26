@@ -9,7 +9,7 @@ namespace Xs.Registry.Dotnet.Models
     {
         public string Name { get; }
 
-        public NuGetVersion Version { get; }
+        public string Version { get; }
 
         public string Description { get; }
 
@@ -26,7 +26,7 @@ namespace Xs.Registry.Dotnet.Models
         )
         {
             Name = name;
-            Version = version;
+            Version = version.ToString();
             Description = description;
             Dependencies = dependencies;
             Published = published;

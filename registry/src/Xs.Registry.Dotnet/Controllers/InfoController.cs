@@ -28,7 +28,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
             foreach (var package in packages)
                 if (!result.ContainsKey(package.Name))
-                    result[package.Name] = package.Version.ToNormalizedString();
+                    result[package.Name] = package.Version;
 
             return Ok(result);
         }

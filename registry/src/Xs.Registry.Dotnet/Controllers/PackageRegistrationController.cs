@@ -72,8 +72,8 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             var id = packages.First().Name.ToLowerInvariant();
             var leafs = packages.Select(GetRegistrationLeaf).ToArray();
-            var lower = packages.Min(e => e.Version).ToNormalizedString();
-            var upper = packages.Max(e => e.Version).ToNormalizedString();
+            var lower = packages.Min(e => e.Version);
+            var upper = packages.Max(e => e.Version);
 
             return new RegistrationPageView(url.AbsoluteUri($"v3/registration/{id}/page.json"), leafs, lower, upper);
         }
@@ -81,7 +81,7 @@ namespace Xs.Registry.Dotnet.Controllers
         private RegistrationLeafView GetRegistrationLeaf(Package package)
         {
             var id = package.Name.ToLowerInvariant();
-            var version = package.Version.ToNormalizedString();
+            var version = package.Version;
 
             return new RegistrationLeafView(
                 url.AbsoluteUri($"v3/registration/{id}/{version}/leaf.json"),
@@ -94,7 +94,7 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             var id = package.Name.ToLowerInvariant();
             var name = package.Name;
-            var version = package.Version.ToNormalizedString();
+            var version = package.Version;
 
             return new CatalogEntryView(url.AbsoluteUri($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
         }

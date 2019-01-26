@@ -53,7 +53,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
             var model = new Package();
 
             model.Name = src.Name;
-            model.Version = src.Version.ToString();
+            model.Version = src.Version;
             model.Description = src.Description;
             model.Dependencies = src.Dependencies
                 .Select(e => new PackageDependencies()
