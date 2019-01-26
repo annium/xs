@@ -170,7 +170,8 @@ namespace Xs.Registry.Node.Controllers
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
 
-            if ((await packageRepository.FindByNameVersionAsync(packageName, version)) == null)
+            var package = await packageRepository.FindByNameVersionAsync(name, version);
+            if (package == null)
                 return NotFound();
 
             var user = GetUser();
@@ -182,6 +183,9 @@ namespace Xs.Registry.Node.Controllers
 
             if (!(await packageStorage.ExistsAsync(packageName, version)))
                 return ServerError("Package file missing");
+
+            package.Downloads++;
+            await packageRepository.SaveAsync(package);
 
             var content = await packageStorage.GetAsync(packageName, version);
 

@@ -40,8 +40,16 @@ namespace Xs.Registry.Dotnet.Controllers
         [HttpGet("v3/package/{name}/{version}/{name2}.{version2}.nupkg")]
         public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken token)
         {
-            if ((await packageRepository.FindByNameVersionAsync(name, version)) == null)
+            var package = await packageRepository.FindByNameVersionAsync(name, version);
+
+            if (package == null)
                 return NotFound();
+
+            if (!(await packageStorage.ExistsAsync(name, version)))
+                return ServerError("Package file missing");
+
+            package.Downloads++;
+            await packageRepository.SaveAsync(package);
 
             var content = await packageStorage.GetPackageAsync(name, version);
 
@@ -53,6 +61,9 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             if ((await packageRepository.FindByNameVersionAsync(name, version)) == null)
                 return NotFound();
+
+            if (!(await packageStorage.ExistsAsync(name, version)))
+                return ServerError("Nuspec file missing");
 
             var content = await packageStorage.GetNuspecAsync(name, version);
 
