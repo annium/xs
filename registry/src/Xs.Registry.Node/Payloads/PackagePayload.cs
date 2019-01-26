@@ -34,7 +34,7 @@ namespace Xs.Registry.Node.Payloads
             new MemoryStream(Convert.FromBase64String(Attachments[$"{Name}-{Version}.tgz"].Data));
 
         [JsonIgnore]
-        public DateTime Published { get; } = DateTime.UtcNow;
+        public DateTime Published { get; set; }
 
         public static explicit operator Models.Package(PackagePayload src)
         {

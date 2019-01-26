@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace Xs.Registry.Node.Controllers
 {
     public class PackageController : ServerController
     {
+        private readonly Func<DateTime> getTime;
+
         private readonly IMetadataManager metadataManager;
 
         private readonly IMetadataRepository metadataRepository;
@@ -30,6 +33,7 @@ namespace Xs.Registry.Node.Controllers
         private readonly IUrlHelper url;
 
         public PackageController(
+            Func<DateTime> getTime,
             IMetadataManager metadataManager,
             IMetadataRepository metadataRepository,
             IPackageRepository packageRepository,
@@ -37,6 +41,7 @@ namespace Xs.Registry.Node.Controllers
             IUrlHelper url
         )
         {
+            this.getTime = getTime;
             this.metadataManager = metadataManager;
             this.metadataRepository = metadataRepository;
             this.packageRepository = packageRepository;
@@ -54,6 +59,7 @@ namespace Xs.Registry.Node.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            packagePayload.Published = getTime();
             var package = (Package) packagePayload;
             var packageStream = packagePayload.GetAttachment();
             var name = package.Name;
