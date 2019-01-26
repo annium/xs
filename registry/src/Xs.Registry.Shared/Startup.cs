@@ -27,6 +27,12 @@ namespace Xs.Registry.Shared
         {
             app.UseExceptionMiddleware();
 
+            app.UseCors(builder => builder
+                .SetIsOriginAllowed(o => true)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+
             app.UseMvc();
         }
     }

@@ -34,6 +34,12 @@ namespace Xs.Registry.Node
 
             app.UseExceptionMiddleware();
 
+            app.UseCors(builder => builder
+                .SetIsOriginAllowed(o => true)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+
             app.UseMvc();
 
             T GetService<T>() => app.ApplicationServices.GetRequiredService<T>();
