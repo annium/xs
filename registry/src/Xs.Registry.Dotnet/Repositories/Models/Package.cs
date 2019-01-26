@@ -4,10 +4,11 @@ using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Xs.Core.Helpers;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Dotnet.Repositories.Models
 {
-    internal class Package
+    internal class Package : IPackage
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
@@ -59,7 +60,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
                 .Select(e => new PackageDependencies()
                 {
                     Framework = e.Key.GetShortFolderName(),
-                    Dependencies = e.Value.ToDictionary(d => d.Key, d => d.Value.ToString())
+                        Dependencies = e.Value.ToDictionary(d => d.Key, d => d.Value.ToString())
                 })
                 .ToList();
             model.Published = src.Published;

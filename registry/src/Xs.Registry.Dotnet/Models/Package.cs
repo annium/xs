@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using NuGet.Frameworks;
 using NuGet.Versioning;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Dotnet.Models
 {
-    public class Package
+    public class Package : IPackage
     {
         public string Name { get; }
 

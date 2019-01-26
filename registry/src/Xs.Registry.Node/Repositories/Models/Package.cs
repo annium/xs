@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Node.Repositories.Models
 {
-    internal class Package
+    internal class Package : IPackage
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();

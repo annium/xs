@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Node.Models
 {
-    public class Package
+    public class Package : IPackage
     {
         public string Name { get; }
 
