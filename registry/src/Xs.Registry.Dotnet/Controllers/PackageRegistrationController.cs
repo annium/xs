@@ -3,20 +3,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Helpers;
+using Xs.Registry.Core.Repositories;
 using Xs.Registry.Dotnet.Models;
-using Xs.Registry.Dotnet.Repositories;
 using Xs.Registry.Dotnet.Views;
 
 namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackageRegistrationController : ServerController
     {
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly IUrlHelper url;
 
         public PackageRegistrationController(
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             IUrlHelper url
         )
         {

@@ -5,7 +5,8 @@ using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Xs.Registry.Core;
-using Xs.Registry.Node.Repositories;
+using Xs.Registry.Core.Repositories;
+using Xs.Registry.Node.Models;
 
 namespace Xs.Registry.Node
 {
@@ -38,7 +39,7 @@ namespace Xs.Registry.Node
             services.AddSingleton(db.GetCollection<Repositories.Models.Package>("packages"));
 
             // repositories
-            services.AddSingleton<IPackageRepository, PackageRepository>();
+            services.AddSingleton<IPackageRepository<Package>, PackageRepository<Package, Repositories.Models.Package>>();
         }
 
         public override void Setup(IServiceProvider provider)

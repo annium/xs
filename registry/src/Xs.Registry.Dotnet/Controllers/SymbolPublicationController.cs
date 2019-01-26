@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
+using Xs.Registry.Core.Repositories;
 using Xs.Registry.Dotnet.Helpers;
-using Xs.Registry.Dotnet.Repositories;
+using Xs.Registry.Dotnet.Models;
 using Xs.Registry.Dotnet.Storage;
 
 namespace Xs.Registry.Dotnet.Controllers
@@ -24,12 +25,12 @@ namespace Xs.Registry.Dotnet.Controllers
             ".p7s"
         };
 
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly ISymbolStorage symbolStorage;
 
         public SymbolPublicationController(
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             ISymbolStorage symbolStorage
         )
         {

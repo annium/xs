@@ -3,19 +3,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Helpers;
-using Xs.Registry.Dotnet.Repositories;
+using Xs.Registry.Core.Repositories;
+using Xs.Registry.Dotnet.Models;
 using Xs.Registry.Dotnet.Storage;
 
 namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackageConsumptionController : ServerController
     {
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
         public PackageConsumptionController(
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             IPackageStorage packageStorage
         )
         {

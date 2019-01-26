@@ -2,20 +2,22 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Xs.Registry.Node.Models;
+using Xs.Registry.Core.Models;
 
-namespace Xs.Registry.Node.Repositories
+namespace Xs.Registry.Core.Repositories
 {
-    internal class PackageRepository : IPackageRepository
+    public class PackageRepository<TPackage, TPackageModel> : IPackageRepository<TPackage>
+        where TPackage : IPackage
+    where TPackageModel : IPackage
     {
-        private readonly IMongoCollection<Models.Package> collection;
+        private readonly IMongoCollection<TPackageModel> collection;
 
         private readonly Configuration configuration;
 
         private readonly Func<DateTime> getTime;
 
         public PackageRepository(
-            IMongoCollection<Models.Package> collection,
+            IMongoCollection<TPackageModel> collection,
             Configuration configuration,
             Func<DateTime> getTime
         )
@@ -25,7 +27,7 @@ namespace Xs.Registry.Node.Repositories
             this.getTime = getTime;
         }
 
-        public async Task<Package[]> FindAllByQueryAsync(string query)
+        public async Task<TPackage[]> FindAllByQueryAsync(string query)
         {
             query = query.ToLowerInvariant();
 
@@ -33,10 +35,10 @@ namespace Xs.Registry.Node.Repositories
                 .Find(e => e.Name.ToLowerInvariant().Contains(query))
                 .ToListAsync();
 
-            return models.Select(e => (Package) e).ToArray();
+            return models.Select(e => (TPackage) (object) e).ToArray();
         }
 
-        public async Task<Package[]> FindAllByNameAsync(string name)
+        public async Task<TPackage[]> FindAllByNameAsync(string name)
         {
             name = name.ToLowerInvariant();
 
@@ -44,10 +46,10 @@ namespace Xs.Registry.Node.Repositories
                 .Find(e => e.Name.ToLowerInvariant() == name)
                 .ToListAsync();
 
-            return models.Select(e => (Package) e).ToArray();
+            return models.Select(e => (TPackage) (object) e).ToArray();
         }
 
-        public async Task<Package> FindByNameVersionAsync(string name, string version)
+        public async Task<TPackage> FindByNameVersionAsync(string name, string version)
         {
             name = name.ToLowerInvariant();
             version = version.ToLowerInvariant();
@@ -56,29 +58,29 @@ namespace Xs.Registry.Node.Repositories
                 .Find(e => e.Name.ToLowerInvariant() == name && e.Version.ToLowerInvariant() == version)
                 .FirstOrDefaultAsync();
 
-            return (Package) model;
+            return (TPackage) (object) model;
         }
 
-        public async Task SaveAsync(Package package)
+        public async Task SaveAsync(TPackage package)
         {
-            var model = (Models.Package) package;
+            var model = (TPackageModel) (object) package;
 
             await collection.InsertOneAsync(model);
         }
 
-        public Task DeleteAllByNameAsync(string name)
+        public async Task DeleteAllByNameAsync(string name)
         {
             name = name.ToLowerInvariant();
 
-            return collection.DeleteManyAsync(e => e.Name.ToLowerInvariant() == name);
+            await collection.DeleteManyAsync(e => e.Name.ToLowerInvariant() == name);
         }
 
-        public Task DeleteByNameVersionAsync(string name, string version)
+        public async Task DeleteByNameVersionAsync(string name, string version)
         {
             name = name.ToLowerInvariant();
             version = version.ToLowerInvariant();
 
-            return collection
+            await collection
                 .DeleteOneAsync(e => e.Name.ToLowerInvariant() == name && e.Version.ToLowerInvariant() == version);
         }
     }

@@ -12,7 +12,6 @@ using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Tools;
 using Xs.Registry.Node.Models;
 using Xs.Registry.Node.Payloads;
-using Xs.Registry.Node.Repositories;
 using Xs.Registry.Node.Storage;
 using Xs.Registry.Node.Views;
 
@@ -26,7 +25,7 @@ namespace Xs.Registry.Node.Controllers
 
         private readonly IMetadataRepository metadataRepository;
 
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
@@ -36,7 +35,7 @@ namespace Xs.Registry.Node.Controllers
             Func<DateTime> getTime,
             IMetadataManager metadataManager,
             IMetadataRepository metadataRepository,
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             IPackageStorage packageStorage,
             IUrlHelper url
         )

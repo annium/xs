@@ -12,7 +12,6 @@ using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Tools;
 using Xs.Registry.Dotnet.Helpers;
 using Xs.Registry.Dotnet.Models;
-using Xs.Registry.Dotnet.Repositories;
 using Xs.Registry.Dotnet.Storage;
 
 namespace Xs.Registry.Dotnet.Controllers
@@ -25,7 +24,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
         private readonly IMetadataRepository metadataRepository;
 
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
@@ -33,7 +32,7 @@ namespace Xs.Registry.Dotnet.Controllers
             Func<DateTime> getTime,
             IMetadataManager metadataManager,
             IMetadataRepository metadataRepository,
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             IPackageStorage packageStorage
         )
         {

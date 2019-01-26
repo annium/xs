@@ -3,17 +3,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Helpers;
-using Xs.Registry.Node.Repositories;
+using Xs.Registry.Core.Repositories;
+using Xs.Registry.Node.Models;
 
 namespace Xs.Registry.Node.Controllers
 {
     [Route("info")]
     public class InfoController : ServerController
     {
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         public InfoController(
-            IPackageRepository packageRepository
+            IPackageRepository<Package> packageRepository
         )
         {
             this.packageRepository = packageRepository;
