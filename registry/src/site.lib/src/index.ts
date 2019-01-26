@@ -1,3 +1,5 @@
-export const demo = (message: string): void => {
-  console.log('demo:', message);
+import * as api from './api'
+
+export {
+  api,
 }

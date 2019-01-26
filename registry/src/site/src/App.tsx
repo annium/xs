@@ -7,11 +7,20 @@ import logo from './logo.svg'
 import styles from './App.module.scss'
 
 
-import { demo } from 'site.lib';
+import * as lib from 'site.lib'
 
 export default class App extends Component {
-  handleClick = () => {
-    demo('lib');
+  private api: lib.api.Client
+
+  constructor(props: {}) {
+    super(props)
+    this.api = lib.api.factory({ url: 'http://localhost:9901' })
+  }
+
+  handleClick = async () => {
+    console.log('send request')
+    const regsitry = await this.api.get('registry');
+    console.log('regsitry info:', regsitry)
   }
 
   render() {
