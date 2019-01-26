@@ -35,10 +35,10 @@ namespace Xs.Registry.Shared.Controllers
         public async Task<IActionResult> CreateUserAsync([FromBody] UserRegistrationPayload registrationModel)
         {
             if (registrationModel == null)
-                return BadRequest(new { general = new [] { "Empty data" } });
+                return BadRequest("Specify user data");
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("Check user data");
 
             var name = registrationModel.Name;
 
@@ -60,10 +60,10 @@ namespace Xs.Registry.Shared.Controllers
         public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)
         {
             if (updateModel == null)
-                return BadRequest(new { general = new [] { "Empty data" } });
+                return BadRequest("Specify user data");
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("Check user data");
 
             var user = GetUser();
             var newPasswordHash = securityManager.Hash(updateModel.NewPassword);

@@ -53,10 +53,10 @@ namespace Xs.Registry.Node.Controllers
         public async Task<IActionResult> PublishPackageAsync([FromBody] PackagePayload packagePayload)
         {
             if (packagePayload == null)
-                return BadRequest(new { common = new [] { "Empty data" } });
+                return BadRequest("Empty data");
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("Incorrect data");
 
             packagePayload.Published = getTime();
             var package = (Package) packagePayload;
