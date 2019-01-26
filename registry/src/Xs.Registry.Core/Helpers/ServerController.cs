@@ -22,5 +22,8 @@ namespace Xs.Registry.Core.Helpers
 
         protected IActionResult Forbidden(object result) =>
             new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+
+        protected IActionResult ServerError(object result) =>
+            new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
     }
 }

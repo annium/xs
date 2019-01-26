@@ -5,7 +5,7 @@ namespace Xs.Registry.Node.Models
 {
     public class Package
     {
-        public PackageName Name { get; }
+        public string Name { get; }
 
         public string Version { get; }
 

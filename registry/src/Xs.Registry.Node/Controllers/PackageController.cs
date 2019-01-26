@@ -62,7 +62,7 @@ namespace Xs.Registry.Node.Controllers
             packagePayload.Published = getTime();
             var package = (Package) packagePayload;
             var packageStream = packagePayload.GetAttachment();
-            var name = package.Name;
+            var name = PackageName.Parse(package.Name);
             var version = package.Version;
 
             var user = GetUser();
@@ -180,6 +180,9 @@ namespace Xs.Registry.Node.Controllers
             var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, packageName);
             if (metadata != null && !metadataManager.CheckPermission(user, metadata, Permission.Read))
                 return Forbidden("You need read permission to get this package.");
+
+            if (!(await packageStorage.ExistsAsync(packageName, version)))
+                return ServerError("Package file missing");
 
             var content = await packageStorage.GetAsync(packageName, version);
 
