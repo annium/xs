@@ -1,11 +1,6 @@
 # editors
 .vscode/
 
-
-# artifacts
-data/
-packages/
-
 # OS & misc
 .DS_STORE
 *.log
