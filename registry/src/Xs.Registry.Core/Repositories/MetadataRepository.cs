@@ -41,7 +41,7 @@ namespace Xs.Registry.Core.Repositories
                     Builders<Models.Metadata>.Filter.Eq(e => e.PackageName, m.PackageName)
                 ),
                 Builders<Models.Metadata>.Update
-                .Set(e => e.UserId, m.UserId)
+                .Set(e => e.OwnerId, m.OwnerId)
                 .Set(e => e.ProjectType, m.ProjectType)
                 .Set(e => e.PackageName, m.PackageName)
                 .Set(e => e.Permissions, m.Permissions),

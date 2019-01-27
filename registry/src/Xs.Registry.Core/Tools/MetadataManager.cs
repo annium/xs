@@ -9,7 +9,7 @@ namespace Xs.Registry.Core.Tools
     {
         public PermissionCategory GetPermissionCategory(User user, Metadata metadata)
         {
-            return metadata.UserId == user.Id ? PermissionCategory.Owner : PermissionCategory.World;
+            return metadata.OwnerId == user.Id ? PermissionCategory.Owner : PermissionCategory.World;
         }
 
         public Metadata Generate(User user, ProjectType projectType, string packageName)
@@ -35,7 +35,7 @@ namespace Xs.Registry.Core.Tools
                 e => e.Key == category ? e.Value | permission : e.Value
             );
 
-            return new Metadata(metadata.UserId, metadata.ProjectType, metadata.PackageName, permissions);
+            return new Metadata(metadata.OwnerId, metadata.ProjectType, metadata.PackageName, permissions);
         }
 
         public Metadata RevokePermission(Metadata metadata, PermissionCategory category, Permission permission)
@@ -45,7 +45,7 @@ namespace Xs.Registry.Core.Tools
                 e => e.Key == category ? e.Value ^ permission : e.Value
             );
 
-            return new Metadata(metadata.UserId, metadata.ProjectType, metadata.PackageName, permissions);
+            return new Metadata(metadata.OwnerId, metadata.ProjectType, metadata.PackageName, permissions);
         }
     }
 }

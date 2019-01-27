@@ -11,8 +11,8 @@ namespace Xs.Registry.Core.Repositories.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
-        [BsonElement("user")]
-        public string UserId { get; set; }
+        [BsonElement("owner")]
+        public string OwnerId { get; set; }
 
         [BsonElement("type")]
         public string ProjectType { get; set; }
@@ -31,7 +31,7 @@ namespace Xs.Registry.Core.Repositories.Models
 
             var model = new Metadata();
 
-            model.UserId = src.UserId;
+            model.OwnerId = src.OwnerId;
             model.ProjectType = src.ProjectType.ToString();
             model.PackageName = src.PackageName;
             model.Permissions = new Dictionary<PermissionCategory, Permission>(src.Permissions);
@@ -45,7 +45,7 @@ namespace Xs.Registry.Core.Repositories.Models
                 return null;
 
             return new Core.Models.Metadata(
-                src.UserId,
+                src.OwnerId,
                 Xs.Core.Models.ProjectType.Get(src.ProjectType),
                 src.PackageName,
                 src.Permissions

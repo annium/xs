@@ -5,7 +5,7 @@ namespace Xs.Registry.Core.Models
 {
     public class Metadata
     {
-        public string UserId { get; }
+        public string OwnerId { get; }
 
         public ProjectType ProjectType { get; }
 
@@ -14,13 +14,13 @@ namespace Xs.Registry.Core.Models
         public IReadOnlyDictionary<PermissionCategory, Permission> Permissions { get; }
 
         public Metadata(
-            string userId,
+            string ownerId,
             ProjectType projectType,
             string packageName,
             IReadOnlyDictionary<PermissionCategory, Permission> permissions
         )
         {
-            this.UserId = userId;
+            this.OwnerId = ownerId;
             this.ProjectType = projectType;
             this.PackageName = packageName;
             this.Permissions = permissions;
