@@ -22,15 +22,15 @@ export default class ApiClient {
     return this.send<T>('get', url, query)
   }
 
-  public post<T>(url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
+  public post<T = void>(url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
     return this.send<T>('post', url, query, body)
   }
 
-  public put<T>(url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
+  public put<T = void>(url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
     return this.send<T>('put', url, query, body)
   }
 
-  public delete<T>(url: string, query?: Query): Promise<DataResponse<T>> {
+  public delete<T = void>(url: string, query?: Query): Promise<DataResponse<T>> {
     return this.send<T>('delete', url, query)
   }
 
@@ -104,22 +104,13 @@ export default class ApiClient {
 
   private parseResponse<T>(raw: RawResponse): DataResponse<T> {
     if (raw.isOk && !raw.body.errors)
-      return {
-        data: raw.body as T,
-        error: null,
-      }
+      return new DataResponse<T>(raw.body as T, null)
 
-    return {
-      data: null,
-      error: raw.body.toString(),
-    }
+    return new DataResponse<T>(null as any as T, raw.body.toString())
   }
 
   private parseFailure<T>(reason: any): DataResponse<T> {
-    return {
-      data: null,
-      error: reason.toString(),
-    }
+    return new DataResponse<T>(null as any as T, reason.toString())
   }
 }
 

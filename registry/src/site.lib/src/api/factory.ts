@@ -25,10 +25,10 @@ function buildUrl({ protocol, host, port, basePath }: UrlOptions) {
   let url = `${protocol}//${host}`
 
   switch (protocol) {
-    case 'http':
+    case 'http:':
       if (port !== 80) url += `:${port}`
       break
-    case 'https':
+    case 'https:':
       if (port !== 443) url += `:${port}`
       break
     default:
