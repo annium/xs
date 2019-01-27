@@ -13,7 +13,7 @@ using Xs.Core.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
+    internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, ICachingProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
         private static object cacheLocker = new object();
 
@@ -75,23 +75,31 @@ namespace Xs.Cli.Dotnet.Projects
             return Task.CompletedTask;
         }
 
-        public Task InstallAsync(bool force, CancellationToken token)
+        public Task ClearCacheAsync(CancellationToken token)
         {
-            if (!force)
-                return RunAsync("install", $"dotnet restore --no-dependencies {File.FullName}", token);
+            logger.LogInfo($"Start {Name} cache clean.");
 
             var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
-            foreach (var(_, name, version) in PackageDependencies)
+            lock(cacheLocker)
             {
-                var cachePath = Path.Combine(cache, name.ToLowerInvariant(), version.ToString());
-                lock(cacheLocker)
+                foreach (var(_, name, version) in PackageDependencies)
                 {
+                    var cachePath = Path.Combine(cache, name.ToLowerInvariant(), version.ToString());
                     if (Directory.Exists(cachePath))
                         Directory.Delete(cachePath, recursive : true);
                 }
             }
 
-            return RunAsync("install", $"dotnet restore --no-cache --no-dependencies {File.FullName}", token);
+            logger.LogInfo($"Finished {Name} cache clean.");
+
+            return Task.CompletedTask;
+        }
+
+        public Task InstallAsync(bool force, CancellationToken token)
+        {
+            var forceFlag = force ? "--no-cache" : string.Empty;
+
+            return RunAsync("install", $"dotnet restore {forceFlag} --no-dependencies {File.FullName}", token);
         }
 
         public Task BuildAsync(Env env, CancellationToken token)

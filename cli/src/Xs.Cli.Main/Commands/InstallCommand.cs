@@ -42,11 +42,24 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
-                .OfType<IInstallableProject>()
-                .ToArray();
+            var force = cfg.Force;
+
+            var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask).ToArray();
+
+            if (force)
+            {
+                logger.LogDebug($"Clear {projects.Length} projects cache.");
+                await runner.RunAsync(
+                    projects.OfType<ICachingProject>(),
+                    (project, tkn) => project.ClearCacheAsync(tkn),
+                    token);
+            }
+
             logger.LogDebug($"Install {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.InstallAsync(cfg.Force, tkn), token);
+            await runner.RunAsync(
+                projects.OfType<IInstallableProject>(),
+                (project, tkn) => project.InstallAsync(force, tkn),
+                token);
         }
     }
 

@@ -82,10 +82,10 @@ namespace Xs.Cli.Main.Commands
 
             await Discover();
 
-            if (command != null)
-                await watcher.WatchAsync(root, FilterChange, CallCommand, CallCommand, token);
-            else
+            if (string.IsNullOrWhiteSpace(command))
                 await watcher.WatchAsync(root, FilterChange, HandleChange, HandleDelete, token);
+            else
+                await watcher.WatchAsync(root, FilterChange, CallCommand, CallCommand, token);
         }
 
         private bool FilterChange(string path) =>
@@ -221,6 +221,6 @@ namespace Xs.Cli.Main.Commands
 
         [Raw]
         [Help("Command to execute on change.")]
-        public string Command { get; set; }
+        public string Command { get; set; } = string.Empty;
     }
 }
