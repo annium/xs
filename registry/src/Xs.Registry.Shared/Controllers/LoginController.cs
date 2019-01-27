@@ -7,6 +7,7 @@ using Xs.Registry.Core.Helpers;
 using Xs.Registry.Core.Models;
 using Xs.Registry.Core.Repositories;
 using Xs.Registry.Core.Security;
+using Xs.Registry.Shared.Payloads;
 
 namespace Xs.Registry.Shared.Controllers
 {
@@ -35,9 +36,9 @@ namespace Xs.Registry.Shared.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginUserAsync(string name, string password)
+        public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginPayload loginPayload)
         {
-            var(user, result) = await LoginUserInternalAsync(name, password);
+            var(user, result) = await LoginUserInternalAsync(loginPayload);
             if (result != null)
                 return result;
 
@@ -67,17 +68,23 @@ namespace Xs.Registry.Shared.Controllers
         }
 
         [HttpPost("app")]
-        public async Task<IActionResult> LoginAppAsync(string name, string password)
+        public async Task<IActionResult> LoginAppAsync([FromBody] UserLoginPayload loginPayload)
         {
-            var(user, result) = await LoginUserInternalAsync(name, password);
+            var(user, result) = await LoginUserInternalAsync(loginPayload);
             if (result != null)
                 return result;
 
             return Ok(user.ApiToken);
         }
 
-        private async Task<ValueTuple<User, IActionResult>> LoginUserInternalAsync(string name, string password)
+        private async Task<ValueTuple<User, IActionResult>> LoginUserInternalAsync(UserLoginPayload loginPayload)
         {
+            if (loginPayload == null)
+                return (null, BadRequest("Pass login data"));
+
+            var name = loginPayload.Name;
+            var password = loginPayload.Password;
+
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
                 return (null, BadRequest("Pass login data"));
 

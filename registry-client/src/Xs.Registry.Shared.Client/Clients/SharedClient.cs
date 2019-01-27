@@ -28,8 +28,7 @@ namespace Xs.Registry.Shared.Client
         {
             return Http.Open(this.uri)
                 .Post("login/app")
-                .Param("name", name)
-                .Param("password", password)
+                .JsonContent(new { name, password })
                 .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsStringAsync();
         }

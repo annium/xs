@@ -35,6 +35,7 @@ namespace Xs.Registry.Core.Repositories.Models
             model.Name = src.Name;
             model.PasswordHash = src.PasswordHash;
             model.ApiToken = src.ApiToken;
+            model.Sessions = src.Sessions.Select(e => (UserSession) e).ToList();
 
             return model;
         }
@@ -56,6 +57,13 @@ namespace Xs.Registry.Core.Repositories.Models
 
     internal class UserSession
     {
+        [BsonElement("token")]
+        public Guid Token { get; set; }
+
+        [BsonElement("expires")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime Expires { get; set; }
+
         public static explicit operator UserSession(Core.Models.UserSession src)
         {
             var model = new UserSession();
@@ -65,13 +73,6 @@ namespace Xs.Registry.Core.Repositories.Models
 
             return model;
         }
-
-        [BsonElement("token")]
-        public Guid Token { get; set; }
-
-        [BsonElement("expires")]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime Expires { get; set; }
 
         public static explicit operator Core.Models.UserSession(UserSession src)
         {
