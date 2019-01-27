@@ -1,10 +1,21 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { Provider } from 'mobx-react'
 
-import App from './App'
-
-
-import './index.scss'
+import Routes from './routes'
 
 
-ReactDOM.render(<App />, document.getElementById('root'))
+import './styles/layout.scss'
+
+
+import createStore from './store'
+const store = createStore()
+
+ReactDOM.render(
+  <Provider {...store}>
+    <Routes />
+  </Provider>,
+  document.getElementById('root')
+)
+
+Object.defineProperty(window, 's', { get: () => store })

@@ -1,22 +1,27 @@
+import { inject, observer } from 'mobx-react'
 import * as React from 'react'
-import { Component } from 'react'
+import { RouteComponentProps } from 'react-router-dom'
 
-import logo from './logo.svg'
-
-
-import styles from './App.module.scss'
+import { UserStore } from './data/user'
+import { Store } from './store'
 
 
-export default class App extends Component {
+interface Props extends RouteComponentProps {
+  user: UserStore
+}
+
+const log = console.log.bind(console, 'App')
+@inject((stores: Store) => ({ user: stores.user }))
+@observer
+export default class App extends React.Component<Props> {
+  async componentWillMount() {
+    log('componentWillMount', 'load user')
+    await this.props.user.load()
+  }
+
   render() {
-    return (
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <img src={logo} className={styles.logo} alt="logo" />
-          <p>Edit <code>src/App.tsx</code> and save to reload.</p>
-          <a className={styles.link} href="https://reactjs.org" target="_blank">Learn React</a>
-        </header>
-      </div>
-    )
+    log('render')
+
+    return this.props.children
   }
 }

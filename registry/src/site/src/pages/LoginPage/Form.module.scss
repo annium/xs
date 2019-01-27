@@ -1,0 +1,10 @@
+@import 'common.scss';
+
+form.form {
+    border: 1px solid $color-grey;
+    padding: 2rem;
+
+    >.submit {
+        width: 100%;
+    }
+}

@@ -1,0 +1,37 @@
+@import 'common.scss';
+
+.menu {
+    @include flex(row, stretch);
+    position: relative;
+    height: 4rem;
+    border-top: 1px solid $color-light-grey;
+}
+
+.item {
+    @include flex(column, center, center);
+    width: 4rem;
+    cursor: pointer;
+    color: $color-dark-grey;
+    font-size: 1rem;
+    text-decoration: none;
+
+    >i {
+        font-size: 1.5rem;
+    }
+
+    &:hover {
+        background: $color-light-grey;
+    }
+}
+
+.isActiveItem {
+    background: $color-light-grey;
+}
+
+.separator {
+    flex: 1;
+}
+
+.info {
+    @include flex(row, center, center);
+}
