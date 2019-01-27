@@ -36,13 +36,15 @@ export default class ApiClient {
 
   private send<T>(method: string, url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
     return fetch(this.baseUrl + this.withQuery(url, query), this.prepareOptions(method, body))
-      .then(response => this.readResponse(response).then(raw => this.parseResponse<T>(raw)), reason => this.parseFailure<T>(reason))
+      .then(
+        response => this.readResponse(response).then(raw => this.parseResponse<T>(raw)),
+        reason => this.parseFailure<T>(reason)
+      )
   }
 
   private withQuery(url: string, query?: Query) {
-    if (!query || !Object.keys(query).length) {
+    if (!query || !Object.keys(query).length)
       return url
-    }
 
     const params = Object.keys(query).map(param => `${param}=${encodeURIComponent(query[param].toString())}`).join('&')
 
@@ -54,18 +56,16 @@ export default class ApiClient {
 
     const headers: { [key: string]: string } = {}
 
-    if (typeof preparedBody === 'string') {
+    if (typeof preparedBody === 'string')
       headers['Content-Type'] = 'application/json'
-    }
 
     return Object.assign({}, this.baseOpts, { method, headers, body: preparedBody })
   }
 
   private prepareBody(body: any): FormData | string {
     // if no files - send as json
-    if (!Object.values(body).some(f => f instanceof Blob)) {
+    if (!Object.values(body).some(f => f instanceof Blob))
       return JSON.stringify(body)
-    }
 
     const data = new FormData()
     this.prepareFormData(data, body)
@@ -74,25 +74,23 @@ export default class ApiClient {
   }
 
   private prepareFormData(data: FormData, object: any, prefix?: string): void {
-    for (const name in object) {
+    for (const name in object)
       if (object.hasOwnProperty(name)) {
-        const value = object[name];
+        const value = object[name]
         const prefixedName = prefix ? `${prefix}[${name}]` : name
-        if (typeof value === 'string' || typeof value === 'number') {
+        if (typeof value === 'string' || typeof value === 'number')
           data.append(prefixedName, value.toString())
-        } else if (typeof value === 'boolean') {
+        else if (typeof value === 'boolean')
           data.append(prefixedName, value ? '1' : '0')
-        } else if (value === null) {
+        else if (value === null)
           data.append(prefixedName, 'null')
-        } else if (value instanceof File) {
+        else if (value instanceof File)
           data.append(prefixedName, value, value.name)
-        } else if (value instanceof Blob) {
+        else if (value instanceof Blob)
           data.append(prefixedName, value, name)
-        } else {
+        else
           this.prepareFormData(data, value, prefixedName)
-        }
       }
-    }
   }
 
   private readResponse(response: Response): Promise<RawResponse> {
@@ -105,12 +103,11 @@ export default class ApiClient {
   }
 
   private parseResponse<T>(raw: RawResponse): DataResponse<T> {
-    if (raw.isOk && !raw.body.errors) {
+    if (raw.isOk && !raw.body.errors)
       return {
         data: raw.body as T,
         error: null,
       }
-    }
 
     return {
       data: null,

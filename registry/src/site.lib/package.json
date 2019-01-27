@@ -5,9 +5,10 @@
   "main": "dist/index.js",
   "devDependencies": {
     "@types/node": "10.12.18",
+    "tslint": "5.12.1",
     "typescript": "3.2.4"
   },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tslint -p . && tsc -b"
   }
 }
