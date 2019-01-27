@@ -3,7 +3,7 @@ import 'whatwg-fetch'
 import { Query, Response as DataResponse } from '.'
 
 
-export default class ApiClient {
+export default class Client {
   private baseUrl: string
   private baseOpts: RequestInit
 
@@ -94,16 +94,26 @@ export default class ApiClient {
   }
 
   private readResponse(response: Response): Promise<RawResponse> {
-    return response.text().then(raw => ({
+    return response.text().then(body => ({
       isOk: response.ok,
       status: response.status,
       statusText: response.statusText,
-      body: JSON.parse(raw),
+      body: this.parseBody(body, response.headers.get('content-type')),
     }))
   }
 
+  private parseBody(body: string, contentType: string | null) {
+    if (!contentType)
+      return body
+
+    if (contentType.includes('application/json'))
+      return JSON.parse(body)
+
+    return body
+  }
+
   private parseResponse<T>(raw: RawResponse): DataResponse<T> {
-    if (raw.isOk && !raw.body.errors)
+    if (raw.isOk)
       return new DataResponse<T>(raw.body as T, null)
 
     return new DataResponse<T>(null as any as T, raw.body.toString())
