@@ -9,6 +9,8 @@ namespace Xs.Registry.Core.Repositories
 
         Task<TPackage[]> FindAllByNameAsync(string name);
 
+        Task<TPackage> FindLatestByNameAsync(string name);
+
         Task<TPackage> FindByNameVersionAsync(string name, string version);
 
         Task SaveAsync(TPackage package);
