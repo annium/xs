@@ -12,13 +12,13 @@ namespace Xs.Registry.Core.Tools
             return metadata.OwnerId == user.Id ? PermissionCategory.Owner : PermissionCategory.World;
         }
 
-        public Metadata Generate(User user, ProjectType projectType, string packageName)
+        public Metadata Generate(User user)
         {
             var permissions = new Dictionary<PermissionCategory, Permission>();
             permissions[PermissionCategory.Owner] = Permission.Read | Permission.Publish;
             permissions[PermissionCategory.World] = Permission.Read;
 
-            return new Metadata(user.Id, projectType, packageName, permissions);
+            return new Metadata(user.Id, permissions);
         }
 
         public bool CheckPermission(User user, Metadata metadata, Permission permission)
@@ -35,7 +35,7 @@ namespace Xs.Registry.Core.Tools
                 e => e.Key == category ? e.Value | permission : e.Value
             );
 
-            return new Metadata(metadata.OwnerId, metadata.ProjectType, metadata.PackageName, permissions);
+            return new Metadata(metadata.OwnerId, permissions);
         }
 
         public Metadata RevokePermission(Metadata metadata, PermissionCategory category, Permission permission)
@@ -45,7 +45,7 @@ namespace Xs.Registry.Core.Tools
                 e => e.Key == category ? e.Value ^ permission : e.Value
             );
 
-            return new Metadata(metadata.OwnerId, metadata.ProjectType, metadata.PackageName, permissions);
+            return new Metadata(metadata.OwnerId, permissions);
         }
     }
 }

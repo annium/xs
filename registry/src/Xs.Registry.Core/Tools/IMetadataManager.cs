@@ -7,7 +7,7 @@ namespace Xs.Registry.Core.Tools
     {
         PermissionCategory GetPermissionCategory(User user, Metadata metadata);
 
-        Metadata Generate(User user, ProjectType projectType, string packageName);
+        Metadata Generate(User user);
 
         bool CheckPermission(User user, Metadata metadata, Permission permission);
 

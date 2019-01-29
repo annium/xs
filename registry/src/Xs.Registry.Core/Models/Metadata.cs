@@ -9,32 +9,22 @@ namespace Xs.Registry.Core.Models
 
         public string OwnerId { get; }
 
-        public ProjectType ProjectType { get; }
-
-        public string PackageName { get; }
-
         public IReadOnlyDictionary<PermissionCategory, Permission> Permissions { get; }
 
         internal Metadata(
             string ownerId,
-            ProjectType projectType,
-            string packageName,
             IReadOnlyDictionary<PermissionCategory, Permission> permissions
         )
         {
             this.OwnerId = ownerId;
-            this.ProjectType = projectType;
-            this.PackageName = packageName;
             this.Permissions = permissions;
         }
 
         internal Metadata(
             string id,
             string ownerId,
-            ProjectType projectType,
-            string packageName,
             IReadOnlyDictionary<PermissionCategory, Permission> permissions
-        ) : this(ownerId, projectType, packageName, permissions)
+        ) : this(ownerId, permissions)
         {
             this.Id = id;
         }

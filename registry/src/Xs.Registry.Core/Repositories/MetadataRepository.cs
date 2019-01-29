@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Xs.Core.Models;
 using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Core.Repositories
@@ -16,16 +15,10 @@ namespace Xs.Registry.Core.Repositories
             this.collection = collection;
         }
 
-        public async Task<Metadata> FindByProjectTypePackageNameAsync(ProjectType projectType, string packageName)
+        public async Task<Metadata> GetByIdAsync(string id)
         {
-            var projectTypeString = projectType.ToString();
-            packageName = packageName.ToLowerInvariant();
-
             var m = await collection
-                .Find(
-                    e => e.ProjectType == projectTypeString &&
-                    e.PackageName.ToLowerInvariant() == packageName
-                )
+                .Find(e => e.Id == id)
                 .FirstOrDefaultAsync();
 
             return (Metadata) m;
@@ -41,22 +34,14 @@ namespace Xs.Registry.Core.Repositories
                 ),
                 Builders<Models.Metadata>.Update
                 .Set(e => e.OwnerId, m.OwnerId)
-                .Set(e => e.ProjectType, m.ProjectType)
-                .Set(e => e.PackageName, m.PackageName)
                 .Set(e => e.Permissions, m.Permissions),
                 new FindOneAndUpdateOptions<Models.Metadata, Models.Metadata>() { IsUpsert = true }
             );
         }
 
-        public async Task DeleteByProjectTypePackageNameAsync(ProjectType projectType, string packageName)
+        public async Task DeleteByIdAsync(string id)
         {
-            var projectTypeString = projectType.ToString();
-            packageName = packageName.ToLowerInvariant();
-
-            await collection.DeleteOneAsync(
-                e => e.ProjectType == projectTypeString &&
-                e.PackageName.ToLowerInvariant() == packageName
-            );
+            await collection.DeleteOneAsync(e => e.Id == id);
         }
     }
 }

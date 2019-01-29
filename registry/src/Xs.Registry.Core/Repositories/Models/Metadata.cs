@@ -14,12 +14,6 @@ namespace Xs.Registry.Core.Repositories.Models
         [BsonElement("owner")]
         public string OwnerId { get; set; }
 
-        [BsonElement("type")]
-        public string ProjectType { get; set; }
-
-        [BsonElement("name")]
-        public string PackageName { get; set; }
-
         [BsonElement("permissions")]
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<PermissionCategory, Permission> Permissions { get; set; }
@@ -34,8 +28,6 @@ namespace Xs.Registry.Core.Repositories.Models
             if (src.Id != null)
                 model.Id = src.Id;
             model.OwnerId = src.OwnerId;
-            model.ProjectType = src.ProjectType.ToString();
-            model.PackageName = src.PackageName;
             model.Permissions = new Dictionary<PermissionCategory, Permission>(src.Permissions);
 
             return model;
@@ -49,8 +41,6 @@ namespace Xs.Registry.Core.Repositories.Models
             return new Core.Models.Metadata(
                 src.Id,
                 src.OwnerId,
-                Xs.Core.Models.ProjectType.Get(src.ProjectType),
-                src.PackageName,
                 src.Permissions
             );
         }
