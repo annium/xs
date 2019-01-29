@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Xs.Core.Models;
 using Xs.Registry.Core.Models;
 
@@ -11,8 +12,9 @@ namespace Xs.Registry.Core.Tools
 
         bool CheckPermission(User user, Metadata metadata, Permission permission);
 
-        Metadata GrantPermission(Metadata metadata, PermissionCategory category, Permission permission);
-
-        Metadata RevokePermission(Metadata metadata, PermissionCategory category, Permission permission);
+        Metadata SetPermissions(
+            Metadata metadata,
+            IReadOnlyDictionary<PermissionCategory, Permission> permissions
+        );
     }
 }

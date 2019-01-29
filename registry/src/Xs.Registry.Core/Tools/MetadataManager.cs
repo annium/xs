@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Xs.Core.Models;
 using Xs.Registry.Core.Models;
 
@@ -28,23 +27,11 @@ namespace Xs.Registry.Core.Tools
             return metadata.Permissions[GetPermissionCategory(user, metadata)].HasFlag(permission);
         }
 
-        public Metadata GrantPermission(Metadata metadata, PermissionCategory category, Permission permission)
+        public Metadata SetPermissions(
+            Metadata metadata,
+            IReadOnlyDictionary<PermissionCategory, Permission> permissions
+        )
         {
-            var permissions = metadata.Permissions.ToDictionary(
-                e => e.Key,
-                e => e.Key == category ? e.Value | permission : e.Value
-            );
-
-            return new Metadata(metadata.OwnerId, permissions);
-        }
-
-        public Metadata RevokePermission(Metadata metadata, PermissionCategory category, Permission permission)
-        {
-            var permissions = metadata.Permissions.ToDictionary(
-                e => e.Key,
-                e => e.Key == category ? e.Value ^ permission : e.Value
-            );
-
             return new Metadata(metadata.OwnerId, permissions);
         }
     }

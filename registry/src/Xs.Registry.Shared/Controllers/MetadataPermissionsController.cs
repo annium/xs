@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Core.Models;
@@ -22,71 +23,48 @@ namespace Xs.Registry.Shared.Controllers
             IMetadataRepository metadataRepository
         )
         {
-            ProjectType.Register("dotnet");
             this.metadataManager = metadataManager;
             this.metadataRepository = metadataRepository;
         }
 
-        [HttpGet("{type}/{name}/permissions")]
+        [HttpGet("{id}/permissions")]
         [Authorize(Access.Session)]
         public async Task<IActionResult> GetPermissionsAsync(
-            string type,
-            string name
+            string id
         )
         {
-            var(metadata, readResult) = await GetMetadataAsync(type, name);
+            var(metadata, readResult) = await GetMetadataAsync(id);
             if (readResult != null)
                 return readResult;
 
             return Ok(metadata.Permissions);
         }
 
-        [HttpPut("{type}/{name}/permissions/{category}/{permission}")]
+        [HttpPost("{id}/permissions")]
         [Authorize(Access.Session)]
-        public async Task<IActionResult> GrantPermissionAsync(
-            string type,
-            string name,
-            PermissionCategory category,
-            Permission permission
+        public async Task<IActionResult> SetPermissionAsync(
+            string id, [FromBody] Dictionary<PermissionCategory, Permission> permissions
         )
         {
-            var(metadata, readResult) = await GetMetadataAsync(type, name);
+            if (permissions == null)
+                return BadRequest("Pass permissions to set");
+
+            var(metadata, readResult) = await GetMetadataAsync(id);
             if (readResult != null)
                 return readResult;
 
-            metadata = metadataManager.GrantPermission(metadata, category, permission);
+            metadata = metadataManager.SetPermissions(metadata, permissions);
 
             await metadataRepository.SaveAsync(metadata);
 
             return NoContent();
         }
 
-        [HttpDelete("{type}/{name}/permissions/{category}/{permission}")]
-        [Authorize(Access.Session)]
-        public async Task<IActionResult> RevokePermissionAsync(
-            string type,
-            string name,
-            PermissionCategory category,
-            Permission permission
-        )
+        private async Task<ValueTuple<Metadata, IActionResult>> GetMetadataAsync(string id)
         {
-            var(metadata, readResult) = await GetMetadataAsync(type, name);
-            if (readResult != null)
-                return readResult;
-
-            metadata = metadataManager.RevokePermission(metadata, category, permission);
-
-            await metadataRepository.SaveAsync(metadata);
-
-            return NoContent();
-        }
-
-        private async Task<ValueTuple<Metadata, IActionResult>> GetMetadataAsync(string type, string name)
-        {
-            var projectType = ProjectType.Get(type);
             var user = GetUser();
 
-            var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(projectType, name);
+            var metadata = await metadataRepository.GetByIdAsync(id);
             if (metadata == null)
                 return (null, NotFound());
 

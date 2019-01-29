@@ -42,13 +42,6 @@ namespace Xs.Registry.Core
 
         public override void Setup(IServiceProvider provider)
         {
-            provider.GetRequiredService<IMongoCollection<Repositories.Models.Metadata>>().Indexes.CreateOne(
-                new CreateIndexModel<Repositories.Models.Metadata>(
-                    Builders<Repositories.Models.Metadata>.IndexKeys
-                    .Ascending(nameof(Repositories.Models.Metadata.ProjectType))
-                    .Ascending(nameof(Repositories.Models.Metadata.PackageName))
-                )
-            );
             provider.GetRequiredService<IMongoCollection<Repositories.Models.User>>().Indexes.CreateOne(
                 new CreateIndexModel<Repositories.Models.User>(
                     Builders<Repositories.Models.User>.IndexKeys
