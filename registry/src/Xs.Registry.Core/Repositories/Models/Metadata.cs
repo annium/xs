@@ -31,6 +31,8 @@ namespace Xs.Registry.Core.Repositories.Models
 
             var model = new Metadata();
 
+            if (src.Id != null)
+                model.Id = src.Id;
             model.OwnerId = src.OwnerId;
             model.ProjectType = src.ProjectType.ToString();
             model.PackageName = src.PackageName;
@@ -45,6 +47,7 @@ namespace Xs.Registry.Core.Repositories.Models
                 return null;
 
             return new Core.Models.Metadata(
+                src.Id,
                 src.OwnerId,
                 Xs.Core.Models.ProjectType.Get(src.ProjectType),
                 src.PackageName,

@@ -37,8 +37,7 @@ namespace Xs.Registry.Core.Repositories
 
             await collection.FindOneAndUpdateAsync(
                 Builders<Models.Metadata>.Filter.And(
-                    Builders<Models.Metadata>.Filter.Eq(e => e.ProjectType, m.ProjectType),
-                    Builders<Models.Metadata>.Filter.Eq(e => e.PackageName, m.PackageName)
+                    Builders<Models.Metadata>.Filter.Eq(e => e.Id, m.Id)
                 ),
                 Builders<Models.Metadata>.Update
                 .Set(e => e.OwnerId, m.OwnerId)
