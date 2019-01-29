@@ -5,6 +5,8 @@ namespace Xs.Registry.Core.Repositories
 {
     public interface IMetadataRepository
     {
+        Task<Metadata[]> GetByIdsAsync(string[] ids);
+
         Task<Metadata> GetByIdAsync(string id);
 
         Task SaveAsync(Metadata metadata);

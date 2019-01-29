@@ -6,6 +6,10 @@ namespace Xs.Registry.Core.Repositories
 {
     public interface IUserRepository
     {
+        Task<User[]> GetByIdsAsync(string[] ids);
+
+        Task<User> GetByIdAsync(string id);
+
         Task<User> FindByNameAsync(string name);
 
         Task<User> FindByApiTokenAsync(Guid token);

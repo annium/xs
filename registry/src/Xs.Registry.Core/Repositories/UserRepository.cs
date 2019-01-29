@@ -18,6 +18,24 @@ namespace Xs.Registry.Core.Repositories
             this.collection = collection;
         }
 
+        public async Task<User[]> GetByIdsAsync(string[] ids)
+        {
+            var result = await collection
+                .Find(e => ids.Any(id => e.Id == id))
+                .ToListAsync();
+
+            return result.Select(e => (User) e).ToArray();
+        }
+
+        public async Task<User> GetByIdAsync(string id)
+        {
+            var m = await collection
+                .Find(e => e.Id == id)
+                .FirstOrDefaultAsync();
+
+            return (User) m;
+        }
+
         public Task<User> FindByNameAsync(string name) =>
             FindByPredicateAsync(u => u.Name == name);
 

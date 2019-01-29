@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Xs.Registry.Core.Models;
@@ -13,6 +14,15 @@ namespace Xs.Registry.Core.Repositories
         )
         {
             this.collection = collection;
+        }
+
+        public async Task<Metadata[]> GetByIdsAsync(string[] ids)
+        {
+            var result = await collection
+                .Find(e => ids.Any(id => e.Id == id))
+                .ToListAsync();
+
+            return result.Select(e => (Metadata) e).ToArray();
         }
 
         public async Task<Metadata> GetByIdAsync(string id)
