@@ -62,24 +62,35 @@ namespace Xs.Registry.Dotnet.Controllers
 
                     var user = GetUser();
 
-                    // try load metadata; if exists - check permissions
-                    var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, name);
-                    if (metadata != null && !metadataManager.CheckPermission(user, metadata, Permission.Publish))
-                        return Forbidden("You need publish permission to publish new package.");
+                    // find existing and latest packages
+                    var latest = await packageRepository.FindLatestByNameAsync(name);
+                    var current = await packageRepository.FindByNameVersionAsync(name, version);
 
-                    // if package exists - either can rewrite if permission granted, or it's conflict
-                    var exists = (await packageRepository.FindByNameVersionAsync(name, version)) != null;
-                    if (exists && !metadataManager.CheckPermission(user, metadata, Permission.Republish))
+                    // try load metadata; if exists - check permissions
+                    var metadata = latest == null ?
+                        metadataManager.Generate(user) :
+                        await metadataRepository.GetByIdAsync(latest.MetadataId);
+
+                    // check publish permissions, if latest package found
+                    if (latest != null && !metadataManager.CheckPermission(user, metadata, Permission.Publish))
+                        return Forbidden($"You need publish permission to publish package {name} {version}.");
+
+                    // check republish permission if current package found - otherwise it's conflict
+                    if (current != null && !metadataManager.CheckPermission(user, metadata, Permission.Republish))
                         return Conflict($"Package {name} {version} already exists. You need republish permission to overwrite it.");
 
-                    // if exists - delete old
-                    if (exists)
-                    {
-                        await packageStorage.DeleteAsync(name, version);
-                        await packageRepository.DeleteByNameVersionAsync(name, version);
-                    }
-
                     var executor = Executor.Staged();
+
+                    // if current package exists - delete it
+                    if (current != null)
+                        executor.Stage(
+                            async() =>
+                            {
+                                await packageStorage.DeleteAsync(name, version);
+                                await packageRepository.DeleteByNameVersionAsync(name, version);
+                            },
+                            () => { }
+                        );
 
                     // persist to storage
                     executor.Stage(
@@ -92,18 +103,18 @@ namespace Xs.Registry.Dotnet.Controllers
                         () => packageStorage.DeleteAsync(name, version)
                     );
 
-                    // if no metadata - generate and save
-                    if (metadata == null)
-                        executor.Stage(
-                            () => metadataRepository.SaveAsync(metadataManager.Generate(user, Constants.ProjectType, name)),
-                            () => metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, name)
-                        );
-
                     // persist to db
                     executor.Stage(
                         () => packageRepository.SaveAsync(package),
                         () => packageRepository.DeleteByNameVersionAsync(name, version)
                     );
+
+                    // if no latest - save new metadata
+                    if (latest == null)
+                        executor.Stage(
+                            () => metadataRepository.SaveAsync(metadata),
+                            () => { }
+                        );
 
                     await executor.RunAsync();
                 }
@@ -142,7 +153,8 @@ namespace Xs.Registry.Dotnet.Controllers
             var user = GetUser();
 
             // load metadata and check permissions
-            var metadata = await metadataRepository.FindByProjectTypePackageNameAsync(Constants.ProjectType, name);
+            var metadataId = allExisting[0].MetadataId;
+            var metadata = await metadataRepository.GetByIdAsync(metadataId);
             if (!metadataManager.CheckPermission(user, metadata, Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package.");
 
@@ -151,12 +163,12 @@ namespace Xs.Registry.Dotnet.Controllers
             // delete from storage
             executor.With(() => packageStorage.DeleteAsync(name, version));
 
-            // if it was last package - delete metadata
-            if (allExisting.Length == 1)
-                executor.With(() => metadataRepository.DeleteByProjectTypePackageNameAsync(Constants.ProjectType, name));
-
             // delete from db
             executor.With(() => packageRepository.DeleteByNameVersionAsync(name, version));
+
+            // if it was last package - delete metadata
+            if (allExisting.Length == 1)
+                executor.With(() => metadataRepository.DeleteByIdAsync(metadataId));
 
             await executor.RunAsync();
 

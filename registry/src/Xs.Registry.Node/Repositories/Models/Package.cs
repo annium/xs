@@ -11,6 +11,9 @@ namespace Xs.Registry.Node.Repositories.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string MetadataId { get; set; }
+
         [BsonElement("name")]
         public string Name { get; set; }
 
@@ -42,25 +45,6 @@ namespace Xs.Registry.Node.Repositories.Models
         [BsonElement("intergity")]
         public string Integrity { get; set; }
 
-        public static explicit operator Node.Models.Package(Package src)
-        {
-            if (src == null)
-                return null;
-
-            return new Node.Models.Package(
-                Node.Models.PackageName.Parse(src.Name),
-                src.Version,
-                src.Description,
-                src.Main,
-                src.Dependencies,
-                src.DevDependencies,
-                src.Published,
-                src.Downloads,
-                src.Shasum,
-                src.Integrity
-            );
-        }
-
         public static explicit operator Package(Node.Models.Package src)
         {
             if (src == null)
@@ -68,6 +52,9 @@ namespace Xs.Registry.Node.Repositories.Models
 
             var model = new Package();
 
+            if (src.Id != null)
+                model.Id = src.Id;
+            model.MetadataId = src.MetadataId;
             model.Name = src.Name.ToString();
             model.Version = src.Version;
             model.Description = src.Description;
@@ -80,6 +67,27 @@ namespace Xs.Registry.Node.Repositories.Models
             model.Integrity = src.Integrity;
 
             return model;
+        }
+
+        public static explicit operator Node.Models.Package(Package src)
+        {
+            if (src == null)
+                return null;
+
+            return new Node.Models.Package(
+                src.Id,
+                src.MetadataId,
+                Node.Models.PackageName.Parse(src.Name),
+                src.Version,
+                src.Description,
+                src.Main,
+                src.Dependencies,
+                src.DevDependencies,
+                src.Published,
+                src.Downloads,
+                src.Shasum,
+                src.Integrity
+            );
         }
     }
 }

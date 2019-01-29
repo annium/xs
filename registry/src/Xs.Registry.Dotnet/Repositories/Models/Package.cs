@@ -13,6 +13,9 @@ namespace Xs.Registry.Dotnet.Repositories.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string MetadataId { get; set; }
+
         [BsonElement("name")]
         public string Name { get; set; }
 
@@ -32,24 +35,6 @@ namespace Xs.Registry.Dotnet.Repositories.Models
         [BsonElement("downloads")]
         public uint Downloads { get; set; }
 
-        public static explicit operator Dotnet.Models.Package(Package src)
-        {
-            if (src == null)
-                return null;
-
-            return new Dotnet.Models.Package(
-                src.Name,
-                NuGet.Versioning.NuGetVersion.Parse(src.Version),
-                src.Description,
-                src.Dependencies.ToDictionary(
-                    e => NuGet.Frameworks.NuGetFramework.Parse(e.Framework),
-                    e => e.Dependencies.ToDictionary(d => d.Key, d => NuGet.Versioning.VersionRange.Parse(d.Value)).ToReadOnly()
-                ),
-                src.Published,
-                src.Downloads
-            );
-        }
-
         public static explicit operator Package(Dotnet.Models.Package src)
         {
             if (src == null)
@@ -57,6 +42,9 @@ namespace Xs.Registry.Dotnet.Repositories.Models
 
             var model = new Package();
 
+            if (src.Id != null)
+                model.Id = src.Id;
+            model.MetadataId = src.MetadataId;
             model.Name = src.Name;
             model.Version = src.Version;
             model.Description = src.Description;
@@ -71,6 +59,26 @@ namespace Xs.Registry.Dotnet.Repositories.Models
             model.Downloads = src.Downloads;
 
             return model;
+        }
+
+        public static explicit operator Dotnet.Models.Package(Package src)
+        {
+            if (src == null)
+                return null;
+
+            return new Dotnet.Models.Package(
+                src.Id,
+                src.MetadataId,
+                src.Name,
+                NuGet.Versioning.NuGetVersion.Parse(src.Version),
+                src.Description,
+                src.Dependencies.ToDictionary(
+                    e => NuGet.Frameworks.NuGetFramework.Parse(e.Framework),
+                    e => e.Dependencies.ToDictionary(d => d.Key, d => NuGet.Versioning.VersionRange.Parse(d.Value)).ToReadOnly()
+                ),
+                src.Published,
+                src.Downloads
+            );
         }
     }
 }

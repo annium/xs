@@ -6,6 +6,10 @@ namespace Xs.Registry.Node.Models
 {
     public class Package : IPackage
     {
+        public string Id { get; }
+
+        public string MetadataId { get; set; }
+
         public string Name { get; }
 
         public string Version { get; }
@@ -26,7 +30,7 @@ namespace Xs.Registry.Node.Models
 
         public string Integrity { get; }
 
-        public Package(
+        internal Package(
             PackageName name,
             string version,
             string description,
@@ -49,6 +53,25 @@ namespace Xs.Registry.Node.Models
             Downloads = downloads;
             Shasum = shasum;
             Integrity = integrity;
+        }
+
+        internal Package(
+            string id,
+            string metadataId,
+            PackageName name,
+            string version,
+            string description,
+            string main,
+            IReadOnlyDictionary<string, string> dependencies,
+            IReadOnlyDictionary<string, string> devDependencies,
+            DateTime published,
+            uint downloads,
+            string shasum,
+            string integrity
+        ) : this(name, version, description, main, dependencies, devDependencies, published, downloads, shasum, integrity)
+        {
+            Id = id;
+            MetadataId = metadataId;
         }
     }
 }
