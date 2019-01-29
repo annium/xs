@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
+using Xs.Core.Models;
 
 namespace Xs.Registry.Core.Models
 {
-    public class PackagePreview : IPackage
+    public class PackagePreview
     {
         public string Name { get; }
 
@@ -12,15 +14,21 @@ namespace Xs.Registry.Core.Models
 
         public DateTime Published { get; }
 
-        public uint Downloads { get; set; }
+        public uint Downloads { get; }
 
-        public PackagePreview(IPackage package)
+        public string Owner { get; }
+
+        public IReadOnlyDictionary<PermissionCategory, Permission> Permissions { get; }
+
+        public PackagePreview(IPackage package, Metadata metadata, User owner)
         {
             Name = package.Name;
             Version = package.Version;
             Description = package.Description;
             Published = package.Published;
             Downloads = package.Downloads;
+            Owner = owner.Name;
+            Permissions = metadata.Permissions;
         }
     }
 }

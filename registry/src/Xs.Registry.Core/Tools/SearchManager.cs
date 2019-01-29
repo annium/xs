@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,37 +12,84 @@ namespace Xs.Registry.Core.Tools
     {
         private readonly IPackageRepository<TPackage> packageRepository;
 
+        private readonly IMetadataRepository metadataRepository;
+
+        private readonly IUserRepository userRepository;
+
         public SearchManager(
-            IPackageRepository<TPackage> packageRepository
+            IPackageRepository<TPackage> packageRepository,
+            IMetadataRepository metadataRepository,
+            IUserRepository userRepository
         )
         {
             this.packageRepository = packageRepository;
+            this.metadataRepository = metadataRepository;
+            this.userRepository = userRepository;
         }
 
-        public async Task<IPackage[]> FindPackagesAsync(string query)
+        public async Task<PackagePreview[]> FindPackagesAsync(string query)
         {
-            var packages = (await packageRepository.FindAllByQueryAsync(query)).OrderByDescending(e => e.Version);
+            //TODO: implement distinct on BE
+            var allPackages = await packageRepository.FindAllByQueryAsync(query);
+            if (allPackages.Length == 0)
+                return Array.Empty<PackagePreview>();
 
-            var result = new List<IPackage>();
+            var packages = new List<IPackage>();
+            foreach (var package in allPackages)
+                if (!packages.Any(p => p.Name == package.Name))
+                    packages.Add(package);
 
+            var metadataIds = packages.Select(p => p.MetadataId).ToArray();
+            var metadata = await metadataRepository.GetByIdsAsync(metadataIds);
+
+            var userIds = metadata.Select(p => p.OwnerId).ToArray();
+            var users = await userRepository.GetByIdsAsync(userIds);
+
+            var result = new List<PackagePreview>();
             foreach (var package in packages)
-                if (!result.Any(p => p.Name == package.Name))
-                    result.Add(new PackagePreview(package));
+            {
+                var data = metadata.FirstOrDefault(m => m.Id == package.MetadataId);
+                if (data == null)
+                    throw new Exception($"Metadata {package.MetadataId} referenced by package {package.Id} is missing");
+                var user = users.FirstOrDefault(u => u.Id == data.OwnerId);
+                if (user == null)
+                    throw new Exception($"User {data.OwnerId} referenced by metadata {data.Id} is missing");
+
+                result.Add(new PackagePreview(package, data, user));
+            }
 
             return result.ToArray();
         }
 
-        public async Task<IPackage> FindLatestPackageAsync(string name)
+        public async Task<PackagePreview> FindLatestPackageAsync(string name)
         {
-            return (await packageRepository.FindAllByNameAsync(name))
-                .OrderByDescending(e => e.Version).FirstOrDefault();
+            var package = await packageRepository.FindLatestByNameAsync(name);
+            if (package == null)
+                return null;
+
+            return await BuildPackagePreviewAsync(package);
         }
 
-        public async Task<IPackage> FindPackageAsync(string name, string version)
+        public async Task<PackagePreview> FindPackageAsync(string name, string version)
         {
             var package = await packageRepository.FindByNameVersionAsync(name, version);
+            if (package == null)
+                return null;
 
-            return package;
+            return await BuildPackagePreviewAsync(package);
+        }
+
+        private async Task<PackagePreview> BuildPackagePreviewAsync(IPackage package)
+        {
+            var metadata = await metadataRepository.GetByIdAsync(package.MetadataId);
+            if (metadata == null)
+                throw new Exception($"Metadata {package.MetadataId} referenced by package {package.Id} is missing");
+
+            var user = await userRepository.GetByIdAsync(metadata.OwnerId);
+            if (user == null)
+                throw new Exception($"User {metadata.OwnerId} referenced by metadata {metadata.Id} is missing");
+
+            return new PackagePreview(package, metadata, user);
         }
     }
 }

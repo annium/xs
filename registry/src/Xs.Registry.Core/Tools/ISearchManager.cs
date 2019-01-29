@@ -5,10 +5,10 @@ namespace Xs.Registry.Core.Tools
 {
     public interface ISearchManager
     {
-        Task<IPackage[]> FindPackagesAsync(string query);
+        Task<PackagePreview[]> FindPackagesAsync(string query);
 
-        Task<IPackage> FindLatestPackageAsync(string name);
+        Task<PackagePreview> FindLatestPackageAsync(string name);
 
-        Task<IPackage> FindPackageAsync(string name, string version);
+        Task<PackagePreview> FindPackageAsync(string name, string version);
     }
 }
