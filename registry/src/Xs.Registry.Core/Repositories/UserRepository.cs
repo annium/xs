@@ -33,7 +33,7 @@ namespace Xs.Registry.Core.Repositories
 
             await collection.FindOneAndUpdateAsync(
                 Builders<Models.User>.Filter.And(
-                    Builders<Models.User>.Filter.Eq(e => e.Name, m.Name)
+                    Builders<Models.User>.Filter.Eq(e => e.Id, m.Id)
                 ),
                 Builders<Models.User>.Update
                 .Set(u => u.Name, m.Name)

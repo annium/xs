@@ -16,6 +16,17 @@ namespace Xs.Registry.Core.Models
         public List<UserSession> Sessions { get; } = new List<UserSession>();
 
         public User(
+            string name,
+            string passwordHash,
+            Guid apiToken
+        )
+        {
+            Name = name;
+            PasswordHash = passwordHash;
+            ApiToken = apiToken;
+        }
+
+        internal User(
             string id,
             string name,
             string passwordHash,
@@ -25,17 +36,6 @@ namespace Xs.Registry.Core.Models
         {
             Id = id;
             Sessions = sessions;
-        }
-
-        public User(
-            string name,
-            string passwordHash,
-            Guid apiToken
-        )
-        {
-            Name = name;
-            PasswordHash = passwordHash;
-            ApiToken = apiToken;
         }
     }
 
