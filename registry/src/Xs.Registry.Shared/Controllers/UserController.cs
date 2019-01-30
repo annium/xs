@@ -67,15 +67,13 @@ namespace Xs.Registry.Shared.Controllers
 
             var user = GetUser();
 
-            var name = updateModel.Name;
-            var passwordHash = securityManager.Hash(updateModel.Password);
-            var apiToken = Guid.NewGuid();
-
-            user = new User(name, passwordHash, apiToken);
+            user.Name = updateModel.Name;
+            user.PasswordHash = securityManager.Hash(updateModel.Password);
+            user.ApiToken = Guid.NewGuid();
 
             await userRepository.SaveAsync(user);
 
-            return Ok(apiToken);
+            return Ok(user.ApiToken);
         }
 
         [HttpPost("token")]
@@ -83,13 +81,11 @@ namespace Xs.Registry.Shared.Controllers
         public async Task<IActionResult> UpdateUserApiTokenAsync()
         {
             var user = GetUser();
-            var apiToken = Guid.NewGuid();
-
-            user = new User(user.Name, user.PasswordHash, apiToken);
+            user.ApiToken = Guid.NewGuid();
 
             await userRepository.SaveAsync(user);
 
-            return Ok(apiToken);
+            return Ok(user.ApiToken);
         }
 
         [HttpDelete]

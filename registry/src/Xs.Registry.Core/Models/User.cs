@@ -7,11 +7,11 @@ namespace Xs.Registry.Core.Models
     {
         public string Id { get; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public string PasswordHash { get; }
+        public string PasswordHash { get; set; }
 
-        public Guid ApiToken { get; }
+        public Guid ApiToken { get; set; }
 
         public List<UserSession> Sessions { get; } = new List<UserSession>();
 
