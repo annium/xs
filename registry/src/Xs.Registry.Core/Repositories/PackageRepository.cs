@@ -32,18 +32,21 @@ namespace Xs.Registry.Core.Repositories
             this.getTime = getTime;
         }
 
-        public Task<TPackage[]> FindAllByQueryAsync(string query)
-        {
-            query = query.ToLowerInvariant();
-
-            return FindAllByPredicateAsync(e => e.Name.ToLowerInvariant().Contains(query));
-        }
+        public Task<TPackage[]> FindAllByMetadataIdAsync(string metadataId) =>
+            FindAllByPredicateAsync(e => e.MetadataId == metadataId);
 
         public Task<TPackage[]> FindAllByNameAsync(string name)
         {
             name = name.ToLowerInvariant();
 
             return FindAllByPredicateAsync(e => e.Name.ToLowerInvariant() == name);
+        }
+
+        public Task<TPackage[]> FindAllByQueryAsync(string query)
+        {
+            query = query.ToLowerInvariant();
+
+            return FindAllByPredicateAsync(e => e.Name.ToLowerInvariant().Contains(query));
         }
 
         public Task<TPackage> FindLatestByNameAsync(string name)
@@ -69,13 +72,6 @@ namespace Xs.Registry.Core.Repositories
             var model = ToModel(package);
 
             await collection.InsertOneAsync(model);
-        }
-
-        public async Task DeleteAllByNameAsync(string name)
-        {
-            name = name.ToLowerInvariant();
-
-            await collection.DeleteManyAsync(e => e.Name.ToLowerInvariant() == name);
         }
 
         public async Task DeleteByNameVersionAsync(string name, string version)

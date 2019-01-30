@@ -34,6 +34,15 @@ namespace Xs.Registry.Core.Repositories
             return (Metadata) m;
         }
 
+        public async Task<Metadata[]> FindAllByOwnerIdAsync(string ownerId)
+        {
+            var result = await collection
+                .Find(e => e.OwnerId == ownerId)
+                .ToListAsync();
+
+            return result.Select(e => (Metadata) e).ToArray();
+        }
+
         public async Task SaveAsync(Metadata metadata)
         {
             var m = (Models.Metadata) metadata;

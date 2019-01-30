@@ -9,6 +9,8 @@ namespace Xs.Registry.Core.Repositories
 
         Task<Metadata> GetByIdAsync(string id);
 
+        Task<Metadata[]> FindAllByOwnerIdAsync(string ownerId);
+
         Task SaveAsync(Metadata metadata);
 
         Task DeleteByIdAsync(string id);
