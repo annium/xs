@@ -27,19 +27,35 @@ namespace Xs.Registry.Core.Tools
             this.userRepository = userRepository;
         }
 
-        public async Task<PackagePreview[]> FindPackagesAsync(string query)
+        public async Task<PackagePreview[]> FindOwnerPackagesAsync(string ownerId, string query)
         {
             //TODO: implement distinct on BE
-            var allPackages = await packageRepository.FindAllByQueryAsync(query);
-            if (allPackages.Length == 0)
+            var packages = await packageRepository.FindAllByQueryAsync(query);
+            if (packages.Length == 0)
                 return Array.Empty<PackagePreview>();
 
-            var packages = new List<IPackage>();
-            foreach (var package in allPackages)
-                if (!packages.Any(p => p.Name == package.Name))
-                    packages.Add(package);
+            var user = await userRepository.GetByIdAsync(ownerId);
+            var metadata = await metadataRepository.FindAllByOwnerIdAsync(user.Id);
 
-            var metadataIds = packages.Select(p => p.MetadataId).ToArray();
+            var result = new List<PackagePreview>();
+            foreach (var data in metadata)
+            {
+                var package = packages.FirstOrDefault(p => p.MetadataId == data.Id);
+                if (package != null)
+                    result.Add(new PackagePreview(package, data, user));
+            }
+
+            return result.ToArray();
+        }
+
+        public async Task<PackagePreview[]> FindPackagesAsync(string query, string ownerId = null)
+        {
+            //TODO: implement distinct on BE
+            var packages = await packageRepository.FindAllByQueryAsync(query);
+            if (packages.Length == 0)
+                return Array.Empty<PackagePreview>();
+
+            var metadataIds = packages.Select(p => p.MetadataId).Distinct().ToArray();
             var metadata = await metadataRepository.GetByIdsAsync(metadataIds);
 
             var userIds = metadata.Select(p => p.OwnerId).ToArray();

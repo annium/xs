@@ -5,7 +5,9 @@ namespace Xs.Registry.Core.Tools
 {
     public interface ISearchManager
     {
-        Task<PackagePreview[]> FindPackagesAsync(string query);
+        Task<PackagePreview[]> FindOwnerPackagesAsync(string ownerId, string query);
+
+        Task<PackagePreview[]> FindPackagesAsync(string query, string ownerId = null);
 
         Task<PackagePreview> FindLatestPackageAsync(string name);
 
