@@ -5,8 +5,12 @@ namespace Xs.Registry.Shared.Payloads
     public class UserUpdatePayload
     {
         [Required]
+        [StringLength(30, MinimumLength = 3)]
+        public string Name { get; set; }
+
+        [Required]
         [StringLength(30, MinimumLength = 8)]
         [DataType(DataType.Password)]
-        public string NewPassword { get; set; }
+        public string Password { get; set; }
     }
 }

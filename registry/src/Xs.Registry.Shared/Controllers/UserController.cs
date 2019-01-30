@@ -46,13 +46,13 @@ namespace Xs.Registry.Shared.Controllers
                 return Conflict();
 
             var passwordHash = securityManager.Hash(registrationModel.Password);
-            var token = Guid.NewGuid();
+            var apiToken = Guid.NewGuid();
 
-            var user = new User(name, passwordHash, token);
+            var user = new User(name, passwordHash, apiToken);
 
             await userRepository.SaveAsync(user);
 
-            return Ok(token);
+            return Ok(apiToken);
         }
 
         [HttpPost]
@@ -66,14 +66,16 @@ namespace Xs.Registry.Shared.Controllers
                 return BadRequest("Check user data");
 
             var user = GetUser();
-            var newPasswordHash = securityManager.Hash(updateModel.NewPassword);
-            var token = Guid.NewGuid();
 
-            user = new User(user.Name, newPasswordHash, token);
+            var name = updateModel.Name;
+            var passwordHash = securityManager.Hash(updateModel.Password);
+            var apiToken = Guid.NewGuid();
+
+            user = new User(name, passwordHash, apiToken);
 
             await userRepository.SaveAsync(user);
 
-            return Ok(token);
+            return Ok(apiToken);
         }
 
         [HttpPost("token")]
@@ -81,13 +83,13 @@ namespace Xs.Registry.Shared.Controllers
         public async Task<IActionResult> UpdateUserApiTokenAsync()
         {
             var user = GetUser();
-            var token = Guid.NewGuid();
+            var apiToken = Guid.NewGuid();
 
-            user = new User(user.Name, user.PasswordHash, token);
+            user = new User(user.Name, user.PasswordHash, apiToken);
 
             await userRepository.SaveAsync(user);
 
-            return Ok(token);
+            return Ok(apiToken);
         }
 
         [HttpDelete]
