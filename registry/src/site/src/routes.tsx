@@ -5,6 +5,7 @@ import App from './App'
 import PersonalArea from './PersonalArea'
 import LoginPage from './pages/LoginPage'
 import MainPage from './pages/MainPage'
+import SettingsPage from './pages/SettingsPage'
 
 import createBrowserHistory from 'history/createBrowserHistory'
 const navHistory = createBrowserHistory()
@@ -29,6 +30,7 @@ const renderPersonalArea = (props: any) => (
   <PersonalArea {...props}>
     <Switch>
       <Route path="/" exact component={MainPage} />
+      <Route path="/settings" exact component={SettingsPage} />
       <Route render={() => <h1>Not found</h1>} />
     </Switch>
   </PersonalArea>

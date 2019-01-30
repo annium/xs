@@ -5,21 +5,22 @@ import User from '../models/view/User'
 
 export class UserStore {
   @observable data: User | null = null
-  @observable error: string | null = null
+  @observable accessError: string | null = null
+  @observable updateError: string | null = null
 
   @computed get isLoaded(): boolean {
-    return this.data !== null || this.error !== null
+    return this.data !== null || this.accessError !== null
   }
 
   @computed get hasAccess(): boolean {
-    return this.data !== null && this.error === null
+    return this.data !== null && this.accessError === null
   }
 
   @action.bound async login(name: string, password: string) {
     const result = await user.login(name, password)
 
     if (result.isFailure)
-      runInAction(() => this.error = result.error)
+      runInAction(() => this.accessError = result.error)
     else
       await this.load()
   }
@@ -29,14 +30,12 @@ export class UserStore {
     runInAction(() => {
       console.warn('user loaded', result)
       this.data = result.data
-      this.error = result.error
+      this.accessError = result.error
     })
   }
 
   @action.bound async logout() {
-    const result = await user.logout()
-    runInAction(() => this.error = result.error)
-
+    await user.logout()
     await this.load()
   }
 
@@ -44,7 +43,7 @@ export class UserStore {
     const result = await user.update(name, password)
 
     if (result.isFailure)
-      runInAction(() => this.error = result.error)
+      runInAction(() => { throw this.updateError = result.error })
     else
       await this.load()
   }
@@ -52,9 +51,9 @@ export class UserStore {
   @action.bound async updateToken() {
     const result = await user.updateToken()
 
-    if (result.isFailure)
-      runInAction(() => this.error = result.error)
-    else
-      await this.load()
+    runInAction(() => {
+      this.data!.apiToken = result.data
+      throw this.updateError = result.error
+    })
   }
 }

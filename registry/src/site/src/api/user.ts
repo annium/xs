@@ -15,9 +15,9 @@ export default {
     return api.delete('login')
   },
   update(name: string, password: string): Promise<Response> {
-    return api.post('user/token', undefined, { name, password })
+    return api.post('user', undefined, { name, password })
   },
-  updateToken(): Promise<Response> {
+  updateToken(): Promise<Response<string>> {
     return api.post('user/token')
   },
 }
