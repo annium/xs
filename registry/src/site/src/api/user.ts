@@ -14,6 +14,9 @@ export default {
   logout(): Promise<Response> {
     return api.delete('login')
   },
+  update(name: string, password: string): Promise<Response> {
+    return api.post('user/token', undefined, { name, password })
+  },
   updateToken(): Promise<Response> {
     return api.post('user/token')
   },

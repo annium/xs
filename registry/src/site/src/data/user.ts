@@ -40,6 +40,15 @@ export class UserStore {
     await this.load()
   }
 
+  @action.bound async update(name: string, password: string) {
+    const result = await user.update(name, password)
+
+    if (result.isFailure)
+      runInAction(() => this.error = result.error)
+    else
+      await this.load()
+  }
+
   @action.bound async updateToken() {
     const result = await user.updateToken()
 
