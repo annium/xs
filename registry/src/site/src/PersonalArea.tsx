@@ -39,9 +39,9 @@ export default class PersonalArea extends React.Component<Props> {
   }
 
   private ensureAccess(): void {
-    const { user, location, history } = this.props
+    const { user, history } = this.props
     log('checkAccess', user.hasAccess)
-    if (!user.hasAccess)
+    if (user.isLoaded && !user.hasAccess)
       history.replace('/login')
   }
 }

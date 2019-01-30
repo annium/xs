@@ -1,0 +1,10 @@
+@import 'common.scss';
+
+.loader {
+    flex: 1;
+    @include flex(column, stretch);
+
+    &:global(.ant-spin-nested-loading>div>.ant-spin) {
+        max-height: 100%;
+    }
+}

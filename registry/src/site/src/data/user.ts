@@ -7,6 +7,10 @@ export class UserStore {
   @observable data: User | null = null
   @observable error: string | null = null
 
+  @computed get isLoaded(): boolean {
+    return this.data !== null || this.error !== null
+  }
+
   @computed get hasAccess(): boolean {
     return this.data !== null && this.error === null
   }
