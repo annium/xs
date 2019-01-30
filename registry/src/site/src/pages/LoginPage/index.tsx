@@ -40,29 +40,6 @@ export default class LoginPage extends React.Component<Props> {
     )
   }
 
-  // renderOld() {
-  //   const { user } = this.props
-
-  //   if (user.hasAccess) return null
-  //   log('render', user)
-
-  //   return (
-  //     <div className="login-page">
-  //       <input placeholder="name" onChange={this.setName} />
-  //       <input placeholder="pass" onChange={this.setPassword} />
-  //       <button onClick={() => user.login(name, password)}>login</button>
-  //     </div >
-  //   )
-  // }
-
-  // private setName = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   this.name = e.target.value
-  // }
-
-  // private setPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   this.password = e.target.value
-  // }
-
   private ensureAccess() {
     const { user, history } = this.props
     log('checkAccess', user.hasAccess)
