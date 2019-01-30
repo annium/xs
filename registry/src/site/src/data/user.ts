@@ -23,7 +23,7 @@ export class UserStore {
   @action async load() {
     const result = await user.load()
     runInAction(() => {
-      console.warn('user loaded')
+      console.warn('user loaded', result)
       this.data = result.data
       this.error = result.error
     })
@@ -34,5 +34,14 @@ export class UserStore {
     runInAction(() => this.error = result.error)
 
     await this.load()
+  }
+
+  @action.bound async updateToken() {
+    const result = await user.updateToken()
+
+    if (result.isFailure)
+      runInAction(() => this.error = result.error)
+    else
+      await this.load()
   }
 }
