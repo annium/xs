@@ -9,7 +9,7 @@
 
 .item {
     @include flex(column, center, center);
-    width: 4rem;
+    width: 5rem;
     cursor: pointer;
     color: $color-dark-grey;
     font-size: 1rem;
