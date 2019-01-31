@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
+using Xs.Cli.Core.Audit;
 
 namespace Xs.Cli.Core.Projects
 {
     public interface IAuditableProject : IProject
     {
-        Task<IEnumerable<string>> AuditAsync(CancellationToken token);
+        AuditResult[] Audit(bool fix, CancellationToken token);
     }
 }

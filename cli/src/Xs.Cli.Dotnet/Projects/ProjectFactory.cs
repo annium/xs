@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -22,6 +23,8 @@ namespace Xs.Cli.Dotnet.Projects
 
         private const string projectFileMask = "*.csproj";
 
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
+
         private readonly ProjectMapper mapper;
 
         private readonly ILogger logger;
@@ -29,11 +32,13 @@ namespace Xs.Cli.Dotnet.Projects
         private readonly IShell shell;
 
         public ProjectFactory(
+            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             ILogger logger,
             IShell shell
         )
         {
+            this.auditRules = auditRules;
             this.mapper = mapper;
             this.logger = logger;
             this.shell = shell;
@@ -81,9 +86,9 @@ namespace Xs.Cli.Dotnet.Projects
                 .ToHashSet();
 
             if (packageDeps.Any(e => e.Name == "Microsoft.NET.Test.Sdk"))
-                return new TestProject(name, file, projectDeps, packageDeps, mapper, shell, logger, targetFramework, outputType);
+                return new TestProject(name, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
 
-            return new LibraryProject(name, file, projectDeps, packageDeps, mapper, shell, logger, targetFramework, outputType);
+            return new LibraryProject(name, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
         }
     }
 }

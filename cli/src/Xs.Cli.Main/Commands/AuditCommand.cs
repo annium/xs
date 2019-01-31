@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
@@ -10,7 +9,7 @@ using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class AuditCommand : AsyncCommand<CwdCommandConfiguration>
+    internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "audit";
 
@@ -30,6 +29,7 @@ namespace Xs.Cli.Main.Commands
         }
 
         public override async Task HandleAsync(
+            AuditCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
@@ -39,24 +39,23 @@ namespace Xs.Cli.Main.Commands
                 .ToArray();
             logger.LogDebug($"Audit {projects.Length} projects.");
 
-            var results = await Task.WhenAll(projects.Select(async project =>
+            foreach (var project in projects)
             {
-                var errors = await project.AuditAsync(token);
-                return (project, errors);
-            }));
-
-            var sb = new StringBuilder();
-            foreach (var(project, errors) in results)
-            {
-                var errorsCount = errors.Count();
-                if (errorsCount > 0)
+                var results = project.Audit(cfg.Fix, token);
+                if (results.Length > 0)
                 {
-                    sb.AppendLine($"{project}: {errorsCount} error(s):");
-                    foreach (var error in errors)
-                        sb.AppendLine($" - {error}");
+                    Console.WriteLine($"{project}: {results.Length} result(s):");
+                    foreach (var result in results)
+                        Console.WriteLine($" - {result.Message} (" + (result.IsFixed ? "fixed" : "not fixed") + ")");
                 }
             }
-            Console.Write(sb.ToString());
         }
+    }
+
+    internal class AuditCommandConfiguration
+    {
+        [Option]
+        [Help("Fix errors, if possible.")]
+        public bool Fix { get; set; }
     }
 }

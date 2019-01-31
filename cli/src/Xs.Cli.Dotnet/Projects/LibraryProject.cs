@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -31,6 +32,8 @@ namespace Xs.Cli.Dotnet.Projects
 
         public OutputType OutputType { get; }
 
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
+
         protected readonly ILogger logger;
 
         private readonly ProjectMapper mapper;
@@ -42,11 +45,12 @@ namespace Xs.Cli.Dotnet.Projects
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
+            TargetFramework targetFramework,
+            OutputType outputType,
+            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
-            ILogger logger,
-            TargetFramework targetFramework,
-            OutputType outputType
+            ILogger logger
         ) : base(shell, logger)
         {
             this.Name = name;
@@ -55,66 +59,20 @@ namespace Xs.Cli.Dotnet.Projects
             this.PackageDependencies = packageDependencies;
             this.TargetFramework = targetFramework;
             this.OutputType = outputType;
+            this.auditRules = auditRules;
             this.mapper = mapper;
             this.shell = shell;
             this.logger = logger;
         }
 
-        public Task<IEnumerable<string>> AuditAsync(CancellationToken token)
+        public AuditResult[] Audit(bool fix, CancellationToken token)
         {
-            var allErrors = new List<string>();
+            var results = new List<AuditResult>();
 
-            allErrors.AddRange(FindUselessProjectDependencies());
-            allErrors.AddRange(FindUselessPackageDependencies());
+            foreach (var rule in auditRules)
+                results.AddRange(rule.Execute(this, fix));
 
-            return Task.FromResult<IEnumerable<string>>(allErrors);
-
-            IEnumerable<string> FindUselessProjectDependencies()
-            {
-                var errors = new List<string>();
-                foreach (var dependency in ProjectDependencies)
-                {
-                    var foundDependencies = FindProjectDependenciesDeep(this, p => p.ProjectDependencies.Contains(dependency));
-                    if (foundDependencies.Length > 0)
-                        errors.Add(
-                            $"Useless project {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
-                        );
-                }
-                return errors;
-            }
-
-            IEnumerable<string> FindUselessPackageDependencies()
-            {
-                var errors = new List<string>();
-                foreach (var dependency in PackageDependencies)
-                {
-                    var foundDependencies = FindProjectDependenciesDeep(this, p => p.PackageDependencies.Contains(dependency));
-                    if (foundDependencies.Length > 0)
-                        allErrors.Add(
-                            $"Useless package {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
-                        );
-                }
-                return errors;
-            }
-
-            IProject[] FindProjectDependenciesDeep(IProject project, Func<IProject, bool> isMatch)
-            {
-                if (project.ProjectDependencies.Count == 0)
-                    return Array.Empty<IProject>();
-
-                var matches = new List<IProject>();
-                foreach (var dependency in project.ProjectDependencies)
-                {
-                    if (isMatch(dependency))
-                        matches.Add(dependency);
-
-                    var nestedMatches = FindProjectDependenciesDeep(dependency, isMatch);
-                    if (nestedMatches.Length > 0)
-                        matches.AddRange(nestedMatches);
-                }
-
-                return matches.Distinct().ToArray();
-            }
+            return results.ToArray();
         }
 
         public Task ClearCacheAsync(CancellationToken token)

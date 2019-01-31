@@ -1,6 +1,7 @@
 using System;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Projects;
@@ -15,6 +16,9 @@ namespace Xs.Cli.Dotnet
             services.AddSingleton<ISpecialProjectFactory, ProjectFactory>();
             services.AddSingleton<ProjectMapper>();
             services.AddSingleton<ISpecialConfigurationManager, SpecialConfigurationManager>();
+
+            // audit rules
+            services.AddSingleton<IAuditRule<ISpecialProject>, FindUselessDependenciesRule<ISpecialProject>>();
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -17,21 +18,23 @@ namespace Xs.Cli.Dotnet.Projects
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
+            TargetFramework targetFramework,
+            OutputType outputType,
+            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
-            ILogger logger,
-            TargetFramework targetFramework,
-            OutputType outputType
+            ILogger logger
         ) : base(
             name,
             file,
             projectDependencies,
             packageDependencies,
+            targetFramework,
+            outputType,
+            auditRules,
             mapper,
             shell,
-            logger,
-            targetFramework,
-            outputType
+            logger
         ) { }
 
         public Task TestAsync(Env env, CancellationToken token)
