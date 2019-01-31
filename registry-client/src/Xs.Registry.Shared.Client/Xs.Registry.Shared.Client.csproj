@@ -7,8 +7,4 @@
     <ItemGroup>
         <ProjectReference Include="../Xs.Registry.Core.Client/Xs.Registry.Core.Client.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
-        <PackageReference Include="Annium.Extensions.Net.Http" Version="0.1.0" />
-    </ItemGroup>
 </Project>

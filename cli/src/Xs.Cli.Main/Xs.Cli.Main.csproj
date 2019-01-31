@@ -13,8 +13,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />
-        <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.Entrypoint" Version="0.1.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     </ItemGroup>
 </Project>
