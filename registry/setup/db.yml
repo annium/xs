@@ -1,13 +1,13 @@
 version: "3.4"
 services:
   db:
-    image: "mongo:latest"
+    image: "postgres:10-alpine"
     container_name: registry_db
     restart: always
     ports:
-      - "9911:27017"
+      - "9911:5432"
     volumes:
-      - "db:/data/db"
+      - "db:/var/lib/postgresql/data"
     env_file: ../run/db.env
 networks:
   default:
