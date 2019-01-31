@@ -15,6 +15,7 @@ namespace Xs.Cli.Main.Commands
 
             // commands
             Add<AddCommand>();
+            Add<AuditCommand>();
             Add<BuildCommand>();
             Add<CleanCommand>();
             Add<DeleteCommand>();

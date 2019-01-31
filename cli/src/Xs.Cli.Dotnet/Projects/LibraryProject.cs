@@ -13,7 +13,7 @@ using Xs.Core.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, ICachingProject, IInstallableProject, IBuildableProject, IPublishableProject
+    internal class LibraryProject : ProjectBase, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
         private static object cacheLocker = new object();
 
@@ -60,19 +60,61 @@ namespace Xs.Cli.Dotnet.Projects
             this.logger = logger;
         }
 
-        public Task CleanAsync(CancellationToken token)
+        public Task<IEnumerable<string>> AuditAsync(CancellationToken token)
         {
-            logger.LogInfo($"Start {Name} clean.");
+            var allErrors = new List<string>();
 
-            DeleteDirectory("bin");
-            DeleteDirectory("obj");
+            allErrors.AddRange(FindUselessProjectDependencies());
+            allErrors.AddRange(FindUselessPackageDependencies());
 
-            DeleteFiles("*.nupkg");
-            DeleteFiles("*.snupkg");
+            return Task.FromResult<IEnumerable<string>>(allErrors);
 
-            logger.LogInfo($"Finished {Name} clean.");
+            IEnumerable<string> FindUselessProjectDependencies()
+            {
+                var errors = new List<string>();
+                foreach (var dependency in ProjectDependencies)
+                {
+                    var foundDependencies = FindProjectDependenciesDeep(this, p => p.ProjectDependencies.Contains(dependency));
+                    if (foundDependencies.Length > 0)
+                        errors.Add(
+                            $"Useless project {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
+                        );
+                }
+                return errors;
+            }
 
-            return Task.CompletedTask;
+            IEnumerable<string> FindUselessPackageDependencies()
+            {
+                var errors = new List<string>();
+                foreach (var dependency in PackageDependencies)
+                {
+                    var foundDependencies = FindProjectDependenciesDeep(this, p => p.PackageDependencies.Contains(dependency));
+                    if (foundDependencies.Length > 0)
+                        allErrors.Add(
+                            $"Useless package {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
+                        );
+                }
+                return errors;
+            }
+
+            IProject[] FindProjectDependenciesDeep(IProject project, Func<IProject, bool> isMatch)
+            {
+                if (project.ProjectDependencies.Count == 0)
+                    return Array.Empty<IProject>();
+
+                var matches = new List<IProject>();
+                foreach (var dependency in project.ProjectDependencies)
+                {
+                    if (isMatch(dependency))
+                        matches.Add(dependency);
+
+                    var nestedMatches = FindProjectDependenciesDeep(dependency, isMatch);
+                    if (nestedMatches.Length > 0)
+                        matches.AddRange(nestedMatches);
+                }
+
+                return matches.Distinct().ToArray();
+            }
         }
 
         public Task ClearCacheAsync(CancellationToken token)
@@ -91,6 +133,21 @@ namespace Xs.Cli.Dotnet.Projects
             }
 
             logger.LogInfo($"Finished {Name} cache clean.");
+
+            return Task.CompletedTask;
+        }
+
+        public Task CleanAsync(CancellationToken token)
+        {
+            logger.LogInfo($"Start {Name} clean.");
+
+            DeleteDirectory("bin");
+            DeleteDirectory("obj");
+
+            DeleteFiles("*.nupkg");
+            DeleteFiles("*.snupkg");
+
+            logger.LogInfo($"Finished {Name} clean.");
 
             return Task.CompletedTask;
         }

@@ -39,7 +39,7 @@ namespace Xs.Cli.Main.Tasks
             var projects = new List<IProject>();
             var dependencies = new List<Dependency>();
 
-            logger.LogDebug("Start discovery.");
+            logger.LogDebug($"Start discovery of {root}");
 
             var previous = 0;
             List<Exception> exceptions;

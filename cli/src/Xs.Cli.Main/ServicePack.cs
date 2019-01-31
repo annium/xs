@@ -55,6 +55,7 @@ namespace Xs.Cli.Main
 
             // root
             services.AddSingleton<AddCommand>();
+            services.AddSingleton<AuditCommand>();
             services.AddSingleton<BuildCommand>();
             services.AddSingleton<CleanCommand>();
             services.AddSingleton<DeleteCommand>();
