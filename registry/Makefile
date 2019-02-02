@@ -1,14 +1,5 @@
-<<<<<<< HEAD
 db-up shared-up dotnet-up node-up:
 	$(call up,$(subst -up,,$@))
-=======
-db-up:
-	$(call up,db)
-db-down:
-	$(call down,db)
-db-log:
-	$(call log,db)
->>>>>>> registry: Exchange mongo in setup to postgres
 
 db-down shared-down dotnet-down node-down:
 	$(call down,$(subst -down,,$@))
