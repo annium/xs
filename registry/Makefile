@@ -1,30 +1,11 @@
-db-up:
-	$(call up,db db_tool)
-db-down:
-	$(call down,db db_tool)
-db-log:
-	$(call log,db)
+db-up shared-up dotnet-up node-up:
+	$(call up,$(subst -up,,$@))
 
-shared-up:
-	$(call up,shared)
-shared-down:
-	$(call down,shared)
-shared-log:
-	$(call log,shared)
+db-down shared-down dotnet-down node-down:
+	$(call down,$(subst -down,,$@))
 
-dotnet-up:
-	$(call up,dotnet)
-dotnet-down:
-	$(call down,dotnet)
-dotnet-log:	
-	$(call log,dotnet)
-
-node-up:
-	$(call up,node)
-node-down:
-	$(call down,node)
-node-log:
-	$(call log,node)
+db-log shared-log dotnet-log node-log:
+	$(call log,$(subst -log,,$@))
 
 
 define up
