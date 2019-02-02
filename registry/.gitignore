@@ -22,5 +22,5 @@ dist/
 /run
 
 # configuration
-configuration/*.override.json
+configuration/
 .env*.local
