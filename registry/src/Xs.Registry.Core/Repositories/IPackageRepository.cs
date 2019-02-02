@@ -5,7 +5,7 @@ namespace Xs.Registry.Core.Repositories
 {
     public interface IPackageRepository<TPackage> where TPackage : IPackage
     {
-        Task<TPackage[]> FindAllByMetadataIdAsync(string metadataId);
+        Task<TPackage[]> FindAllByMetaPackageIdAsync(string metaPackageId);
         
         Task<TPackage[]> FindAllByNameAsync(string name);
 

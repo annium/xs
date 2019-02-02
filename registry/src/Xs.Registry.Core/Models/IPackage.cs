@@ -6,7 +6,7 @@ namespace Xs.Registry.Core.Models
     {
         string Id { get; }
 
-        string MetadataId { get; }
+        string MetaPackageId { get; }
 
         string Name { get; }
 

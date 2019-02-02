@@ -20,9 +20,9 @@ namespace Xs.Registry.Dotnet.Controllers
     {
         private readonly Func<DateTime> getTime;
 
-        private readonly IMetadataManager metadataManager;
+        private readonly IMetaPackageManager metaPackageManager;
 
-        private readonly IMetadataRepository metadataRepository;
+        private readonly IMetaPackageRepository metaPackageRepository;
 
         private readonly IPackageRepository<Package> packageRepository;
 
@@ -30,15 +30,15 @@ namespace Xs.Registry.Dotnet.Controllers
 
         public PackagePublicationController(
             Func<DateTime> getTime,
-            IMetadataManager metadataManager,
-            IMetadataRepository metadataRepository,
+            IMetaPackageManager metaPackageManager,
+            IMetaPackageRepository metaPackageRepository,
             IPackageRepository<Package> packageRepository,
             IPackageStorage packageStorage
         )
         {
             this.getTime = getTime;
-            this.metadataManager = metadataManager;
-            this.metadataRepository = metadataRepository;
+            this.metaPackageManager = metaPackageManager;
+            this.metaPackageRepository = metaPackageRepository;
             this.packageRepository = packageRepository;
             this.packageStorage = packageStorage;
         }
@@ -66,17 +66,17 @@ namespace Xs.Registry.Dotnet.Controllers
                     var latest = await packageRepository.FindLatestByNameAsync(name);
                     var current = await packageRepository.FindByNameVersionAsync(name, version);
 
-                    // try load metadata; if exists - check permissions
-                    var metadata = latest == null ?
-                        metadataManager.Generate(user) :
-                        await metadataRepository.GetByIdAsync(latest.MetadataId);
+                    // try load metaPackage; if exists - check permissions
+                    var metaPackage = latest == null ?
+                        metaPackageManager.Generate(user) :
+                        await metaPackageRepository.GetByIdAsync(latest.MetaPackageId);
 
                     // check publish permissions, if latest package found
-                    if (latest != null && !metadataManager.CheckPermission(user, metadata, Permission.Publish))
+                    if (latest != null && !metaPackageManager.CheckPermission(user, metaPackage, Permission.Publish))
                         return Forbidden($"You need publish permission to publish package {name} {version}.");
 
                     // check republish permission if current package found - otherwise it's conflict
-                    if (current != null && !metadataManager.CheckPermission(user, metadata, Permission.Republish))
+                    if (current != null && !metaPackageManager.CheckPermission(user, metaPackage, Permission.Republish))
                         return Conflict($"Package {name} {version} already exists. You need republish permission to overwrite it.");
 
                     var executor = Executor.Staged();
@@ -109,10 +109,10 @@ namespace Xs.Registry.Dotnet.Controllers
                         () => packageRepository.DeleteByNameVersionAsync(name, version)
                     );
 
-                    // if no latest - save new metadata
+                    // if no latest - save new metaPackage
                     if (latest == null)
                         executor.Stage(
-                            () => metadataRepository.SaveAsync(metadata),
+                            () => metaPackageRepository.SaveAsync(metaPackage),
                             () => { }
                         );
 
@@ -152,10 +152,10 @@ namespace Xs.Registry.Dotnet.Controllers
 
             var user = GetUser();
 
-            // load metadata and check permissions
-            var metadataId = allExisting[0].MetadataId;
-            var metadata = await metadataRepository.GetByIdAsync(metadataId);
-            if (!metadataManager.CheckPermission(user, metadata, Permission.Unpublish))
+            // load metaPackage and check permissions
+            var metaPackageId = allExisting[0].MetaPackageId;
+            var metaPackage = await metaPackageRepository.GetByIdAsync(metaPackageId);
+            if (!metaPackageManager.CheckPermission(user, metaPackage, Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package.");
 
             var executor = Executor.Batch();
@@ -166,9 +166,9 @@ namespace Xs.Registry.Dotnet.Controllers
             // delete from db
             executor.With(() => packageRepository.DeleteByNameVersionAsync(name, version));
 
-            // if it was last package - delete metadata
+            // if it was last package - delete metaPackage
             if (allExisting.Length == 1)
-                executor.With(() => metadataRepository.DeleteByIdAsync(metadataId));
+                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackageId));
 
             await executor.RunAsync();
 

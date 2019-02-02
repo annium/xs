@@ -32,11 +32,11 @@ namespace Xs.Registry.Core
             services.AddSingleton<IMongoDatabase>(db);
 
             // db collections
-            services.AddSingleton(db.GetCollection<Repositories.Models.Metadata>("metadata"));
+            services.AddSingleton(db.GetCollection<Repositories.Models.MetaPackage>("metapackages"));
             services.AddSingleton(db.GetCollection<Repositories.Models.User>("users"));
 
             // repositories
-            services.AddSingleton<IMetadataRepository, MetadataRepository>();
+            services.AddSingleton<IMetaPackageRepository, MetaPackageRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
         }
 

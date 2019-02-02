@@ -8,7 +8,7 @@ namespace Xs.Registry.Node.Models
     {
         public string Id { get; }
 
-        public string MetadataId { get; set; }
+        public string MetaPackageId { get; set; }
 
         public string Name { get; }
 
@@ -57,7 +57,7 @@ namespace Xs.Registry.Node.Models
 
         internal Package(
             string id,
-            string metadataId,
+            string metaPackageId,
             PackageName name,
             string version,
             string description,
@@ -71,7 +71,7 @@ namespace Xs.Registry.Node.Models
         ) : this(name, version, description, main, dependencies, devDependencies, published, downloads, shasum, integrity)
         {
             Id = id;
-            MetadataId = metadataId;
+            MetaPackageId = metaPackageId;
         }
     }
 }

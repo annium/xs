@@ -12,7 +12,7 @@ namespace Xs.Registry.Node.Repositories.Models
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [BsonRepresentation(BsonType.ObjectId)]
-        public string MetadataId { get; set; }
+        public string MetaPackageId { get; set; }
 
         [BsonElement("name")]
         public string Name { get; set; }
@@ -54,7 +54,7 @@ namespace Xs.Registry.Node.Repositories.Models
 
             if (src.Id != null)
                 model.Id = src.Id;
-            model.MetadataId = src.MetadataId;
+            model.MetaPackageId = src.MetaPackageId;
             model.Name = src.Name.ToString();
             model.Version = src.Version;
             model.Description = src.Description;
@@ -76,7 +76,7 @@ namespace Xs.Registry.Node.Repositories.Models
 
             return new Node.Models.Package(
                 src.Id,
-                src.MetadataId,
+                src.MetaPackageId,
                 Node.Models.PackageName.Parse(src.Name),
                 src.Version,
                 src.Description,

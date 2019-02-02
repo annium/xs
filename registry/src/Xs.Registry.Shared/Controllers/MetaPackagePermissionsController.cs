@@ -11,20 +11,20 @@ using Xs.Registry.Core.Tools;
 
 namespace Xs.Registry.Shared.Controllers
 {
-    [Route("metadata")]
-    public class MetadataPermissionsController : ServerController
+    [Route("package")]
+    public class MetaPackagePermissionsController : ServerController
     {
-        private readonly IMetadataManager metadataManager;
+        private readonly IMetaPackageManager metaPackageManager;
 
-        private readonly IMetadataRepository metadataRepository;
+        private readonly IMetaPackageRepository metaPackageRepository;
 
-        public MetadataPermissionsController(
-            IMetadataManager metadataManager,
-            IMetadataRepository metadataRepository
+        public MetaPackagePermissionsController(
+            IMetaPackageManager metaPackageManager,
+            IMetaPackageRepository metaPackageRepository
         )
         {
-            this.metadataManager = metadataManager;
-            this.metadataRepository = metadataRepository;
+            this.metaPackageManager = metaPackageManager;
+            this.metaPackageRepository = metaPackageRepository;
         }
 
         [HttpGet("{id}/permissions")]
@@ -33,11 +33,11 @@ namespace Xs.Registry.Shared.Controllers
             string id
         )
         {
-            var(metadata, readResult) = await GetMetadataAsync(id);
+            var(metaPackage, readResult) = await GetMetaPackageAsync(id);
             if (readResult != null)
                 return readResult;
 
-            return Ok(metadata.Permissions);
+            return Ok(metaPackage.Permissions);
         }
 
         [HttpPost("{id}/permissions")]
@@ -49,30 +49,30 @@ namespace Xs.Registry.Shared.Controllers
             if (permissions == null)
                 return BadRequest("Pass permissions to set");
 
-            var(metadata, readResult) = await GetMetadataAsync(id);
+            var(metaPackage, readResult) = await GetMetaPackageAsync(id);
             if (readResult != null)
                 return readResult;
 
-            metadata = metadataManager.SetPermissions(metadata, permissions);
+            metaPackage = metaPackageManager.SetPermissions(metaPackage, permissions);
 
-            await metadataRepository.SaveAsync(metadata);
+            await metaPackageRepository.SaveAsync(metaPackage);
 
             return NoContent();
         }
 
-        private async Task<ValueTuple<Metadata, IActionResult>> GetMetadataAsync(string id)
+        private async Task<ValueTuple<MetaPackage, IActionResult>> GetMetaPackageAsync(string id)
         {
             var user = GetUser();
 
-            var metadata = await metadataRepository.GetByIdAsync(id);
-            if (metadata == null)
+            var metaPackage = await metaPackageRepository.GetByIdAsync(id);
+            if (metaPackage == null)
                 return (null, NotFound());
 
             // if not owner - forbidden
-            if (metadataManager.GetPermissionCategory(user, metadata) != PermissionCategory.Owner)
+            if (metaPackageManager.GetPermissionCategory(user, metaPackage) != PermissionCategory.Owner)
                 return (null, Forbidden("You need to be package owner to manage it's permissions."));
 
-            return (metadata, null);
+            return (metaPackage, null);
         }
     }
 }

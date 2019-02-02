@@ -12,18 +12,18 @@ namespace Xs.Registry.Core.Tools
     {
         private readonly IPackageRepository<TPackage> packageRepository;
 
-        private readonly IMetadataRepository metadataRepository;
+        private readonly IMetaPackageRepository metaPackageRepository;
 
         private readonly IUserRepository userRepository;
 
         public SearchManager(
             IPackageRepository<TPackage> packageRepository,
-            IMetadataRepository metadataRepository,
+            IMetaPackageRepository metaPackageRepository,
             IUserRepository userRepository
         )
         {
             this.packageRepository = packageRepository;
-            this.metadataRepository = metadataRepository;
+            this.metaPackageRepository = metaPackageRepository;
             this.userRepository = userRepository;
         }
 
@@ -35,12 +35,12 @@ namespace Xs.Registry.Core.Tools
                 return Array.Empty<PackagePreview>();
 
             var user = await userRepository.GetByIdAsync(ownerId);
-            var metadata = await metadataRepository.FindAllByOwnerIdAsync(user.Id);
+            var metaPackage = await metaPackageRepository.FindAllByOwnerIdAsync(user.Id);
 
             var result = new List<PackagePreview>();
-            foreach (var data in metadata)
+            foreach (var data in metaPackage)
             {
-                var package = packages.FirstOrDefault(p => p.MetadataId == data.Id);
+                var package = packages.FirstOrDefault(p => p.MetaPackageId == data.Id);
                 if (package != null)
                     result.Add(new PackagePreview(package, data, user));
             }
@@ -55,21 +55,21 @@ namespace Xs.Registry.Core.Tools
             if (packages.Length == 0)
                 return Array.Empty<PackagePreview>();
 
-            var metadataIds = packages.Select(p => p.MetadataId).Distinct().ToArray();
-            var metadata = await metadataRepository.GetByIdsAsync(metadataIds);
+            var metaPackageIds = packages.Select(p => p.MetaPackageId).Distinct().ToArray();
+            var metaPackage = await metaPackageRepository.GetByIdsAsync(metaPackageIds);
 
-            var userIds = metadata.Select(p => p.OwnerId).ToArray();
+            var userIds = metaPackage.Select(p => p.OwnerId).ToArray();
             var users = await userRepository.GetByIdsAsync(userIds);
 
             var result = new List<PackagePreview>();
             foreach (var package in packages)
             {
-                var data = metadata.FirstOrDefault(m => m.Id == package.MetadataId);
+                var data = metaPackage.FirstOrDefault(m => m.Id == package.MetaPackageId);
                 if (data == null)
-                    throw new Exception($"Metadata {package.MetadataId} referenced by package {package.Id} is missing");
+                    throw new Exception($"MetaPackage {package.MetaPackageId} referenced by package {package.Id} is missing");
                 var user = users.FirstOrDefault(u => u.Id == data.OwnerId);
                 if (user == null)
-                    throw new Exception($"User {data.OwnerId} referenced by metadata {data.Id} is missing");
+                    throw new Exception($"User {data.OwnerId} referenced by metaPackage {data.Id} is missing");
 
                 result.Add(new PackagePreview(package, data, user));
             }
@@ -97,15 +97,15 @@ namespace Xs.Registry.Core.Tools
 
         private async Task<PackagePreview> BuildPackagePreviewAsync(IPackage package)
         {
-            var metadata = await metadataRepository.GetByIdAsync(package.MetadataId);
-            if (metadata == null)
-                throw new Exception($"Metadata {package.MetadataId} referenced by package {package.Id} is missing");
+            var metaPackage = await metaPackageRepository.GetByIdAsync(package.MetaPackageId);
+            if (metaPackage == null)
+                throw new Exception($"MetaPackage {package.MetaPackageId} referenced by package {package.Id} is missing");
 
-            var user = await userRepository.GetByIdAsync(metadata.OwnerId);
+            var user = await userRepository.GetByIdAsync(metaPackage.OwnerId);
             if (user == null)
-                throw new Exception($"User {metadata.OwnerId} referenced by metadata {metadata.Id} is missing");
+                throw new Exception($"User {metaPackage.OwnerId} referenced by metaPackage {metaPackage.Id} is missing");
 
-            return new PackagePreview(package, metadata, user);
+            return new PackagePreview(package, metaPackage, user);
         }
     }
 }

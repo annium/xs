@@ -20,7 +20,7 @@ namespace Xs.Registry.Core.Models
 
         public IReadOnlyDictionary<PermissionCategory, Permission> Permissions { get; }
 
-        public PackagePreview(IPackage package, Metadata metadata, User owner)
+        public PackagePreview(IPackage package, MetaPackage metaPackage, User owner)
         {
             Name = package.Name;
             Version = package.Version;
@@ -28,7 +28,7 @@ namespace Xs.Registry.Core.Models
             Published = package.Published;
             Downloads = package.Downloads;
             Owner = owner.Name;
-            Permissions = metadata.Permissions;
+            Permissions = metaPackage.Permissions;
         }
     }
 }

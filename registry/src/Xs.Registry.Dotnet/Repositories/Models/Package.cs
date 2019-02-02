@@ -14,7 +14,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [BsonRepresentation(BsonType.ObjectId)]
-        public string MetadataId { get; set; }
+        public string MetaPackageId { get; set; }
 
         [BsonElement("name")]
         public string Name { get; set; }
@@ -44,7 +44,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
 
             if (src.Id != null)
                 model.Id = src.Id;
-            model.MetadataId = src.MetadataId;
+            model.MetaPackageId = src.MetaPackageId;
             model.Name = src.Name;
             model.Version = src.Version;
             model.Description = src.Description;
@@ -68,7 +68,7 @@ namespace Xs.Registry.Dotnet.Repositories.Models
 
             return new Dotnet.Models.Package(
                 src.Id,
-                src.MetadataId,
+                src.MetaPackageId,
                 src.Name,
                 NuGet.Versioning.NuGetVersion.Parse(src.Version),
                 src.Description,

@@ -3,7 +3,7 @@ using Xs.Core.Models;
 
 namespace Xs.Registry.Core.Models
 {
-    public class Metadata
+    public class MetaPackage
     {
         public string Id { get; }
 
@@ -11,7 +11,7 @@ namespace Xs.Registry.Core.Models
 
         public IReadOnlyDictionary<PermissionCategory, Permission> Permissions { get; }
 
-        internal Metadata(
+        internal MetaPackage(
             string ownerId,
             IReadOnlyDictionary<PermissionCategory, Permission> permissions
         )
@@ -20,7 +20,7 @@ namespace Xs.Registry.Core.Models
             this.Permissions = permissions;
         }
 
-        internal Metadata(
+        internal MetaPackage(
             string id,
             string ownerId,
             IReadOnlyDictionary<PermissionCategory, Permission> permissions

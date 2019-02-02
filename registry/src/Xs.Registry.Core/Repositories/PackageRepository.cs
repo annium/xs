@@ -32,8 +32,8 @@ namespace Xs.Registry.Core.Repositories
             this.getTime = getTime;
         }
 
-        public Task<TPackage[]> FindAllByMetadataIdAsync(string metadataId) =>
-            FindAllByPredicateAsync(e => e.MetadataId == metadataId);
+        public Task<TPackage[]> FindAllByMetaPackageIdAsync(string metaPackageId) =>
+            FindAllByPredicateAsync(e => e.MetaPackageId == metaPackageId);
 
         public Task<TPackage[]> FindAllByNameAsync(string name)
         {
