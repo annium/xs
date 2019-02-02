@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Helpers;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 using Xs.Registry.Dotnet.Models;
 using Xs.Registry.Dotnet.Views;
 

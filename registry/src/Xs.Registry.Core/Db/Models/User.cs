@@ -4,7 +4,7 @@ using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Xs.Registry.Core.Repositories.Models
+namespace Xs.Registry.Core.Db.Models
 {
     internal class User
     {

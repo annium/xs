@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Xs.Registry.Core.Helpers;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 
 namespace Xs.Registry.Core.Auth
 {

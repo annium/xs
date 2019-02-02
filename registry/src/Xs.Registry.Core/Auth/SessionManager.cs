@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Models;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 
 namespace Xs.Registry.Core.Auth
 {

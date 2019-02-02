@@ -6,7 +6,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using Xs.Core.Helpers;
 using Xs.Registry.Core.Models;
 
-namespace Xs.Registry.Dotnet.Repositories.Models
+namespace Xs.Registry.Dotnet.Db.Models
 {
     internal class Package : IPackage
     {

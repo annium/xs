@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xs.Registry.Core.Models;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 
 namespace Xs.Registry.Core.Tools
 {

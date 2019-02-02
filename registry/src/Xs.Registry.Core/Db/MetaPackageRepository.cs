@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Xs.Registry.Core.Models;
 
-namespace Xs.Registry.Core.Repositories
+namespace Xs.Registry.Core.Db
 {
     internal class MetaPackageRepository : IMetaPackageRepository
     {

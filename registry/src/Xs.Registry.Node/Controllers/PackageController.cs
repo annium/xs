@@ -8,7 +8,7 @@ using Xs.Core.Models;
 using Xs.Execution;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 using Xs.Registry.Core.Tools;
 using Xs.Registry.Node.Models;
 using Xs.Registry.Node.Payloads;

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Xs.Registry.Core.Models;
 
-namespace Xs.Registry.Core.Repositories
+namespace Xs.Registry.Core.Db
 {
     public interface IUserRepository
     {

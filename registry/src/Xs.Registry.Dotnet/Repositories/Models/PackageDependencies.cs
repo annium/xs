@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
 
-namespace Xs.Registry.Dotnet.Repositories.Models
+namespace Xs.Registry.Dotnet.Db.Models
 {
     internal class PackageDependencies
     {

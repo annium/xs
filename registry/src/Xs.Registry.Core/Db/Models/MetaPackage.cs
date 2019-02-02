@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
 using Xs.Core.Models;
 
-namespace Xs.Registry.Core.Repositories.Models
+namespace Xs.Registry.Core.Db.Models
 {
     internal class MetaPackage
     {

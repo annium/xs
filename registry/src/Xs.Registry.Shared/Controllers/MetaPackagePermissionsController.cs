@@ -6,7 +6,7 @@ using Xs.Core.Models;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;
 using Xs.Registry.Core.Models;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 using Xs.Registry.Core.Tools;
 
 namespace Xs.Registry.Shared.Controllers

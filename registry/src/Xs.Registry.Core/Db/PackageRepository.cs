@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Xs.Registry.Core.Models;
 
-namespace Xs.Registry.Core.Repositories
+namespace Xs.Registry.Core.Db
 {
     public class PackageRepository<TPackage, TPackageModel> : IPackageRepository<TPackage>
         where TPackage : IPackage

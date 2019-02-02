@@ -5,7 +5,7 @@ using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Xs.Registry.Core;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 using Xs.Registry.Node.Models;
 
 namespace Xs.Registry.Node
@@ -36,19 +36,19 @@ namespace Xs.Registry.Node
                 provider.GetRequiredService<Core.Configuration>().Database,
                 provider.GetRequiredService<Node.Configuration>().Database
             );
-            services.AddSingleton(db.GetCollection<Repositories.Models.Package>("packages"));
+            services.AddSingleton(db.GetCollection<Db.Models.Package>("packages"));
 
             // repositories
-            services.AddSingleton<IPackageRepository<Package>, PackageRepository<Package, Repositories.Models.Package>>();
+            services.AddSingleton<IPackageRepository<Package>, PackageRepository<Package, Db.Models.Package>>();
         }
 
         public override void Setup(IServiceProvider provider)
         {
-            provider.GetRequiredService<IMongoCollection<Repositories.Models.Package>>().Indexes.CreateOne(
-                new CreateIndexModel<Repositories.Models.Package>(
-                    Builders<Repositories.Models.Package>.IndexKeys
-                    .Ascending(nameof(Repositories.Models.Package.Name))
-                    .Ascending(nameof(Repositories.Models.Package.Version))
+            provider.GetRequiredService<IMongoCollection<Db.Models.Package>>().Indexes.CreateOne(
+                new CreateIndexModel<Db.Models.Package>(
+                    Builders<Db.Models.Package>.IndexKeys
+                    .Ascending(nameof(Db.Models.Package.Name))
+                    .Ascending(nameof(Db.Models.Package.Version))
                 )
             );
         }

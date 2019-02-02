@@ -4,7 +4,7 @@ using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using Xs.Registry.Core.Repositories;
+using Xs.Registry.Core.Db;
 
 namespace Xs.Registry.Core
 {
@@ -32,8 +32,8 @@ namespace Xs.Registry.Core
             services.AddSingleton<IMongoDatabase>(db);
 
             // db collections
-            services.AddSingleton(db.GetCollection<Repositories.Models.MetaPackage>("metapackages"));
-            services.AddSingleton(db.GetCollection<Repositories.Models.User>("users"));
+            services.AddSingleton(db.GetCollection<Db.Models.MetaPackage>("metapackages"));
+            services.AddSingleton(db.GetCollection<Db.Models.User>("users"));
 
             // repositories
             services.AddSingleton<IMetaPackageRepository, MetaPackageRepository>();
@@ -42,16 +42,16 @@ namespace Xs.Registry.Core
 
         public override void Setup(IServiceProvider provider)
         {
-            provider.GetRequiredService<IMongoCollection<Repositories.Models.User>>().Indexes.CreateOne(
-                new CreateIndexModel<Repositories.Models.User>(
-                    Builders<Repositories.Models.User>.IndexKeys
-                    .Ascending(nameof(Repositories.Models.User.Name))
+            provider.GetRequiredService<IMongoCollection<Db.Models.User>>().Indexes.CreateOne(
+                new CreateIndexModel<Db.Models.User>(
+                    Builders<Db.Models.User>.IndexKeys
+                    .Ascending(nameof(Db.Models.User.Name))
                 )
             );
-            provider.GetRequiredService<IMongoCollection<Repositories.Models.User>>().Indexes.CreateOne(
-                new CreateIndexModel<Repositories.Models.User>(
-                    Builders<Repositories.Models.User>.IndexKeys
-                    .Ascending(nameof(Repositories.Models.User.ApiToken))
+            provider.GetRequiredService<IMongoCollection<Db.Models.User>>().Indexes.CreateOne(
+                new CreateIndexModel<Db.Models.User>(
+                    Builders<Db.Models.User>.IndexKeys
+                    .Ascending(nameof(Db.Models.User.ApiToken))
                 )
             );
         }
