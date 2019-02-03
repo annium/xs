@@ -1,77 +1,84 @@
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using MongoDB.Driver;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Xs.Registry.Core.Models;
+using Z.EntityFramework.Plus;
 
 namespace Xs.Registry.Core.Db
 {
     internal class UserRepository : IUserRepository
     {
-        private readonly IMongoCollection<Models.User> collection;
+        private readonly CoreDbContext context;
+
+        private readonly IMapper mapper;
 
         public UserRepository(
-            IMongoCollection<Models.User> collection
+            CoreDbContext context,
+            IMapper mapper
         )
         {
-            this.collection = collection;
+            this.context = context;
+            this.mapper = mapper;
         }
 
-        public async Task<User[]> GetByIdsAsync(string[] ids)
+        public async Task CreateAsync(User user)
         {
-            var result = await collection
-                .Find(e => ids.Any(id => e.Id == id))
-                .ToListAsync();
-
-            return result.Select(e => (User) e).ToArray();
+            var entity = mapper.Map<Models.User>(user);
+            context.Users.Add(entity);
+            await context.SaveChangesAsync();
         }
 
-        public async Task<User> GetByIdAsync(string id)
+        public async Task<User> GetById(Guid id)
         {
-            var m = await collection
-                .Find(e => e.Id == id)
+            var user = await context.Users
+                .AsNoTracking()
+                .Where(u => u.Id == id)
                 .FirstOrDefaultAsync();
 
-            return (User) m;
+            return mapper.Map<User>(user);
         }
 
-        public Task<User> FindByNameAsync(string name) =>
-            FindByPredicateAsync(u => u.Name == name);
-
-        public Task<User> FindByApiTokenAsync(Guid token) =>
-            FindByPredicateAsync(u => u.ApiToken == token);
-
-        public Task<User> FindBySessionTokenAsync(Guid token) =>
-            FindByPredicateAsync(u => u.Sessions.Any(s => s.Token == token));
-
-        public async Task SaveAsync(User user)
+        public async Task<User> FindByNameAsync(string name)
         {
-            var m = (Models.User) user;
+            var user = await context.Users
+                .AsNoTracking()
+                .Where(u => u.Name == name)
+                .FirstOrDefaultAsync();
 
-            await collection.FindOneAndUpdateAsync(
-                Builders<Models.User>.Filter.And(
-                    Builders<Models.User>.Filter.Eq(e => e.Id, m.Id)
-                ),
-                Builders<Models.User>.Update
-                .Set(u => u.Name, m.Name)
-                .Set(u => u.PasswordHash, m.PasswordHash)
-                .Set(u => u.ApiToken, m.ApiToken)
-                .Set(u => u.Sessions, m.Sessions),
-                new FindOneAndUpdateOptions<Models.User, Models.User>() { IsUpsert = true }
-            );
+            return mapper.Map<User>(user);
+        }
+
+        public async Task<User> FindByApiTokenAsync(Guid token)
+        {
+            var user = await context.Users
+                .AsNoTracking()
+                .Where(u => u.ApiToken == token)
+                .FirstOrDefaultAsync();
+
+            return mapper.Map<User>(user);
+        }
+
+        public async Task UpdateAsync(User user)
+        {
+            var entity = mapper.Map<Models.User>(user);
+            await context.Users
+                .Where(u => u.Id == entity.Id)
+                .UpdateAsync(u => new Models.User { Name = entity.Name, PasswordHash = entity.PasswordHash });
+        }
+
+        public async Task UpdateApiTokenAsync(Guid userId, Guid apiToken)
+        {
+            await context.Users
+                .Where(u => u.Id == userId)
+                .UpdateAsync(u => new Models.User { ApiToken = apiToken });
         }
 
         public async Task DeleteByNameAsync(string name)
         {
-            await collection.DeleteOneAsync(e => e.Name == name);
-        }
-
-        private async Task<User> FindByPredicateAsync(Expression<Func<Models.User, bool>> predicate)
-        {
-            var result = await collection.Find(predicate).FirstOrDefaultAsync();
-
-            return (User) result;
+            await context.Users.Where(u => u.Name == name).DeleteAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

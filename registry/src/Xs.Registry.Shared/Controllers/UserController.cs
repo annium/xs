@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Xs.Registry.Core.Auth;
+using Xs.Registry.Core.Db;
 using Xs.Registry.Core.Helpers;
 using Xs.Registry.Core.Models;
-using Xs.Registry.Core.Db;
 using Xs.Registry.Core.Security;
 using Xs.Registry.Shared.Payloads;
 
@@ -50,7 +50,7 @@ namespace Xs.Registry.Shared.Controllers
 
             var user = new User(name, passwordHash, apiToken);
 
-            await userRepository.SaveAsync(user);
+            await userRepository.CreateAsync(user);
 
             return Ok(apiToken);
         }
@@ -71,7 +71,7 @@ namespace Xs.Registry.Shared.Controllers
             user.PasswordHash = securityManager.Hash(updateModel.Password);
             user.ApiToken = Guid.NewGuid();
 
-            await userRepository.SaveAsync(user);
+            await userRepository.UpdateAsync(user);
 
             return Ok(user.ApiToken);
         }
@@ -81,11 +81,12 @@ namespace Xs.Registry.Shared.Controllers
         public async Task<IActionResult> UpdateUserApiTokenAsync()
         {
             var user = GetUser();
-            user.ApiToken = Guid.NewGuid();
 
-            await userRepository.SaveAsync(user);
+            var apiToken = Guid.NewGuid();
 
-            return Ok(user.ApiToken);
+            await userRepository.UpdateApiTokenAsync(user.Id, apiToken);
+
+            return Ok(apiToken);
         }
 
         [HttpDelete]

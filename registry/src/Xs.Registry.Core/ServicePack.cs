@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
+using AutoMapper;
+using AutoMapper.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Xs.Registry.Core.Db;
+using Z.EntityFramework.Plus;
 
 namespace Xs.Registry.Core
 {
@@ -28,35 +33,48 @@ namespace Xs.Registry.Core
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             // db
-            var db = GetDatabase(provider.GetRequiredService<Configuration>().Database);
-            services.AddSingleton<IMongoDatabase>(db);
-
-            // db collections
-            services.AddSingleton(db.GetCollection<Db.Models.MetaPackage>("metapackages"));
-            services.AddSingleton(db.GetCollection<Db.Models.User>("users"));
+            RegisterDb(services, provider);
 
             // repositories
-            services.AddSingleton<IMetaPackageRepository, MetaPackageRepository>();
+            // services.AddSingleton<IMetaPackageRepository, MetaPackageRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IUserSessionRepository, UserSessionRepository>();
+
+            // mapping
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                foreach (var profile in provider.GetRequiredService<IEnumerable<MapperConfigurationExpression>>())
+                    cfg.AddProfile(profile);
+            });
+            mapperConfiguration.AssertConfigurationIsValid();
+            services.Replace(new ServiceDescriptor(typeof(IMapper), mapperConfiguration.CreateMapper()));
         }
 
-        public override void Setup(IServiceProvider provider)
+        private void RegisterDb(IServiceCollection services, IServiceProvider provider)
         {
-            provider.GetRequiredService<IMongoCollection<Db.Models.User>>().Indexes.CreateOne(
-                new CreateIndexModel<Db.Models.User>(
-                    Builders<Db.Models.User>.IndexKeys
-                    .Ascending(nameof(Db.Models.User.Name))
-                )
-            );
-            provider.GetRequiredService<IMongoCollection<Db.Models.User>>().Indexes.CreateOne(
-                new CreateIndexModel<Db.Models.User>(
-                    Builders<Db.Models.User>.IndexKeys
-                    .Ascending(nameof(Db.Models.User.ApiToken))
-                )
-            );
+            var cfg = provider.GetRequiredService<Configuration>().Database;
+            services
+                .AddEntityFrameworkNpgsql()
+                .AddDbContext<CoreDbContext>(builder =>
+                {
+                    builder.UseNpgsql(string.Join(';', new string[]
+                    {
+                        $"Host={cfg.Host}",
+                        $"Port={cfg.Port}",
+                        $"Database={cfg.Name}",
+                        $"Username={cfg.User}",
+                        $"Password={cfg.Password}",
+                    }), options => options.UseNodaTime());
+                    builder.EnableSensitiveDataLogging();
+                });
+            if (cfg.LogQueries)
+            {
+                Action<System.Data.Common.DbCommand> executing = command => Console.WriteLine(
+                    $"{command.CommandType} batch command executing: {command.CommandText}"
+                );
+                BatchDeleteManager.BatchDeleteBuilder = builder => builder.Executing = executing;
+                BatchUpdateManager.BatchUpdateBuilder = builder => builder.Executing = executing;
+            }
         }
-
-        private IMongoDatabase GetDatabase(DatabaseConfiguration shared) =>
-            DatabaseAccessor.GetDatabase(shared.Host, shared.Port, shared.Name, shared.User, shared.Pass, shared.LogQueries);
     }
 }

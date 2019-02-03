@@ -6,7 +6,6 @@ namespace Xs.Registry.Shared
     {
         public ServicePack()
         {
-            Add<Core.BaseServicePack>();
             Add<Core.ServicePack>();
             Add<BaseServicePack>();
         }

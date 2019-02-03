@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Core.Auth
 {
@@ -9,8 +8,10 @@ namespace Xs.Registry.Core.Auth
     {
         ValueTuple<Guid, IActionResult> GetToken();
 
-        Task SaveSession(User user, Guid token);
+        Task CreateSession(Guid userId);
 
-        Task DeleteSession(User user);
+        Task RefreshSession(Guid token);
+
+        Task DeleteCurrentSession();
     }
 }

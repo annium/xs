@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Xs.Registry.Core.Auth;
+using Xs.Registry.Core.Db;
 using Xs.Registry.Core.Helpers;
 using Xs.Registry.Core.Models;
-using Xs.Registry.Core.Db;
 using Xs.Registry.Core.Security;
 using Xs.Registry.Shared.Payloads;
 
@@ -42,7 +42,7 @@ namespace Xs.Registry.Shared.Controllers
             if (result != null)
                 return result;
 
-            await sessionManager.SaveSession(user, Guid.NewGuid());
+            await sessionManager.CreateSession(user.Id);
 
             return NoContent();
         }
@@ -60,9 +60,7 @@ namespace Xs.Registry.Shared.Controllers
         [Authorize(Access.Session)]
         public async Task<IActionResult> LogoutAsync()
         {
-            var user = GetUser();
-
-            await sessionManager.DeleteSession(user);
+            await sessionManager.DeleteCurrentSession();
 
             return NoContent();
         }

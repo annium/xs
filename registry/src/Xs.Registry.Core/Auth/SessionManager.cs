@@ -3,8 +3,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Core.Models;
+using NodaTime;
 using Xs.Registry.Core.Db;
+using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Core.Auth
 {
@@ -12,21 +13,21 @@ namespace Xs.Registry.Core.Auth
     {
         private const string AuthCookieName = "AccessToken";
 
-        private readonly Func<DateTime> getTime;
+        private readonly Func<Instant> getInstant;
 
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        private readonly IUserRepository userRepository;
+        private readonly IUserSessionRepository userSessionRepository;
 
         public SessionManager(
-            Func<DateTime> getTime,
+            Func<Instant> getInstant,
             IHttpContextAccessor httpContextAccessor,
-            IUserRepository userRepository
+            IUserSessionRepository userSessionRepository
         )
         {
-            this.getTime = getTime;
+            this.getInstant = getInstant;
             this.httpContextAccessor = httpContextAccessor;
-            this.userRepository = userRepository;
+            this.userSessionRepository = userSessionRepository;
         }
 
         public(Guid, IActionResult) GetToken()
@@ -44,18 +45,45 @@ namespace Xs.Registry.Core.Auth
                 (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
         }
 
-        public async Task SaveSession(User user, Guid token)
+        public async Task CreateSession(Guid userId)
         {
-            var now = getTime();
-            var expires = now + TimeSpan.FromDays(1);
+            // cleanup sessions
+            var now = getInstant();
+            await userSessionRepository.DeleteExpiredAsync(now);
 
-            // renew sessions
-            user.Sessions.RemoveAll(s => s.Token == token || s.Expires < now);
-            user.Sessions.Add(new UserSession(token, expires));
-
-            await userRepository.SaveAsync(user);
+            // create new one
+            var token = Guid.NewGuid();
+            var expires = now + Duration.FromDays(1);
+            await userSessionRepository.CreateAsync(new UserSession(token, userId, expires));
 
             // set cookie
+            SetCookie(token, expires);
+        }
+
+        public async Task RefreshSession(Guid token)
+        {
+            var expires = getInstant() + Duration.FromDays(1);
+
+            // prolongate session
+            await userSessionRepository.ProlongateAsync(token, expires);
+
+            // set cookie
+            SetCookie(token, expires);
+        }
+
+        public async Task DeleteCurrentSession()
+        {
+            var(token, _) = GetToken();
+
+            // cleanup sessions
+            await userSessionRepository.DeleteByTokenAsync(token);
+
+            // delete cookie
+            httpContextAccessor.HttpContext.Response.Cookies.Delete(AuthCookieName);
+        }
+
+        private void SetCookie(Guid token, Instant expires)
+        {
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 AuthCookieName,
                 token.ToString(),
@@ -63,24 +91,12 @@ namespace Xs.Registry.Core.Auth
                 {
                     Domain = httpContextAccessor.HttpContext.Request.Host.Host,
                         Path = "/",
-                        Expires = expires,
+                        Expires = expires.ToDateTimeOffset(),
                         Secure = false,
                         SameSite = SameSiteMode.None,
                         HttpOnly = true,
                 }
             );
-        }
-
-        public async Task DeleteSession(User user)
-        {
-            var(token, _) = GetToken();
-            var now = getTime();
-            user.Sessions.RemoveAll(s => s.Token == token || s.Expires < now);
-
-            await userRepository.SaveAsync(user);
-
-            // delete cookie
-            httpContextAccessor.HttpContext.Response.Cookies.Delete(AuthCookieName);
         }
     }
 }

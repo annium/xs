@@ -1,31 +1,35 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Xs.Registry.Core.Helpers;
+using NodaTime;
 using Xs.Registry.Core.Db;
+using Xs.Registry.Core.Helpers;
 
 namespace Xs.Registry.Core.Auth
 {
     internal class SessionAuthorizationFilter : IAsyncAuthorizationFilter
     {
-        private readonly Func<DateTime> getTime;
+        private readonly Func<Instant> getInstant;
 
         private readonly ISessionManager sessionManager;
 
         private readonly IUserRepository userRepository;
 
+        private readonly IUserSessionRepository userSessionRepository;
+
         public SessionAuthorizationFilter(
-            Func<DateTime> getTime,
+            Func<Instant> getInstant,
             ISessionManager sessionManager,
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            IUserSessionRepository userSessionRepository
         )
         {
-            this.getTime = getTime;
+            this.getInstant = getInstant;
             this.sessionManager = sessionManager;
             this.userRepository = userRepository;
+            this.userSessionRepository = userSessionRepository;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -42,21 +46,20 @@ namespace Xs.Registry.Core.Auth
             if (result != null)
                 return result;
 
-            // try to find user
-            var user = await userRepository.FindBySessionTokenAsync(token);
-            if (user == null)
-                return GetForbiddenResult("No user found with this token.");
-
-            var userSession = user.Sessions.First(s => s.Token == token);
+            // try to find user session
+            var session = await userSessionRepository.FindByTokenAsync(token);
+            if (session == null)
+                return GetForbiddenResult("No session found with this token.");
 
             // if token expired - failure
-            if (userSession.Expires < getTime())
+            if (session.Expires < getInstant())
                 return GetForbiddenResult("Authorization expired. Please login again");
 
-            // save session to get it prolongated
-            await sessionManager.SaveSession(user, userSession.Token);
+            // refresh session
+            await sessionManager.RefreshSession(session.Token);
 
             // save user
+            var user = await userRepository.GetById(session.UserId);
             context.ActionDescriptor.Properties[ServerController.UserProperty] = user;
 
             return null;

@@ -6,17 +6,17 @@ namespace Xs.Registry.Core.Db
 {
     public interface IUserRepository
     {
-        Task<User[]> GetByIdsAsync(string[] ids);
+        Task CreateAsync(User user);
 
-        Task<User> GetByIdAsync(string id);
+        Task<User> GetById(Guid id);
 
         Task<User> FindByNameAsync(string name);
 
         Task<User> FindByApiTokenAsync(Guid token);
 
-        Task<User> FindBySessionTokenAsync(Guid token);
+        Task UpdateAsync(User user);
 
-        Task SaveAsync(User user);
+        Task UpdateApiTokenAsync(Guid userId, Guid apiToken);
 
         Task DeleteByNameAsync(string name);
     }
