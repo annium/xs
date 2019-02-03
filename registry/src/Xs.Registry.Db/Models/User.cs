@@ -1,20 +1,21 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NodaTime;
 
-namespace Xs.Registry.Core.Db.Models
+namespace Xs.Registry.Db.Models
 {
-    internal class UserSession
+    public class User
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Required]
-        public Guid Token { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
-        public Guid UserId { get; set; }
+        public string Name { get; set; }
 
         [Required]
-        public Instant Expires { get; set; }
+        public string PasswordHash { get; set; }
+
+        [Required]
+        public Guid ApiToken { get; set; }
     }
 }

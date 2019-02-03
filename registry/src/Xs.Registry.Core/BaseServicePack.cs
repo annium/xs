@@ -48,7 +48,7 @@ namespace Xs.Registry.Core
             services.AddSingleton<IStorageFactory, FileStorageFactory>();
 
             // tools
-            // services.AddSingleton<IMetaPackageManager, MetaPackageManager>();
+            services.AddSingleton<IMetaPackageManager, MetaPackageManager>();
             services.AddSingleton<IRegistryConnectorFactory, RegistryConnectorFactory>();
             services.AddSingleton<IRegistryManager, RegistryManager>();
         }

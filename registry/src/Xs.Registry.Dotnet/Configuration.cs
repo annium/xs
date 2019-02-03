@@ -7,15 +7,8 @@ namespace Xs.Registry.Dotnet
     {
         public readonly string PackagesFolder = Path.Combine("data", Constants.ProjectType.ToString(), "packages");
 
-        public DatabaseConfiguration Database { get; set; }
-
         public Uri Location { get; set; }
 
         public Uri SharedLocation { get; set; }
-    }
-
-    public class DatabaseConfiguration
-    {
-        public string Name { get; set; }
     }
 }

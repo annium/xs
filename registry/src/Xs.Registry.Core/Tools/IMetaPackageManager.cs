@@ -6,15 +6,14 @@ namespace Xs.Registry.Core.Tools
 {
     public interface IMetaPackageManager
     {
-        PermissionCategory GetPermissionCategory(User user, MetaPackage metaPackage);
+        MetaPackage Generate(User user, ProjectType type, IPackageBase package);
 
-        MetaPackage Generate(User user);
+        PermissionCategory GetPermissionCategory(User user, MetaPackage metaPackage);
 
         bool CheckPermission(User user, MetaPackage metaPackage, Permission permission);
 
-        MetaPackage SetPermissions(
-            MetaPackage metaPackage,
-            IReadOnlyDictionary<PermissionCategory, Permission> permissions
-        );
+        void Update(MetaPackage metaPackage, IPackageBase package);
+
+        void SetPermissions(MetaPackage metaPackage, IEnumerable<MetaPackagePermission> permissions);
     }
 }

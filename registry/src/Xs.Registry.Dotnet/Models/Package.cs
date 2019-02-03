@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
-using NuGet.Frameworks;
-using NuGet.Versioning;
+using NodaTime;
 using Xs.Registry.Core.Models;
 
 namespace Xs.Registry.Dotnet.Models
 {
-    public class Package : IPackage
+    internal class Package : IPackage
     {
-        public string Id { get; }
+        public Guid Id { get; } = Guid.NewGuid();
 
-        public string MetaPackageId { get; set; }
+        public Guid MetaPackageId { get; }
+
+        public MetaPackage MetaPackage { get; }
 
         public string Name { get; }
 
@@ -18,42 +19,46 @@ namespace Xs.Registry.Dotnet.Models
 
         public string Description { get; }
 
-        public IReadOnlyDictionary<NuGetFramework, IReadOnlyDictionary<string, VersionRange>> Dependencies { get; }
+        public Instant Published { get; }
 
-        public DateTime Published { get; }
+        public uint Downloads { get; }
 
-        public uint Downloads { get; set; }
+        public IEnumerable<PackageDependency> Dependencies { get; }
 
         internal Package(
+            Guid metaPackageId,
+            MetaPackage metaPackage,
             string name,
-            NuGetVersion version,
+            string version,
             string description,
-            IReadOnlyDictionary<NuGetFramework, IReadOnlyDictionary<string, VersionRange>> dependencies,
-            DateTime published,
-            uint downloads
+            Instant published,
+            uint downloads,
+            IEnumerable<PackageDependency> dependencies
         )
         {
+            MetaPackageId = metaPackageId;
+            MetaPackage = metaPackage;
             Name = name;
-            Version = version.ToString();
+            Version = version;
             Description = description;
-            Dependencies = dependencies;
             Published = published;
             Downloads = downloads;
+            Dependencies = dependencies;
         }
 
         internal Package(
-            string id,
-            string metaPackageId,
+            Guid id,
+            Guid metaPackageId,
+            MetaPackage metaPackage,
             string name,
-            NuGetVersion version,
+            string version,
             string description,
-            IReadOnlyDictionary<NuGetFramework, IReadOnlyDictionary<string, VersionRange>> dependencies,
-            DateTime published,
-            uint downloads
-        ) : this(name, version, description, dependencies, published, downloads)
+            Instant published,
+            uint downloads,
+            IEnumerable<PackageDependency> dependencies
+        ) : this(metaPackageId, metaPackage, name, version, description, published, downloads, dependencies)
         {
             Id = id;
-            MetaPackageId = metaPackageId;
         }
     }
 }

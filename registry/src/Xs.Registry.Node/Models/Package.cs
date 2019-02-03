@@ -22,7 +22,7 @@ namespace Xs.Registry.Node.Models
 
         public IReadOnlyDictionary<string, string> DevDependencies { get; }
 
-        public DateTime Published { get; }
+        public Instant Published { get; }
 
         public uint Downloads { get; set; }
 
@@ -37,7 +37,7 @@ namespace Xs.Registry.Node.Models
             string main,
             IReadOnlyDictionary<string, string> dependencies,
             IReadOnlyDictionary<string, string> devDependencies,
-            DateTime published,
+            Instant published,
             uint downloads,
             string shasum,
             string integrity
@@ -64,7 +64,7 @@ namespace Xs.Registry.Node.Models
             string main,
             IReadOnlyDictionary<string, string> dependencies,
             IReadOnlyDictionary<string, string> devDependencies,
-            DateTime published,
+            Instant published,
             uint downloads,
             string shasum,
             string integrity

@@ -4,7 +4,7 @@ namespace Xs.Registry.Core.Models
 {
     public class User
     {
-        public Guid Id { get; }
+        public Guid Id { get; } = Guid.NewGuid();
 
         public string Name { get; set; }
 

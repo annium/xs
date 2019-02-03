@@ -34,7 +34,7 @@ namespace Xs.Registry.Node.Db.Models
 
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         [BsonElement("published")]
-        public DateTime Published { get; set; }
+        public Instant Published { get; set; }
 
         [BsonElement("downloads")]
         public uint Downloads { get; set; }

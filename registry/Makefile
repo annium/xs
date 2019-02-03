@@ -7,8 +7,8 @@ db-down shared-down dotnet-down node-down:
 db-log shared-log dotnet-log node-log:
 	$(call log,$(subst -log,,$@))
 
-shared-migrations-add shared-migrations-list shared-migrations-remove shared-db-drop shared-db-update:
-	tools/ef-$(subst shared-,,$@).sh Shared Core Core
+migrations-add migrations-list migrations-remove db-drop db-update:
+	tools/ef-$@.sh Shared Db Context
 
 
 define up

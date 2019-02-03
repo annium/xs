@@ -2,11 +2,9 @@ using System;
 using System.IO;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
-using Xs.Registry.Core;
-using Xs.Registry.Core.Db;
-using Xs.Registry.Dotnet.Models;
+using Xs.Registry.Dotnet.Db;
 
 namespace Xs.Registry.Dotnet
 {
@@ -14,7 +12,6 @@ namespace Xs.Registry.Dotnet
     {
         public ServicePack()
         {
-            Add<Core.BaseServicePack>();
             Add<Core.ServicePack>();
             Add<BaseServicePack>();
         }
@@ -31,31 +28,8 @@ namespace Xs.Registry.Dotnet
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
-            // db collections
-            var db = GetDatabase(
-                provider.GetRequiredService<Core.Configuration>().Database,
-                provider.GetRequiredService<Dotnet.Configuration>().Database
-            );
-            services.AddSingleton(db.GetCollection<Db.Models.Package>("packages"));
-
             // repositories
-            services.AddSingleton<IPackageRepository<Package>, PackageRepository<Package, Db.Models.Package>>();
+            // services.AddSingleton<IPackageRepository<Package>, PackageRepository<Package, Db.Models.Package>>();
         }
-
-        public override void Setup(IServiceProvider provider)
-        {
-            provider.GetRequiredService<IMongoCollection<Db.Models.Package>>().Indexes.CreateOne(
-                new CreateIndexModel<Db.Models.Package>(
-                    Builders<Db.Models.Package>.IndexKeys
-                    .Ascending(nameof(Db.Models.Package.Name))
-                    .Ascending(nameof(Db.Models.Package.Version))
-                )
-            );
-        }
-
-        private IMongoDatabase GetDatabase(
-            Core.DatabaseConfiguration shared,
-            Dotnet.DatabaseConfiguration dotnet
-        ) => DatabaseAccessor.GetDatabase(shared.Host, shared.Port, dotnet.Name, shared.User, shared.Pass, shared.LogQueries);
     }
 }

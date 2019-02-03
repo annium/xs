@@ -19,7 +19,7 @@ namespace Xs.Registry.Node.Controllers
 {
     public class PackageController : ServerController
     {
-        private readonly Func<DateTime> getTime;
+        private readonly Func<Instant> getInstant;
 
         private readonly IMetaPackageManager metaPackageManager;
 
@@ -32,7 +32,7 @@ namespace Xs.Registry.Node.Controllers
         private readonly IUrlHelper url;
 
         public PackageController(
-            Func<DateTime> getTime,
+            Func<Instant> getInstant,
             IMetaPackageManager metaPackageManager,
             IMetaPackageRepository metaPackageRepository,
             IPackageRepository<Package> packageRepository,
@@ -40,7 +40,7 @@ namespace Xs.Registry.Node.Controllers
             IUrlHelper url
         )
         {
-            this.getTime = getTime;
+            this.getInstant = getInstant;
             this.metaPackageManager = metaPackageManager;
             this.metaPackageRepository = metaPackageRepository;
             this.packageRepository = packageRepository;
@@ -58,7 +58,7 @@ namespace Xs.Registry.Node.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Incorrect data");
 
-            packagePayload.Published = getTime();
+            packagePayload.Published = getInstant();
             var package = (Package) packagePayload;
             var packageStream = packagePayload.GetAttachment();
             var name = PackageName.Parse(package.Name);

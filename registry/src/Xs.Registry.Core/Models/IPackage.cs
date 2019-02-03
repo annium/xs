@@ -2,20 +2,14 @@ using System;
 
 namespace Xs.Registry.Core.Models
 {
-    public interface IPackage
+    public interface IPackage : IPackageBase
     {
-        string Id { get; }
+        Guid Id { get; }
 
-        string MetaPackageId { get; }
+        Guid MetaPackageId { get; }
 
-        string Name { get; }
+        // MetaPackage MetaPackage { get; }
 
-        string Version { get; }
-
-        string Description { get; }
-
-        DateTime Published { get; }
-
-        uint Downloads { get; set; }
+        uint Downloads { get; }
     }
 }

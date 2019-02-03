@@ -6,13 +6,10 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../../../core/src/Xs.Core/Xs.Core.csproj" />
-        <ProjectReference Include="../Xs.Registry.Db/Xs.Registry.Db.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Extensions.Configuration" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
-        <PackageReference Include="AutoMapper" Version="8.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.1" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
         <PackageReference Include="NodaTime" Version="2.4.4" />

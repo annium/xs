@@ -2,8 +2,6 @@ using System;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Core.Auth;
-using Xs.Registry.Core.Tools;
-using Xs.Registry.Dotnet.Models;
 using Xs.Registry.Dotnet.Storage;
 
 namespace Xs.Registry.Dotnet
@@ -20,7 +18,7 @@ namespace Xs.Registry.Dotnet
             services.AddSingleton<ISymbolStorage, SymbolStorage>();
 
             // tools
-            services.AddSingleton<ISearchManager, SearchManager<Package>>();
+            // services.AddSingleton<ISearchManager, SearchManager<Package>>();
         }
     }
 }
