@@ -1,0 +1,23 @@
+# editors
+.vscode/
+
+# OS & misc
+.DS_STORE
+*.log
+
+# .NET
+bin/
+obj/
+
+# node
+node_modules/
+dist/
+*.css
+
+# artifacts
+/data
+/run
+
+# configuration
+configuration/
+.env*.local
