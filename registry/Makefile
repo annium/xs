@@ -7,6 +7,12 @@ db-down:
 db-log:
 	$(call log,$(subst -log,,$@))
 
+
+db-drop db-update migrations-add migrations-list migrations-remove:
+	tools/ef-$@.sh
+
+
+
 define up
 	@$(eval components := $(1))
 	@$(eval files := $(foreach component,$(components),-f setup/$(env)/$(component).yml))
