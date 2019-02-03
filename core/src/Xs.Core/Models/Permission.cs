@@ -9,6 +9,5 @@ namespace Xs.Core.Models
         Read = 1,
         Publish = 2,
         Unpublish = 4,
-        Republish = 8,
     }
 }
