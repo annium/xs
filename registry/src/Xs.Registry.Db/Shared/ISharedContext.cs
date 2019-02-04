@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Xs.Registry.Db.Shared
 {
-    internal interface ISharedContext
+    internal interface ISharedContext : IContext
     {
         DbSet<Entities.MetaPackage> MetaPackages { get; }
 

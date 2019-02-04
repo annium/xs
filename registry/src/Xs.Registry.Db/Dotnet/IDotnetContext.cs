@@ -1,6 +1,7 @@
 namespace Xs.Registry.Db.Dotnet
 {
-    internal interface IDotnetContext
+    internal interface IDotnetContext : IContext
     {
+
     }
 }
