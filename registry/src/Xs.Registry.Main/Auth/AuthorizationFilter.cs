@@ -49,7 +49,7 @@ namespace Xs.Registry.Main.Auth
             // try to find user session
             var session = await userSessionRepository.FindByTokenAsync(token);
             if (session == null)
-                return GetForbiddenResult("No session found with this token.");
+                return GetForbiddenResult("Authorization failed. No identity found");
 
             // if token expired - failure
             if (session.Expires < getInstant())
