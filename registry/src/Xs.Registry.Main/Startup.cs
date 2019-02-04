@@ -3,6 +3,7 @@ using Annium.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main
 {
@@ -21,6 +22,8 @@ namespace Xs.Registry.Main
 
         public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime)
         {
+            app.UseExceptionMiddleware();
+
             app.UseCors(builder => builder
                 .SetIsOriginAllowed(o => true)
                 .AllowAnyMethod()

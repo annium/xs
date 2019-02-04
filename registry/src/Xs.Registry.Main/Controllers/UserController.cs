@@ -5,11 +5,12 @@ using Microsoft.Extensions.Logging;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Payloads;
 using Xs.Registry.Main.Tools;
+using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main.Controllers
 {
     [Route("user")]
-    public class UserController : ControllerBase
+    public class UserController : ServerController<User>
     {
         private readonly IUserRepository userRepository;
 
