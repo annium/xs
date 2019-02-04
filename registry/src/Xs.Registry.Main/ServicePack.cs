@@ -20,6 +20,7 @@ namespace Xs.Registry.Main
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             // auth
+            services.AddSingleton<AuthorizationFilter>();
             services.AddSingleton<ISessionManager, SessionManager>();
 
             // tools

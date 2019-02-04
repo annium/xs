@@ -3,6 +3,8 @@ using Annium.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Main.Auth;
+using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main
@@ -12,6 +14,8 @@ namespace Xs.Registry.Main
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+
+            services.AddRegistryAuthorization<AuthorizationFilter>();
 
             services.AddMvc();
 
