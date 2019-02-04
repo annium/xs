@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Payloads;
 using Xs.Registry.Main.Tools;
+using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main.Controllers
@@ -49,7 +50,52 @@ namespace Xs.Registry.Main.Controllers
 
             await userRepository.CreateAsync(user);
 
-            return Ok();
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)
+        {
+            if (updateModel == null)
+                return BadRequest("Specify user data");
+
+            if (!ModelState.IsValid)
+                return BadRequest("Check user data");
+
+            var user = GetUser();
+
+            user.Name = updateModel.Name;
+            user.PasswordHash = securityManager.Hash(updateModel.Password);
+            user.ApiToken = Guid.NewGuid();
+
+            await userRepository.UpdateAsync(user);
+
+            return NoContent();
+        }
+
+        [HttpPost("token")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserApiTokenAsync()
+        {
+            var user = GetUser();
+
+            var apiToken = Guid.NewGuid();
+
+            await userRepository.UpdateApiTokenAsync(user.Id, apiToken);
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteUserAsync()
+        {
+            var user = GetUser();
+
+            await userRepository.DeleteByIdAsync(user.Id);
+
+            return NoContent();
         }
     }
 }

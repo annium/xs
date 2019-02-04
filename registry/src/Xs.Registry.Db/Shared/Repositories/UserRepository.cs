@@ -64,7 +64,12 @@ namespace Xs.Registry.Db.Shared
             var entity = mapper.Map<Entities.User>(user);
             await context.Users
                 .Where(u => u.Id == entity.Id)
-                .UpdateAsync(u => new Entities.User { Name = entity.Name, PasswordHash = entity.PasswordHash });
+                .UpdateAsync(u => new Entities.User
+                {
+                    Name = entity.Name,
+                        PasswordHash = entity.PasswordHash,
+                        ApiToken = entity.ApiToken,
+                });
         }
 
         public async Task UpdateApiTokenAsync(Guid userId, Guid apiToken)
