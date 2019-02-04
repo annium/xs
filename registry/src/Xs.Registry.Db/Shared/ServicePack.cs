@@ -20,7 +20,9 @@ namespace Xs.Registry.Db.Shared
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             services.AddSingleton<ISharedContext>(p => p.GetRequiredService<Context>());
+
             services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IUserSessionRepository, UserSessionRepository>();
         }
 
         private MapperConfigurationExpression ConfigureMapping()
@@ -28,6 +30,7 @@ namespace Xs.Registry.Db.Shared
             var cfg = new MapperConfigurationExpression();
 
             cfg.CreateMap<User, Entities.User>().ReverseMap();
+            cfg.CreateMap<UserSession, Entities.UserSession>().ReverseMap();
 
             return cfg;
         }
