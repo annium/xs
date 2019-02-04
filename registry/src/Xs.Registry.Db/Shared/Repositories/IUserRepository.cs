@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Xs.Registry.Db.Shared
@@ -6,6 +7,16 @@ namespace Xs.Registry.Db.Shared
     {
         Task CreateAsync(User user);
 
+        Task<User> GetById(Guid id);
+
         Task<User> FindByNameAsync(string name);
+
+        Task<User> FindByApiTokenAsync(Guid token);
+
+        Task UpdateAsync(User user);
+
+        Task UpdateApiTokenAsync(Guid userId, Guid apiToken);
+
+        Task DeleteByIdAsync(Guid id);
     }
 }
