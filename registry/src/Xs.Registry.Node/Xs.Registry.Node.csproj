@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <DebugType>Portable</DebugType>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Xs.Registry.Abstract/Xs.Registry.Abstract.csproj" />
+    </ItemGroup>
+</Project>
