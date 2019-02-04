@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Annium.Extensions.DependencyInjection;
+using AutoMapper;
+using AutoMapper.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Main.Tools;
 
 namespace Xs.Registry.Main
 {
@@ -7,6 +13,21 @@ namespace Xs.Registry.Main
         public ServicePack()
         {
             Add<Db.Shared.ServicePack>();
+        }
+
+        public override void Register(IServiceCollection services, IServiceProvider provider)
+        {
+            // tools
+            services.AddSingleton<ISecurityManager, SecurityManager>();
+
+            // mapping
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                foreach (var profile in provider.GetRequiredService<IEnumerable<MapperConfigurationExpression>>())
+                    cfg.AddProfile(profile);
+            });
+            mapperConfiguration.AssertConfigurationIsValid();
+            services.AddSingleton<IMapper>(mapperConfiguration.CreateMapper());
         }
     }
 }

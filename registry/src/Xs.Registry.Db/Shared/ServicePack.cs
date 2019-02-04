@@ -1,5 +1,6 @@
 using System;
 using Annium.Extensions.DependencyInjection;
+using AutoMapper.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Db.Shared
@@ -11,9 +12,24 @@ namespace Xs.Registry.Db.Shared
             Add<BaseServicePack>();
         }
 
+        public override void Configure(IServiceCollection services)
+        {
+            services.AddSingleton<MapperConfigurationExpression>(ConfigureMapping());
+        }
+
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             services.AddSingleton<ISharedContext>(p => p.GetRequiredService<Context>());
+            services.AddSingleton<IUserRepository, UserRepository>();
+        }
+
+        private MapperConfigurationExpression ConfigureMapping()
+        {
+            var cfg = new MapperConfigurationExpression();
+
+            cfg.CreateMap<User, Entities.User>().ReverseMap();
+
+            return cfg;
         }
     }
 }
