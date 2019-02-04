@@ -4,6 +4,7 @@ using Annium.Extensions.DependencyInjection;
 using AutoMapper;
 using AutoMapper.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Tools;
 
 namespace Xs.Registry.Main
@@ -13,10 +14,14 @@ namespace Xs.Registry.Main
         public ServicePack()
         {
             Add<Db.Shared.ServicePack>();
+            Add<Shared.ServicePack>();
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
+            // auth
+            services.AddSingleton<ISessionManager, SessionManager>();
+
             // tools
             services.AddSingleton<ISecurityManager, SecurityManager>();
 
