@@ -44,13 +44,12 @@ namespace Xs.Registry.Main.Controllers
                 return Conflict();
 
             var passwordHash = securityManager.Hash(registrationModel.Password);
-            var apiToken = Guid.NewGuid();
 
-            var user = new User(name, passwordHash, apiToken);
+            var user = new User(name, passwordHash, Guid.NewGuid());
 
             await userRepository.CreateAsync(user);
 
-            return Ok(apiToken);
+            return Ok();
         }
     }
 }
