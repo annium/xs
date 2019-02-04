@@ -9,7 +9,7 @@ using Xs.Registry.Main.Tools;
 
 namespace Xs.Registry.Main
 {
-    public class ServicePack : ServicePackBase
+    internal class ServicePack : ServicePackBase
     {
         public ServicePack()
         {
@@ -24,6 +24,7 @@ namespace Xs.Registry.Main
             services.AddSingleton<ISessionManager, SessionManager>();
 
             // tools
+            services.AddSingleton<IRegistryManager, RegistryManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();
 
             // mapping
