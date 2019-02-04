@@ -12,6 +12,10 @@ namespace Xs.Registry.Main.Auth
     {
         private const string AuthCookieName = "AccessToken";
 
+        private readonly Duration LifeTime = Duration.FromDays(1);
+
+        private readonly Duration ExpirationBuffer = Duration.FromHours(12);
+
         private readonly Func<Instant> getInstant;
 
         private readonly IHttpContextAccessor httpContextAccessor;
@@ -59,15 +63,21 @@ namespace Xs.Registry.Main.Auth
             SetCookie(token, expires);
         }
 
-        public async Task RefreshSession(Guid token)
+        public async Task RefreshSession(UserSession session)
         {
-            var expires = getInstant() + Duration.FromDays(1);
+            var now = getInstant();
+
+            // if session is expiring after expiration buffer - no need to prolongate right now
+            if (session.Expires > now + ExpirationBuffer)
+                return;
+
+            var expires = now + LifeTime;
 
             // prolongate session
-            await userSessionRepository.ProlongateAsync(token, expires);
+            await userSessionRepository.ProlongateAsync(session.Token, expires);
 
             // set cookie
-            SetCookie(token, expires);
+            SetCookie(session.Token, expires);
         }
 
         public async Task DeleteCurrentSession()

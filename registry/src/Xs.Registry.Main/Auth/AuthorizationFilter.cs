@@ -56,7 +56,7 @@ namespace Xs.Registry.Main.Auth
                 return GetForbiddenResult("Authorization expired. Please login again");
 
             // refresh session
-            await sessionManager.RefreshSession(session.Token);
+            await sessionManager.RefreshSession(session);
 
             // save user
             var user = await userRepository.GetById(session.UserId);

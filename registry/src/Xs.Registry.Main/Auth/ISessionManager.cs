@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Main.Auth
 {
@@ -10,7 +11,7 @@ namespace Xs.Registry.Main.Auth
 
         Task CreateSession(Guid userId);
 
-        Task RefreshSession(Guid token);
+        Task RefreshSession(UserSession session);
 
         Task DeleteCurrentSession();
     }
