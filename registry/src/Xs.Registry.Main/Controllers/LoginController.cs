@@ -6,6 +6,7 @@ using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Payloads;
 using Xs.Registry.Main.Tools;
+using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main.Controllers
@@ -54,6 +55,24 @@ namespace Xs.Registry.Main.Controllers
                 return result;
 
             return Ok(user.ApiToken);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Info()
+        {
+            var user = GetUser();
+
+            return Ok(new { Name = user.Name, ApiToken = user.ApiToken });
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            await sessionManager.DeleteCurrentSession();
+
+            return NoContent();
         }
 
         private async Task<ValueTuple<User, IActionResult>> LoginUserInternalAsync(UserLoginPayload loginPayload)
