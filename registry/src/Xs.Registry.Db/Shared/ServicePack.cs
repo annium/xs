@@ -21,9 +21,13 @@ namespace Xs.Registry.Db.Shared
         {
             services.AddSingleton<ISharedContext>(p => p.GetRequiredService<Context>());
 
+            // repositories
             services.AddSingleton<IMetaPackageRepository, MetaPackageRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IUserSessionRepository, UserSessionRepository>();
+
+            // tools
+            services.AddSingleton<IMetaPackageManager, MetaPackageManager>();
         }
 
         private MapperConfigurationExpression ConfigureMapping()

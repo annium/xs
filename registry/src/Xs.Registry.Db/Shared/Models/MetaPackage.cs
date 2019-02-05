@@ -10,13 +10,13 @@ namespace Xs.Registry.Db.Shared
 
         public ProjectType Type { get; }
 
-        public string Name { get; internal set; }
+        public string Name { get; }
 
-        public string Version { get; internal set; }
+        public string Version { get; }
 
-        public string Description { get; internal set; }
+        public string Description { get; }
 
-        public Instant Published { get; internal set; }
+        public Instant Published { get; }
 
         public uint Downloads { get; }
 
@@ -24,9 +24,9 @@ namespace Xs.Registry.Db.Shared
 
         public User Owner { get; }
 
-        public IEnumerable<MetaPackagePermission> Permissions { get; internal set; } = Array.Empty<MetaPackagePermission>();
+        public IEnumerable<MetaPackagePermission> Permissions { get; }
 
-        public MetaPackage(
+        internal MetaPackage(
             ProjectType type,
             string name,
             string version,
