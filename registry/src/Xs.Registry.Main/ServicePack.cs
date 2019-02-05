@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using Annium.Extensions.DependencyInjection;
-using AutoMapper;
-using AutoMapper.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Tools;
+using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main
 {
@@ -28,13 +26,7 @@ namespace Xs.Registry.Main
             services.AddSingleton<ISecurityManager, SecurityManager>();
 
             // mapping
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                foreach (var profile in provider.GetRequiredService<IEnumerable<MapperConfigurationExpression>>())
-                    cfg.AddProfile(profile);
-            });
-            mapperConfiguration.AssertConfigurationIsValid();
-            services.AddSingleton<IMapper>(mapperConfiguration.CreateMapper());
+            services.AddAutoMapper(provider);
         }
     }
 }

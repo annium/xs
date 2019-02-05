@@ -1,6 +1,9 @@
 using System;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
@@ -14,6 +17,12 @@ namespace Xs.Registry.Shared
 
             // helpers
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper>(p =>
+            {
+                var actionContext = p.GetRequiredService<IActionContextAccessor>().ActionContext;
+                return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
+            });
         }
     }
 }
