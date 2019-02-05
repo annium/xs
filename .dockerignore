@@ -3,8 +3,7 @@
 
 
 # artifacts
-data/
-src/packages/
+node_modules/
 
 # OS & misc
 .DS_STORE
@@ -16,4 +15,4 @@ obj/
 coverage.json
 
 # local run folder
-/run
+run/

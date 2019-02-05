@@ -1,10 +1,10 @@
-db-up:
+db-up main-up dotnet-up node-up:
 	$(call up,$(subst -up,,$@))
 
-db-down:
+db-down main-down dotnet-down node-down:
 	$(call down,$(subst -down,,$@))
 
-db-log:
+db-log main-log dotnet-log node-log:
 	$(call log,$(subst -log,,$@))
 
 

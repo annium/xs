@@ -1,0 +1,23 @@
+version: "3.4"
+services:
+  main:
+    build:
+      context: ../..
+      dockerfile: registry/src/Xs.Registry.Main/Dockerfile
+    image: registry_main
+    container_name: registry_main
+    restart: always
+    ports:
+      - "9901:9901"
+    volumes:
+      - "../run/configuration:/app/configuration"
+      - "../run/data:/app/data"
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: "1"
+networks:
+  default:
+    external:
+      name: registry
