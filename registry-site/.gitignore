@@ -5,13 +5,10 @@
 .DS_STORE
 *.log
 
-# .NET
-bin/
-obj/
-
-# artifacts
-/data
-/run
+# node
+node_modules/
+dist/
+*.css
 
 # configuration
 configuration/
