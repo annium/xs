@@ -2,6 +2,8 @@ using System.IO;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Abstract.Auth;
+using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Dotnet
 {
@@ -20,6 +22,15 @@ namespace Xs.Registry.Dotnet
                 .AddJsonFile(Path.Combine("configuration", "dotnet.override.json"), optional : true)
                 .Build<Configuration>()
             );
+        }
+
+        public override void Register(IServiceCollection services, System.IServiceProvider provider)
+        {
+            // auth
+            services.AddSingleton<ITokenAccessor>(new HeaderTokenAccessor("X-NuGet-ApiKey"));
+
+            // mapping
+            services.AddAutoMapper(provider);
         }
     }
 }
