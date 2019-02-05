@@ -1,6 +1,6 @@
-using Xs.Registry.Shared.Client;
+using Xs.RegistryClient.Shared;
 
-namespace Xs.Registry.Dotnet.Client
+namespace Xs.RegistryClient.Dotnet
 {
     public class DotnetClient : ClientBase, IProjectClient
     {

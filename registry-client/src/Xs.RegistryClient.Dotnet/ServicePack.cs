@@ -1,9 +1,9 @@
 using System;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.Registry.Shared.Client;
+using Xs.RegistryClient.Shared;
 
-namespace Xs.Registry.Dotnet.Client
+namespace Xs.RegistryClient.Dotnet
 {
     public class ServicePack : ServicePackBase
     {

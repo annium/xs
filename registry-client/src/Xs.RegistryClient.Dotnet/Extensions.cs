@@ -1,6 +1,6 @@
 using Annium.Extensions.Net.Http;
 
-namespace Xs.Registry.Dotnet.Client
+namespace Xs.RegistryClient.Dotnet
 {
     internal static class Extensions
     {

@@ -1,23 +1,22 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.Registry.Shared.Client;
 
-namespace Xs.Registry.Node.Client
+namespace Xs.RegistryClient.Main
 {
-    public class NodeClientFactory : IProjectClientFactory
+    public class MainClientFactory
     {
         private readonly IServiceProvider provider;
 
-        public NodeClientFactory(
+        public MainClientFactory(
             IServiceProvider provider
         )
         {
             this.provider = provider;
         }
 
-        public IProjectClient Create(Uri uri)
+        public MainClient Create(Uri uri)
         {
-            var client = provider.GetRequiredService<NodeClient>();
+            var client = provider.GetRequiredService<MainClient>();
 
             client.SetUri(uri);
 

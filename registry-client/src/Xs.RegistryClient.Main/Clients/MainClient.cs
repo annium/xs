@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Extensions.Net.Http;
-using Xs.Registry.Shared.Client;
+using Xs.RegistryClient.Shared;
 
-namespace Xs.Registry.Main.Client
+namespace Xs.RegistryClient.Main
 {
     public class MainClient : ClientBase
     {

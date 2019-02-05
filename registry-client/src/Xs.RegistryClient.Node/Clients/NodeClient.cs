@@ -1,6 +1,6 @@
-using Xs.Registry.Shared.Client;
+using Xs.RegistryClient.Shared;
 
-namespace Xs.Registry.Node.Client
+namespace Xs.RegistryClient.Node
 {
     public class NodeClient : ClientBase, IProjectClient
     {

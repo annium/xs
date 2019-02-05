@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
-using Xs.Registry.Main.Client;
+using Xs.RegistryClient.Main;
 
 namespace Xs.Cli.Main.Commands.Remote
 {

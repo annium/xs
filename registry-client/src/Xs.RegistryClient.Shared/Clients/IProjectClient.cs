@@ -1,4 +1,4 @@
-namespace Xs.Registry.Shared.Client
+namespace Xs.RegistryClient.Shared
 {
     public interface IProjectClient
     {

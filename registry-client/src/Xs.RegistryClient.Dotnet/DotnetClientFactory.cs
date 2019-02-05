@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.Registry.Shared.Client;
+using Xs.RegistryClient.Shared;
 
-namespace Xs.Registry.Dotnet.Client
+namespace Xs.RegistryClient.Dotnet
 {
     public class DotnetClientFactory : IProjectClientFactory
     {
