@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Core.Helpers;
-using Xs.Core.Models;
+
 using Xs.Registry.Core.Tools;
 
 namespace Xs.Registry.Shared.Controllers

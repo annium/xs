@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Xs.Core.Models
+namespace Xs.Cli.Core.Models
 {
     public class ProjectType
     {

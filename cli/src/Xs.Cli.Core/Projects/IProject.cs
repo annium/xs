@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Xs.Cli.Core.Models;
-using Xs.Core.Models;
 
 namespace Xs.Cli.Core.Projects
 {

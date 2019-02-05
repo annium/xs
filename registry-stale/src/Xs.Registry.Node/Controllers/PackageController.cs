@@ -4,7 +4,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Core.Models;
+
 using Xs.Execution;
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Helpers;

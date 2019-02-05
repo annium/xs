@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NodaTime;
-using Xs.Core.Models;
+
 
 namespace Xs.Registry.Db.Models
 {

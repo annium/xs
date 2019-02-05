@@ -2,26 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Extensions.Net.Http;
-using Xs.Registry.Core.Client;
+using Xs.Registry.Shared.Client;
 
-namespace Xs.Registry.Shared.Client
+namespace Xs.Registry.Main.Client
 {
-    public class SharedClient : ClientBase
+    public class MainClient : ClientBase
     {
-        public PermissionsClient Permissions { get; }
-
-        public UserClient User { get; }
-
-        public SharedClient(
-            PermissionsClient permissionsClient,
-            UserClient userClient
-        ) : base(
-            permissionsClient,
-            userClient
-        )
+        public MainClient()
         {
-            Permissions = permissionsClient;
-            User = userClient;
+
         }
 
         public Task<string> LoginAsync(string name, string password)

@@ -1,16 +1,12 @@
-using Xs.Registry.Core.Client;
+using Xs.Registry.Shared.Client;
 
 namespace Xs.Registry.Node.Client
 {
     public class NodeClient : ClientBase, IProjectClient
     {
-        public IInfoClient Info { get; }
-
-        public NodeClient(
-            InfoClient infoClient
-        ) : base(infoClient)
+        public NodeClient()
         {
-            Info = infoClient;
+
         }
     }
 }

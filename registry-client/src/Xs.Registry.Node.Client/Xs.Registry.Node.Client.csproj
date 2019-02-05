@@ -5,6 +5,6 @@
         <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../Xs.Registry.Core.Client/Xs.Registry.Core.Client.csproj" />
+        <ProjectReference Include="../Xs.Registry.Shared.Client/Xs.Registry.Shared.Client.csproj" />
     </ItemGroup>
 </Project>

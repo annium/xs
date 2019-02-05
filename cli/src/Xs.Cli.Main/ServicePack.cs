@@ -33,24 +33,11 @@ namespace Xs.Cli.Main
             services.AddSingleton<Commands.Ls.ListInsCommand>();
             services.AddSingleton<Commands.Ls.ListOutsCommand>();
 
-            // registry
-            services.AddSingleton<Commands.Registry.Group>();
-
-            // registry - user
-            services.AddSingleton<Commands.Registry.User.Group>();
-            services.AddSingleton<Commands.Registry.User.CreateCommand>();
-            services.AddSingleton<Commands.Registry.User.DeleteCommand>();
-            services.AddSingleton<Commands.Registry.User.ShowCommand>();
-            services.AddSingleton<Commands.Registry.User.UpdateCommand>();
-
             // remote
             services.AddSingleton<Commands.Remote.Group>();
             services.AddSingleton<Commands.Remote.AddCommand>();
             services.AddSingleton<Commands.Remote.DeleteCommand>();
-            services.AddSingleton<Commands.Remote.GrantCommand>();
             services.AddSingleton<Commands.Remote.ListCommand>();
-            services.AddSingleton<Commands.Remote.ShowPermsCommand>();
-            services.AddSingleton<Commands.Remote.RevokeCommand>();
             services.AddSingleton<Commands.Remote.ShowCommand>();
 
             // root
@@ -61,7 +48,8 @@ namespace Xs.Cli.Main
             services.AddSingleton<DeleteCommand>();
             services.AddSingleton<InstallCommand>();
             services.AddSingleton<PublishCommand>();
-            services.AddSingleton<SearchCommand>();
+            // TODO: need to rewrite to use metapackages
+            // services.AddSingleton<SearchCommand>();
             services.AddSingleton<TestCommand>();
             services.AddSingleton<UnpublishCommand>();
             services.AddSingleton<UpdateCommand>();
@@ -86,7 +74,7 @@ namespace Xs.Cli.Main
         private void RegisterConversions()
         {
             Converter.Register<string, Core.Models.Version>(e => new Core.Models.Version(e));
-            Converter.Register<string, Xs.Core.Models.ProjectType>(Xs.Core.Models.ProjectType.Get);
+            Converter.Register<string, Core.Models.ProjectType>(Core.Models.ProjectType.Get);
         }
     }
 }

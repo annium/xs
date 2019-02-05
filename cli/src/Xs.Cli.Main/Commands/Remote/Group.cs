@@ -10,10 +10,7 @@ namespace Xs.Cli.Main.Commands.Remote
         {
             Add<AddCommand>();
             Add<DeleteCommand>();
-            Add<GrantCommand>();
             Add<ListCommand>();
-            Add<ShowPermsCommand>();
-            Add<RevokeCommand>();
             Add<ShowCommand>();
         }
     }

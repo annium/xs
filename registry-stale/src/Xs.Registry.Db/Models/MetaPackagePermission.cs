@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using Xs.Core.Models;
+
 
 namespace Xs.Registry.Db.Models
 {

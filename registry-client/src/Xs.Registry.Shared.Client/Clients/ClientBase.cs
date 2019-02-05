@@ -1,6 +1,6 @@
 using System;
 
-namespace Xs.Registry.Core.Client
+namespace Xs.Registry.Shared.Client
 {
     public abstract class ClientBase
     {

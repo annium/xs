@@ -7,7 +7,7 @@ using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tasks.Dependencies;
-using Xs.Core.Models;
+
 
 namespace Xs.Cli.Main.Commands
 {

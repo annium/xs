@@ -2,7 +2,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Xs.Core.Helpers
+namespace Xs.Cli.Core.Helpers
 {
     public static class Json
     {

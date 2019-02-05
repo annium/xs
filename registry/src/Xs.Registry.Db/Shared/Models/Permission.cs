@@ -1,6 +1,6 @@
 using System;
 
-namespace Xs.Core.Models
+namespace Xs.Registry.Db.Shared
 {
     [Flags]
     public enum Permission

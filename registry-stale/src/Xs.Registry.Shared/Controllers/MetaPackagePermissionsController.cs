@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Core.Models;
+
 using Xs.Registry.Core.Auth;
 using Xs.Registry.Core.Db;
 using Xs.Registry.Core.Helpers;

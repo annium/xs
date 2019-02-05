@@ -5,7 +5,7 @@ using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
-using Xs.Core.Models;
+
 
 namespace Xs.Cli.Node.Projects
 {

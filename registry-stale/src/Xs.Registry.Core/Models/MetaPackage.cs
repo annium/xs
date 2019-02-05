@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NodaTime;
-using Xs.Core.Models;
+
 
 namespace Xs.Registry.Core.Models
 {

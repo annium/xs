@@ -1,4 +1,4 @@
-using Xs.Core.Models;
+using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Node
 {

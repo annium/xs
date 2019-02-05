@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Tools;
-using Xs.Core.Helpers;
 
 namespace Xs.Cli.Main.Commands.Remote
 {

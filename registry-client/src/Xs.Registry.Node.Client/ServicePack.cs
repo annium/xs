@@ -1,7 +1,7 @@
 using System;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.Registry.Core.Client;
+using Xs.Registry.Shared.Client;
 
 namespace Xs.Registry.Node.Client
 {
@@ -11,8 +11,6 @@ namespace Xs.Registry.Node.Client
         {
             services.AddSingleton<IProjectClientFactory, NodeClientFactory>();
             services.AddSingleton<NodeClient>();
-
-            services.AddSingleton<InfoClient>();
         }
     }
 }

@@ -1,13 +1,11 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.Core.Models;
-using Xs.Registry.Core.Client;
+using Xs.Registry.Shared.Client;
 
 namespace Xs.Registry.Node.Client
 {
     public class NodeClientFactory : IProjectClientFactory
     {
-        public ProjectType ProjectType { get; } = ProjectType.Get("node");
         private readonly IServiceProvider provider;
 
         public NodeClientFactory(

@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
-using Xs.Core.Models;
-using Xs.Registry.Shared.Client;
+using Xs.Registry.Main.Client;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
@@ -17,11 +17,11 @@ namespace Xs.Cli.Main.Commands.Remote
 
         private readonly IConfigurationManager configurationManager;
 
-        private readonly SharedClientFactory sharedClientFactory;
+        private readonly MainClientFactory sharedClientFactory;
 
         public AddCommand(
             IConfigurationManager configurationManager,
-            SharedClientFactory sharedClientFactory
+            MainClientFactory sharedClientFactory
         )
         {
             this.configurationManager = configurationManager;

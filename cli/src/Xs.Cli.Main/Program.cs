@@ -20,7 +20,7 @@ namespace Xs.Cli.Main
             .UseServicePack<Annium.Extensions.Arguments.ServicePack>()
             .UseServicePack<Xs.Registry.Dotnet.Client.ServicePack>()
             .UseServicePack<Xs.Registry.Node.Client.ServicePack>()
-            .UseServicePack<Xs.Registry.Shared.Client.ServicePack>()
+            .UseServicePack<Xs.Registry.Main.Client.ServicePack>()
             .UseServicePack<Core.ServicePack>()
             .UseServicePack<Dotnet.ServicePack>()
             .UseServicePack<Node.ServicePack>()

@@ -4,7 +4,4 @@
         <DebugType>Portable</DebugType>
         <OutputType>Library</OutputType>
     </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Xs.Core.Models;
 using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db
@@ -18,7 +17,7 @@ namespace Xs.Registry.Db
         {
             builder.Entity<MetaPackage>()
                 .Property(m => m.Type)
-                .HasConversion(t => t.ToString(), t => ProjectType.Get(t));
+                .HasConversion(t => t.ToString(), t => Shared.ProjectType.Get(t));
             builder.Entity<MetaPackage>()
                 .HasOne<User>(m => m.Owner).WithMany().IsRequired()
                 .HasForeignKey(m => m.OwnerId).OnDelete(DeleteBehavior.Restrict);

@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Xs.Core.Models;
+using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Abstract.Tools
 {

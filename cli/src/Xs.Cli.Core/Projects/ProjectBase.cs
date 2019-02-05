@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
-using Xs.Core.Models;
 
 namespace Xs.Cli.Core.Projects
 {

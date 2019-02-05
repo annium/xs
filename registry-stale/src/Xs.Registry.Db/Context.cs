@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Xs.Core.Models;
+
 using Xs.Registry.Db.Dotnet;
 
 namespace Xs.Registry.Db

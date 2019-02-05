@@ -5,7 +5,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xs.Cli.Core.Models;
-using Xs.Core.Helpers;
 
 namespace Xs.Cli.Node.Projects
 {
@@ -25,7 +24,7 @@ namespace Xs.Cli.Node.Projects
 
             var deps = GetPropertyDictionary(info, El.Dependencies)
                 .Concat(GetPropertyDictionary(info, El.DevDependencies))
-                .ToDictionary();
+                .ToDictionary(e => e.Key, e => e.Value);
 
             project.ProjectDependencies = deps
                 .Where(e => e.Value.StartsWith(El.FilePrefix))
@@ -72,8 +71,8 @@ namespace Xs.Cli.Node.Projects
                 .OrderBy(e => e.Name)
                 .ToDictionary(e => e.Name, e => e.Version.ToString());
 
-            var deps = projectDeps.Concat(packageDeps).ToDictionary();
-            var devDeps = projectDevDeps.Concat(packageDevDeps).ToDictionary();
+            var deps = projectDeps.Concat(packageDeps).ToDictionary(e => e.Key, e => e.Value);
+            var devDeps = projectDevDeps.Concat(packageDevDeps).ToDictionary(e => e.Key, e => e.Value);
 
             info[El.Version] = project.Version?.ToString();
 

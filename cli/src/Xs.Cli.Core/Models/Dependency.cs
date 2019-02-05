@@ -1,5 +1,3 @@
-using Xs.Core.Models;
-
 namespace Xs.Cli.Core.Models
 {
     public class Dependency

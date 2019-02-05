@@ -1,4 +1,4 @@
-using Xs.Core.Models;
+using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Dotnet
 {
