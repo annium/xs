@@ -8,7 +8,6 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tasks.Dependencies;
 
-
 namespace Xs.Cli.Main.Commands
 {
     internal class AddCommand : AsyncCommand<AddCommandConfiguration, CwdCommandConfiguration>
@@ -78,7 +77,7 @@ namespace Xs.Cli.Main.Commands
             }
 
             logger.LogDebug($"Assume dependency {name} as package.");
-            var packages = ProjectType.List().ToDictionary(
+            var packages = ProjectType.List().Where(t => targets.Count(p => p.Type == t) > 0).ToDictionary(
                 e => e,
                 e => dependencies.FirstOrDefault(d => d.Type == e && d.Name.ToLowerInvariant() == nameLow)
             );
@@ -88,7 +87,9 @@ namespace Xs.Cli.Main.Commands
             {
                 // if no version - can't define dependency
                 if (version == null)
-                    throw new InvalidOperationException($"Package {name} is not used for yet in some projects. Specify version to use.");
+                    throw new InvalidOperationException(
+                        $"Package {name} is not used in {packages.First(p => p.Value == null).Key} target projects. Specify version to use."
+                    );
                 // else - new dependencies is added
                 else
                     packages = packages.ToDictionary(e => e.Key, e => new Dependency(e.Key, name, version));
