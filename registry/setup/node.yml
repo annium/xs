@@ -2,8 +2,8 @@ version: "3.4"
 services:
   node:
     build:
-      context: ../..
-      dockerfile: registry/src/Xs.Registry.Node/Dockerfile
+      context: ../src
+      dockerfile: Xs.Registry.Node/Dockerfile
     image: registry_node
     container_name: registry_node
     restart: always

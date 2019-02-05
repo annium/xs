@@ -2,9 +2,6 @@
 .vscode/
 
 
-# artifacts
-node_modules/
-
 # OS & misc
 .DS_STORE
 *.log
@@ -14,5 +11,6 @@ bin/
 obj/
 coverage.json
 
-# local run folder
+# local artifacts
+configuration/
 run/

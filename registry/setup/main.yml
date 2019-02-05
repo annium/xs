@@ -2,8 +2,8 @@ version: "3.4"
 services:
   main:
     build:
-      context: ../..
-      dockerfile: registry/src/Xs.Registry.Main/Dockerfile
+      context: ../src
+      dockerfile: Xs.Registry.Main/Dockerfile
     image: registry_main
     container_name: registry_main
     restart: always
