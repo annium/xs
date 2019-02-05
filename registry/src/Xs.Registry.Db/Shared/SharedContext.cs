@@ -16,11 +16,10 @@ namespace Xs.Registry.Db
         private void ConfigureShared(ModelBuilder builder)
         {
             builder.Entity<MetaPackage>()
-                .Property(m => m.Type)
-                .HasConversion(t => t.ToString(), t => Shared.ProjectType.Get(t));
-            builder.Entity<MetaPackage>()
                 .HasOne<User>(m => m.Owner).WithMany().IsRequired()
                 .HasForeignKey(m => m.OwnerId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<MetaPackage>()
+                .HasAlternateKey(m => new { m.Type, m.Name });
 
             builder.Entity<MetaPackagePermission>()
                 .HasKey(p => new { p.MetaPackageId, p.Category });

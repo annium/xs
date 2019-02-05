@@ -21,6 +21,7 @@ namespace Xs.Registry.Db.Shared
         {
             services.AddSingleton<ISharedContext>(p => p.GetRequiredService<Context>());
 
+            services.AddSingleton<IMetaPackageRepository, MetaPackageRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IUserSessionRepository, UserSessionRepository>();
         }
@@ -29,6 +30,12 @@ namespace Xs.Registry.Db.Shared
         {
             var cfg = new MapperConfigurationExpression();
 
+            cfg.CreateMap<MetaPackage, Entities.MetaPackage>().ReverseMap();
+            cfg.CreateMap<MetaPackagePermission, Entities.MetaPackagePermission>()
+                .ForMember(p => p.MetaPackageId, opt => opt.Ignore())
+                .ReverseMap();
+            cfg.CreateMap<ProjectType, string>().ConvertUsing(t => t.ToString());
+            cfg.CreateMap<string, ProjectType>().ConvertUsing(t => ProjectType.Get(t));
             cfg.CreateMap<User, Entities.User>().ReverseMap();
             cfg.CreateMap<UserSession, Entities.UserSession>().ReverseMap();
 

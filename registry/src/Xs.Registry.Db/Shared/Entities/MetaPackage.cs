@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NodaTime;
@@ -12,7 +13,7 @@ namespace Xs.Registry.Db.Shared.Entities
         public Guid Id { get; set; }
 
         [Required]
-        public ProjectType Type { get; set; }
+        public string Type { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -34,6 +35,6 @@ namespace Xs.Registry.Db.Shared.Entities
 
         public User Owner { get; set; }
 
-        public MetaPackagePermission[] Permissions { get; set; }
+        public List<MetaPackagePermission> Permissions { get; set; }
     }
 }
