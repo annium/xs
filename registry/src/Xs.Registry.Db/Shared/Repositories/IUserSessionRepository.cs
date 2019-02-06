@@ -6,7 +6,7 @@ namespace Xs.Registry.Db.Shared
 {
     public interface IUserSessionRepository
     {
-        Task CreateAsync(UserSession userSession);
+        Task<UserSession> CreateAsync(UserSession userSession);
 
         Task<UserSession> FindByTokenAsync(Guid token);
 

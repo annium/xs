@@ -23,11 +23,17 @@ namespace Xs.Registry.Db.Shared
             this.mapper = mapper;
         }
 
-        public async Task CreateAsync(UserSession userSession)
+        public async Task<UserSession> CreateAsync(UserSession userSession)
         {
             var entity = mapper.Map<Entities.UserSession>(userSession);
-            context.UserSessions.Add(entity);
+
+            context.Entry(entity).State = EntityState.Added;
+
             await context.SaveChangesAsync();
+
+            context.Entry(entity).State = EntityState.Detached;
+
+            return mapper.Map<UserSession>(entity);
         }
 
         public async Task<UserSession> FindByTokenAsync(Guid token)
@@ -37,21 +43,21 @@ namespace Xs.Registry.Db.Shared
             return mapper.Map<UserSession>(entity);
         }
 
-        public async Task ProlongateAsync(Guid token, Instant expires)
+        public Task ProlongateAsync(Guid token, Instant expires)
         {
-            await context.UserSessions
+            return context.UserSessions
                 .Where(s => s.Token == token)
                 .UpdateAsync(s => new Entities.UserSession() { Expires = expires });
         }
 
-        public async Task DeleteByTokenAsync(Guid token)
+        public Task DeleteByTokenAsync(Guid token)
         {
-            await context.UserSessions.Where(s => s.Token == token).DeleteAsync();
+            return context.UserSessions.Where(s => s.Token == token).DeleteAsync();
         }
 
-        public async Task DeleteExpiredAsync(Instant now)
+        public Task DeleteExpiredAsync(Instant now)
         {
-            await context.UserSessions.Where(s => s.Expires < now).DeleteAsync();
+            return context.UserSessions.Where(s => s.Expires < now).DeleteAsync();
         }
     }
 }

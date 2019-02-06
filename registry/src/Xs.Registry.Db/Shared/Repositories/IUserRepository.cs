@@ -5,7 +5,7 @@ namespace Xs.Registry.Db.Shared
 {
     public interface IUserRepository
     {
-        Task CreateAsync(User user);
+        Task<User> CreateAsync(User user);
 
         Task<User> GetById(Guid id);
 

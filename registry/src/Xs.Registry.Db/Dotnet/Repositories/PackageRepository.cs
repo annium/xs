@@ -94,11 +94,11 @@ namespace Xs.Registry.Db.Dotnet
                 .UpdateAsync(p => new Entities.Package { Downloads = downloads + 1 });
         }
 
-        public async Task DeleteByNameVersionAsync(string name, string version)
+        public Task DeleteByNameVersionAsync(string name, string version)
         {
             name = name.ToLower();
 
-            await context.Packages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
+            return context.Packages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
         }
     }
 }

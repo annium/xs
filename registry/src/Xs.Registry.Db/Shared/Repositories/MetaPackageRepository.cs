@@ -64,9 +64,9 @@ namespace Xs.Registry.Db.Shared
             return mapper.Map<MetaPackage>(entity);
         }
 
-        public async Task UpdateInfoAsync(Guid id, IPackageInfo packageInfo)
+        public Task UpdateInfoAsync(Guid id, IPackageInfo packageInfo)
         {
-            await context.MetaPackages
+            return context.MetaPackages
                 .Where(p => p.Id == id)
                 .UpdateAsync(u => new Entities.MetaPackage()
                 {
@@ -77,9 +77,9 @@ namespace Xs.Registry.Db.Shared
                 });
         }
 
-        public async Task SetDownloadsAsync(Guid id, int downloads)
+        public Task SetDownloadsAsync(Guid id, int downloads)
         {
-            await context.MetaPackages
+            return context.MetaPackages
                 .Where(p => p.Id == id)
                 .UpdateAsync(u => new Entities.MetaPackage { Downloads = downloads });
         }
@@ -96,17 +96,17 @@ namespace Xs.Registry.Db.Shared
                 .UpdateAsync(p => new Entities.MetaPackage { Downloads = downloads + 1 });
         }
 
-        public async Task DeleteByIdAsync(Guid id)
+        public Task DeleteByIdAsync(Guid id)
         {
-            await context.MetaPackages.Where(p => p.Id == id).DeleteAsync();
+            return context.MetaPackages.Where(p => p.Id == id).DeleteAsync();
         }
 
-        public async Task DeleteByTypeNameAsync(ProjectType type, string name)
+        public Task DeleteByTypeNameAsync(ProjectType type, string name)
         {
             var typeString = type.ToString();
             name = name.ToLower();
 
-            await context.MetaPackages.Where(p => p.Type == typeString && p.LowerName == name).DeleteAsync();
+            return context.MetaPackages.Where(p => p.Type == typeString && p.LowerName == name).DeleteAsync();
         }
     }
 }

@@ -22,11 +22,17 @@ namespace Xs.Registry.Db.Shared
             this.mapper = mapper;
         }
 
-        public async Task CreateAsync(User user)
+        public async Task<User> CreateAsync(User user)
         {
             var entity = mapper.Map<Entities.User>(user);
-            context.Users.Add(entity);
+
+            context.Entry(entity).State = EntityState.Added;
+
             await context.SaveChangesAsync();
+
+            context.Entry(entity).State = EntityState.Detached;
+
+            return mapper.Map<User>(entity);
         }
 
         public async Task<User> GetById(Guid id)
@@ -59,10 +65,11 @@ namespace Xs.Registry.Db.Shared
             return mapper.Map<User>(user);
         }
 
-        public async Task UpdateAsync(User user)
+        public Task UpdateAsync(User user)
         {
             var entity = mapper.Map<Entities.User>(user);
-            await context.Users
+
+            return context.Users
                 .Where(u => u.Id == entity.Id)
                 .UpdateAsync(u => new Entities.User
                 {
@@ -72,16 +79,16 @@ namespace Xs.Registry.Db.Shared
                 });
         }
 
-        public async Task UpdateApiTokenAsync(Guid userId, Guid apiToken)
+        public Task UpdateApiTokenAsync(Guid userId, Guid apiToken)
         {
-            await context.Users
+            return context.Users
                 .Where(u => u.Id == userId)
                 .UpdateAsync(u => new Entities.User { ApiToken = apiToken });
         }
 
-        public async Task DeleteByIdAsync(Guid id)
+        public Task DeleteByIdAsync(Guid id)
         {
-            await context.Users.Where(u => u.Id == id).DeleteAsync();
+            return context.Users.Where(u => u.Id == id).DeleteAsync();
         }
     }
 }
