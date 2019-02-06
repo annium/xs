@@ -1,0 +1,40 @@
+using System;
+using Annium.Extensions.DependencyInjection;
+using AutoMapper.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Xs.Registry.Db.Dotnet
+{
+    public class ServicePack : ServicePackBase
+    {
+        public ServicePack()
+        {
+            Add<BaseServicePack>();
+        }
+
+        public override void Configure(IServiceCollection services)
+        {
+            services.AddSingleton<MapperConfigurationExpression>(ConfigureMapping());
+        }
+
+        public override void Register(IServiceCollection services, IServiceProvider provider)
+        {
+            services.AddSingleton<IDotnetContext>(p => p.GetRequiredService<Context>());
+
+            // repositories
+            services.AddSingleton<IPackageRepository, PackageRepository>();
+        }
+
+        private MapperConfigurationExpression ConfigureMapping()
+        {
+            var cfg = new MapperConfigurationExpression();
+
+            cfg.CreateMap<Package, Entities.Package>().ReverseMap();
+            cfg.CreateMap<PackageDependency, Entities.PackageDependency>()
+                .ForMember(p => p.PackageId, opt => opt.Ignore())
+                .ReverseMap();
+
+            return cfg;
+        }
+    }
+}
