@@ -4,7 +4,7 @@ using NodaTime;
 
 namespace Xs.Registry.Db.Shared
 {
-    public class MetaPackage
+    public class MetaPackage : IPackageInfo
     {
         public Guid Id { get; }
 
