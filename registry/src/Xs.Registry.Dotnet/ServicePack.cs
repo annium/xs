@@ -3,6 +3,7 @@ using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Abstract.Auth;
+using Xs.Registry.Dotnet.Storage;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Dotnet
@@ -28,6 +29,10 @@ namespace Xs.Registry.Dotnet
         {
             // auth
             services.AddSingleton<ITokenAccessor>(new HeaderTokenAccessor("X-NuGet-ApiKey"));
+
+            // storage
+            services.AddSingleton<IPackageStorage, PackageStorage>();
+            services.AddSingleton<ISymbolStorage, SymbolStorage>();
 
             // mapping
             services.AddAutoMapper(provider);
