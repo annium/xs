@@ -29,7 +29,7 @@ namespace Xs.Registry.Db.Dotnet.Entities
         public Instant Published { get; set; }
 
         [Required]
-        public uint Downloads { get; set; }
+        public int Downloads { get; set; }
 
         public List<PackageDependency> Dependencies { get; set; }
     }

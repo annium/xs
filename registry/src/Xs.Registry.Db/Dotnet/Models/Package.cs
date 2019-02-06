@@ -18,7 +18,7 @@ namespace Xs.Registry.Db.Dotnet
 
         public Instant Published { get; }
 
-        public uint Downloads { get; }
+        public int Downloads { get; }
 
         public IEnumerable<PackageDependency> Dependencies { get; }
 
@@ -28,7 +28,6 @@ namespace Xs.Registry.Db.Dotnet
             string version,
             string description,
             Instant published,
-            uint downloads,
             IEnumerable<PackageDependency> dependencies
         )
         {
@@ -37,7 +36,6 @@ namespace Xs.Registry.Db.Dotnet
             Version = version;
             Description = description;
             Published = published;
-            Downloads = downloads;
             Dependencies = dependencies;
         }
 
@@ -48,11 +46,12 @@ namespace Xs.Registry.Db.Dotnet
             string version,
             string description,
             Instant published,
-            uint downloads,
+            int downloads,
             IEnumerable<PackageDependency> dependencies
-        ) : this(metaPackageId, name, version, description, published, downloads, dependencies)
+        ) : this(metaPackageId, name, version, description, published, dependencies)
         {
             Id = id;
+            Downloads = downloads;
         }
     }
 }

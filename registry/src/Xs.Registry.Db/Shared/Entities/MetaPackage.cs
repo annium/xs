@@ -28,7 +28,7 @@ namespace Xs.Registry.Db.Shared.Entities
         public Instant Published { get; set; }
 
         [Required]
-        public uint Downloads { get; set; }
+        public int Downloads { get; set; }
 
         [Required]
         public Guid OwnerId { get; set; }

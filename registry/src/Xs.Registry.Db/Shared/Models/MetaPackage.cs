@@ -18,7 +18,7 @@ namespace Xs.Registry.Db.Shared
 
         public Instant Published { get; }
 
-        public uint Downloads { get; }
+        public int Downloads { get; }
 
         public Guid OwnerId { get; }
 
@@ -32,7 +32,7 @@ namespace Xs.Registry.Db.Shared
             string version,
             string description,
             Instant published,
-            uint downloads,
+            int downloads,
             Guid ownerId,
             User owner,
             IEnumerable<MetaPackagePermission> permissions
@@ -56,7 +56,7 @@ namespace Xs.Registry.Db.Shared
             string version,
             string description,
             Instant published,
-            uint downloads,
+            int downloads,
             Guid ownerId,
             User owner,
             IEnumerable<MetaPackagePermission> permissions
