@@ -12,13 +12,13 @@ namespace Xs.Registry.Dotnet.Controllers
     {
         private readonly IMetaPackageRepository metaPackageRepository;
 
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
         public PackageConsumptionController(
             IMetaPackageRepository metaPackageRepository,
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             IPackageStorage packageStorage
         )
         {

@@ -5,26 +5,35 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Z.EntityFramework.Plus;
 
-namespace Xs.Registry.Db.Node
+namespace Xs.Registry.Db.Shared
 {
-    internal class PackageRepository : IPackageRepository
+    internal class PackageRepository<TPackage, TPackageEntity, TPackageDependencyEntity, TContext>
+        : IPackageRepository<TPackage>
+        where TPackage : class, IPackage
+    where TPackageEntity : class, Entities.IPackage<TPackageDependencyEntity>, new()
+    where TPackageDependencyEntity : class
+    where TContext : IContext
     {
-        private readonly INodeContext context;
+        private readonly TContext context;
+
+        private readonly DbSet<TPackageEntity> packages;
 
         private readonly IMapper mapper;
 
         public PackageRepository(
-            INodeContext context,
+            TContext context,
+            Func<TContext, DbSet<TPackageEntity>> getPackagesSet,
             IMapper mapper
         )
         {
             this.context = context;
+            this.packages = getPackagesSet(context);
             this.mapper = mapper;
         }
 
-        public async Task<Package> CreateAsync(Package package)
+        public async Task<TPackage> CreateAsync(TPackage package)
         {
-            var entity = mapper.Map<Entities.Package>(package);
+            var entity = mapper.Map<TPackageEntity>(package);
 
             context.Entry(entity).State = EntityState.Added;
             foreach (var dependency in entity.Dependencies)
@@ -36,69 +45,69 @@ namespace Xs.Registry.Db.Node
             foreach (var dependency in entity.Dependencies)
                 context.Entry(dependency).State = EntityState.Detached;
 
-            return mapper.Map<Package>(entity);
+            return mapper.Map<TPackage>(entity);
         }
 
-        public async Task<Package[]> FindAllByNameAsync(string name)
+        public async Task<TPackage[]> FindAllByNameAsync(string name)
         {
             name = name.ToLower();
 
-            var entities = await context.NodePackages
+            var entities = await packages
                 .AsNoTracking()
                 .Where(p => p.LowerName == name)
                 .ToArrayAsync();
 
-            return entities.Select(mapper.Map<Package>).ToArray();
+            return entities.Select(mapper.Map<TPackage>).ToArray();
         }
 
         public Task<string[]> FindAllVersionsByNameAsync(string name)
         {
             name = name.ToLower();
 
-            return context.NodePackages
+            return packages
                 .AsNoTracking()
                 .Where(p => p.LowerName == name)
                 .Select(p => p.Version)
                 .ToArrayAsync();
         }
 
-        public async Task<Package> FindByNameVersionAsync(string name, string version)
+        public async Task<TPackage> FindByNameVersionAsync(string name, string version)
         {
             name = name.ToLower();
 
-            var entity = await context.NodePackages
+            var entity = await packages
                 .AsNoTracking()
                 .Include(p => p.Dependencies)
                 .Where(p => p.LowerName == name && p.Version == version)
                 .FirstOrDefaultAsync();
 
-            return mapper.Map<Package>(entity);
+            return mapper.Map<TPackage>(entity);
         }
 
         public Task<int> CountAllDownloadsAsync(string name)
         {
             name = name.ToLower();
 
-            return context.NodePackages.Where(p => p.LowerName == name).CountAsync();
+            return packages.Where(p => p.LowerName == name).CountAsync();
         }
 
         public async Task IncrementDownloadsAsync(Guid id)
         {
-            var downloads = await context.NodePackages
+            var downloads = await packages
                 .Where(p => p.Id == id)
                 .Select(p => p.Downloads)
                 .FirstOrDefaultAsync();
 
-            await context.NodePackages
+            await packages
                 .Where(p => p.Id == id && p.Downloads == downloads)
-                .UpdateAsync(p => new Entities.Package { Downloads = downloads + 1 });
+                .UpdateAsync(p => new TPackageEntity { Downloads = downloads + 1 });
         }
 
         public Task DeleteByNameVersionAsync(string name, string version)
         {
             name = name.ToLower();
 
-            return context.NodePackages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
+            return packages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
         }
     }
 }

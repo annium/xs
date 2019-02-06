@@ -11,12 +11,12 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackageRegistrationController : ServerController<User>
     {
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly IUrlHelper url;
 
         public PackageRegistrationController(
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             IUrlHelper url
         )
         {

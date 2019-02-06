@@ -24,7 +24,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
         private readonly IMetaPackageRepository metaPackageRepository;
 
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
@@ -32,7 +32,7 @@ namespace Xs.Registry.Dotnet.Controllers
             Func<Instant> getInstant,
             IMetaPackageManager metaPackageManager,
             IMetaPackageRepository metaPackageRepository,
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             IPackageStorage packageStorage
         )
         {

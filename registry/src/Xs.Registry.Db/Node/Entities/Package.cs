@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NodaTime;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db.Node.Entities
 {
     [Table(nameof(Package), Schema = Schema.Node)]
-    internal class Package : IPackageInfo
+    internal class Package : IPackage<PackageDependency>
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

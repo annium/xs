@@ -25,12 +25,12 @@ namespace Xs.Registry.Dotnet.Controllers
             ".p7s"
         };
 
-        private readonly IPackageRepository packageRepository;
+        private readonly IPackageRepository<Package> packageRepository;
 
         private readonly ISymbolStorage symbolStorage;
 
         public SymbolPublicationController(
-            IPackageRepository packageRepository,
+            IPackageRepository<Package> packageRepository,
             ISymbolStorage symbolStorage
         )
         {

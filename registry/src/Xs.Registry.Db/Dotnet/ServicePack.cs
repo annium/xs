@@ -1,6 +1,7 @@
 using System;
 using Annium.Extensions.DependencyInjection;
 using AutoMapper.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Db.Dotnet
@@ -22,7 +23,8 @@ namespace Xs.Registry.Db.Dotnet
             services.AddSingleton<IDotnetContext>(p => p.GetRequiredService<Context>());
 
             // repositories
-            services.AddSingleton<IPackageRepository, PackageRepository>();
+            services.AddSingleton<Func<Context, DbSet<Entities.Package>>>((Context context) => context.DotnetPackages);
+            services.AddSingleton<Shared.IPackageRepository<Package>, Shared.PackageRepository<Package, Entities.Package, Entities.PackageDependency, Context>>();
         }
 
         private MapperConfigurationExpression ConfigureMapping()
