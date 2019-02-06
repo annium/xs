@@ -5,7 +5,7 @@
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../core/src/Xs.Execution/Xs.Execution.csproj" />
+        <ProjectReference Include="../Xs.Execution/Xs.Execution.csproj" />
         <ProjectReference Include="../Xs.Registry.Abstract/Xs.Registry.Abstract.csproj" />
     </ItemGroup>
     <ItemGroup>
