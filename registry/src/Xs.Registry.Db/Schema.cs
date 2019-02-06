@@ -5,5 +5,7 @@ namespace Xs.Registry.Db
         internal const string Shared = "shared";
 
         internal const string Dotnet = "dotnet";
+
+        internal const string Node = "node";
     }
 }

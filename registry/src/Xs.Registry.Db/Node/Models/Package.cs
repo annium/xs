@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NodaTime;
 using Xs.Registry.Db.Shared;
 
-namespace Xs.Registry.Db.Dotnet
+namespace Xs.Registry.Db.Node
 {
     public class Package : IPackageInfo
     {
@@ -21,6 +21,12 @@ namespace Xs.Registry.Db.Dotnet
 
         public int Downloads { get; }
 
+        public string Main { get; }
+
+        public string Shasum { get; }
+
+        public string Integrity { get; }
+
         public IEnumerable<PackageDependency> Dependencies { get; }
 
         public Package(
@@ -29,6 +35,9 @@ namespace Xs.Registry.Db.Dotnet
             string version,
             string description,
             Instant published,
+            string main,
+            string shasum,
+            string integrity,
             IEnumerable<PackageDependency> dependencies
         )
         {
@@ -37,6 +46,9 @@ namespace Xs.Registry.Db.Dotnet
             Version = version;
             Description = description;
             Published = published;
+            Main = main;
+            Shasum = shasum;
+            Integrity = integrity;
             Dependencies = dependencies;
         }
 
@@ -48,8 +60,11 @@ namespace Xs.Registry.Db.Dotnet
             string description,
             Instant published,
             int downloads,
+            string main,
+            string shasum,
+            string integrity,
             IEnumerable<PackageDependency> dependencies
-        ) : this(metaPackageId, name, version, description, published, dependencies)
+        ) : this(metaPackageId, name, version, description, published, main, shasum, integrity, dependencies)
         {
             Id = id;
             Downloads = downloads;

@@ -9,6 +9,7 @@ namespace Xs.Registry.Db
         protected override void OnModelCreating(ModelBuilder builder)
         {
             ConfigureDotnet(builder);
+            ConfigureNode(builder);
             ConfigureShared(builder);
         }
     }
