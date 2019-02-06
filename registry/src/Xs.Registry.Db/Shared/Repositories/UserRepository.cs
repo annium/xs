@@ -82,7 +82,6 @@ namespace Xs.Registry.Db.Shared
         public async Task DeleteByIdAsync(Guid id)
         {
             await context.Users.Where(u => u.Id == id).DeleteAsync();
-            await context.SaveChangesAsync();
         }
     }
 }
