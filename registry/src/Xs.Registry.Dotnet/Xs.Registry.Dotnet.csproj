@@ -7,4 +7,7 @@
     <ItemGroup>
         <ProjectReference Include="../Xs.Registry.Abstract/Xs.Registry.Abstract.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="NuGet.Packaging" Version="4.9.3" />
+    </ItemGroup>
 </Project>
