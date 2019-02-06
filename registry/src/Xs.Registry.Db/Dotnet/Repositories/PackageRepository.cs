@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -50,6 +51,17 @@ namespace Xs.Registry.Db.Dotnet
             return entities.Select(mapper.Map<Package>).ToArray();
         }
 
+        public Task<string[]> FindAllVersionsByNameAsync(string name)
+        {
+            name = name.ToLower();
+
+            return context.Packages
+                .AsNoTracking()
+                .Where(p => p.LowerName == name)
+                .Select(p => p.Version)
+                .ToArrayAsync();
+        }
+
         public async Task<Package> FindByNameVersionAsync(string name, string version)
         {
             name = name.ToLower();
@@ -68,6 +80,18 @@ namespace Xs.Registry.Db.Dotnet
             name = name.ToLower();
 
             return context.Packages.Where(p => p.LowerName == name).CountAsync();
+        }
+
+        public async Task IncrementDownloadsAsync(Guid id)
+        {
+            var downloads = await context.Packages
+                .Where(p => p.Id == id)
+                .Select(p => p.Downloads)
+                .FirstOrDefaultAsync();
+
+            await context.Packages
+                .Where(p => p.Id == id && p.Downloads == downloads)
+                .UpdateAsync(p => new Entities.Package { Downloads = downloads + 1 });
         }
 
         public async Task DeleteByNameVersionAsync(string name, string version)
