@@ -15,6 +15,8 @@ namespace Xs.Registry.Db.Shared
 
         Task SetDownloadsAsync(Guid id, int downloads);
 
+        Task IncrementDownloadsAsync(Guid id);
+
         Task DeleteByIdAsync(Guid id);
 
         Task DeleteByTypeNameAsync(ProjectType type, string name);

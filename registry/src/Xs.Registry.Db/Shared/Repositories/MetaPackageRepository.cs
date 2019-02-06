@@ -84,6 +84,18 @@ namespace Xs.Registry.Db.Shared
                 .UpdateAsync(u => new Entities.MetaPackage { Downloads = downloads });
         }
 
+        public async Task IncrementDownloadsAsync(Guid id)
+        {
+            var downloads = await context.MetaPackages
+                .Where(p => p.Id == id)
+                .Select(p => p.Downloads)
+                .FirstOrDefaultAsync();
+
+            await context.MetaPackages
+                .Where(p => p.Id == id && p.Downloads == downloads)
+                .UpdateAsync(p => new Entities.MetaPackage { Downloads = downloads + 1 });
+        }
+
         public async Task DeleteByIdAsync(Guid id)
         {
             await context.MetaPackages.Where(p => p.Id == id).DeleteAsync();

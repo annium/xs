@@ -10,15 +10,19 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackageConsumptionController : ServerController<User>
     {
+        private readonly IMetaPackageRepository metaPackageRepository;
+
         private readonly IPackageRepository packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
         public PackageConsumptionController(
+            IMetaPackageRepository metaPackageRepository,
             IPackageRepository packageRepository,
             IPackageStorage packageStorage
         )
         {
+            this.metaPackageRepository = metaPackageRepository;
             this.packageRepository = packageRepository;
             this.packageStorage = packageStorage;
         }
@@ -46,6 +50,7 @@ namespace Xs.Registry.Dotnet.Controllers
                 return ServerError("Package file missing");
 
             await packageRepository.IncrementDownloadsAsync(package.Id);
+            await metaPackageRepository.IncrementDownloadsAsync(package.MetaPackageId);
 
             var content = await packageStorage.GetPackageAsync(name, version);
 
