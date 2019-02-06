@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Z.EntityFramework.Plus;
 
 namespace Xs.Registry.Db.Dotnet
 {
@@ -20,7 +21,7 @@ namespace Xs.Registry.Db.Dotnet
             this.mapper = mapper;
         }
 
-        public async Task CreateAsync(Package package)
+        public async Task<Package> CreateAsync(Package package)
         {
             var entity = mapper.Map<Entities.Package>(package);
 
@@ -29,6 +30,22 @@ namespace Xs.Registry.Db.Dotnet
                 context.Entry(dependency).State = EntityState.Added;
 
             await context.SaveChangesAsync();
+
+            context.Entry(entity).State = EntityState.Detached;
+            foreach (var dependency in entity.Dependencies)
+                context.Entry(dependency).State = EntityState.Detached;
+
+            return mapper.Map<Package>(entity);
+        }
+
+        public async Task<Package[]> FindAllByNameAsync(string name)
+        {
+            var entities = await context.Packages
+                .AsNoTracking()
+                .Where(p => p.Name == name)
+                .ToArrayAsync();
+
+            return entities.Select(mapper.Map<Package>).ToArray();
         }
 
         public async Task<Package> FindByNameVersionAsync(string name, string version)
@@ -40,6 +57,16 @@ namespace Xs.Registry.Db.Dotnet
                 .FirstOrDefaultAsync();
 
             return mapper.Map<Package>(entity);
+        }
+
+        public Task<int> CountAllDownloadsAsync(string name)
+        {
+            return context.Packages.Where(p => p.Name == name).CountAsync();
+        }
+
+        public async Task DeleteByNameVersionAsync(string name, string version)
+        {
+            await context.Packages.Where(p => p.Name == name && p.Version == version).DeleteAsync();
         }
     }
 }

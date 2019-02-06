@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Z.EntityFramework.Plus;
 
 namespace Xs.Registry.Db.Shared
 {
@@ -21,7 +22,7 @@ namespace Xs.Registry.Db.Shared
             this.mapper = mapper;
         }
 
-        public async Task CreateAsync(MetaPackage metaPackage)
+        public async Task<MetaPackage> CreateAsync(MetaPackage metaPackage)
         {
             var entity = mapper.Map<Entities.MetaPackage>(metaPackage);
 
@@ -30,6 +31,12 @@ namespace Xs.Registry.Db.Shared
                 context.Entry(permission).State = EntityState.Added;
 
             await context.SaveChangesAsync();
+
+            context.Entry(entity).State = EntityState.Detached;
+            foreach (var permission in entity.Permissions)
+                context.Entry(permission).State = EntityState.Detached;
+
+            return mapper.Map<MetaPackage>(entity);
         }
 
         public async Task<MetaPackage> GetByIdAsync(Guid id)
@@ -43,7 +50,7 @@ namespace Xs.Registry.Db.Shared
             return mapper.Map<MetaPackage>(entity);
         }
 
-        public async Task<MetaPackage> FindByProjectTypeNameAsync(ProjectType type, string name)
+        public async Task<MetaPackage> FindByTypeNameAsync(ProjectType type, string name)
         {
             var typeString = type.ToString();
 
@@ -54,6 +61,38 @@ namespace Xs.Registry.Db.Shared
                 .FirstOrDefaultAsync();
 
             return mapper.Map<MetaPackage>(entity);
+        }
+
+        public async Task UpdateInfoAsync(Guid id, IPackageInfo packageInfo)
+        {
+            await context.MetaPackages
+                .Where(p => p.Id == id)
+                .UpdateAsync(u => new Entities.MetaPackage()
+                {
+                    Name = packageInfo.Name,
+                        Version = packageInfo.Version,
+                        Description = packageInfo.Description,
+                        Published = packageInfo.Published,
+                });
+        }
+
+        public async Task SetDownloadsAsync(Guid id, int downloads)
+        {
+            await context.MetaPackages
+                .Where(p => p.Id == id)
+                .UpdateAsync(u => new Entities.MetaPackage { Downloads = downloads });
+        }
+
+        public async Task DeleteByIdAsync(Guid id)
+        {
+            await context.MetaPackages.Where(p => p.Id == id).DeleteAsync();
+        }
+
+        public async Task DeleteByTypeNameAsync(ProjectType type, string name)
+        {
+            var typeString = type.ToString();
+
+            await context.MetaPackages.Where(p => p.Type == typeString && p.Name == name).DeleteAsync();
         }
     }
 }

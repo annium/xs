@@ -13,6 +13,7 @@ namespace Xs.Registry.Dotnet
         public ServicePack()
         {
             Add<Abstract.ServicePack>();
+            Add<Db.Dotnet.ServicePack>();
         }
 
         public override void Configure(IServiceCollection services)
