@@ -5,9 +5,9 @@ namespace Xs.Registry.Db
 {
     internal partial class Context : Dotnet.IDotnetContext
     {
-        public DbSet<Package> Packages { get; set; }
+        public DbSet<Package> DotnetPackages { get; set; }
 
-        public DbSet<PackageDependency> PackageDependencies { get; set; }
+        public DbSet<PackageDependency> DotnetPackageDependencies { get; set; }
 
         private void ConfigureDotnet(ModelBuilder builder)
         {

@@ -43,7 +43,7 @@ namespace Xs.Registry.Db.Dotnet
         {
             name = name.ToLower();
 
-            var entities = await context.Packages
+            var entities = await context.DotnetPackages
                 .AsNoTracking()
                 .Where(p => p.LowerName == name)
                 .ToArrayAsync();
@@ -55,7 +55,7 @@ namespace Xs.Registry.Db.Dotnet
         {
             name = name.ToLower();
 
-            return context.Packages
+            return context.DotnetPackages
                 .AsNoTracking()
                 .Where(p => p.LowerName == name)
                 .Select(p => p.Version)
@@ -66,7 +66,7 @@ namespace Xs.Registry.Db.Dotnet
         {
             name = name.ToLower();
 
-            var entity = await context.Packages
+            var entity = await context.DotnetPackages
                 .AsNoTracking()
                 .Include(p => p.Dependencies)
                 .Where(p => p.LowerName == name && p.Version == version)
@@ -79,17 +79,17 @@ namespace Xs.Registry.Db.Dotnet
         {
             name = name.ToLower();
 
-            return context.Packages.Where(p => p.LowerName == name).CountAsync();
+            return context.DotnetPackages.Where(p => p.LowerName == name).CountAsync();
         }
 
         public async Task IncrementDownloadsAsync(Guid id)
         {
-            var downloads = await context.Packages
+            var downloads = await context.DotnetPackages
                 .Where(p => p.Id == id)
                 .Select(p => p.Downloads)
                 .FirstOrDefaultAsync();
 
-            await context.Packages
+            await context.DotnetPackages
                 .Where(p => p.Id == id && p.Downloads == downloads)
                 .UpdateAsync(p => new Entities.Package { Downloads = downloads + 1 });
         }
@@ -98,7 +98,7 @@ namespace Xs.Registry.Db.Dotnet
         {
             name = name.ToLower();
 
-            return context.Packages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
+            return context.DotnetPackages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
         }
     }
 }

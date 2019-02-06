@@ -4,8 +4,8 @@ namespace Xs.Registry.Db.Dotnet
 {
     internal interface IDotnetContext : IContext
     {
-        DbSet<Entities.Package> Packages { get; }
+        DbSet<Entities.Package> DotnetPackages { get; }
 
-        DbSet<Entities.PackageDependency> PackageDependencies { get; }
+        DbSet<Entities.PackageDependency> DotnetPackageDependencies { get; }
     }
 }
