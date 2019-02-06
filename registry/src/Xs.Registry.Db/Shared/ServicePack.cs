@@ -34,7 +34,9 @@ namespace Xs.Registry.Db.Shared
         {
             var cfg = new MapperConfigurationExpression();
 
-            cfg.CreateMap<MetaPackage, Entities.MetaPackage>().ReverseMap();
+            cfg.CreateMap<MetaPackage, Entities.MetaPackage>()
+                .ForMember(p => p.LowerName, opt => opt.MapFrom(p => p.Name.ToLower()))
+                .ReverseMap();
             cfg.CreateMap<MetaPackagePermission, Entities.MetaPackagePermission>()
                 .ForMember(p => p.MetaPackageId, opt => opt.Ignore())
                 .ReverseMap();

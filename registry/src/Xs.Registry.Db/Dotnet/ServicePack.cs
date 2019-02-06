@@ -29,7 +29,9 @@ namespace Xs.Registry.Db.Dotnet
         {
             var cfg = new MapperConfigurationExpression();
 
-            cfg.CreateMap<Package, Entities.Package>().ReverseMap();
+            cfg.CreateMap<Package, Entities.Package>()
+                .ForMember(p => p.LowerName, opt => opt.MapFrom(p => p.Name.ToLower()))
+                .ReverseMap();
             cfg.CreateMap<PackageDependency, Entities.PackageDependency>()
                 .ForMember(p => p.PackageId, opt => opt.Ignore())
                 .ReverseMap();

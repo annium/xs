@@ -19,7 +19,7 @@ namespace Xs.Registry.Db
                 .HasOne<User>(m => m.Owner).WithMany().IsRequired()
                 .HasForeignKey(m => m.OwnerId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<MetaPackage>()
-                .HasAlternateKey(m => new { m.Type, m.Name });
+                .HasAlternateKey(m => new { m.Type, m.LowerName });
 
             builder.Entity<MetaPackagePermission>()
                 .HasKey(p => new { p.MetaPackageId, p.Category });

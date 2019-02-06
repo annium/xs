@@ -12,7 +12,7 @@ namespace Xs.Registry.Db
         private void ConfigureDotnet(ModelBuilder builder)
         {
             builder.Entity<Package>()
-                .HasAlternateKey(p => new { p.Name, p.Version });
+                .HasAlternateKey(p => new { p.LowerName, p.Version });
             builder.Entity<Package>()
                 .HasOne<Shared.Entities.MetaPackage>().WithMany().IsRequired()
                 .HasForeignKey(p => p.MetaPackageId).OnDelete(DeleteBehavior.Cascade);

@@ -53,11 +53,12 @@ namespace Xs.Registry.Db.Shared
         public async Task<MetaPackage> FindByTypeNameAsync(ProjectType type, string name)
         {
             var typeString = type.ToString();
+            name = name.ToLower();
 
             var entity = await context.MetaPackages
                 .AsNoTracking()
                 .Include(p => p.Permissions)
-                .Where(p => p.Type == typeString && p.Name == name)
+                .Where(p => p.Type == typeString && p.LowerName == name)
                 .FirstOrDefaultAsync();
 
             return mapper.Map<MetaPackage>(entity);
@@ -91,8 +92,9 @@ namespace Xs.Registry.Db.Shared
         public async Task DeleteByTypeNameAsync(ProjectType type, string name)
         {
             var typeString = type.ToString();
+            name = name.ToLower();
 
-            await context.MetaPackages.Where(p => p.Type == typeString && p.Name == name).DeleteAsync();
+            await context.MetaPackages.Where(p => p.Type == typeString && p.LowerName == name).DeleteAsync();
         }
     }
 }

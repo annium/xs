@@ -20,6 +20,9 @@ namespace Xs.Registry.Db.Dotnet.Entities
         public string Name { get; set; }
 
         [Required]
+        public string LowerName { get; set; }
+
+        [Required]
         public string Version { get; set; }
 
         [Required]
