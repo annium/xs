@@ -50,6 +50,18 @@ namespace Xs.Registry.Db.Shared
             return mapper.Map<MetaPackage>(entity);
         }
 
+        public async Task<MetaPackage[]> FindAllByOwnerIdAsync(Guid ownerId)
+        {
+            var entities = await context.MetaPackages
+                .AsNoTracking()
+                .Include(p => p.Owner)
+                .Include(p => p.Permissions)
+                .Where(p => p.OwnerId == ownerId)
+                .ToListAsync();
+
+            return entities.Select(mapper.Map<MetaPackage>).ToArray();
+        }
+
         public async Task<MetaPackage> FindByTypeNameAsync(ProjectType type, string name)
         {
             var typeString = type.ToString();

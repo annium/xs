@@ -9,6 +9,8 @@ namespace Xs.Registry.Db.Shared
 
         Task<MetaPackage> GetByIdAsync(Guid id);
 
+        Task<MetaPackage[]> FindAllByOwnerIdAsync(Guid ownerId);
+
         Task<MetaPackage> FindByTypeNameAsync(ProjectType type, string name);
 
         Task UpdateInfoAsync(Guid id, IPackageInfo packageInfo);
