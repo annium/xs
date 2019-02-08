@@ -4,14 +4,18 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Newtonsoft.Json;
 using NodaTime;
+using Xs.Registry.Db.Shared;
+using Xs.Registry.Node.Models;
 
 namespace Xs.Registry.Node.Payloads
 {
-    public class PackagePayload
+    public class PackagePayload : IPackageInfo
     {
         [Required]
         [StringLength(100, MinimumLength = 2)]
         public string Name { get; set; }
+
+        public PackageName PackageName => PackageName.Parse(Name);
 
         [JsonIgnore]
         public string Version => DistributionTags?.ContainsKey("latest") ?? false ? DistributionTags["latest"] : "";
