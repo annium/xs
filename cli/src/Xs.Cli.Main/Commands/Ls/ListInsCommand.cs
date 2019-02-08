@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,13 +39,47 @@ namespace Xs.Cli.Main.Commands.Ls
             projects = filterTask.Run(projects, cfg.Mask);
             var last = projects.Last();
 
+            // show deps if explicitly specified, or opposite flag not set
+            var showProjects = cfg.Projects || !cfg.Packages;
+            var showPackages = cfg.Packages || !cfg.Projects;
+
+            // if plain dependencies list requested - join deps and log them in single list
+            if (cfg.Plain)
+            {
+                LogPlainDependencies(projects, showProjects, showPackages);
+                return;
+            }
+
+            // otherwise - log nice dependencies tree
             foreach (var project in projects)
-                LogProjectWithDependencies(project, cfg.ProjectsOnly, string.Empty, project == last);
+                LogProjectWithDependencies(project, showProjects, showPackages, string.Empty, project == last);
+        }
+
+        private void LogPlainDependencies(
+            IEnumerable<IProject> projects,
+            bool showProjects,
+            bool showPackages
+        )
+        {
+            if (showProjects)
+            {
+                var projectDeps = projects.SelectMany(p => p.ProjectDependencies).Distinct().OrderBy(e => e.Name).ToArray();
+                foreach (var dependency in projectDeps)
+                    Console.WriteLine(dependency);
+            }
+
+            if (showPackages)
+            {
+                var packageDeps = projects.SelectMany(p => p.PackageDependencies).Distinct().OrderBy(e => e.Name).ToArray();
+                foreach (var dependency in packageDeps)
+                    Console.WriteLine(dependency);
+            }
         }
 
         private void LogProjectWithDependencies(
             IProject project,
-            bool onlyProjects,
+            bool showProjects,
+            bool showPackages,
             string prefix,
             bool isLast
         )
@@ -53,7 +88,7 @@ namespace Xs.Cli.Main.Commands.Ls
             var projectDeps = project.ProjectDependencies.OrderBy(e => e.Name).ToArray();
             var node = isLast ? "└─" : "├─";
 
-            var depsCount = onlyProjects ? projectDeps.Length : packageDeps.Length + projectDeps.Length;
+            var depsCount = showProjects ? projectDeps.Length : packageDeps.Length + projectDeps.Length;
             if (depsCount == 0)
             {
                 Console.WriteLine($"{prefix}{node}─ {project.Name}");
@@ -63,18 +98,18 @@ namespace Xs.Cli.Main.Commands.Ls
             Console.WriteLine($"{prefix}{node}┬ {project.Name}");
             prefix += isLast ? "  " : "│ ";
 
-            if (!onlyProjects && packageDeps.Length > 0)
+            if (showPackages && packageDeps.Length > 0)
             {
                 var last = projectDeps.Length > 0 ? null : packageDeps.Last();
                 foreach (var dependency in packageDeps)
                     LogDependency(dependency, prefix, dependency == last);
             }
 
-            if (projectDeps.Length > 0)
+            if (showProjects && projectDeps.Length > 0)
             {
                 var last = projectDeps.Last();
                 foreach (var dependency in projectDeps)
-                    LogProjectWithDependencies(dependency, onlyProjects, prefix, dependency == last);
+                    LogProjectWithDependencies(dependency, showProjects, showPackages, prefix, dependency == last);
             }
         }
 
@@ -95,8 +130,16 @@ namespace Xs.Cli.Main.Commands.Ls
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Option("p")]
+        [Option]
         [Help("Show only project dependencies (without packages).")]
-        public bool ProjectsOnly { get; set; }
+        public bool Projects { get; set; }
+
+        [Option]
+        [Help("Show only package dependencies (without projects).")]
+        public bool Packages { get; set; }
+
+        [Option]
+        [Help("Show plain dependencies list (no recursion).")]
+        public bool Plain { get; set; }
     }
 }

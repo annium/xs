@@ -39,8 +39,25 @@ namespace Xs.Cli.Main.Commands.Ls
             var projects = filterTask.Run(allProjects, cfg.Mask);
             var last = projects.Last();
 
+            // if plain dependants list requested - them in single list
+            if (cfg.Plain)
+            {
+                LogPlainDependants(projects, allProjects);
+                return;
+            }
+
             foreach (var project in projects)
                 LogProjectWithDependants(project, allProjects, string.Empty, project == last);
+        }
+
+        private void LogPlainDependants(IEnumerable<IProject> projects, IEnumerable<IProject> allProjects)
+        {
+            var dependants = allProjects
+                .Where(e => e.ProjectDependencies.Intersect(projects).Count() > 0)
+                .OrderBy(e => e.Name)
+                .ToArray();
+            foreach (var dependant in dependants)
+                Console.WriteLine(dependant);
         }
 
         private void LogProjectWithDependants(
@@ -89,5 +106,9 @@ namespace Xs.Cli.Main.Commands.Ls
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Option]
+        [Help("Show plain dependants list (no recursion).")]
+        public bool Plain { get; set; }
     }
 }
