@@ -5,6 +5,7 @@
         <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="../Xs.Execution/Xs.Execution.csproj" />
         <ProjectReference Include="../Xs.Registry.Db/Xs.Registry.Db.csproj" />
         <ProjectReference Include="../Xs.Registry.Shared/Xs.Registry.Shared.csproj" />
     </ItemGroup>
