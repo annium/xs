@@ -55,6 +55,7 @@ namespace Xs.Registry.Db.Shared
             var entities = await packages
                 .AsNoTracking()
                 .Where(p => p.LowerName == name)
+                .OrderByDescending(p => p.Version)
                 .ToArrayAsync();
 
             return entities.Select(mapper.Map<TPackage>).ToArray();
@@ -68,6 +69,7 @@ namespace Xs.Registry.Db.Shared
                 .AsNoTracking()
                 .Where(p => p.LowerName == name)
                 .Select(p => p.Version)
+                .OrderByDescending(v => v)
                 .ToArrayAsync();
         }
 
