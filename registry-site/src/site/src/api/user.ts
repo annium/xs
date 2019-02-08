@@ -17,7 +17,7 @@ export default {
   update(name: string, password: string): Promise<Response> {
     return api.post('user', undefined, { name, password })
   },
-  updateToken(): Promise<Response<string>> {
+  updateToken(): Promise<Response> {
     return api.post('user/token')
   },
 }

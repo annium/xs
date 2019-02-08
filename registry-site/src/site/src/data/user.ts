@@ -51,9 +51,9 @@ export class UserStore {
   @action.bound async updateToken() {
     const result = await user.updateToken()
 
-    runInAction(() => {
-      this.data!.apiToken = result.data
-      throw this.updateError = result.error
-    })
+    if (result.isFailure)
+      runInAction(() => { throw this.updateError = result.error })
+    else
+      await this.load()
   }
 }
