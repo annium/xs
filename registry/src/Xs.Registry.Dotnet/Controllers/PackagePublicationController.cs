@@ -132,7 +132,14 @@ namespace Xs.Registry.Dotnet.Controllers
                 if (!access.Has(Permission.Publish))
                     return Forbidden($"You need publish permission to publish package {payload.Name} {payload.Version}.");
 
-                var pkg = new Package(metaPackage.Id, payload.Name, payload.Version, payload.Description, payload.Published, payload.Dependencies);
+                var pkg = new Package(
+                    metaPackage.Id,
+                    payload.Name,
+                    payload.Version,
+                    payload.Description,
+                    payload.Published,
+                    payload.Dependencies
+                );
 
                 executor.Stage(
                     () => packageStorage.SaveAsync(pkg.Name, pkg.Version, payload.PackageStream, payload.NuspecStream),
