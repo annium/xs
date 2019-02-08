@@ -55,7 +55,7 @@ export default class SettingsPage extends React.Component<Props> {
         <Row>
           <Col {...layout}>
             <h2>API Token</h2>
-            <Input disabled value={user.data!.apiToken} suffix={<Icon type="sync" onClick={user.updateToken} />} />
+            <Input disabled value={user.data!.apiToken} suffix={<Icon type="sync" onClick={handleUpdateToken} />} />
           </Col>
         </Row>
       </div >

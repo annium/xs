@@ -20,7 +20,7 @@ export class UserStore {
     const result = await user.login(name, password)
 
     if (result.isFailure)
-      runInAction(() => this.accessError = result.error)
+      runInAction(() => { throw this.accessError = result.error })
     else
       await this.load()
   }

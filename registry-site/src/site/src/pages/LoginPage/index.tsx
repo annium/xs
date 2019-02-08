@@ -1,3 +1,4 @@
+import message from 'antd/lib/message'
 import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
@@ -38,9 +39,13 @@ export default class LoginPage extends React.Component<Props> {
 
     if (user.hasAccess) return null
 
+    const handleLogin = (name: string, password: string) => user
+      .login(name, password)
+      .catch(error => message.error('login failed: ' + error))
+
     return (
       <div className={styles.page}>
-        <LoginForm onSubmit={user.login} />
+        <LoginForm onSubmit={handleLogin} />
       </div>
     )
   }
