@@ -3,6 +3,7 @@ import { action, computed, observable, runInAction } from 'mobx'
 import user from '../api/user'
 import User from '../models/view/User'
 
+
 export class UserStore {
   @observable data: User | null = null
   @observable accessError: string | null = null

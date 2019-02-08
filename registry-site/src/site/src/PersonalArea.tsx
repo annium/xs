@@ -3,21 +3,24 @@ import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
 import Root from './components/Root'
-import { UserStore } from './data/user'
 import { Store } from './store'
 
 
-interface Props extends RouteComponentProps {
-  user: UserStore
-}
+type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
 
 const log = console.log.bind(console, 'PersonalArea')
-@inject((stores: Store) => ({ user: stores.user }))
+@inject((stores: Store) => ({
+  startup: stores.startup,
+  user: stores.user
+}))
 @observer
 export default class PersonalArea extends React.Component<Props> {
   async componentWillMount() {
+    const { startup } = this.props
+
     log('componentWillMount', 'ensure access')
     this.ensureAccess()
+    await startup.load()
   }
 
   async componentDidUpdate() {
