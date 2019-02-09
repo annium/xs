@@ -44,16 +44,8 @@ export default class SettingsPage extends React.Component<Props> {
         <Row>
           <Col {...layout}>
             <h1>Settings</h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col {...layout}>
             <h2>Credentials</h2>
             <UpdateUserForm name={user.data!.name} onSubmit={handleUpdate} />
-          </Col>
-        </Row>
-        <Row>
-          <Col {...layout}>
             <h2>API Token</h2>
             <Input disabled value={user.data!.apiToken} suffix={<Icon type="sync" onClick={handleUpdateToken} />} />
           </Col>
