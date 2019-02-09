@@ -17,7 +17,7 @@ using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Node.Controllers
 {
-    public class PackageController : ServerController<User>
+    public class PackagePublicationConsumptionController : ServerController<User>
     {
         private readonly Func<Instant> getInstant;
 
@@ -31,7 +31,7 @@ namespace Xs.Registry.Node.Controllers
 
         private readonly IUrlHelper url;
 
-        public PackageController(
+        public PackagePublicationConsumptionController(
             Func<Instant> getInstant,
             IMetaPackageManager metaPackageManager,
             IMetaPackageRepository metaPackageRepository,
