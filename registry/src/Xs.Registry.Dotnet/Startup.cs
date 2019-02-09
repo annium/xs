@@ -3,6 +3,8 @@ using Annium.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
+using NodaTime.Serialization.JsonNet;
 using Xs.Registry.Abstract.Auth;
 using Xs.Registry.Abstract.Tools;
 using Xs.Registry.Shared.Auth;
@@ -18,7 +20,8 @@ namespace Xs.Registry.Dotnet
 
             services.AddRegistryAuthorization<AuthorizationFilter>();
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(opts => opts.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization));
 
             return new ServiceProviderBuilder(services)
                 .UseServicePack<TServicePack>()
