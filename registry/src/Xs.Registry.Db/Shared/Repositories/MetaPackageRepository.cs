@@ -62,6 +62,32 @@ namespace Xs.Registry.Db.Shared
             return entities.Select(mapper.Map<MetaPackage>).ToArray();
         }
 
+        public async Task<MetaPackage[]> FindPackagesByQueryAsync(Guid userId, string query, int page, int count)
+        {
+            var request = context.MetaPackages
+                .AsNoTracking()
+                .Include(p => p.Owner)
+                .Include(p => p.Permissions)
+                .Where(p => p.OwnerId == userId ||
+                    p.Permissions.Any(e => e.Category == PermissionCategory.World && e.Permission.HasFlag(Permission.Read))
+                );
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                query = query.ToLower();
+                request = request.Where(p => p.Name.ToLower().Contains(query));
+            }
+
+            request = request
+                .OrderBy(p => p.Name)
+                .Skip((page - 1) * count)
+                .Take(count);
+
+            var entities = await request.ToListAsync();
+
+            return entities.Select(mapper.Map<MetaPackage>).ToArray();
+        }
+
         public async Task<MetaPackage> FindByTypeNameAsync(ProjectType type, string name)
         {
             var typeString = type.ToString();
