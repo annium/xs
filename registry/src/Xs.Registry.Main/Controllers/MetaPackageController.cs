@@ -43,7 +43,14 @@ namespace Xs.Registry.Main.Controllers
 
             return Ok(packages.Select(p => new MetaPackageView(p)).ToArray());
         }
-        // name
-        // name/version
+
+        [HttpGet("{type}/{name}")]
+        [Authorize]
+        public async Task<IActionResult> GetPackageAsync(string type, string name)
+        {
+            var package = await metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
+
+            return Ok(new MetaPackageView(package));
+        }
     }
 }

@@ -95,6 +95,7 @@ namespace Xs.Registry.Db.Shared
 
             var entity = await context.MetaPackages
                 .AsNoTracking()
+                .Include(p => p.Owner)
                 .Include(p => p.Permissions)
                 .Where(p => p.Type == typeString && p.LowerName == name)
                 .FirstOrDefaultAsync();
