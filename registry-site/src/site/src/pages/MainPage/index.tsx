@@ -13,6 +13,10 @@ const log = console.log.bind(console, 'MainPage')
 export default class MainPage extends React.Component {
   @observable private query: string = ''
 
+  async componentDidMount() {
+    log('mount')
+  }
+
   render() {
     log('render')
     const { query } = this

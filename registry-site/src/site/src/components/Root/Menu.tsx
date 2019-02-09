@@ -1,7 +1,7 @@
 import Icon from 'antd/lib/icon'
 import { inject, observer } from 'mobx-react'
 import * as React from 'react'
-import { withRouter, NavLink, RouteComponentProps } from 'react-router-dom'
+import { NavLink, RouteComponentProps, withRouter } from 'react-router-dom'
 
 import { UserStore } from '../../data/user'
 import { Store } from '../../store'

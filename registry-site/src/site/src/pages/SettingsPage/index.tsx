@@ -7,12 +7,11 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import UpdateUserForm from './UpdateUserForm'
-import { Store } from '../../store'
 import { UserStore } from '../../data/user'
-
+import { Store } from '../../store'
 
 import styles from './index.module.scss'
+import UpdateUserForm from './UpdateUserForm'
 
 
 interface Props extends RouteComponentProps {

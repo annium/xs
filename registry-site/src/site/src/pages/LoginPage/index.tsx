@@ -3,12 +3,11 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import LoginForm from './Form'
 import { StartupStore } from '../../data/startup'
 import { UserStore } from '../../data/user'
 import { Store } from '../../store'
 
-
+import LoginForm from './Form'
 import styles from './index.module.scss'
 
 

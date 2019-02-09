@@ -1,13 +1,13 @@
+import createBrowserHistory from 'history/createBrowserHistory'
 import * as React from 'react'
 import { Route, Router, Switch } from 'react-router-dom'
 
 import App from './App'
-import PersonalArea from './PersonalArea'
 import LoginPage from './pages/LoginPage'
 import MainPage from './pages/MainPage'
 import SettingsPage from './pages/SettingsPage'
+import PersonalArea from './PersonalArea'
 
-import createBrowserHistory from 'history/createBrowserHistory'
 const navHistory = createBrowserHistory()
 
 

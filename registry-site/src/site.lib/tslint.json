@@ -14,7 +14,6 @@
     "linebreak-style": {
       "options": "LF"
     },
-    "match-default-export-name": true,
     "max-line-length": [true, 120],
     "member-ordering": [
       true,

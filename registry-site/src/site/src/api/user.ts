@@ -1,7 +1,8 @@
 import { Response } from 'site.lib/dist/api'
 
-import api from './api'
 import User from '../models/view/User'
+
+import api from './api'
 
 
 export default {

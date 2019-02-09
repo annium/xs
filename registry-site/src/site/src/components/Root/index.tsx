@@ -1,9 +1,7 @@
 import * as React from 'react'
 
-import Menu from './Menu'
-
-
 import styles from './index.module.scss'
+import Menu from './Menu'
 
 
 export default class Root extends React.Component {

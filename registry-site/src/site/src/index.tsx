@@ -1,14 +1,12 @@
+import { Provider } from 'mobx-react'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { Provider } from 'mobx-react'
 
 import Routes from './routes'
-
-
+import createStore from './store'
 import './styles/layout.scss'
 
 
-import createStore from './store'
 const store = createStore()
 
 ReactDOM.render(
