@@ -16,7 +16,7 @@ export default interface MetaPackageData {
   permissions: MetaPackagePermission[]
 }
 
-export const toView = (data: MetaPackageData): MetaPackage => {
+export const toMetaPackage = (data: MetaPackageData): MetaPackage => {
   return {
     ...data,
     published: moment(data.published),

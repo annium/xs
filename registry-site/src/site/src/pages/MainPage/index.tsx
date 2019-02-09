@@ -1,9 +1,13 @@
 import Col, { ColSize } from 'antd/lib/col'
 import Input from 'antd/lib/input'
+import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
 import { observer } from 'mobx-react'
 import * as React from 'react'
+
+import packages from '../../api/packages'
+import MetaPackage from '../../models/view/MetaPackage'
 
 import styles from './index.module.scss'
 
@@ -12,9 +16,15 @@ const log = console.log.bind(console, 'MainPage')
 @observer
 export default class MainPage extends React.Component {
   @observable private query: string = ''
+  private packages: MetaPackage[] = []
 
   async componentDidMount() {
-    log('mount')
+    const packagesResult = await packages.my()
+
+    if (packagesResult.isSuccess)
+      this.packages = packagesResult.data
+    else
+      message.error(`Packages load failed with: ${packagesResult.error}`)
   }
 
   render() {
