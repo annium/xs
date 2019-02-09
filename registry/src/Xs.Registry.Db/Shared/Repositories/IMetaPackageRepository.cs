@@ -9,6 +9,8 @@ namespace Xs.Registry.Db.Shared
 
         Task<MetaPackage> GetByIdAsync(Guid id);
 
+        Task<MetaPackageAccess> GetAccessByIdAsync(Guid id);
+
         Task<MetaPackage[]> FindAllByOwnerIdAsync(Guid ownerId);
 
         Task<MetaPackage[]> FindPackagesByQueryAsync(Guid userId, string query, int page, int count);

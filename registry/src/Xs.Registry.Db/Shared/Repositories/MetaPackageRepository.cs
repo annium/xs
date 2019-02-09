@@ -50,6 +50,20 @@ namespace Xs.Registry.Db.Shared
             return mapper.Map<MetaPackage>(entity);
         }
 
+        public async Task<MetaPackageAccess> GetAccessByIdAsync(Guid id)
+        {
+            var data = await context.MetaPackages
+                .Where(p => p.Id == id)
+                .Include(p => p.Permissions)
+                .Select(p => new { owner = p.OwnerId, permissions = p.Permissions })
+                .FirstOrDefaultAsync();
+
+            if (data == null)
+                return null;
+
+            return new MetaPackageAccess(data.owner, data.permissions.Select(mapper.Map<MetaPackagePermission>).ToArray());
+        }
+
         public async Task<MetaPackage[]> FindAllByOwnerIdAsync(Guid ownerId)
         {
             var entities = await context.MetaPackages
