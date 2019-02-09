@@ -241,7 +241,7 @@ namespace Xs.Registry.Node.Controllers
             if (!access.Has(Permission.Read))
                 return Forbidden("You need read permission to get this package.");
 
-            return Ok(new PackageView(packages, url));
+            return Ok(new PackagesView(packages, url));
         }
 
         [HttpGet("{name}/{version}.tgz")]
