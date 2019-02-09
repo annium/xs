@@ -23,7 +23,7 @@ namespace Xs.Registry.Db.Shared
             );
         }
 
-        public UserMetaPackageAccess GetAccess(User user, MetaPackage metaPackage) =>
-            new UserMetaPackageAccess(user, metaPackage);
+        public MetaPackageAccess GetAccess(MetaPackage metaPackage) =>
+            new MetaPackageAccess(metaPackage.OwnerId, metaPackage.Permissions);
     }
 }

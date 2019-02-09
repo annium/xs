@@ -4,6 +4,6 @@ namespace Xs.Registry.Db.Shared
     {
         MetaPackage Generate(User user, ProjectType type, IPackageInfo package);
 
-        UserMetaPackageAccess GetAccess(User user, MetaPackage metaPackage);
+        MetaPackageAccess GetAccess(MetaPackage metaPackage);
     }
 }

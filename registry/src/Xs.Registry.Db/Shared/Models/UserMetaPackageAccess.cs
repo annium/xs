@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Xs.Registry.Db.Shared
@@ -11,16 +13,17 @@ namespace Xs.Registry.Db.Shared
         private readonly Permission permission;
 
         internal UserMetaPackageAccess(
-            User user,
-            MetaPackage metaPackage
+            Guid userId,
+            Guid ownerId,
+            IEnumerable<MetaPackagePermission> permissions
         )
         {
-            var category = metaPackage.OwnerId == user.Id ? PermissionCategory.Owner : PermissionCategory.World;
+            var category = ownerId == userId ? PermissionCategory.Owner : PermissionCategory.World;
 
             IsOwner = category == PermissionCategory.Owner;
             IsWorld = category == PermissionCategory.World;
 
-            permission = metaPackage.Permissions.FirstOrDefault(p => p.Category == category)?.Permission ?? Permission.None;
+            permission = permissions.FirstOrDefault(p => p.Category == category)?.Permission ?? Permission.None;
         }
 
         public bool Has(Permission permission) => this.permission.HasFlag(permission);

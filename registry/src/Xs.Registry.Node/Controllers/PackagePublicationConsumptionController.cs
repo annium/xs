@@ -76,7 +76,7 @@ namespace Xs.Registry.Node.Controllers
                         metaPackageManager.Generate(user, Constants.ProjectType, packagePayload)
                     );
 
-                var access = metaPackageManager.GetAccess(user, metaPackage);
+                var access = metaPackageManager.GetAccess(metaPackage).ForUser(user);
 
                 // if new - publish new package
                 if (isNew)
@@ -199,8 +199,8 @@ namespace Xs.Registry.Node.Controllers
                 return NotFound();
 
             // load metaPackage and check permissions
-            var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
-            var access = metaPackageManager.GetAccess(GetUser(), metaPackage);
+            var metaPackageId = versions[0].MetaPackageId;
+            var access = (await metaPackageRepository.GetAccessByIdAsync(metaPackageId)).ForUser(GetUser());
             if (!access.Has(Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package.");
 
@@ -214,7 +214,7 @@ namespace Xs.Registry.Node.Controllers
 
             // if it was last package - delete metaPackage
             if (versions.Length == 1)
-                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
+                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackageId));
 
             await executor.RunAsync();
 
@@ -237,8 +237,7 @@ namespace Xs.Registry.Node.Controllers
                 return NotFound();
 
             // try load metaPackage; if exists - check permissions
-            var metaPackage = await metaPackageRepository.GetByIdAsync(packages[0].MetaPackageId);
-            var access = metaPackageManager.GetAccess(GetUser(), metaPackage);
+            var access = (await metaPackageRepository.GetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(GetUser());
             if (!access.Has(Permission.Read))
                 return Forbidden("You need read permission to get this package.");
 
@@ -258,8 +257,7 @@ namespace Xs.Registry.Node.Controllers
             var user = GetUser();
 
             // try load metaPackage; if exists - check permissions
-            var metaPackage = await metaPackageRepository.GetByIdAsync(package.MetaPackageId);
-            var access = metaPackageManager.GetAccess(GetUser(), metaPackage);
+            var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(GetUser());
             if (!access.Has(Permission.Read))
                 return Forbidden("You need read permission to get this package.");
 

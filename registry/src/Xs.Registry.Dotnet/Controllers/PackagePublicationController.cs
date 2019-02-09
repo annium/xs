@@ -69,7 +69,7 @@ namespace Xs.Registry.Dotnet.Controllers
                         metaPackageManager.Generate(user, Constants.ProjectType, packagePayload)
                     );
 
-                var access = metaPackageManager.GetAccess(user, metaPackage);
+                var access = metaPackageManager.GetAccess(metaPackage).ForUser(user);
 
                 // if new - publish new package
                 if (isNew)
@@ -214,8 +214,8 @@ namespace Xs.Registry.Dotnet.Controllers
             var user = GetUser();
 
             // load metaPackage and check permissions
-            var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
-            var access = metaPackageManager.GetAccess(user, metaPackage);
+            var metaPackageId = versions[0].MetaPackageId;
+            var access = (await metaPackageRepository.GetAccessByIdAsync(metaPackageId)).ForUser(GetUser());
             if (!access.Has(Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package.");
 
@@ -229,7 +229,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
             // if it was last package - delete metaPackage
             if (versions.Length == 1)
-                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
+                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackageId));
 
             await executor.RunAsync();
 
