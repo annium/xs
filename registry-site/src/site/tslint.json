@@ -17,6 +17,10 @@
     "jsx-alignment": false,
     "jsx-no-bind": true,
     "label-position": true,
+    "linebreak-style": {
+      "options": "LF"
+    },
+    "match-default-export-name": true,
     "max-line-length": [true, 120],
     "member-ordering": [
       true,
@@ -72,6 +76,14 @@
       "check-open-brace",
       "check-whitespace"
     ],
+    "ordered-imports": {
+      "options": {
+        "grouped-imports": true,
+        "import-sources-order": "case-insensitive",
+        "module-source-path": "full",
+        "named-imports-order": "case-insensitive"
+      }
+    },
     "prefer-const": [
       true,
       {

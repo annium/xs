@@ -9,6 +9,7 @@
     "typescript": "3.2.4"
   },
   "scripts": {
-    "build": "tslint -p . && tsc -b"
+    "build": "tslint -p . && tsc -b",
+    "lint": "tslint -p ."
   }
 }
