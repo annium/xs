@@ -1,38 +1,44 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using NodaTime;
 using Xs.Registry.Db.Node;
 
 namespace Xs.Registry.Node.Views
 {
-    public class PackageView
+    internal class PackageView
     {
+        public Guid Id { get; }
+
         public string Name { get; }
+
+        public string Version { get; }
 
         public string Description { get; }
 
-        [JsonProperty("dist-tags")]
-        public IReadOnlyDictionary<string, string> DistributionTags { get; }
+        public Instant Published { get; }
 
-        public IReadOnlyDictionary<string, PackageVersionView> Versions { get; }
+        public int Downloads { get; }
 
-        public IReadOnlyDictionary<string, string> Time { get; }
+        public string Main { get; }
 
-        public PackageView(IEnumerable<Package> packages, IUrlHelper urlHelper)
+        public string Shasum { get; }
+
+        public string Integrity { get; }
+
+        public IEnumerable<PackageDependency> Dependencies { get; }
+
+        internal PackageView(Package package)
         {
-            packages = packages.OrderByDescending(e => e.Version);
-            var latest = packages.First();
-
-            Name = latest.Name.ToString();
-            Description = latest.Description;
-            DistributionTags = new Dictionary<string, string>() { { "latest", latest.Version } };
-            Versions = packages.Select(e => new PackageVersionView(e, urlHelper)).ToDictionary(e => e.Version, e => e);
-
-            var times = packages.ToDictionary(e => e.Version, e => e.Published.ToDateTimeUtc().ToString(Configuration.DateFormat));
-            times["created"] = packages.First().Published.ToDateTimeUtc().ToString(Configuration.DateFormat);
-            times["modified"] = latest.Published.ToDateTimeUtc().ToString(Configuration.DateFormat);
-            Time = times;
+            Id = package.Id;
+            Name = package.Name;
+            Version = package.Version;
+            Description = package.Description;
+            Published = package.Published;
+            Downloads = package.Downloads;
+            Main = package.Main;
+            Shasum = package.Shasum;
+            Integrity = package.Integrity;
+            Dependencies = package.Dependencies;
         }
     }
 }
