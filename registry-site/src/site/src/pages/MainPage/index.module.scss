@@ -4,3 +4,29 @@
     @include flex(column);
     flex: 1;
 }
+
+.pkgMetaTitle {
+    @include flex(row);
+}
+
+a.pkgMetaName {
+    color: $color-blue;
+}
+
+.pkgMetaOwner {
+    margin-left: 1rem;
+}
+
+.pkgMetaDetails {
+    @include flex(row);
+    color: $color-dark-grey;
+
+    >*:not(:first-child) {
+        padding-left: 1rem;
+        border-left: 1px solid $color-grey;
+    }
+
+    >*:not(:last-child) {
+        padding-right: 1rem;
+    }
+}
