@@ -73,6 +73,20 @@ namespace Xs.Registry.Db.Shared
                 .ToArrayAsync();
         }
 
+        public async Task<TPackage> FindLatestByNameAsync(string name)
+        {
+            name = name.ToLower();
+
+            var entity = await packages
+                .AsNoTracking()
+                .Include(p => p.Dependencies)
+                .Where(p => p.LowerName == name)
+                .OrderByDescending(p => p.Version)
+                .FirstOrDefaultAsync();
+
+            return mapper.Map<TPackage>(entity);
+        }
+
         public async Task<TPackage> FindByNameVersionAsync(string name, string version)
         {
             name = name.ToLower();
