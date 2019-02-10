@@ -63,7 +63,7 @@ namespace Xs.Registry.Main.Controllers
         {
             var user = GetUser();
 
-            return Ok(new { Name = user.Name, ApiToken = user.ApiToken });
+            return Ok(new { Id = user.Id, Name = user.Name, ApiToken = user.ApiToken });
         }
 
         [HttpDelete]

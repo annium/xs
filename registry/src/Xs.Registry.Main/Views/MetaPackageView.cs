@@ -21,6 +21,8 @@ namespace Xs.Registry.Main.Views
 
         public int Downloads { get; }
 
+        public Guid OwnerId { get; }
+
         public string Owner { get; }
 
         public IEnumerable<MetaPackagePermission> Permissions { get; }
@@ -34,7 +36,8 @@ namespace Xs.Registry.Main.Views
             Description = metaPackage.Description;
             Published = metaPackage.Published;
             Downloads = metaPackage.Downloads;
-            Owner = metaPackage.Owner?.Name ?? string.Empty;
+            OwnerId = metaPackage.OwnerId;
+            Owner = metaPackage.Owner.Name;
             Permissions = metaPackage.Permissions;
         }
     }
