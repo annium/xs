@@ -1,45 +1,60 @@
 import Col from 'antd/lib/col'
-import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import * as React from 'react'
+import { RouteComponentProps } from 'react-router'
 
 import metaPackages from '../../api/metaPackages'
+import PackageFilter from '../../components/PackageFilter'
 import PackageList from '../../components/PackageList'
 import MetaPackage from '../../models/view/MetaPackage'
+import { ProjectType } from '../../models/view/ProjectType'
+import { Store } from '../../store'
+import { updateLocation } from '../../utils/history'
 import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
 
 
-const log = console.log.bind(console, 'HomePage')
+type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
+
+@inject((stores: Store) => ({ user: stores.user }))
 @observer
-export default class HomePage extends React.Component {
-  @observable private query: string = ''
+export default class HomePage extends React.Component<Props> {
+  @observable private type: ProjectType
+  @observable private query: string
   @observable private packages: MetaPackage[] = []
 
-  async componentDidMount() {
-    const packagesResult = await metaPackages.search('', '', '', 1)
+  constructor(props: Props) {
+    super(props)
 
-    if (packagesResult.isSuccess)
-      this.packages = packagesResult.data
-    else
-      message.error(`Packages load failed with: ${packagesResult.error}`)
+    const params = new URLSearchParams(props.location.search)
+    this.type = Object.values(ProjectType).includes(params.get('type'))
+      ? params.get('type') as ProjectType
+      : ProjectType.Any
+    this.query = params.get('query') || ''
+  }
+
+  async componentDidMount() {
+    this.search()
   }
 
   render() {
-    log('render')
-    const query = this.query.toLowerCase()
-    const packages = query ? this.packages.filter(p => p.name.toLowerCase().includes(query)) : this.packages
+    const { type, query, packages } = this
 
     return (
       <div className={styles.page}>
         <Row>
           <Col {...getCenteredLayout(22, 22, 20, 18, 14)}>
             <h1>My packages</h1>
-            <Input.Search placeholder="search packages" enterButton onSearch={this.setQuery} />
+            <PackageFilter
+              type={type}
+              onTypeChange={this.setType}
+              query={query}
+              onQueryChange={this.setQuery}
+              onSubmit={this.search} />
             <PackageList packages={packages} />
           </Col>
         </Row>
@@ -47,5 +62,19 @@ export default class HomePage extends React.Component {
     )
   }
 
-  private setQuery = (value: string) => this.query = value
+  private search = async () => {
+    const { type, query } = this
+    const { user } = this.props
+    updateLocation(this.props.history, { type, query })
+    const packagesResult = await metaPackages.search(user!.data!.id, type, query, 1)
+
+    if (packagesResult.isSuccess)
+      this.packages = packagesResult.data
+    else
+      message.error(`Packages load failed with: ${packagesResult.error}`)
+  }
+
+  private setType = (type: ProjectType) => this.type = type
+
+  private setQuery = (query: string) => this.query = query
 }
