@@ -1,6 +1,5 @@
-import Col, { ColSize } from 'antd/lib/col'
+import Col from 'antd/lib/col'
 import Input from 'antd/lib/input'
-import List from 'antd/lib/list'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
@@ -9,12 +8,12 @@ import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
 import metaPackages from '../../api/metaPackages'
-import PackageItem from '../../components/PackageItem'
 import PackageList from '../../components/PackageList'
 import ProjectTypeSelect from '../../components/ProjectTypeSelect'
 import MetaPackage from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
 import { updateLocation } from '../../utils/history'
+import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
 
@@ -42,12 +41,12 @@ export default class SearchPage extends React.Component<Props> {
   }
 
   render() {
-    const { type, query, packages } = this
+    const { type, packages } = this
 
     return (
       <div className={styles.page}>
         <Row>
-          <Col {...this.getLayout()}>
+          <Col {...getCenteredLayout(22, 22, 20, 18, 14)}>
             <h1>My packages</h1>
             <div className={styles.filter}>
               <ProjectTypeSelect type={type} onSelect={this.setType} />
@@ -74,16 +73,6 @@ export default class SearchPage extends React.Component<Props> {
       this.packages = packagesResult.data
     else
       message.error(`Packages load failed with: ${packagesResult.error}`)
-  }
-
-  private getLayout(): { [key: string]: ColSize } {
-    return {
-      xs: { offset: 1, span: 22 },
-      sm: { offset: 1, span: 22 },
-      md: { offset: 2, span: 20 },
-      lg: { offset: 3, span: 18 },
-      xl: { offset: 5, span: 14 },
-    }
   }
 
   private setType = (type: ProjectType) => this.type = type

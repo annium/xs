@@ -1,4 +1,4 @@
-import Col, { ColSize } from 'antd/lib/col'
+import Col from 'antd/lib/col'
 import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
@@ -9,6 +9,7 @@ import * as React from 'react'
 import metaPackages from '../../api/metaPackages'
 import PackageList from '../../components/PackageList'
 import MetaPackage from '../../models/view/MetaPackage'
+import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
 
@@ -36,7 +37,7 @@ export default class HomePage extends React.Component {
     return (
       <div className={styles.page}>
         <Row>
-          <Col {...this.getLayout()}>
+          <Col {...getCenteredLayout(22, 22, 20, 18, 14)}>
             <h1>My packages</h1>
             <Input.Search placeholder="search packages" enterButton onSearch={this.setQuery} />
             <PackageList packages={packages} />
@@ -44,16 +45,6 @@ export default class HomePage extends React.Component {
         </Row>
       </div>
     )
-  }
-
-  private getLayout(): { [key: string]: ColSize } {
-    return {
-      xs: { offset: 1, span: 22 },
-      sm: { offset: 1, span: 22 },
-      md: { offset: 2, span: 20 },
-      lg: { offset: 3, span: 18 },
-      xl: { offset: 5, span: 14 },
-    }
   }
 
   private setQuery = (value: string) => this.query = value
