@@ -11,7 +11,7 @@ type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
 const log = console.log.bind(console, 'PersonalArea')
 @inject((stores: Store) => ({
   startup: stores.startup,
-  user: stores.user
+  user: stores.user,
 }))
 @observer
 export default class PersonalArea extends React.Component<Props> {

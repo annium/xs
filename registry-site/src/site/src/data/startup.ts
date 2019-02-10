@@ -14,7 +14,7 @@ export class StartupStore {
       search: '',
       hash: '',
       key: '',
-      state: ''
+      state: '',
     }
     this.servers = {}
   }

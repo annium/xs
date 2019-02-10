@@ -6,14 +6,14 @@ import MetaPackagePermission from '../view/MetaPackagePermission'
 
 export default interface MetaPackageData {
   id: string,
-  type: string,
-  name: string,
-  version: string,
-  description: string,
-  published: string,
-  downloads: number,
-  ownerId: string,
-  owner: string,
+  type: string
+  name: string
+  version: string
+  description: string
+  published: string
+  downloads: number
+  ownerId: string
+  owner: string
   permissions: MetaPackagePermission[]
 }
 

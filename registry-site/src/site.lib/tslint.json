@@ -86,7 +86,26 @@
     "radix": true,
     "semicolon": [true, "never"],
     "switch-default": true,
-    "trailing-comma": false,
+    "trailing-comma": {
+      "options": [{
+        "multiline": {
+          "arrays": "always",
+          "exports": "always",
+          "functions": "never",
+          "imports": "always",
+          "objects": "always",
+          "typeLiterals": "never"
+        },
+        "singleline": {
+          "arrays": "never",
+          "exports": "never",
+          "functions": "never",
+          "imports": "never",
+          "objects": "never",
+          "typeLiterals": "never"
+        }
+      }]
+    },
     "triple-equals": [true, "allow-null-check"],
     "typedef": [true, "parameter", "property-declaration"],
     "typedef-whitespace": [

@@ -26,7 +26,7 @@ class UpdateUserForm extends React.PureComponent<FormProps>{
     const { name, form: { getFieldDecorator } } = this.props
 
     const inputLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
-    const buttonLayout = { wrapperCol: { offset: 6, span: 18, } }
+    const buttonLayout = { wrapperCol: { offset: 6, span: 18 } }
 
     return (
       <Form onSubmit={this.handleSubmit} className={styles.form} layout="horizontal">

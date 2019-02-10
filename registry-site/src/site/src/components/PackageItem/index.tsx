@@ -53,7 +53,7 @@ export default class PackageItem extends React.Component<Props> {
   private renderPackageAccess = (owner: string, access: UserMetaPackageAccess) => {
     const ownerCls = cx({
       [styles.isOwner]: access.isOwner,
-      [styles.isWorld]: access.isWorld
+      [styles.isWorld]: access.isWorld,
     })
 
     return (
