@@ -20,7 +20,7 @@ type Props = Partial<Pick<Store, 'user'>> & {
 
 @inject((stores: Store) => ({ user: stores.user }))
 @observer
-export default class PackageItem extends React.PureComponent<Props> {
+export default class PackageItem extends React.Component<Props> {
   private static readonly permissionKeys = Object.keys(Permission)
     .filter(key => typeof key === 'string')
     .map(key => key as keyof typeof Permission)
