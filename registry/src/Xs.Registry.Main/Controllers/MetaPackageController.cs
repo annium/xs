@@ -12,12 +12,16 @@ namespace Xs.Registry.Main.Controllers
     [Route("packages")]
     public class MetaPackageController : ServerController<User>
     {
+        private readonly IMetaPackageManager metaPackageManager;
+
         private readonly IMetaPackageRepository metaPackageRepository;
 
         public MetaPackageController(
+            IMetaPackageManager metaPackageManager,
             IMetaPackageRepository metaPackageRepository
         )
         {
+            this.metaPackageManager = metaPackageManager;
             this.metaPackageRepository = metaPackageRepository;
         }
 
@@ -56,7 +60,30 @@ namespace Xs.Registry.Main.Controllers
             if (package == null)
                 return NotFound();
 
+            var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
+            if (!access.Has(Permission.Read))
+                return Forbidden("You need read permission to get this package.");
+
             return Ok(new MetaPackageView(package));
+        }
+
+        [HttpPost("{type}/{name}/permissions")]
+        [Authorize]
+        public async Task<IActionResult> UpdatePackagePermissionsAsync(string type, string name, [FromBody] MetaPackagePermission[] permissions)
+        {
+            name = HttpUtility.UrlDecode(name);
+            var package = await metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
+
+            if (package == null)
+                return NotFound();
+
+            var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
+            if (!access.IsOwner)
+                return Forbidden($"You need to be owner to update package permissions");
+
+            await metaPackageRepository.UpdatePermissionsAsync(package.Id, permissions);
+
+            return NoContent();
         }
     }
 }
