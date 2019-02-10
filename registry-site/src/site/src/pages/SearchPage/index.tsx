@@ -10,6 +10,7 @@ import { RouteComponentProps } from 'react-router'
 
 import metaPackages from '../../api/metaPackages'
 import PackageItem from '../../components/PackageItem'
+import PackageList from '../../components/PackageList'
 import ProjectTypeSelect from '../../components/ProjectTypeSelect'
 import MetaPackage from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
@@ -48,7 +49,6 @@ export default class SearchPage extends React.Component<Props> {
         <Row>
           <Col {...this.getLayout()}>
             <h1>My packages</h1>
-            {type}: {query}
             <div className={styles.filter}>
               <ProjectTypeSelect type={type} onSelect={this.setType} />
               <Input.Search
@@ -58,7 +58,7 @@ export default class SearchPage extends React.Component<Props> {
                 onChange={this.setQuery}
                 onSearch={this.search} />
             </div>
-            {this.renderPackages(packages)}
+            <PackageList packages={packages} />
           </Col>
         </Row>
       </div>
@@ -74,28 +74,6 @@ export default class SearchPage extends React.Component<Props> {
       this.packages = packagesResult.data
     else
       message.error(`Packages load failed with: ${packagesResult.error}`)
-  }
-
-  private renderPackages = (packages: MetaPackage[]) => {
-    return (
-      <List
-        header={this.renderHeader(packages)}
-        itemLayout="vertical"
-        dataSource={packages}
-        renderItem={this.renderPackage} />
-    )
-  }
-
-  private renderHeader = (packages: MetaPackage[]) => {
-    return (
-      <h3>Total {packages.length} packages:</h3>
-    )
-  }
-
-  private renderPackage = (pkg: MetaPackage, index: number) => {
-    return (
-      <PackageItem key={index} pkg={pkg} />
-    )
   }
 
   private getLayout(): { [key: string]: ColSize } {

@@ -1,6 +1,5 @@
 import Col, { ColSize } from 'antd/lib/col'
 import Input from 'antd/lib/input'
-import List from 'antd/lib/list'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
@@ -8,7 +7,7 @@ import { observer } from 'mobx-react'
 import * as React from 'react'
 
 import metaPackages from '../../api/metaPackages'
-import PackageItem from '../../components/PackageItem'
+import PackageList from '../../components/PackageList'
 import MetaPackage from '../../models/view/MetaPackage'
 
 import styles from './index.module.scss'
@@ -40,32 +39,10 @@ export default class HomePage extends React.Component {
           <Col {...this.getLayout()}>
             <h1>My packages</h1>
             <Input.Search placeholder="search packages" enterButton onSearch={this.setQuery} />
-            {this.renderPackages(packages)}
+            <PackageList packages={packages} />
           </Col>
         </Row>
       </div>
-    )
-  }
-
-  private renderPackages = (packages: MetaPackage[]) => {
-    return (
-      <List
-        header={this.renderHeader(packages)}
-        itemLayout="vertical"
-        dataSource={packages}
-        renderItem={this.renderPackage} />
-    )
-  }
-
-  private renderHeader = (packages: MetaPackage[]) => {
-    return (
-      <h3>Total {packages.length} packages:</h3>
-    )
-  }
-
-  private renderPackage = (pkg: MetaPackage, index: number) => {
-    return (
-      <PackageItem key={index} pkg={pkg} />
     )
   }
 
