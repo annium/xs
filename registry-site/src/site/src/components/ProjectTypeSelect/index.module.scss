@@ -1,0 +1,14 @@
+@import 'common.scss';
+
+.selected {
+    color: inherit;
+}
+
+.item {
+    @include flex(row, center);
+    color: inherit;
+}
+
+.label {
+    margin-left: 0.5rem;
+}
