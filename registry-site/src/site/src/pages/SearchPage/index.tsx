@@ -1,5 +1,4 @@
 import Col from 'antd/lib/col'
-import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
@@ -8,8 +7,8 @@ import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
 import metaPackages from '../../api/metaPackages'
+import PackageFilter from '../../components/PackageFilter'
 import PackageList from '../../components/PackageList'
-import ProjectTypeSelect from '../../components/ProjectTypeSelect'
 import MetaPackage from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
 import { updateLocation } from '../../utils/history'
@@ -41,26 +40,23 @@ export default class SearchPage extends React.Component<Props> {
   }
 
   render() {
-    const { type, packages } = this
+    const { type, query, packages } = this
 
     return (
       <div className={styles.page}>
         <Row>
           <Col {...getCenteredLayout(22, 22, 20, 18, 14)}>
             <h1>My packages</h1>
-            <div className={styles.filter}>
-              <ProjectTypeSelect type={type} onSelect={this.setType} />
-              <Input.Search
-                placeholder="search packages"
-                enterButton
-                value={this.query}
-                onChange={this.setQuery}
-                onSearch={this.search} />
-            </div>
+            <PackageFilter
+              type={type}
+              onTypeChange={this.setType}
+              query={query}
+              onQueryChange={this.setQuery}
+              onSubmit={this.search} />
             <PackageList packages={packages} />
           </Col>
         </Row>
-      </div>
+      </div >
     )
   }
 
@@ -77,5 +73,5 @@ export default class SearchPage extends React.Component<Props> {
 
   private setType = (type: ProjectType) => this.type = type
 
-  private setQuery = (e: React.ChangeEvent<HTMLInputElement>) => this.query = e.target.value
+  private setQuery = (query: string) => this.query = query
 }
