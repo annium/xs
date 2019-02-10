@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -25,27 +26,24 @@ namespace Xs.Registry.Main.Controllers
             this.metaPackageRepository = metaPackageRepository;
         }
 
-        [HttpGet("my")]
-        [Authorize]
-        public async Task<IActionResult> GetMyPackagesAsync()
-        {
-            var packages = await metaPackageRepository.FindAllByOwnerIdAsync(GetUser().Id);
-
-            return Ok(packages.Select(p => new MetaPackageView(p)).ToArray());
-        }
-
         [HttpGet("search")]
         [Authorize]
-        public async Task<IActionResult> FindPackagesAsync(string query = "", int page = 1, int count = 50)
+        public async Task<IActionResult> FindPackagesAsync(
+            Guid ownerId = default(Guid),
+            string type = null,
+            string query = null,
+            int page = 1,
+            int count = 50
+        )
         {
+            var projectType = type == null ? null : ProjectType.Get(type);
             query = HttpUtility.UrlDecode(query);
             if (page < 1)
                 return BadRequest("Page must be positive integer");
-
             if (count < 1)
                 return BadRequest("Count must be positive integer");
 
-            var packages = await metaPackageRepository.FindPackagesByQueryAsync(GetUser().Id, query, page, count);
+            var packages = await metaPackageRepository.FindPackagesAsync(GetUser().Id, ownerId, projectType, query, page, count);
 
             return Ok(packages.Select(p => new MetaPackageView(p)).ToArray());
         }

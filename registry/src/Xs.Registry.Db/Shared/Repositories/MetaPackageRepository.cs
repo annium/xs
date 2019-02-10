@@ -76,15 +76,42 @@ namespace Xs.Registry.Db.Shared
             return entities.Select(mapper.Map<MetaPackage>).ToArray();
         }
 
-        public async Task<MetaPackage[]> FindPackagesByQueryAsync(Guid userId, string query, int page, int count)
+        public async Task<MetaPackage[]> FindPackagesAsync(
+            Guid userId,
+            Guid ownerId,
+            ProjectType type,
+            string query,
+            int page,
+            int count
+        )
         {
             var request = context.MetaPackages
                 .AsNoTracking()
                 .Include(p => p.Owner)
                 .Include(p => p.Permissions)
-                .Where(p => p.OwnerId == userId ||
+                .AsQueryable();
+
+            // if ownerId passed and is equal to userId - searching own packages, so skip access check
+            if (ownerId == userId)
+                request = request.Where(p => p.OwnerId == userId);
+
+            // otherwise, if ownerId specified - search user's packages, applying access check
+            else if (ownerId != Guid.Empty)
+                request = request.Where(p => p.OwnerId == ownerId &&
                     p.Permissions.Any(e => e.Category == PermissionCategory.World && e.Permission.HasFlag(Permission.Read))
                 );
+
+            // otherwise, if ownerId not specified - generic search with access check
+            else
+                request = request.Where(p => p.OwnerId == userId ||
+                    p.Permissions.Any(e => e.Category == PermissionCategory.World && e.Permission.HasFlag(Permission.Read))
+                );
+
+            if (type != null)
+            {
+                var typeString = type.ToString();
+                request = request.Where(p => p.Type == typeString);
+            }
 
             if (!string.IsNullOrWhiteSpace(query))
             {
