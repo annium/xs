@@ -1,6 +1,4 @@
-import Avatar from 'antd/lib/avatar'
 import Col, { ColSize } from 'antd/lib/col'
-import Icon from 'antd/lib/icon'
 import Input from 'antd/lib/input'
 import List from 'antd/lib/list'
 import message from 'antd/lib/message'
@@ -8,9 +6,9 @@ import Row from 'antd/lib/row'
 import { observable } from 'mobx'
 import { observer } from 'mobx-react'
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
 
 import packagesApi from '../../api/packages'
+import Package from '../../components/Package'
 import MetaPackage from '../../models/view/MetaPackage'
 
 import styles from './index.module.scss'
@@ -67,32 +65,7 @@ export default class HomePage extends React.Component {
 
   private renderPackage = (pkg: MetaPackage, index: number) => {
     return (
-      <List.Item key={index}>
-        <List.Item.Meta
-          avatar={<Avatar src={`/icons/${pkg.type}.svg`} />}
-          title={this.renderPackageTitle(pkg)}
-          description={this.renderPackageDetails(pkg)} />
-        {pkg.description}
-      </List.Item>
-    )
-  }
-
-  private renderPackageTitle = (pkg: MetaPackage) => {
-    return (
-      <div className={styles.pkgMetaTitle}>
-        <NavLink className={styles.pkgMetaName} to={`/packages/${pkg.type}/${pkg.name}`}>{pkg.name}</NavLink>
-        <span className={styles.pkgMetaOwner}>by: {pkg.owner}</span>
-      </div>
-    )
-  }
-
-  private renderPackageDetails = (pkg: MetaPackage) => {
-    return (
-      <div className={styles.pkgMetaDetails}>
-        <span><Icon type="download" /> {pkg.downloads.toLocaleString()} total downloads</span>
-        <span><Icon type="clock-circle" /> last updated {pkg.published.fromNow()}</span>
-        <span><Icon type="flag" /> latest version: {pkg.version}</span>
-      </div>
+      <Package key={index} pkg={pkg} />
     )
   }
 
