@@ -18,10 +18,10 @@ export default {
 
     return new Response(data.map(toMetaPackage), error)
   },
-  async get(type: string, name: string): Promise<Response<MetaPackage>> {
+  async get(type: string, name: string): Promise<Response<MetaPackage | null>> {
     name = encodeURIComponent(name)
     const { data, error } = await api.get<MetaPackageData>(`packages/${type}/${name}`)
 
-    return new Response(toMetaPackage(data), error)
+    return new Response(data ? toMetaPackage(data) : null, error)
   },
 }
