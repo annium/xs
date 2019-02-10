@@ -23,6 +23,8 @@ namespace Xs.Registry.Db.Shared
 
         Task IncrementDownloadsAsync(Guid id);
 
+        Task UpdatePermissionsAsync(Guid id, MetaPackagePermission[] permissions);
+
         Task DeleteByIdAsync(Guid id);
 
         Task DeleteByTypeNameAsync(ProjectType type, string name);

@@ -149,6 +149,14 @@ namespace Xs.Registry.Db.Shared
                 .UpdateAsync(p => new Entities.MetaPackage { Downloads = downloads + 1 });
         }
 
+        public async Task UpdatePermissionsAsync(Guid id, MetaPackagePermission[] permissions)
+        {
+            foreach (var permission in permissions)
+                await context.MetaPackagePermissions
+                .Where(p => p.MetaPackageId == id && p.Category == permission.Category)
+                .UpdateAsync(p => new Entities.MetaPackagePermission { Permission = permission.Permission });
+        }
+
         public Task DeleteByIdAsync(Guid id)
         {
             return context.MetaPackages.Where(p => p.Id == id).DeleteAsync();
