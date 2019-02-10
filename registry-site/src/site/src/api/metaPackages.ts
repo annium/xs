@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { Response } from 'site.lib/dist/api'
 
 import MetaPackageData, { toMetaPackage } from '../models/data/MetaPackageData'
@@ -7,14 +8,9 @@ import api from './api'
 
 
 export default {
-  async my(): Promise<Response<MetaPackage[]>> {
-    const { data, error } = await api.get<MetaPackageData[]>('packages/my')
-
-    return new Response(data.map(toMetaPackage), error)
-  },
-  async search(query: string, page: number): Promise<Response<MetaPackage[]>> {
-    query = encodeURIComponent(query)
-    const { data, error } = await api.get<MetaPackageData[]>('packages/search', { query, page })
+  async search(ownerId: string, type: string, query: string, page: number): Promise<Response<MetaPackage[]>> {
+    const q = _.pickBy({ ownerId, type, query: encodeURIComponent(query), page }, _.identity)
+    const { data, error } = await api.get<MetaPackageData[]>('packages/search', q)
 
     return new Response(data.map(toMetaPackage), error)
   },

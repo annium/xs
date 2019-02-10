@@ -21,7 +21,7 @@ export default class HomePage extends React.Component {
   @observable private packages: MetaPackage[] = []
 
   async componentDidMount() {
-    const packagesResult = await metaPackages.my()
+    const packagesResult = await metaPackages.search('', '', '', 1)
 
     if (packagesResult.isSuccess)
       this.packages = packagesResult.data
