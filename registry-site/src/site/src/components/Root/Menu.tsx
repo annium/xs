@@ -3,16 +3,13 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { NavLink, RouteComponentProps, withRouter } from 'react-router-dom'
 
-import { UserStore } from '../../data/user'
 import { Store } from '../../store'
 
 
 import styles from './Menu.module.scss'
 
 
-export interface Props extends RouteComponentProps {
-  user?: UserStore
-}
+type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
 
 class Menu extends React.Component<Props> {
   render() {

@@ -3,18 +3,13 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { StartupStore } from '../../data/startup'
-import { UserStore } from '../../data/user'
 import { Store } from '../../store'
 
 import LoginForm from './Form'
 import styles from './index.module.scss'
 
 
-interface Props extends RouteComponentProps {
-  startup: StartupStore
-  user: UserStore
-}
+type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
 
 const log = console.log.bind(console, 'LoginPage')
 @inject((stores: Store) => ({

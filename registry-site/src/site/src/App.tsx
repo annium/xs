@@ -3,15 +3,10 @@ import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
 import Loader from './components/Loader'
-import { StartupStore } from './data/startup'
-import { UserStore } from './data/user'
 import { Store } from './store'
 
 
-interface Props extends RouteComponentProps {
-  startup: StartupStore
-  user: UserStore
-}
+type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
 
 const log = console.log.bind(console, 'App')
 @inject((stores: Store) => ({

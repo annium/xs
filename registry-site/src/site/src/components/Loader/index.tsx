@@ -6,7 +6,7 @@ import * as React from 'react'
 import styles from './index.module.scss'
 
 
-export interface Props {
+export type Props = {
   isLoading: boolean
   className?: string
   size?: 'big' | 'normal' | 'small'
