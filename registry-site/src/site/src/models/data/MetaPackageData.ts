@@ -12,6 +12,7 @@ export default interface MetaPackageData {
   description: string,
   published: string,
   downloads: number,
+  ownerId: string,
   owner: string,
   permissions: MetaPackagePermission[]
 }

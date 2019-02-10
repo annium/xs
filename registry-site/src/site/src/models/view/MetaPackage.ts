@@ -10,6 +10,7 @@ export default interface MetaPackage {
   description: string,
   published: Moment,
   downloads: number,
+  ownerId: string,
   owner: string,
   permissions: MetaPackagePermission[]
 }
