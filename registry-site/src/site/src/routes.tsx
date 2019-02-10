@@ -5,6 +5,7 @@ import { Route, Router, Switch } from 'react-router-dom'
 import App from './App'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import PackagePage from './pages/PackagePage'
 import SettingsPage from './pages/SettingsPage'
 import PersonalArea from './PersonalArea'
 
@@ -30,6 +31,7 @@ const renderPersonalArea = (props: any) => (
   <PersonalArea {...props}>
     <Switch>
       <Route path="/" exact component={HomePage} />
+      <Route path="/packages/:type/:name(.*)" component={PackagePage} />
       <Route path="/settings" exact component={SettingsPage} />
       <Route render={() => <h1>Not found</h1>} />
     </Switch>
