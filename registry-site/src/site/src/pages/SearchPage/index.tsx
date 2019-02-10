@@ -13,6 +13,7 @@ import PackageItem from '../../components/PackageItem'
 import ProjectTypeSelect from '../../components/ProjectTypeSelect'
 import MetaPackage from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
+import { updateLocation } from '../../utils/history'
 
 import styles from './index.module.scss'
 
@@ -66,7 +67,7 @@ export default class SearchPage extends React.Component<Props> {
 
   private search = async () => {
     const { type, query } = this
-    this.updateLocation({ type, query })
+    updateLocation(this.props.history, { type, query })
     const packagesResult = await metaPackages.search('', type, query, 1)
 
     if (packagesResult.isSuccess)
@@ -110,17 +111,4 @@ export default class SearchPage extends React.Component<Props> {
   private setType = (type: ProjectType) => this.type = type
 
   private setQuery = (e: React.ChangeEvent<HTMLInputElement>) => this.query = e.target.value
-
-  private updateLocation(parameters: { [key: string]: string }) {
-    const { history, location } = this.props
-
-    const params = new URLSearchParams(location.search)
-    for (const param in parameters)
-      if (parameters[param])
-        params.set(param, parameters[param])
-      else
-        params.delete(param)
-
-    history.replace({ ...location, search: params.toString() })
-  }
 }
