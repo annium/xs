@@ -8,7 +8,7 @@ import { observer } from 'mobx-react'
 import * as React from 'react'
 
 import metaPackages from '../../api/metaPackages'
-import Package from '../../components/Package'
+import PackageItem from '../../components/PackageItem'
 import MetaPackage from '../../models/view/MetaPackage'
 
 import styles from './index.module.scss'
@@ -65,7 +65,7 @@ export default class HomePage extends React.Component {
 
   private renderPackage = (pkg: MetaPackage, index: number) => {
     return (
-      <Package key={index} pkg={pkg} />
+      <PackageItem key={index} pkg={pkg} />
     )
   }
 

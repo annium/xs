@@ -20,7 +20,7 @@ type Props = Partial<Pick<Store, 'user'>> & {
 
 @inject((stores: Store) => ({ user: stores.user }))
 @observer
-export default class Package extends React.PureComponent<Props> {
+export default class PackageItem extends React.PureComponent<Props> {
   private static readonly permissionKeys = Object.keys(Permission)
     .filter(key => typeof key === 'string')
     .map(key => key as keyof typeof Permission)
@@ -77,7 +77,7 @@ export default class Package extends React.PureComponent<Props> {
   }
 
   private getPermissionList(permission: Permission) {
-    return Package.permissionKeys
+    return PackageItem.permissionKeys
       .filter(name => Permission[name] && (permission & (Permission[name] as Permission)) === Permission[name])
       .join(', ')
   }
