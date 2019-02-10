@@ -41,7 +41,7 @@ namespace Xs.Registry.Node.Controllers
 
             var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(GetUser());
             if (!access.Has(Permission.Read))
-                return NotFound();
+                return Forbidden("You need read permission to get this package.");
 
             return Ok(new PackageView(package));
         }
@@ -58,7 +58,7 @@ namespace Xs.Registry.Node.Controllers
 
             var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(GetUser());
             if (!access.Has(Permission.Read))
-                return NotFound();
+                return Forbidden("You need read permission to get this package.");
 
             return Ok(new PackageView(package));
         }
