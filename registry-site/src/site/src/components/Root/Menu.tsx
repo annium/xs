@@ -23,6 +23,9 @@ class Menu extends React.Component<Props> {
         <NavLink className={styles.item} exact activeClassName={styles.isActiveItem} to="/">
           <Icon type="home" /> Home
         </NavLink>
+        <NavLink className={styles.item} exact activeClassName={styles.isActiveItem} to="/search">
+          <Icon type="search" /> Search
+        </NavLink>
         <div className={styles.separator} />
         <div className={styles.info}>Hi, {data!.name}</div>
         <div className={styles.separator} />
