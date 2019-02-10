@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Views;
@@ -48,7 +49,11 @@ namespace Xs.Registry.Main.Controllers
         [Authorize]
         public async Task<IActionResult> GetPackageAsync(string type, string name)
         {
+            name = HttpUtility.UrlDecode(name);
             var package = await metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
+
+            if (package == null)
+                return NotFound();
 
             return Ok(new MetaPackageView(package));
         }
