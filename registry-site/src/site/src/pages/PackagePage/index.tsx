@@ -1,6 +1,4 @@
 import Col, { ColSize } from 'antd/lib/col'
-import Input from 'antd/lib/input'
-import List from 'antd/lib/list'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
@@ -8,8 +6,7 @@ import { observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
-import packagesApi from '../../api/packages'
-import Package from '../../components/Package'
+import metaPackages from '../../api/metaPackages'
 import MetaPackage from '../../models/view/MetaPackage'
 
 import styles from './index.module.scss'
@@ -23,7 +20,7 @@ export default class PackagePage extends React.Component<Props> {
 
   async componentDidMount() {
     const { type, name } = this.props.match.params
-    const packageResult = await packagesApi.get(type, name)
+    const packageResult = await metaPackages.get(type, name)
 
     if (packageResult.isSuccess)
       this.metaPackage = packageResult.data

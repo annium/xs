@@ -7,7 +7,7 @@ import { observable } from 'mobx'
 import { observer } from 'mobx-react'
 import * as React from 'react'
 
-import packagesApi from '../../api/packages'
+import metaPackages from '../../api/metaPackages'
 import Package from '../../components/Package'
 import MetaPackage from '../../models/view/MetaPackage'
 
@@ -21,7 +21,7 @@ export default class HomePage extends React.Component {
   @observable private packages: MetaPackage[] = []
 
   async componentDidMount() {
-    const packagesResult = await packagesApi.my()
+    const packagesResult = await metaPackages.my()
 
     if (packagesResult.isSuccess)
       this.packages = packagesResult.data
