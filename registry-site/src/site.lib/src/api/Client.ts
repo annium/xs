@@ -116,7 +116,7 @@ export default class Client {
     if (raw.isOk)
       return new DataResponse<T>(raw.body as T, null)
 
-    return new DataResponse<T>(null as any as T, raw.body.toString())
+    return new DataResponse<T>(null as any as T, raw.body.toString() || raw.statusText)
   }
 
   private parseFailure<T>(reason: any): DataResponse<T> {
