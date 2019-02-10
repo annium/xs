@@ -3,8 +3,8 @@ import * as React from 'react'
 import { Route, Router, Switch } from 'react-router-dom'
 
 import App from './App'
+import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
-import MainPage from './pages/MainPage'
 import SettingsPage from './pages/SettingsPage'
 import PersonalArea from './PersonalArea'
 
@@ -29,7 +29,7 @@ const renderApp = (props: any) => (
 const renderPersonalArea = (props: any) => (
   <PersonalArea {...props}>
     <Switch>
-      <Route path="/" exact component={MainPage} />
+      <Route path="/" exact component={HomePage} />
       <Route path="/settings" exact component={SettingsPage} />
       <Route render={() => <h1>Not found</h1>} />
     </Switch>

@@ -16,9 +16,9 @@ import MetaPackage from '../../models/view/MetaPackage'
 import styles from './index.module.scss'
 
 
-const log = console.log.bind(console, 'MainPage')
+const log = console.log.bind(console, 'HomePage')
 @observer
-export default class MainPage extends React.Component {
+export default class HomePage extends React.Component {
   @observable private query: string = ''
   @observable private packages: MetaPackage[] = []
 
@@ -40,7 +40,7 @@ export default class MainPage extends React.Component {
       <div className={styles.page}>
         <Row>
           <Col {...this.getLayout()}>
-            <h1>Main page</h1>
+            <h1>My packages</h1>
             <Input.Search placeholder="search packages" enterButton onSearch={this.setQuery} />
             {this.renderPackages(packages)}
           </Col>
