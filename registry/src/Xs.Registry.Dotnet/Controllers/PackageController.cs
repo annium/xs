@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Shared;
@@ -32,6 +33,7 @@ namespace Xs.Registry.Dotnet.Controllers
         [Authorize]
         public async Task<IActionResult> GetLatestPackageAsync(string name)
         {
+            name = HttpUtility.UrlDecode(name);
             var package = await packageRepository.FindLatestByNameAsync(name);
 
             if (package == null)
@@ -48,6 +50,7 @@ namespace Xs.Registry.Dotnet.Controllers
         [Authorize]
         public async Task<IActionResult> GetPackageAsync(string name, string version)
         {
+            name = HttpUtility.UrlDecode(name);
             var package = await packageRepository.FindByNameVersionAsync(name, version);
 
             if (package == null)

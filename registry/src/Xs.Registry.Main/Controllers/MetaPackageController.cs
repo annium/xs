@@ -34,6 +34,7 @@ namespace Xs.Registry.Main.Controllers
         [Authorize]
         public async Task<IActionResult> FindPackagesAsync(string query = "", int page = 1, int count = 50)
         {
+            query = HttpUtility.UrlDecode(query);
             if (page < 1)
                 return BadRequest("Page must be positive integer");
 
