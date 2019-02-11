@@ -6,7 +6,7 @@ import App from './App'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import PackagePage from './pages/PackagePage'
-import SearchPage from './pages/SearchPage'
+import PackagesPage from './pages/PackagesPage'
 import SettingsPage from './pages/SettingsPage'
 import PersonalArea from './PersonalArea'
 
@@ -33,7 +33,7 @@ const renderPersonalArea = (props: any) => (
     <Switch>
       <Route path="/" exact component={HomePage} />
       <Route path="/packages/:type/:name(.*)" component={PackagePage} />
-      <Route path="/search" exact component={SearchPage} />
+      <Route path="/packages" exact component={PackagesPage} />
       <Route path="/settings" exact component={SettingsPage} />
       <Route render={() => <h1>Not found</h1>} />
     </Switch>
