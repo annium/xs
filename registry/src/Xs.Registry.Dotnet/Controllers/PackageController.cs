@@ -62,5 +62,24 @@ namespace Xs.Registry.Dotnet.Controllers
 
             return Ok(new PackageView(package));
         }
+
+        [HttpDelete("{name}/{version}")]
+        [Authorize]
+        public async Task<IActionResult> DeletePackageAsync(string name, string version)
+        {
+            name = HttpUtility.UrlDecode(name);
+            var package = await packageRepository.FindByNameVersionAsync(name, version);
+
+            if (package == null)
+                return NotFound();
+
+            var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(GetUser());
+            if (!access.Has(Permission.Unpublish))
+                return Forbidden("You need unpublish permission to unpublish this package.");
+
+            await packageRepository.DeleteByIdAsync(package.Id);
+
+            return NoContent();
+        }
     }
 }

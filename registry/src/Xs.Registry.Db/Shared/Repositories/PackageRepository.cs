@@ -7,8 +7,7 @@ using Z.EntityFramework.Plus;
 
 namespace Xs.Registry.Db.Shared
 {
-    internal class PackageRepository<TPackage, TPackageEntity, TPackageDependencyEntity, TContext>
-        : IPackageRepository<TPackage>
+    internal class PackageRepository<TPackage, TPackageEntity, TPackageDependencyEntity, TContext> : IPackageRepository<TPackage>
         where TPackage : class, IPackage
     where TPackageEntity : class, Entities.IPackage<TPackageDependencyEntity>, new()
     where TPackageDependencyEntity : class
@@ -117,6 +116,11 @@ namespace Xs.Registry.Db.Shared
             await packages
                 .Where(p => p.Id == id && p.Downloads == downloads)
                 .UpdateAsync(p => new TPackageEntity { Downloads = downloads + 1 });
+        }
+
+        public Task DeleteByIdAsync(Guid id)
+        {
+            return packages.Where(p => p.Id == id).DeleteAsync();
         }
 
         public Task DeleteByNameVersionAsync(string name, string version)
