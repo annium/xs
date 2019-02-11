@@ -6,14 +6,14 @@ import { computed, observable } from 'mobx'
 import { observer } from 'mobx-react'
 import React from 'react'
 
-import serverApi from '../../../api/server/node'
-import MetaPackage from '../../../models/view/MetaPackage'
-import PackageModel from '../../../models/view/node/Package'
-import { gutter } from '../../../utils/layout'
-import PackageInfo from '../../PackageInfo'
-import PackageStats from '../../PackageStats'
-import PackageTitle from '../../PackageTitle'
-import PackageVersions from '../../PackageVersions'
+import serverApi from '../../api/server/dotnet'
+import PackageModel from '../../models/view/dotnet/Package'
+import MetaPackage from '../../models/view/MetaPackage'
+import { gutter } from '../../utils/layout'
+import PackageInfo from '../PackageInfo'
+import PackageStats from '../PackageStats'
+import PackageTitle from '../PackageTitle'
+import PackageVersions from '../PackageVersions'
 
 
 type Props = {
