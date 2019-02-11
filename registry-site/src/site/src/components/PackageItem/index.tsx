@@ -10,6 +10,7 @@ import MetaPackage from '../../models/view/MetaPackage'
 import { Permission } from '../../models/view/Permission'
 import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
 import { Store } from '../../store'
+import route from '../../utils/route'
 
 import styles from './index.module.scss'
 
@@ -44,7 +45,7 @@ export default class PackageItem extends React.Component<Props> {
   private renderPackageTitle = (pkg: MetaPackage, access: UserMetaPackageAccess) => {
     return (
       <div className={styles.title}>
-        <NavLink className={styles.name} to={`/packages/${pkg.type}/${pkg.name}`}>{pkg.name}</NavLink>
+        <NavLink className={styles.name} to={route.package(pkg.type, pkg.name)}>{pkg.name}</NavLink>
         {this.renderPackageAccess(pkg.owner, access)}
       </div>
     )

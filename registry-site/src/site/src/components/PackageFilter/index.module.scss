@@ -2,4 +2,8 @@
 
 .filter {
     @include flex(row);
+
+    >*:not(:first-child) {
+        margin-left: 0.5rem;
+    }
 }
