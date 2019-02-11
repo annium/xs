@@ -10,6 +10,7 @@ import serverApi from '../../../api/server/node'
 import MetaPackage from '../../../models/view/MetaPackage'
 import PackageModel from '../../../models/view/node/Package'
 import { gutter } from '../../../utils/layout'
+import PackageInfo from '../../PackageInfo'
 import PackageTitle from '../../PackageTitle'
 import PackageVersions from '../../PackageVersions'
 
@@ -55,7 +56,7 @@ export default class Package extends React.Component<Props>{
           <PackageVersions type={metaPackage.type} pkg={pkg} packages={packages} />
         </Col>
         <Col span={8}>
-          info, etc, here
+          <PackageInfo pkg={pkg} />
         </Col>
       </Row>
     )
