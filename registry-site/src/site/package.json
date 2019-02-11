@@ -4,28 +4,28 @@
   "private": true,
   "dependencies": {
     "site.lib": "file:../site.lib",
-    "antd": "3.13.0",
+    "antd": "3.13.2",
     "classnames": "2.2.6",
     "lodash": "4.17.11",
     "mobx": "5.9.0",
     "mobx-react": "5.4.3",
     "moment": "2.24.0",
-    "react": "16.7.0",
-    "react-dom": "16.7.0",
+    "react": "16.8.1",
+    "react-dom": "16.8.1",
     "react-router-dom": "4.3.1"
   },
   "devDependencies": {
     "@types/classnames": "2.2.7",
     "@types/lodash": "4.14.120",
-    "@types/node": "10.12.18",
-    "@types/react": "16.7.21",
-    "@types/react-dom": "16.0.11",
+    "@types/node": "10.12.24",
+    "@types/react": "16.8.2",
+    "@types/react-dom": "16.8.0",
     "@types/react-router-dom": "4.3.1",
     "node-sass": "4.11.0",
-    "react-scripts": "2.1.3",
+    "react-scripts": "2.1.4",
     "tslint": "5.12.1",
     "tslint-react": "3.6.0",
-    "typescript": "3.2.4"
+    "typescript": "3.3.3"
   },
   "scripts": {
     "build": "tslint -p . && react-scripts build",
