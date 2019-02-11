@@ -8,14 +8,15 @@ import { ProjectType } from '../../models/view/ProjectType'
 
 type Props = {
   metaPackage: MetaPackage
+  version?: string
 }
 
-export default function Package({ metaPackage }: Props) {
+export default function Package({ metaPackage, version }: Props) {
   switch (metaPackage.type) {
     case ProjectType.Dotnet:
-      return <DotnetPackage metaPackage={metaPackage} />
+      return <DotnetPackage metaPackage={metaPackage} version={version} />
     case ProjectType.Node:
-      return <NodePackage metaPackage={metaPackage} />
+      return <NodePackage metaPackage={metaPackage} version={version} />
     default:
       return null
   }

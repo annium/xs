@@ -32,7 +32,7 @@ const renderPersonalArea = (props: any) => (
   <PersonalArea {...props}>
     <Switch>
       <Route path="/" exact component={HomePage} />
-      <Route path="/packages/:type/:name(.*)" component={PackagePage} />
+      <Route path="/packages/:type/:nameVersion(.*)" component={PackagePage} />
       <Route path="/packages" exact component={PackagesPage} />
       <Route path="/settings" exact component={SettingsPage} />
       <Route render={() => <h1>Not found</h1>} />
