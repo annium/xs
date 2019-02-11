@@ -1,3 +1,4 @@
+import { Col, Row } from 'antd/lib/grid'
 import message from 'antd/lib/message'
 import confirm from 'antd/lib/modal/confirm'
 import _ from 'lodash'
@@ -8,9 +9,9 @@ import React from 'react'
 import serverApi from '../../../api/server/dotnet'
 import PackageModel from '../../../models/view/dotnet/Package'
 import MetaPackage from '../../../models/view/MetaPackage'
+import { gutter } from '../../../utils/layout'
 import PackageTitle from '../../PackageTitle'
 
-import styles from './index.module.scss'
 
 type Props = {
   metaPackage: MetaPackage
@@ -22,7 +23,11 @@ export default class Package extends React.Component<Props>{
   @observable private packages: PackageModel[] = []
 
   @computed public get pkg() {
-    return _.sortBy(this.packages, (pkg: PackageModel) => pkg.version)[this.packages.length - 1]
+    const { version } = this.props
+
+    return version ?
+      this.packages.filter(p => p.version === version)[0] :
+      _.sortBy(this.packages, (pkg: PackageModel) => pkg.version)[this.packages.length - 1]
   }
 
   async componentDidMount() {
@@ -43,9 +48,14 @@ export default class Package extends React.Component<Props>{
     if (!pkg) return null
 
     return (
-      <div className={styles.package}>
-        <PackageTitle metaPackage={metaPackage} pkg={pkg} onDelete={this.handleDelete} />
-      </div>
+      <Row gutter={gutter}>
+        <Col span={16}>
+          <PackageTitle metaPackage={metaPackage} pkg={pkg} onDelete={this.handleDelete} />
+        </Col>
+        <Col span={8}>
+          info, etc, here
+        </Col>
+      </Row>
     )
   }
 
