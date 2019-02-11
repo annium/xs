@@ -214,8 +214,8 @@ namespace Xs.Registry.Dotnet.Controllers
             var user = GetUser();
 
             // load metaPackage and check permissions
-            var metaPackageId = versions[0].MetaPackageId;
-            var access = (await metaPackageRepository.GetAccessByIdAsync(metaPackageId)).ForUser(GetUser());
+            var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
+            var access = metaPackageManager.GetAccess(metaPackage).ForUser(GetUser());
             if (!access.Has(Permission.Unpublish))
                 return Forbidden("You need unpublish permission to unpublish this package.");
 
@@ -229,7 +229,25 @@ namespace Xs.Registry.Dotnet.Controllers
 
             // if it was last package - delete metaPackage
             if (versions.Length == 1)
-                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackageId));
+                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
+            // else - update metaPackage
+            else
+            {
+                // get latest version of all left except deleted (note - they are sorted from repository)
+                var latest = versions.FirstOrDefault(p => p.Version != version);
+
+                // if latest changed - need to update metaPackage
+                if (latest.Version != metaPackage.Version)
+                    executor.With(() => metaPackageRepository.UpdateInfoAsync(metaPackage.Id, latest));
+
+                // and anyway - recount totals
+                executor.With(
+                    async() => await metaPackageRepository.SetDownloadsAsync(
+                        metaPackage.Id,
+                        await packageRepository.CountAllDownloadsAsync(metaPackage.Name)
+                    )
+                );
+            }
 
             await executor.RunAsync();
 

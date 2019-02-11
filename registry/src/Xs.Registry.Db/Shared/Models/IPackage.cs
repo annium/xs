@@ -1,6 +1,6 @@
 namespace Xs.Registry.Db.Shared
 {
-    public interface IPackage
+    public interface IPackage : IPackageInfo
     {
 
     }
