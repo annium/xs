@@ -1,41 +1,53 @@
+import { merge } from 'lodash'
 import 'whatwg-fetch'
 
 import { Query, Response as DataResponse } from '.'
 
 
+type RawHeaders = Record<string, string>
+
 export default class Client {
   private baseUrl: string
-  private baseOpts: RequestInit
+  private baseOptions: RequestInit
 
-  constructor(baseUrl: URL, baseOpts: RequestInit) {
+  constructor(baseUrl: URL, baseOptions: RequestInit) {
     this.baseUrl = baseUrl.href
-    this.baseOpts = Object.assign({}, baseOpts, {
+    this.baseOptions = merge({
       headers: {
         'Accept': 'application/json',
       },
       credentials: 'include',
       mode: 'cors',
-    })
+    }, baseOptions)
   }
 
-  public get<T>(url: string, query?: Query): Promise<DataResponse<T>> {
-    return this.send<T>('get', url, query)
+  public get<T>(url: string, query?: Query, headers?: RawHeaders): Promise<DataResponse<T>> {
+    return this.send<T>('get', url, query, null, headers)
   }
 
-  public post<T = void>(url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
-    return this.send<T>('post', url, query, body)
+  public post<T = void>(url: string, query?: Query, body?: any, headers?: RawHeaders): Promise<DataResponse<T>> {
+    return this.send<T>('post', url, query, body, headers)
   }
 
-  public put<T = void>(url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
-    return this.send<T>('put', url, query, body)
+  public put<T = void>(url: string, query?: Query, body?: any, headers?: RawHeaders): Promise<DataResponse<T>> {
+    return this.send<T>('put', url, query, body, headers)
   }
 
-  public delete<T = void>(url: string, query?: Query): Promise<DataResponse<T>> {
-    return this.send<T>('delete', url, query)
+  public delete<T = void>(url: string, query?: Query, headers?: RawHeaders): Promise<DataResponse<T>> {
+    return this.send<T>('delete', url, query, null, headers)
   }
 
-  private send<T>(method: string, url: string, query?: Query, body?: any): Promise<DataResponse<T>> {
-    return fetch(this.baseUrl + this.withQuery(url, query), this.prepareOptions(method, body))
+  private send<T>(
+    method: string,
+    url: string,
+    query?: Query,
+    body?: any,
+    headers?: RawHeaders
+  ): Promise<DataResponse<T>> {
+    return fetch(
+      this.baseUrl + this.withQuery(url, query),
+      this.prepareOptions(method, headers || {}, body)
+    )
       .then(
         response => this.readResponse(response).then(raw => this.parseResponse<T>(raw)),
         reason => this.parseFailure<T>(reason)
@@ -51,15 +63,13 @@ export default class Client {
     return `${url}?${params}`
   }
 
-  private prepareOptions(method: string, body: any): RequestInit {
+  private prepareOptions(method: string, headers: RawHeaders, body: any): RequestInit {
     const preparedBody = body ? this.prepareBody(body) : null
-
-    const headers: { [key: string]: string } = {}
 
     if (typeof preparedBody === 'string')
       headers['Content-Type'] = 'application/json'
 
-    return Object.assign({}, this.baseOpts, { method, headers, body: preparedBody })
+    return merge(this.baseOptions, { method, headers, body: preparedBody })
   }
 
   private prepareBody(body: any): FormData | string {

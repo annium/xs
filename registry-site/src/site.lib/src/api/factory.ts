@@ -4,7 +4,7 @@ import { Client } from '.'
 
 
 interface FactoryOptions {
-  url: UrlOptions | string
+  url: URL | UrlOptions | string
   init?: RequestInit
 }
 
@@ -16,7 +16,9 @@ interface UrlOptions {
 }
 
 export default function factory(options: FactoryOptions): Client {
-  const url = new URL(typeof options.url === 'string' ? options.url : buildUrl(options.url))
+  const url = options.url instanceof URL
+    ? options.url
+    : new URL(typeof options.url === 'string' ? options.url : buildUrl(options.url))
 
   return new Client(url, options.init || {})
 }
