@@ -15,3 +15,5 @@ export function getCenteredLayout(
     xl: { offset: (24 - xl) / 2, span: xl },
   }
 }
+
+export const gutter = { xs: 10, sm: 12, md: 14, lg: 14, xl: 14 }

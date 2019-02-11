@@ -1,4 +1,4 @@
-import Col, { ColSize } from 'antd/lib/col'
+import Col from 'antd/lib/col'
 import Icon from 'antd/lib/icon'
 import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
@@ -8,6 +8,7 @@ import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Store } from '../../store'
+import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
 import UpdateUserForm from './UpdateUserForm'
@@ -33,12 +34,10 @@ export default class SettingsPage extends React.Component<Props> {
       .then(() => message.success('token updated'),
         error => message.error('token update failed: ' + error))
 
-    const layout = this.layout()
-
     return (
       <div className={styles.page}>
         <Row>
-          <Col {...layout}>
+          <Col {...getCenteredLayout(24, 16, 12, 10, 8)}>
             <h1>Settings</h1>
             <h2>Credentials</h2>
             <UpdateUserForm name={user.data!.name} onSubmit={handleUpdate} />
@@ -48,14 +47,5 @@ export default class SettingsPage extends React.Component<Props> {
         </Row>
       </div >
     )
-  }
-  private layout(): { [key: string]: ColSize } {
-    return {
-      xs: { span: 24 },
-      sm: { offset: 4, span: 16 },
-      md: { offset: 6, span: 12 },
-      lg: { offset: 7, span: 10 },
-      xl: { offset: 8, span: 8 },
-    }
   }
 }
