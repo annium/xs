@@ -1,0 +1,19 @@
+@import 'common.scss';
+
+.header {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+}
+
+.current {
+    background: $color-ghost-grey;
+}
+
+.link {
+    @include flex(row);
+
+    a {
+        flex: 1;
+        color: $color-blue;
+    }
+}

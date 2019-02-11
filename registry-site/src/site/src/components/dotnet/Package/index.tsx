@@ -11,6 +11,7 @@ import PackageModel from '../../../models/view/dotnet/Package'
 import MetaPackage from '../../../models/view/MetaPackage'
 import { gutter } from '../../../utils/layout'
 import PackageTitle from '../../PackageTitle'
+import PackageVersions from '../../PackageVersions'
 
 
 type Props = {
@@ -42,7 +43,7 @@ export default class Package extends React.Component<Props>{
   }
 
   render() {
-    const { pkg } = this
+    const { pkg, packages } = this
     const { metaPackage } = this.props
 
     if (!pkg) return null
@@ -51,6 +52,7 @@ export default class Package extends React.Component<Props>{
       <Row gutter={gutter}>
         <Col span={16}>
           <PackageTitle metaPackage={metaPackage} pkg={pkg} onDelete={this.handleDelete} />
+          <PackageVersions metaPackage={metaPackage} packages={packages} />
         </Col>
         <Col span={8}>
           info, etc, here
