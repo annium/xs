@@ -11,6 +11,7 @@ import PackageModel from '../../../models/view/dotnet/Package'
 import MetaPackage from '../../../models/view/MetaPackage'
 import { gutter } from '../../../utils/layout'
 import PackageInfo from '../../PackageInfo'
+import PackageStats from '../../PackageStats'
 import PackageTitle from '../../PackageTitle'
 import PackageVersions from '../../PackageVersions'
 
@@ -57,6 +58,7 @@ export default class Package extends React.Component<Props>{
         </Col>
         <Col span={8}>
           <PackageInfo pkg={pkg} />
+          <PackageStats pkg={pkg} packages={packages} />
         </Col>
       </Row>
     )
