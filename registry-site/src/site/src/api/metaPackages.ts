@@ -3,6 +3,7 @@ import { Response } from 'site.lib/dist/api'
 
 import MetaPackageData, { toMetaPackage } from '../models/data/MetaPackageData'
 import MetaPackage from '../models/view/MetaPackage'
+import MetaPackagePermission from '../models/view/MetaPackagePermission'
 
 import api from './api'
 
@@ -19,5 +20,9 @@ export default {
     const { data, error } = await api.get<MetaPackageData>(`packages/${type}/${name}`)
 
     return new Response(data ? toMetaPackage(data) : null, error)
+  },
+  async setPermissions(type: string, name: string, permissions: MetaPackagePermission[]): Promise<Response> {
+    name = encodeURIComponent(name)
+    return await api.post(`packages/${type}/${name}/permissions`, undefined, permissions)
   },
 }
