@@ -3,28 +3,29 @@ import cx from 'classnames'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import MetaPackage from '../../models/view/MetaPackage'
 import Package from '../../models/view/Package'
+import { ProjectType } from '../../models/view/ProjectType'
 import route from '../../utils/route'
 
 import styles from './index.module.scss'
 
 
 type Props = {
-  metaPackage: MetaPackage
+  type: ProjectType
+  pkg: Package
   packages: Package[]
 }
 
 export default class PackageVersions extends React.PureComponent<Props> {
   render() {
-    const { metaPackage, packages } = this.props
+    const { type, packages } = this.props
 
     return (
       <>
         <div className={styles.header}>Version History</div>
         <Table<Package>
           rowKey="version"
-          columns={this.getColumns(metaPackage)}
+          columns={this.getColumns(type)}
           dataSource={packages}
           pagination={false}
           size="small"
@@ -33,7 +34,7 @@ export default class PackageVersions extends React.PureComponent<Props> {
     )
   }
 
-  private getColumns(metaPackage: MetaPackage): ColumnProps<Package>[] {
+  private getColumns(type: ProjectType): ColumnProps<Package>[] {
     return ([
       {
         title: 'Version',
@@ -41,7 +42,7 @@ export default class PackageVersions extends React.PureComponent<Props> {
         key: 'version',
         className: styles.link,
         render: (_, record) => (
-          <NavLink to={route.package(metaPackage.type, record.name, record.version)}>{record.version}</NavLink>
+          <NavLink to={route.package(type, record.name, record.version)}>{record.version}</NavLink>
         ),
       },
       {
@@ -60,11 +61,11 @@ export default class PackageVersions extends React.PureComponent<Props> {
   }
 
   private getRowProps = (record: Package) => {
-    const { metaPackage } = this.props
+    const { pkg } = this.props
 
     return {
       className: cx({
-        [styles.current]: record.version === metaPackage.version,
+        [styles.current]: record.version === pkg.version,
       }),
     }
   }

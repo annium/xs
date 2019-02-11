@@ -52,7 +52,7 @@ export default class Package extends React.Component<Props>{
       <Row gutter={gutter}>
         <Col span={16}>
           <PackageTitle metaPackage={metaPackage} pkg={pkg} onDelete={this.handleDelete} />
-          <PackageVersions metaPackage={metaPackage} packages={packages} />
+          <PackageVersions type={metaPackage.type} pkg={pkg} packages={packages} />
         </Col>
         <Col span={8}>
           info, etc, here
