@@ -1,6 +1,7 @@
 import message from 'antd/lib/message'
 import confirm from 'antd/lib/modal/confirm'
-import { observable } from 'mobx'
+import _ from 'lodash'
+import { computed, observable } from 'mobx'
 import { observer } from 'mobx-react'
 import React from 'react'
 
@@ -18,19 +19,21 @@ type Props = {
 
 @observer
 export default class Package extends React.Component<Props>{
-  @observable private pkg: PackageModel | null = null
+  @observable private packages: PackageModel[] = []
+
+  @computed public get pkg() {
+    return _.sortBy(this.packages, (pkg: PackageModel) => pkg.version)[this.packages.length - 1]
+  }
 
   async componentDidMount() {
-    const { metaPackage: { name }, version } = this.props
+    const { metaPackage: { name } } = this.props
 
-    const packageResult = version
-      ? await serverApi.get(name, version)
-      : await serverApi.getLatest(name)
+    const packagesResult = await serverApi.get(name)
 
-    if (packageResult.isSuccess)
-      this.pkg = packageResult.data
+    if (packagesResult.isSuccess)
+      this.packages = packagesResult.data
     else
-      message.error(`Package load failed with: ${packageResult.error}`)
+      message.error(`Package load failed with: ${packagesResult.error}`)
   }
 
   render() {
@@ -47,10 +50,10 @@ export default class Package extends React.Component<Props>{
   }
 
   private handleDelete = () => {
-    const { name, version } = this.pkg!
+    const { name, version } = this.pkg
     confirm({
       title: 'Confirm delete',
-      content: `Confirm, if you really want to delete package ${name}:${version}`,
+      content: <span>Confirm, if you really want to delete package <b>{name} {version}</b></span>,
       onOk: () => serverApi.delete(name, version).then(
         () => message.success('Package successfully deleted'),
         error => message.error(`Package deletion failed with: ${error}`)

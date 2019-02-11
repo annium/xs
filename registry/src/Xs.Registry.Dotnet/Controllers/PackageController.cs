@@ -20,7 +20,7 @@ namespace Xs.Registry.Dotnet.Controllers
         private readonly IMetaPackageRepository metaPackageRepository;
 
         private readonly IPackageRepository<Package> packageRepository;
-        
+
         private readonly IPackageStorage packageStorage;
 
         public PackageController(
@@ -38,36 +38,18 @@ namespace Xs.Registry.Dotnet.Controllers
 
         [HttpGet("{name}")]
         [Authorize]
-        public async Task<IActionResult> GetLatestPackageAsync(string name)
+        public async Task<IActionResult> GetPackagesAsync(string name)
         {
             name = HttpUtility.UrlDecode(name);
-            var package = await packageRepository.FindLatestByNameAsync(name);
-
-            if (package == null)
+            var packages = await packageRepository.FindAllByNameAsync(name);
+            if (packages.Length == 0)
                 return NotFound();
 
-            var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(GetUser());
+            var access = (await metaPackageRepository.GetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(GetUser());
             if (!access.Has(Permission.Read))
                 return Forbidden("You need read permission to get this package.");
 
-            return Ok(new PackageView(package));
-        }
-
-        [HttpGet("{name}/{version}")]
-        [Authorize]
-        public async Task<IActionResult> GetPackageAsync(string name, string version)
-        {
-            name = HttpUtility.UrlDecode(name);
-            var package = await packageRepository.FindByNameVersionAsync(name, version);
-
-            if (package == null)
-                return NotFound();
-
-            var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(GetUser());
-            if (!access.Has(Permission.Read))
-                return Forbidden("You need read permission to get this package.");
-
-            return Ok(new PackageView(package));
+            return Ok(packages.Select(p => new PackageView(p)).ToArray());
         }
 
         [HttpDelete("{name}/{version}")]
