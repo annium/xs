@@ -1,0 +1,22 @@
+@import 'common.scss';
+
+.header {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+}
+
+.item {
+    @include flex(row, center);
+
+    >*:not(:first-child) {
+        margin-left: 0.5rem;
+    }
+}
+
+.icon {
+    font-size: 1.2rem;
+}
+
+.label {
+    font-size: 1.1rem;
+}
