@@ -194,7 +194,6 @@ namespace Xs.Registry.Node.Controllers
             // get available versions
             var versions = await packageRepository.FindAllByNameAsync(name);
             var version = versions.FirstOrDefault()?.Version;
-
             if (version == null)
                 return NotFound();
 
@@ -225,7 +224,7 @@ namespace Xs.Registry.Node.Controllers
                 if (latest.Version != metaPackage.Version)
                     executor.With(() => metaPackageRepository.UpdateInfoAsync(metaPackage.Id, latest));
 
-                // and anyway - recount totals
+                // and anyway - recount downloads
                 executor.With(
                     async() => await metaPackageRepository.SetDownloadsAsync(
                         metaPackage.Id,

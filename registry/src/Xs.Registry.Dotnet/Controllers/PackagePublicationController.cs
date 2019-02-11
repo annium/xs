@@ -45,9 +45,9 @@ namespace Xs.Registry.Dotnet.Controllers
 
         [HttpPut("api/v2/package")]
         [Authorize]
-        public async Task<IActionResult> PublishPackageAsync(CancellationToken ct)
+        public async Task<IActionResult> PublishPackageAsync()
         {
-            using(var packageStream = await Request.GetUploadStreamOrNullAsync(ct))
+            using(var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None))
             {
                 if (packageStream == null)
                     return BadRequest("Use multipart/form-data to upload package.");
@@ -177,7 +177,7 @@ namespace Xs.Registry.Dotnet.Controllers
             {
                 using(var packageReader = new NuGet.Packaging.PackageArchiveReader(packageStream, leaveStreamOpen : true))
                 {
-                    await packageReader.ValidatePackageEntriesAsync(ct);
+                    await packageReader.ValidatePackageEntriesAsync(CancellationToken.None);
 
                     var nuspec = packageReader.NuspecReader;
                     var dependencies = nuspec.GetDependencyGroups()
@@ -203,15 +203,12 @@ namespace Xs.Registry.Dotnet.Controllers
 
         [HttpDelete("api/v2/package/{name}/{version}")]
         [Authorize]
-        public async Task<IActionResult> UnpublishPackageAsync(string name, string version, CancellationToken token)
+        public async Task<IActionResult> UnpublishPackageAsync(string name, string version)
         {
             // get available versions
             var versions = await packageRepository.FindAllByNameAsync(name);
-
             if (!versions.Any(p => p.Version == version))
                 return NotFound();
-
-            var user = GetUser();
 
             // load metaPackage and check permissions
             var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
@@ -240,7 +237,7 @@ namespace Xs.Registry.Dotnet.Controllers
                 if (latest.Version != metaPackage.Version)
                     executor.With(() => metaPackageRepository.UpdateInfoAsync(metaPackage.Id, latest));
 
-                // and anyway - recount totals
+                // and anyway - recount downloads
                 executor.With(
                     async() => await metaPackageRepository.SetDownloadsAsync(
                         metaPackage.Id,
