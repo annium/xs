@@ -7,7 +7,7 @@ import createStore from './store'
 import './styles/layout.scss'
 
 
-const store = createStore()
+export const store = createStore()
 
 ReactDOM.render(
   <Provider {...store}>
