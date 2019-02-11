@@ -1,4 +1,4 @@
-import Col, { ColSize } from 'antd/lib/col'
+import Col from 'antd/lib/col'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
@@ -8,12 +8,13 @@ import { RouteComponentProps } from 'react-router'
 
 import metaPackages from '../../api/metaPackages'
 import MetaPackage from '../../models/view/MetaPackage'
+import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
+import Package from './Package'
 
 type Props = RouteComponentProps<{ type: string, name: string }>
 
-const log = console.log.bind(console, 'PackagePage')
 @observer
 export default class PackagePage extends React.Component<Props> {
   @observable private metaPackage: MetaPackage | null = null
@@ -29,7 +30,6 @@ export default class PackagePage extends React.Component<Props> {
   }
 
   render() {
-    log('render')
     const { metaPackage } = this
 
     if (!metaPackage) return null
@@ -37,21 +37,11 @@ export default class PackagePage extends React.Component<Props> {
     return (
       <div className={styles.page}>
         <Row>
-          <Col {...this.getLayout()}>
-            <h1>{metaPackage.type} {metaPackage.name}</h1>
+          <Col {...getCenteredLayout(22, 22, 20, 18, 14)}>
+            <Package metaPackage={metaPackage} />
           </Col>
         </Row>
       </div>
     )
-  }
-
-  private getLayout(): { [key: string]: ColSize } {
-    return {
-      xs: { offset: 1, span: 22 },
-      sm: { offset: 1, span: 22 },
-      md: { offset: 2, span: 20 },
-      lg: { offset: 3, span: 18 },
-      xl: { offset: 5, span: 14 },
-    }
   }
 }
