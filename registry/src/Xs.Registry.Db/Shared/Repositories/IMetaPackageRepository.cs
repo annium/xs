@@ -26,8 +26,6 @@ namespace Xs.Registry.Db.Shared
 
         Task SetDownloadsAsync(Guid id, int downloads);
 
-        Task IncrementDownloadsAsync(Guid id);
-
         Task UpdatePermissionsAsync(Guid id, MetaPackagePermission[] permissions);
 
         Task DeleteByIdAsync(Guid id);

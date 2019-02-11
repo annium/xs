@@ -282,7 +282,8 @@ namespace Xs.Registry.Node.Controllers
                 return ServerError("Package file missing");
 
             await packageRepository.IncrementDownloadsAsync(package.Id);
-            await metaPackageRepository.IncrementDownloadsAsync(package.MetaPackageId);
+            var total = await packageRepository.CountAllDownloadsAsync(package.Name);
+            await metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
 
             var content = await packageStorage.GetAsync(packageName, version);
 
