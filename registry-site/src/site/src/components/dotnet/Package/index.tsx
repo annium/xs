@@ -1,4 +1,5 @@
 import message from 'antd/lib/message'
+import confirm from 'antd/lib/modal/confirm'
 import { observable } from 'mobx'
 import { observer } from 'mobx-react'
 import React from 'react'
@@ -40,8 +41,21 @@ export default class Package extends React.Component<Props>{
 
     return (
       <div className={styles.package}>
-        <PackageTitle metaPackage={metaPackage} pkg={pkg} />
+        <PackageTitle metaPackage={metaPackage} pkg={pkg} onDelete={this.handleDelete} />
       </div>
     )
+  }
+
+  private handleDelete = () => {
+    const { name, version } = this.pkg!
+    confirm({
+      title: 'Confirm delete',
+      content: `Confirm, if you really want to delete package ${name}:${version}`,
+      onOk: () => serverApi.delete(name, version).then(
+        () => message.success('Package successfully deleted'),
+        error => message.error(`Package deletion failed with: ${error}`)
+      ),
+      maskClosable: true,
+    })
   }
 }

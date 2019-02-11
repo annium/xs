@@ -30,6 +30,12 @@ export default function createApi<TPackageData extends PackageData, TPackage ext
 
       return new Response(data ? toPackage(data) : null, error)
     },
+    async delete(name: string, version: string): Promise<Response> {
+      const api = await getApi(type)
+
+      name = encodeURIComponent(name)
+      return await api.delete(`packages/${name}/${version}`)
+    },
   }
 }
 
