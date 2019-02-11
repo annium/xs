@@ -11,11 +11,12 @@ import { ProjectType } from '../../models/view/ProjectType'
 
 export default function createApi<TPackageData extends PackageData, TPackage extends Package>(
   type: ProjectType,
+  getTokenHeader: (token: string) => Record<string, string>,
   toPackage: (data: TPackageData) => TPackage
 ) {
   return {
     async getLatest(name: string): Promise<Response<TPackage | null>> {
-      const api = await getApi(type)
+      const api = await getApi(type, getTokenHeader)
 
       name = encodeURIComponent(name)
       const { data, error } = await api.get<TPackageData>(`packages/${name}`)
@@ -23,7 +24,7 @@ export default function createApi<TPackageData extends PackageData, TPackage ext
       return new Response(data ? toPackage(data) : null, error)
     },
     async get(name: string, version: string): Promise<Response<TPackage | null>> {
-      const api = await getApi(type)
+      const api = await getApi(type, getTokenHeader)
 
       name = encodeURIComponent(name)
       const { data, error } = await api.get<TPackageData>(`packages/${name}/${version}`)
@@ -31,7 +32,7 @@ export default function createApi<TPackageData extends PackageData, TPackage ext
       return new Response(data ? toPackage(data) : null, error)
     },
     async delete(name: string, version: string): Promise<Response> {
-      const api = await getApi(type)
+      const api = await getApi(type, getTokenHeader)
 
       name = encodeURIComponent(name)
       return await api.delete(`packages/${name}/${version}`)
@@ -39,7 +40,10 @@ export default function createApi<TPackageData extends PackageData, TPackage ext
   }
 }
 
-async function getApi(type: ProjectType): Promise<lib.api.Client> {
+async function getApi(
+  type: ProjectType,
+  getTokenHeader: (token: string) => Record<string, string>
+): Promise<lib.api.Client> {
   await when(() => Boolean(store))
   await when(() => Boolean(store.user.data))
 
@@ -53,9 +57,7 @@ async function getApi(type: ProjectType): Promise<lib.api.Client> {
   return lib.api.factory({
     url: server,
     init: {
-      headers: {
-        'X-NuGet-ApiKey': apiToken,
-      },
+      headers: getTokenHeader(apiToken),
     },
   })
 }
