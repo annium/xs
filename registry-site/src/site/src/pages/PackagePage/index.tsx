@@ -2,20 +2,23 @@ import Col from 'antd/lib/col'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { observable } from 'mobx'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
 import metaPackages from '../../api/metaPackages'
 import MetaPackage from '../../models/view/MetaPackage'
+import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
+import { Store } from '../../store'
 import { getCenteredLayout } from '../../utils/layout'
 import { parseNameVersion } from '../../utils/nameVersion'
 
 import styles from './index.module.scss'
 import Package from './Package'
 
-type Props = RouteComponentProps<{ type: string, nameVersion: string }>
+type Props = Pick<Store, 'user'> & RouteComponentProps<{ type: string, nameVersion: string }>
 
+@inject((stores: Store) => ({ user: stores.user }))
 @observer
 export default class PackagePage extends React.Component<Props> {
   @observable private metaPackage: MetaPackage | null = null
@@ -33,16 +36,18 @@ export default class PackagePage extends React.Component<Props> {
 
   render() {
     const { metaPackage } = this
-
     if (!metaPackage) return null
 
-    const { version } = parseNameVersion(this.props.match.params.nameVersion)
+    const { match, user } = this.props
+
+    const { version } = parseNameVersion(match.params.nameVersion)
+    const access = new UserMetaPackageAccess(user.data!.id, metaPackage.ownerId, metaPackage.permissions)
 
     return (
       <div className={styles.page}>
         <Row>
           <Col {...getCenteredLayout(22, 22, 20, 18, 14)}>
-            <Package metaPackage={metaPackage} version={version} />
+            <Package access={access} metaPackage={metaPackage} version={version} />
           </Col>
         </Row>
       </div>

@@ -9,6 +9,7 @@ import React from 'react'
 import serverApi from '../../api/server/node'
 import MetaPackage from '../../models/view/MetaPackage'
 import PackageModel from '../../models/view/node/Package'
+import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
 import { gutter } from '../../utils/layout'
 import PackageInfo from '../PackageInfo'
 import PackageOwner from '../PackageOwner'
@@ -19,6 +20,7 @@ import PackageVersions from '../PackageVersions'
 
 
 type Props = {
+  access: UserMetaPackageAccess
   metaPackage: MetaPackage
   version?: string
 }
@@ -48,7 +50,7 @@ export default class Package extends React.Component<Props>{
 
   render() {
     const { pkg, packages } = this
-    const { metaPackage } = this.props
+    const { access, metaPackage } = this.props
 
     if (!pkg) return null
 
@@ -60,7 +62,7 @@ export default class Package extends React.Component<Props>{
         </Col>
         <Col span={8}>
           <PackageInfo pkg={pkg} />
-          <PackagePermissions metaPackage={metaPackage} />
+          {access.isOwner ? <PackagePermissions metaPackage={metaPackage} /> : null}
           <PackageStats pkg={pkg} packages={packages} />
           <PackageOwner metaPackage={metaPackage} />
         </Col>

@@ -3,7 +3,7 @@ import message from 'antd/lib/message'
 import Switch from 'antd/lib/switch'
 import { cloneDeep, isEqual } from 'lodash'
 import { computed, observable } from 'mobx'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import React from 'react'
 
 import metaPackagesApi from '../../api/metaPackages'
@@ -11,17 +11,14 @@ import MetaPackage from '../../models/view/MetaPackage'
 import MetaPackagePermission from '../../models/view/MetaPackagePermission'
 import { Permission } from '../../models/view/Permission'
 import { PermissionCategory } from '../../models/view/PermissionCategory'
-import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
-import { Store } from '../../store'
 
 import styles from './index.module.scss'
 
 
-type Props = Partial<Pick<Store, 'user'>> & {
+type Props = {
   metaPackage: MetaPackage
 }
 
-@inject((stores: Store) => ({ user: stores.user }))
 @observer
 export default class PackagePermissions extends React.Component<Props> {
   private static readonly categories = Object.keys(PermissionCategory)
@@ -46,16 +43,8 @@ export default class PackagePermissions extends React.Component<Props> {
   }
 
   render() {
-    const { metaPackage, user } = this.props
-
-    if (!user) return null
-
-    const access = new UserMetaPackageAccess(user.data!.id, metaPackage.ownerId, metaPackage.permissions)
-    if (!access.isOwner) return null
-
-    const { permissions } = this
-    const getPermissionChecked = this.getPermissionChecked(permissions)
-    const setPermissionChecked = this.setPermissionChecked(permissions)
+    const getPermissionChecked = this.getPermissionChecked(this.permissions)
+    const setPermissionChecked = this.setPermissionChecked(this.permissions)
 
     return (
       <div className={styles.block}>
@@ -83,14 +72,14 @@ export default class PackagePermissions extends React.Component<Props> {
 
   private getPermissionChecked = (permissions: MetaPackagePermission[]) =>
     (category: PermissionCategory, permission: Permission): boolean => {
-      const packagePermission = this.permissions.find(p => p.category === category)!
+      const packagePermission = permissions.find(p => p.category === category)!
 
       return Boolean(packagePermission.permission & permission)
     }
 
   private setPermissionChecked = (permissions: MetaPackagePermission[]) =>
     (category: PermissionCategory, permission: Permission) => (value: boolean): void => {
-      const packagePermission = this.permissions.find(p => p.category === category)!
+      const packagePermission = permissions.find(p => p.category === category)!
 
       packagePermission.permission = value
         ? packagePermission.permission | permission
