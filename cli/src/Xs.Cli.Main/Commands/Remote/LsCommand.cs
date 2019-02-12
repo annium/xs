@@ -5,15 +5,15 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class ListCommand : Command<CwdCommandConfiguration>
+    internal class LsCommand : Command<CwdCommandConfiguration>
     {
-        public override string Id { get; } = "list";
+        public override string Id { get; } = "ls";
 
         public override string Description { get; } = "List tracked registries.";
 
         private readonly IConfigurationManager configurationManager;
 
-        public ListCommand(
+        public LsCommand(
             IConfigurationManager configurationManager
         )
         {
