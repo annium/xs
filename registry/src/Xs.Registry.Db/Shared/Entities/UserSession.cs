@@ -8,7 +8,7 @@ namespace Xs.Registry.Db.Shared.Entities
     [Table(nameof(Context.UserSessions), Schema = Schema.Shared)]
     internal class UserSession
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
         public Guid Token { get; set; }
 

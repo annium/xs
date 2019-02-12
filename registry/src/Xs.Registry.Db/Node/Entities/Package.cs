@@ -10,7 +10,7 @@ namespace Xs.Registry.Db.Node.Entities
     [Table(nameof(Package), Schema = Schema.Node)]
     internal class Package : IPackage<PackageDependency>
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
 
         [Required]

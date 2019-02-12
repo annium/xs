@@ -7,7 +7,7 @@ namespace Xs.Registry.Db.Shared.Entities
     [Table(nameof(Context.Users), Schema = Schema.Shared)]
     internal class User
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
 
         [Required]

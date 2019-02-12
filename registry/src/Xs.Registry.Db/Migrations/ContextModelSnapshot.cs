@@ -22,8 +22,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Dotnet.Entities.Package", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -70,8 +69,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Node.Entities.Package", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -127,8 +125,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.MetaPackage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -175,8 +172,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<Guid>("ApiToken");
 
@@ -193,8 +189,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.UserSession", b =>
                 {
-                    b.Property<Guid>("Token")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Token");
 
                     b.Property<Instant>("Expires");
 

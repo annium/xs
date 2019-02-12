@@ -11,8 +11,8 @@ using Xs.Registry.Db;
 namespace Xs.Registry.Db.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20190208192756_Init")]
-    partial class Init
+    [Migration("20190212124450_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,8 +24,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Dotnet.Entities.Package", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -72,8 +71,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Node.Entities.Package", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -129,8 +127,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.MetaPackage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -177,8 +174,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Id");
 
                     b.Property<Guid>("ApiToken");
 
@@ -195,8 +191,7 @@ namespace Xs.Registry.Db.Migrations
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.UserSession", b =>
                 {
-                    b.Property<Guid>("Token")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("Token");
 
                     b.Property<Instant>("Expires");
 
