@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
+using LinqToDB.Data;
+using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Z.EntityFramework.Plus;
 
 namespace Xs.Registry.Db
 {
@@ -30,18 +32,13 @@ namespace Xs.Registry.Db
                         $"Username={cfg.User}",
                         $"Password={cfg.Password}",
                     }), options => options.UseNodaTime()); // is needed, cause not enabled by default
-                    builder.EnableSensitiveDataLogging(); // TODO: remove, used for debugging only
                 });
 
-            // this one is confusing: EF+ logging configuration is separate, EF itself uses IWebHostBuilder approach
-            if (cfg.LogQueries)
-            {
-                Action<System.Data.Common.DbCommand> executing = command => Console.WriteLine(
-                    $"{command.CommandType} batch command executing: {command.CommandText}"
-                );
-                BatchDeleteManager.BatchDeleteBuilder = builder => builder.Executing = executing;
-                BatchUpdateManager.BatchUpdateBuilder = builder => builder.Executing = executing;
-            }
+            // init linq2db for EF Core
+            LinqToDBForEFTools.Initialize();
+            DataConnection.TurnTraceSwitchOn(TraceLevel.Verbose);
+            DataConnection.WriteTraceLine = (message, context) => Console.WriteLine($"{context}: {message}");
+            LinqToDB.Common.Configuration.Linq.AllowMultipleQuery = true;
         }
     }
 }

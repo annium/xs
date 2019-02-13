@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Z.EntityFramework.Plus;
+using LinqToDB;
+using LinqToDB.Data;
+using LinqToDB.EntityFrameworkCore;
 
 namespace Xs.Registry.Db.Shared
 {
@@ -25,16 +26,14 @@ namespace Xs.Registry.Db.Shared
         public async Task<MetaPackage> CreateAsync(MetaPackage metaPackage)
         {
             var entity = mapper.Map<Entities.MetaPackage>(metaPackage);
+            entity.Id = Guid.NewGuid();
+            entity.Permissions.ForEach(p => p.MetaPackageId = entity.Id);
 
-            context.Entry(entity).State = EntityState.Added;
-            foreach (var permission in entity.Permissions)
-                context.Entry(permission).State = EntityState.Added;
-
-            await context.SaveChangesAsync();
-
-            context.Entry(entity).State = EntityState.Detached;
-            foreach (var permission in entity.Permissions)
-                context.Entry(permission).State = EntityState.Detached;
+            using(var db = context.GetDataConnection())
+            {
+                await db.InsertAsync(entity);
+                db.BulkCopy(entity.Permissions);
+            }
 
             return mapper.Map<MetaPackage>(entity);
         }
@@ -42,10 +41,9 @@ namespace Xs.Registry.Db.Shared
         public async Task<MetaPackage> GetByIdAsync(Guid id)
         {
             var entity = await context.MetaPackages
-                .AsNoTracking()
-                .Include(p => p.Permissions)
-                .Where(p => p.Id == id)
-                .FirstOrDefaultAsync();
+                .ToLinqToDBTable()
+                .LoadWith(p => p.Permissions)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             return mapper.Map<MetaPackage>(entity);
         }
@@ -53,8 +51,9 @@ namespace Xs.Registry.Db.Shared
         public async Task<MetaPackageAccess> GetAccessByIdAsync(Guid id)
         {
             var data = await context.MetaPackages
+                .ToLinqToDBTable()
+                .LoadWith(p => p.Permissions)
                 .Where(p => p.Id == id)
-                .Include(p => p.Permissions)
                 .Select(p => new { owner = p.OwnerId, permissions = p.Permissions })
                 .FirstOrDefaultAsync();
 
@@ -67,9 +66,9 @@ namespace Xs.Registry.Db.Shared
         public async Task<MetaPackage[]> FindAllByOwnerIdAsync(Guid ownerId)
         {
             var entities = await context.MetaPackages
-                .AsNoTracking()
-                .Include(p => p.Owner)
-                .Include(p => p.Permissions)
+                .ToLinqToDBTable()
+                .LoadWith(p => p.Owner)
+                .LoadWith(p => p.Permissions)
                 .Where(p => p.OwnerId == ownerId)
                 .ToListAsync();
 
@@ -86,9 +85,9 @@ namespace Xs.Registry.Db.Shared
         )
         {
             var request = context.MetaPackages
-                .AsNoTracking()
-                .Include(p => p.Owner)
-                .Include(p => p.Permissions)
+                .ToLinqToDBTable()
+                .LoadWith(p => p.Owner)
+                .LoadWith(p => p.Permissions)
                 .AsQueryable();
 
             // if ownerId passed and is equal to userId - searching own packages, so skip access check
@@ -98,13 +97,13 @@ namespace Xs.Registry.Db.Shared
             // otherwise, if ownerId specified - search user's packages, applying access check
             else if (ownerId != Guid.Empty)
                 request = request.Where(p => p.OwnerId == ownerId &&
-                    p.Permissions.Any(e => e.Category == PermissionCategory.World && e.Permission.HasFlag(Permission.Read))
+                    p.Permissions.Any(e => e.Category == PermissionCategory.World && (e.Permission & Permission.Read) == Permission.Read)
                 );
 
             // otherwise, if ownerId not specified - generic search with access check
             else
                 request = request.Where(p => p.OwnerId == userId ||
-                    p.Permissions.Any(e => e.Category == PermissionCategory.World && e.Permission.HasFlag(Permission.Read))
+                    p.Permissions.Any(e => e.Category == PermissionCategory.World && (e.Permission & Permission.Read) == Permission.Read)
                 );
 
             if (type != null)
@@ -135,9 +134,9 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entity = await context.MetaPackages
-                .AsNoTracking()
-                .Include(p => p.Owner)
-                .Include(p => p.Permissions)
+                .ToLinqToDBTable()
+                .LoadWith(p => p.Owner)
+                .LoadWith(p => p.Permissions)
                 .Where(p => p.Type == typeString && p.LowerName == name)
                 .FirstOrDefaultAsync();
 

@@ -2,26 +2,27 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Z.EntityFramework.Plus;
+using LinqToDB;
+using LinqToDB.Data;
+using LinqToDB.EntityFrameworkCore;
 
 namespace Xs.Registry.Db.Shared
 {
     internal class PackageRepository<TPackage, TPackageEntity, TPackageDependencyEntity, TContext> : IPackageRepository<TPackage>
         where TPackage : class, IPackage
     where TPackageEntity : class, Entities.IPackage<TPackageDependencyEntity>, new()
-    where TPackageDependencyEntity : class
+    where TPackageDependencyEntity : class, Entities.IPackageDependency
     where TContext : IContext
     {
         private readonly TContext context;
 
-        private readonly DbSet<TPackageEntity> packages;
+        private readonly Microsoft.EntityFrameworkCore.DbSet<TPackageEntity> packages;
 
         private readonly IMapper mapper;
 
         public PackageRepository(
             TContext context,
-            Func<TContext, DbSet<TPackageEntity>> getPackagesSet,
+            Func<TContext, Microsoft.EntityFrameworkCore.DbSet<TPackageEntity>> getPackagesSet,
             IMapper mapper
         )
         {
@@ -33,16 +34,14 @@ namespace Xs.Registry.Db.Shared
         public async Task<TPackage> CreateAsync(TPackage package)
         {
             var entity = mapper.Map<TPackageEntity>(package);
+            entity.Id = Guid.NewGuid();
+            entity.Dependencies.ForEach(d => d.PackageId = entity.Id);
 
-            context.Entry(entity).State = EntityState.Added;
-            foreach (var dependency in entity.Dependencies)
-                context.Entry(dependency).State = EntityState.Added;
-
-            await context.SaveChangesAsync();
-
-            context.Entry(entity).State = EntityState.Detached;
-            foreach (var dependency in entity.Dependencies)
-                context.Entry(dependency).State = EntityState.Detached;
+            using(var db = context.GetDataConnection())
+            {
+                await db.InsertAsync(entity);
+                db.BulkCopy(entity.Dependencies);
+            }
 
             return mapper.Map<TPackage>(entity);
         }
@@ -52,7 +51,7 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entities = await packages
-                .AsNoTracking()
+                .ToLinqToDBTable()
                 .Where(p => p.LowerName == name)
                 .OrderByDescending(p => p.Version)
                 .ToArrayAsync();
@@ -65,7 +64,7 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             return packages
-                .AsNoTracking()
+                .ToLinqToDBTable()
                 .Where(p => p.LowerName == name)
                 .Select(p => p.Version)
                 .OrderByDescending(v => v)
@@ -77,8 +76,8 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entity = await packages
-                .AsNoTracking()
-                .Include(p => p.Dependencies)
+                .ToLinqToDBTable()
+                .LoadWith(p => p.Dependencies)
                 .Where(p => p.LowerName == name)
                 .OrderByDescending(p => p.Version)
                 .FirstOrDefaultAsync();
@@ -91,8 +90,8 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entity = await packages
-                .AsNoTracking()
-                .Include(p => p.Dependencies)
+                .ToLinqToDBTable()
+                .LoadWith(p => p.Dependencies)
                 .Where(p => p.LowerName == name && p.Version == version)
                 .FirstOrDefaultAsync();
 

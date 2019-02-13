@@ -1,10 +1,9 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+using LinqToDB;
+using LinqToDB.EntityFrameworkCore;
 using NodaTime;
-using Z.EntityFramework.Plus;
 
 namespace Xs.Registry.Db.Shared
 {
@@ -27,37 +26,41 @@ namespace Xs.Registry.Db.Shared
         {
             var entity = mapper.Map<Entities.UserSession>(userSession);
 
-            context.Entry(entity).State = EntityState.Added;
-
-            await context.SaveChangesAsync();
-
-            context.Entry(entity).State = EntityState.Detached;
+            await context.UserSessions.ToLinqToDBTable()
+                .InsertAsync(() => new Entities.UserSession
+                {
+                    UserId = entity.UserId,
+                        Token = entity.Token,
+                        Expires = entity.Expires,
+                });
 
             return mapper.Map<UserSession>(entity);
         }
 
         public async Task<UserSession> FindByTokenAsync(Guid token)
         {
-            var entity = await context.UserSessions.FirstOrDefaultAsync(s => s.Token == token);
+            var entity = await context.UserSessions.ToLinqToDBTable().FirstOrDefaultAsync(u => u.Token == token);
 
             return mapper.Map<UserSession>(entity);
         }
 
         public Task ProlongateAsync(Guid token, Instant expires)
         {
-            return context.UserSessions
-                .Where(s => s.Token == token)
-                .UpdateAsync(s => new Entities.UserSession() { Expires = expires });
+            return context.UserSessions.ToLinqToDBTable()
+                .UpdateAsync(
+                    s => s.Token == token,
+                    s => new Entities.UserSession { Expires = expires }
+                );
         }
 
         public Task DeleteByTokenAsync(Guid token)
         {
-            return context.UserSessions.Where(s => s.Token == token).DeleteAsync();
+            return context.UserSessions.DeleteAsync(s => s.Token == token);
         }
 
         public Task DeleteExpiredAsync(Instant now)
         {
-            return context.UserSessions.Where(s => s.Expires < now).DeleteAsync();
+            return context.UserSessions.DeleteAsync(s => s.Expires < now);
         }
     }
 }

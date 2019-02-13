@@ -1,9 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Z.EntityFramework.Plus;
+using LinqToDB;
+using LinqToDB.EntityFrameworkCore;
 
 namespace Xs.Registry.Db.Shared
 {
@@ -25,12 +24,12 @@ namespace Xs.Registry.Db.Shared
         public async Task<User> CreateAsync(User user)
         {
             var entity = mapper.Map<Entities.User>(user);
+            entity.Id = Guid.NewGuid();
 
-            context.Entry(entity).State = EntityState.Added;
-
-            await context.SaveChangesAsync();
-
-            context.Entry(entity).State = EntityState.Detached;
+            using(var db = context.GetDataConnection())
+            {
+                await db.InsertAsync(entity);
+            }
 
             return mapper.Map<User>(entity);
         }
@@ -38,9 +37,8 @@ namespace Xs.Registry.Db.Shared
         public async Task<User> GetById(Guid id)
         {
             var user = await context.Users
-                .AsNoTracking()
-                .Where(u => u.Id == id)
-                .FirstOrDefaultAsync();
+                .ToLinqToDBTable()
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             return mapper.Map<User>(user);
         }
@@ -48,19 +46,15 @@ namespace Xs.Registry.Db.Shared
         public async Task<User> FindByNameAsync(string name)
         {
             var user = await context.Users
-                .AsNoTracking()
-                .Where(u => u.Name == name)
-                .FirstOrDefaultAsync();
+                .ToLinqToDBTable()
+                .FirstOrDefaultAsync(u => u.Name == name);
 
             return mapper.Map<User>(user);
         }
 
         public async Task<User> FindByApiTokenAsync(Guid token)
         {
-            var user = await context.Users
-                .AsNoTracking()
-                .Where(u => u.ApiToken == token)
-                .FirstOrDefaultAsync();
+            var user = await context.Users.ToLinqToDBTable().FirstOrDefaultAsync(u => u.ApiToken == token);
 
             return mapper.Map<User>(user);
         }
@@ -69,26 +63,30 @@ namespace Xs.Registry.Db.Shared
         {
             var entity = mapper.Map<Entities.User>(user);
 
-            return context.Users
-                .Where(u => u.Id == entity.Id)
-                .UpdateAsync(u => new Entities.User
-                {
-                    Name = entity.Name,
-                        PasswordHash = entity.PasswordHash,
-                        ApiToken = entity.ApiToken,
-                });
+            return context.Users.ToLinqToDBTable()
+                .UpdateAsync(
+                    u => u.Id == entity.Id,
+                    u => new Entities.User
+                    {
+                        Name = entity.Name,
+                            PasswordHash = entity.PasswordHash,
+                            ApiToken = entity.ApiToken,
+                    }
+                );
         }
 
         public Task UpdateApiTokenAsync(Guid userId, Guid apiToken)
         {
-            return context.Users
-                .Where(u => u.Id == userId)
-                .UpdateAsync(u => new Entities.User { ApiToken = apiToken });
+            return context.Users.ToLinqToDBTable()
+                .UpdateAsync(
+                    u => u.Id == userId,
+                    u => new Entities.User { ApiToken = apiToken, }
+                );
         }
 
         public Task DeleteByIdAsync(Guid id)
         {
-            return context.Users.Where(u => u.Id == id).DeleteAsync();
+            return context.Users.DeleteAsync(u => u.Id == id);
         }
     }
 }
