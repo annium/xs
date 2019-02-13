@@ -1,11 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db.Node.Entities
 {
     [Table(nameof(PackageDependency), Schema = Schema.Node)]
-    internal class PackageDependency
+    internal class PackageDependency : IPackageDependency
     {
         [Required]
         public Guid PackageId { get; set; }
