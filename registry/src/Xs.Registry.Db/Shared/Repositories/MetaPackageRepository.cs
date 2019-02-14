@@ -63,19 +63,7 @@ namespace Xs.Registry.Db.Shared
             return new MetaPackageAccess(data.owner, data.permissions.Select(mapper.Map<MetaPackagePermission>).ToArray());
         }
 
-        public async Task<MetaPackage[]> FindAllByOwnerIdAsync(Guid ownerId)
-        {
-            var entities = await context.MetaPackages
-                .ToLinqToDBTable()
-                .LoadWith(p => p.Owner)
-                .LoadWith(p => p.Permissions)
-                .Where(p => p.OwnerId == ownerId)
-                .ToListAsync();
-
-            return entities.Select(mapper.Map<MetaPackage>).ToArray();
-        }
-
-        public async Task<MetaPackage[]> FindPackagesAsync(
+        public async Task<MetaPackage[]> FindAsync(
             Guid userId,
             Guid ownerId,
             ProjectType type,
@@ -86,44 +74,69 @@ namespace Xs.Registry.Db.Shared
         {
             var request = context.MetaPackages
                 .ToLinqToDBTable()
-                .LoadWith(p => p.Owner)
-                .LoadWith(p => p.Permissions)
+                .InnerJoin(
+                    context.Users.ToLinqToDBTable(),
+                    (m, u) => m.OwnerId == u.Id,
+                    (m, u) => new { m, u }
+                )
+                .InnerJoin(
+                    context.MetaPackagePermissions.ToLinqToDBTable(),
+                    (mu, p) => mu.m.Id == p.MetaPackageId,
+                    (mu, p) => new { m = mu.m, u = mu.u, p }
+                )
                 .AsQueryable();
 
             // if ownerId passed and is equal to userId - searching own packages, so skip access check
             if (ownerId == userId)
-                request = request.Where(p => p.OwnerId == userId);
+                request = request.Where(o => o.u.Id == userId);
 
             // otherwise, if ownerId specified - search user's packages, applying access check
             else if (ownerId != Guid.Empty)
-                request = request.Where(p => p.OwnerId == ownerId &&
-                    p.Permissions.Any(e => e.Category == PermissionCategory.World && (e.Permission & Permission.Read) == Permission.Read)
+                request = request.Where(
+                    o => o.u.Id == ownerId &&
+                    o.p.Category == PermissionCategory.World &&
+                    (o.p.Permission & Permission.Read) == Permission.Read
                 );
 
             // otherwise, if ownerId not specified - generic search with access check
             else
-                request = request.Where(p => p.OwnerId == userId ||
-                    p.Permissions.Any(e => e.Category == PermissionCategory.World && (e.Permission & Permission.Read) == Permission.Read)
+                request = request.Where(
+                    o => o.u.Id == userId ||
+                    (o.p.Category == PermissionCategory.World &&
+                        (o.p.Permission & Permission.Read) == Permission.Read)
                 );
 
             if (type != null)
             {
                 var typeString = type.ToString();
-                request = request.Where(p => p.Type == typeString);
+                request = request.Where(o => o.m.Type == typeString);
             }
 
             if (!string.IsNullOrWhiteSpace(query))
             {
                 query = query.ToLower();
-                request = request.Where(p => p.Name.ToLower().Contains(query));
+                request = request.Where(o => o.m.LowerName.Contains(query));
             }
 
-            request = request
-                .OrderBy(p => p.Name)
+            var ids = await request
+                .OrderBy(o => o.m.Name)
+                .Select(o => o.m.Id)
+                .Distinct()
                 .Skip((page - 1) * count)
-                .Take(count);
+                .Take(count)
+                .ToArrayAsync();
 
-            var entities = await request.ToListAsync();
+            var entities = await context.MetaPackages.ToLinqToDBTable()
+                .LoadWith(m => m.Owner)
+                .Where(m => ids.Contains(m.Id))
+                .ToArrayAsync();
+
+            var permissions = await context.MetaPackagePermissions.ToLinqToDBTable()
+                .Where(p => ids.Contains(p.MetaPackageId))
+                .ToArrayAsync();
+
+            foreach (var entity in entities)
+                entity.Permissions = permissions.Where(p => p.MetaPackageId == entity.Id).ToList();
 
             return entities.Select(mapper.Map<MetaPackage>).ToArray();
         }

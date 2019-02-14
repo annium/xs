@@ -43,7 +43,7 @@ namespace Xs.Registry.Main.Controllers
             if (count < 1)
                 return BadRequest("Count must be positive integer");
 
-            var packages = await metaPackageRepository.FindPackagesAsync(GetUser().Id, ownerId, projectType, query, page, count);
+            var packages = await metaPackageRepository.FindAsync(GetUser().Id, ownerId, projectType, query, page, count);
 
             return Ok(packages.Select(p => new MetaPackageView(p)).ToArray());
         }
