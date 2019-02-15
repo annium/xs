@@ -102,7 +102,7 @@ namespace Xs.Registry.Db.Shared
         {
             name = name.ToLower();
 
-            return packages.Where(p => p.LowerName == name).CountAsync();
+            return packages.Where(p => p.LowerName == name).SumAsync(p => p.Downloads);
         }
 
         public async Task IncrementDownloadsAsync(Guid id)
