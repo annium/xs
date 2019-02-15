@@ -1,3 +1,5 @@
+using LinqToDB;
+using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Xs.Registry.Db.Node.Entities;
 
@@ -5,9 +7,13 @@ namespace Xs.Registry.Db
 {
     internal partial class Context : Node.INodeContext
     {
-        public DbSet<Package> NodePackages { get; set; }
+        public DbSet<Package> NodePackagesSet { get; set; }
 
-        public DbSet<PackageDependency> NodePackageDependencies { get; set; }
+        public ITable<Package> NodePackages => NodePackagesSet.ToLinqToDBTable();
+
+        public DbSet<PackageDependency> NodePackageDependenciesSet { get; set; }
+
+        public ITable<PackageDependency> NodePackageDependencies => NodePackageDependenciesSet.ToLinqToDBTable();
 
         private void ConfigureNode(ModelBuilder builder)
         {

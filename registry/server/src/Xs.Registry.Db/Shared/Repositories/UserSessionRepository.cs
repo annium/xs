@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using LinqToDB;
-using LinqToDB.EntityFrameworkCore;
 using NodaTime;
 
 namespace Xs.Registry.Db.Shared
@@ -26,7 +25,7 @@ namespace Xs.Registry.Db.Shared
         {
             var entity = mapper.Map<Entities.UserSession>(userSession);
 
-            await context.UserSessions.ToLinqToDBTable()
+            await context.UserSessions
                 .InsertAsync(() => new Entities.UserSession
                 {
                     UserId = entity.UserId,
@@ -39,14 +38,14 @@ namespace Xs.Registry.Db.Shared
 
         public async Task<UserSession> FindByTokenAsync(Guid token)
         {
-            var entity = await context.UserSessions.ToLinqToDBTable().FirstOrDefaultAsync(u => u.Token == token);
+            var entity = await context.UserSessions.FirstOrDefaultAsync(u => u.Token == token);
 
             return mapper.Map<UserSession>(entity);
         }
 
         public Task ProlongateAsync(Guid token, Instant expires)
         {
-            return context.UserSessions.ToLinqToDBTable()
+            return context.UserSessions
                 .UpdateAsync(
                     s => s.Token == token,
                     s => new Entities.UserSession { Expires = expires }

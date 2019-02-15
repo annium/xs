@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore;
+using LinqToDB;
 
 namespace Xs.Registry.Db.Node
 {
     internal interface INodeContext : IContext
     {
-        DbSet<Entities.Package> NodePackages { get; }
+        ITable<Entities.Package> NodePackages { get; }
 
-        DbSet<Entities.PackageDependency> NodePackageDependencies { get; }
+        ITable<Entities.PackageDependency> NodePackageDependencies { get; }
     }
 }

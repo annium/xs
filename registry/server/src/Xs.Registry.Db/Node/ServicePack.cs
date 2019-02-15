@@ -1,7 +1,7 @@
 using System;
 using Annium.Extensions.DependencyInjection;
 using AutoMapper.Configuration;
-using Microsoft.EntityFrameworkCore;
+using LinqToDB;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Db.Node
@@ -23,7 +23,7 @@ namespace Xs.Registry.Db.Node
             services.AddSingleton<INodeContext>(p => p.GetRequiredService<Context>());
 
             // repositories
-            services.AddSingleton<Func<Context, DbSet<Entities.Package>>>((Context context) => context.NodePackages);
+            services.AddSingleton<Func<Context, ITable<Entities.Package>>>((Context context) => context.NodePackages);
             services.AddSingleton<Shared.IPackageRepository<Package>, Shared.PackageRepository<Package, Entities.Package, Entities.PackageDependency, Context>>();
         }
 

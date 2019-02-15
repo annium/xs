@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.EntityFrameworkCore;
 
 namespace Xs.Registry.Db.Shared
 {
@@ -16,18 +15,18 @@ namespace Xs.Registry.Db.Shared
     {
         private readonly TContext context;
 
-        private readonly Microsoft.EntityFrameworkCore.DbSet<TPackageEntity> packages;
+        private readonly ITable<TPackageEntity> packages;
 
         private readonly IMapper mapper;
 
         public PackageRepository(
             TContext context,
-            Func<TContext, Microsoft.EntityFrameworkCore.DbSet<TPackageEntity>> getPackagesSet,
+            Func<TContext, ITable<TPackageEntity>> getPackagesTable,
             IMapper mapper
         )
         {
             this.context = context;
-            this.packages = getPackagesSet(context);
+            this.packages = getPackagesTable(context);
             this.mapper = mapper;
         }
 
@@ -51,7 +50,6 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entities = await packages
-                .ToLinqToDBTable()
                 .Where(p => p.LowerName == name)
                 .OrderByDescending(p => p.Version)
                 .ToArrayAsync();
@@ -64,7 +62,6 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             return packages
-                .ToLinqToDBTable()
                 .Where(p => p.LowerName == name)
                 .Select(p => p.Version)
                 .OrderByDescending(v => v)
@@ -76,7 +73,6 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entity = await packages
-                .ToLinqToDBTable()
                 .LoadWith(p => p.Dependencies)
                 .Where(p => p.LowerName == name && p.Version == version)
                 .FirstOrDefaultAsync();

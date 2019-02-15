@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using LinqToDB;
-using LinqToDB.EntityFrameworkCore;
 
 namespace Xs.Registry.Db.Shared
 {
@@ -37,7 +36,6 @@ namespace Xs.Registry.Db.Shared
         public async Task<User> GetById(Guid id)
         {
             var user = await context.Users
-                .ToLinqToDBTable()
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             return mapper.Map<User>(user);
@@ -46,7 +44,6 @@ namespace Xs.Registry.Db.Shared
         public async Task<User> FindByNameAsync(string name)
         {
             var user = await context.Users
-                .ToLinqToDBTable()
                 .FirstOrDefaultAsync(u => u.Name == name);
 
             return mapper.Map<User>(user);
@@ -54,7 +51,7 @@ namespace Xs.Registry.Db.Shared
 
         public async Task<User> FindByApiTokenAsync(Guid token)
         {
-            var user = await context.Users.ToLinqToDBTable().FirstOrDefaultAsync(u => u.ApiToken == token);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.ApiToken == token);
 
             return mapper.Map<User>(user);
         }
@@ -63,7 +60,7 @@ namespace Xs.Registry.Db.Shared
         {
             var entity = mapper.Map<Entities.User>(user);
 
-            return context.Users.ToLinqToDBTable()
+            return context.Users
                 .UpdateAsync(
                     u => u.Id == entity.Id,
                     u => new Entities.User
@@ -77,7 +74,7 @@ namespace Xs.Registry.Db.Shared
 
         public Task UpdateApiTokenAsync(Guid userId, Guid apiToken)
         {
-            return context.Users.ToLinqToDBTable()
+            return context.Users
                 .UpdateAsync(
                     u => u.Id == userId,
                     u => new Entities.User { ApiToken = apiToken, }

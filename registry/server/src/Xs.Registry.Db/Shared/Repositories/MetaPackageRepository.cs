@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.EntityFrameworkCore;
 
 namespace Xs.Registry.Db.Shared
 {
@@ -41,7 +40,6 @@ namespace Xs.Registry.Db.Shared
         public async Task<MetaPackage> GetByIdAsync(Guid id)
         {
             var entity = await context.MetaPackages
-                .ToLinqToDBTable()
                 .LoadWith(p => p.Permissions)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -51,7 +49,6 @@ namespace Xs.Registry.Db.Shared
         public async Task<MetaPackageAccess> GetAccessByIdAsync(Guid id)
         {
             var data = await context.MetaPackages
-                .ToLinqToDBTable()
                 .LoadWith(p => p.Permissions)
                 .Where(p => p.Id == id)
                 .Select(p => new { owner = p.OwnerId, permissions = p.Permissions })
@@ -73,14 +70,13 @@ namespace Xs.Registry.Db.Shared
         )
         {
             var request = context.MetaPackages
-                .ToLinqToDBTable()
                 .InnerJoin(
-                    context.Users.ToLinqToDBTable(),
+                    context.Users,
                     (m, u) => m.OwnerId == u.Id,
                     (m, u) => new { m, u }
                 )
                 .InnerJoin(
-                    context.MetaPackagePermissions.ToLinqToDBTable(),
+                    context.MetaPackagePermissions,
                     (mu, p) => mu.m.Id == p.MetaPackageId,
                     (mu, p) => new { m = mu.m, u = mu.u, p }
                 )
@@ -126,12 +122,12 @@ namespace Xs.Registry.Db.Shared
                 .Take(count)
                 .ToArrayAsync();
 
-            var entities = await context.MetaPackages.ToLinqToDBTable()
+            var entities = await context.MetaPackages
                 .LoadWith(m => m.Owner)
                 .Where(m => ids.Contains(m.Id))
                 .ToArrayAsync();
 
-            var permissions = await context.MetaPackagePermissions.ToLinqToDBTable()
+            var permissions = await context.MetaPackagePermissions
                 .Where(p => ids.Contains(p.MetaPackageId))
                 .ToArrayAsync();
 
@@ -147,7 +143,6 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entity = await context.MetaPackages
-                .ToLinqToDBTable()
                 .LoadWith(p => p.Owner)
                 .LoadWith(p => p.Permissions)
                 .Where(p => p.Type == typeString && p.LowerName == name)
