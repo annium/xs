@@ -9,7 +9,7 @@ db-log main-log dotnet-log node-log:
 
 
 db-drop db-update migrations-add migrations-list migrations-remove:
-	tools/ef-$@.sh
+	cd server && tools/ef-$@.sh
 
 
 
@@ -17,10 +17,10 @@ define up
 	@$(eval components := $(1))
 	@$(eval files := $(foreach component,$(components),-f setup/$(env)/$(component).yml))
 	$(call net-up)
-	@rm -rf src/packages
-	@cp -rf /projects/annium/packages src/packages
+	@rm -rf server/src/packages
+	@cp -rf /projects/annium/packages server/src/packages
 	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p registry $(files) up --build -d --force-recreate
-	@rm -rf src/packages
+	@rm -rf server/src/packages
 endef
 
 define down

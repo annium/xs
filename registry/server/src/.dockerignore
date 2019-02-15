@@ -1,16 +1,16 @@
 # editors
-.vscode/
+**/.vscode/
 
 
 # OS & misc
-.DS_STORE
-*.log
+**/.DS_STORE
+**/*.log
 
 # .NET
-bin/
-obj/
-coverage.json
+**/bin/
+**/obj/
+**/coverage.json
 
 # local artifacts
-configuration/
-run/
+**/configuration/
+**/run/
