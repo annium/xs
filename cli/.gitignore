@@ -3,8 +3,6 @@
 
 # OS & misc
 .DS_STORE
-*.log
-.xs
 
 # .NET
 bin/

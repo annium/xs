@@ -1,0 +1,10 @@
+# editors
+.vscode/
+
+# OS & misc
+.DS_STORE
+
+# .NET
+bin/
+obj/
+coverage.json
