@@ -71,20 +71,6 @@ namespace Xs.Registry.Db.Shared
                 .ToArrayAsync();
         }
 
-        public async Task<TPackage> FindLatestByNameAsync(string name)
-        {
-            name = name.ToLower();
-
-            var entity = await packages
-                .ToLinqToDBTable()
-                .LoadWith(p => p.Dependencies)
-                .Where(p => p.LowerName == name)
-                .OrderByDescending(p => p.Version)
-                .FirstOrDefaultAsync();
-
-            return mapper.Map<TPackage>(entity);
-        }
-
         public async Task<TPackage> FindByNameVersionAsync(string name, string version)
         {
             name = name.ToLower();
@@ -115,11 +101,6 @@ namespace Xs.Registry.Db.Shared
             await packages
                 .Where(p => p.Id == id && p.Downloads == downloads)
                 .UpdateAsync(p => new TPackageEntity { Downloads = downloads + 1 });
-        }
-
-        public Task DeleteByIdAsync(Guid id)
-        {
-            return packages.Where(p => p.Id == id).DeleteAsync();
         }
 
         public Task DeleteByNameVersionAsync(string name, string version)

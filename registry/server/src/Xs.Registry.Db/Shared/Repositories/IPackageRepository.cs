@@ -11,15 +11,11 @@ namespace Xs.Registry.Db.Shared
 
         Task<string[]> FindAllVersionsByNameAsync(string name);
 
-        Task<TPackage> FindLatestByNameAsync(string name);
-
         Task<TPackage> FindByNameVersionAsync(string name, string version);
 
         Task<int> CountAllDownloadsAsync(string name);
 
         Task IncrementDownloadsAsync(Guid id);
-
-        Task DeleteByIdAsync(Guid id);
 
         Task DeleteByNameVersionAsync(string name, string version);
     }

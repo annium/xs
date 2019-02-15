@@ -188,13 +188,5 @@ namespace Xs.Registry.Db.Shared
         {
             return context.MetaPackages.Where(p => p.Id == id).DeleteAsync();
         }
-
-        public Task DeleteByTypeNameAsync(ProjectType type, string name)
-        {
-            var typeString = type.ToString();
-            name = name.ToLower();
-
-            return context.MetaPackages.Where(p => p.Type == typeString && p.LowerName == name).DeleteAsync();
-        }
     }
 }
