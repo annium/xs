@@ -1,5 +1,5 @@
 FROM node:alpine as builder
-COPY ./src /src/
+COPY . /src/
 WORKDIR /src/site.lib/src
 RUN yarn install --force
 RUN yarn build
