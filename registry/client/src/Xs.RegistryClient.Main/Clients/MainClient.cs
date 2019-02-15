@@ -19,7 +19,7 @@ namespace Xs.RegistryClient.Main
                 .Post("login/app")
                 .JsonContent(new { name, password })
                 .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase}).")
-                .AsStringAsync();
+                .AsAsync<string>();
         }
 
         public Task<Dictionary<string, Uri>> GetRegistryInfoAsync(string token)
