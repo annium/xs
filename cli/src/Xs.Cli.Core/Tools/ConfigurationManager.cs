@@ -30,6 +30,15 @@ namespace Xs.Cli.Core.Tools
 
         public void Save(string folder, Configuration configuration)
         {
+            configuration.Registries = configuration.Registries
+                .OrderBy(r => r.Name)
+                .Select(r =>
+                {
+                    r.Servers = r.Servers.OrderBy(s => s.Key.ToString()).ToDictionary(e => e.Key, e => e.Value);
+                    return r;
+                })
+                .ToList();
+
             Json.WriteFile(FilePath(folder), configuration);
 
             // prepare lists of registries by types
