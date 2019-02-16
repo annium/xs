@@ -63,7 +63,7 @@ namespace Xs.Cli.Core.Projects
             if (result.IsSuccess)
                 logger.LogInfo($"Finished {Name} {operation}.");
             else
-                throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}.");
+                throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
         }
     }
 }
