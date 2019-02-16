@@ -18,7 +18,7 @@ namespace Xs.Cli.Dotnet.Tools
 
         private readonly string defaultName = "nuget";
 
-        private readonly Uri defaultUri = new Uri("https://api.nuget.org/v3/index.json");
+        private readonly Uri defaultUri = new Uri("https://api.nuget.org/");
 
         public void Save(string folder, IEnumerable<ValueTuple<string, Uri, string>> registries)
         {
@@ -60,8 +60,11 @@ namespace Xs.Cli.Dotnet.Tools
             }
         }
 
-        private XElement GetAddRule(string name, Uri uri) =>
-            new XElement(El.Add, new XAttribute(El.Key, name), new XAttribute(El.Value, uri.ToString()));
+        private XElement GetAddRule(string name, Uri uri) => new XElement(
+            El.Add,
+            new XAttribute(El.Key, name),
+            new XAttribute(El.Value, new Uri(uri, Constants.ServerPathSuffix).ToString())
+        );
 
         private string FilePath(string folder) => Path.Combine(folder, file);
 

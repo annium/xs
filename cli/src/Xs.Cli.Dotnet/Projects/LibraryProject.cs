@@ -146,7 +146,7 @@ namespace Xs.Cli.Dotnet.Projects
 
             await RunAsync(
                 "publish",
-                $"dotnet nuget push {packageFile} --source {registry} --api-key {accessToken}",
+                $"dotnet nuget push {packageFile} --source {new Uri(registry, Constants.ServerPathSuffix)} --api-key {accessToken}",
                 token);
 
             System.IO.File.Delete(packageFile);
@@ -155,7 +155,7 @@ namespace Xs.Cli.Dotnet.Projects
         public Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token) =>
             RunAsync(
                 "unpublish",
-                $"dotnet nuget delete {Name} {version} --source {registry} --api-key {accessToken} --non-interactive",
+                $"dotnet nuget delete {Name} {version} --source {new Uri(registry, Constants.ServerPathSuffix)} --api-key {accessToken} --non-interactive",
                 token);
 
         public override bool IsRelated(string path)
