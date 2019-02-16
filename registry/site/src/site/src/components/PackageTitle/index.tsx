@@ -27,7 +27,7 @@ export default function PackageTitle({ access, metaPackage, pkg, onDelete: handl
           <span className={styles.version}>{pkg.version}</span>
         </div>
         <div className={styles.separator} />
-        {access.isOwner || access.has(Permission.Unpublish)
+        {access.has(Permission.Unpublish)
           ? <Button type="danger" icon="delete" onClick={handleDelete}>Delete</Button>
           : null}
       </div>
