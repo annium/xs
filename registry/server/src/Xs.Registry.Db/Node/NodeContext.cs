@@ -1,5 +1,4 @@
 using LinqToDB;
-using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Xs.Registry.Db.Node.Entities;
 
@@ -9,11 +8,11 @@ namespace Xs.Registry.Db
     {
         public DbSet<Package> NodePackagesSet { get; set; }
 
-        public ITable<Package> NodePackages => NodePackagesSet.ToLinqToDBTable();
+        public ITable<Package> NodePackages => Table(NodePackagesSet);
 
         public DbSet<PackageDependency> NodePackageDependenciesSet { get; set; }
 
-        public ITable<PackageDependency> NodePackageDependencies => NodePackageDependenciesSet.ToLinqToDBTable();
+        public ITable<PackageDependency> NodePackageDependencies => Table(NodePackageDependenciesSet);
 
         private void ConfigureNode(ModelBuilder builder)
         {

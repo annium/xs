@@ -1,3 +1,4 @@
+using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,11 @@ namespace Xs.Registry.Db
             ConfigureDotnet(builder);
             ConfigureNode(builder);
             ConfigureShared(builder);
+        }
+
+        private ITable<T> Table<T>(DbSet<T> set) where T : class
+        {
+            return set.ToLinqToDBTable();
         }
     }
 }

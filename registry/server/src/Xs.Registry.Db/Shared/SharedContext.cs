@@ -1,5 +1,4 @@
 using LinqToDB;
-using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Xs.Registry.Db.Shared.Entities;
 
@@ -9,19 +8,19 @@ namespace Xs.Registry.Db
     {
         public virtual DbSet<MetaPackage> MetaPackagesSet { get; set; }
 
-        public ITable<MetaPackage> MetaPackages => MetaPackagesSet.ToLinqToDBTable();
+        public ITable<MetaPackage> MetaPackages => Table(MetaPackagesSet);
 
         public virtual DbSet<MetaPackagePermission> MetaPackagePermissionsSet { get; set; }
 
-        public ITable<MetaPackagePermission> MetaPackagePermissions => MetaPackagePermissionsSet.ToLinqToDBTable();
+        public ITable<MetaPackagePermission> MetaPackagePermissions => Table(MetaPackagePermissionsSet);
 
         public virtual DbSet<User> UsersSet { get; set; }
 
-        public ITable<User> Users => UsersSet.ToLinqToDBTable();
+        public ITable<User> Users => Table(UsersSet);
 
         public virtual DbSet<UserSession> UserSessionsSet { get; set; }
 
-        public ITable<UserSession> UserSessions => UserSessionsSet.ToLinqToDBTable();
+        public ITable<UserSession> UserSessions => Table(UserSessionsSet);
 
         private void ConfigureShared(ModelBuilder builder)
         {
