@@ -48,7 +48,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasIndex("MetaPackageId");
 
-                    b.ToTable("Package","dotnet");
+                    b.ToTable("Packages","dotnet");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Dotnet.Entities.PackageDependency", b =>
@@ -64,7 +64,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasKey("PackageId", "Framework", "Name");
 
-                    b.ToTable("PackageDependency","dotnet");
+                    b.ToTable("PackageDependencies","dotnet");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Node.Entities.Package", b =>
@@ -104,7 +104,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasIndex("MetaPackageId");
 
-                    b.ToTable("Package","node");
+                    b.ToTable("Packages","node");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Node.Entities.PackageDependency", b =>
@@ -120,7 +120,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasKey("PackageId", "Name");
 
-                    b.ToTable("PackageDependency","node");
+                    b.ToTable("PackageDependencies","node");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.MetaPackage", b =>

@@ -7,7 +7,7 @@ using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db.Node.Entities
 {
-    [Table(nameof(Package), Schema = Schema.Node)]
+    [Table("Packages", Schema = Schema.Node)]
     internal class Package : IPackage<PackageDependency>
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]

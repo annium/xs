@@ -5,7 +5,7 @@ using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db.Dotnet.Entities
 {
-    [Table(nameof(PackageDependency), Schema = Schema.Dotnet)]
+    [Table("PackageDependencies", Schema = Schema.Dotnet)]
     internal class PackageDependency : IPackageDependency
     {
         [Required]
