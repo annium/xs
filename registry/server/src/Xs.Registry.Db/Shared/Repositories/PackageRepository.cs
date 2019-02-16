@@ -58,6 +58,14 @@ namespace Xs.Registry.Db.Shared
                 .OrderByDescending(p => p.Version)
                 .ToArrayAsync();
 
+            var ids = entities.Select(e => e.Id).ToArray();
+            var dependencies = await packageDependencies
+                .Where(d => ids.Contains(d.PackageId))
+                .ToArrayAsync();
+
+            foreach (var entity in entities)
+                entity.Dependencies = dependencies.Where(p => p.PackageId == entity.Id).ToList();
+
             return entities.Select(mapper.Map<TPackage>).ToArray();
         }
 
