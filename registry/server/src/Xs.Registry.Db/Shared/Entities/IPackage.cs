@@ -13,6 +13,6 @@ namespace Xs.Registry.Db.Shared.Entities
 
         int Downloads { get; set; }
 
-        List<TDependency> Dependencies { get; }
+        List<TDependency> Dependencies { get; set; }
     }
 }

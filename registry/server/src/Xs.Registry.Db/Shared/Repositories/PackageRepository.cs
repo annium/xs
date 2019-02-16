@@ -17,16 +17,20 @@ namespace Xs.Registry.Db.Shared
 
         private readonly ITable<TPackageEntity> packages;
 
+        private readonly ITable<TPackageDependencyEntity> packageDependencies;
+
         private readonly IMapper mapper;
 
         public PackageRepository(
             TContext context,
             Func<TContext, ITable<TPackageEntity>> getPackagesTable,
+            Func<TContext, ITable<TPackageDependencyEntity>> getPackageDependenciesTable,
             IMapper mapper
         )
         {
             this.context = context;
             this.packages = getPackagesTable(context);
+            this.packageDependencies = getPackageDependenciesTable(context);
             this.mapper = mapper;
         }
 
@@ -73,9 +77,13 @@ namespace Xs.Registry.Db.Shared
             name = name.ToLower();
 
             var entity = await packages
-                .LoadWith(p => p.Dependencies)
                 .Where(p => p.LowerName == name && p.Version == version)
                 .FirstOrDefaultAsync();
+
+            if (entity != null)
+                entity.Dependencies = await packageDependencies
+                .Where(d => d.PackageId == entity.Id)
+                .ToListAsync();
 
             return mapper.Map<TPackage>(entity);
         }

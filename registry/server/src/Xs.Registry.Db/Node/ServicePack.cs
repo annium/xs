@@ -24,6 +24,7 @@ namespace Xs.Registry.Db.Node
 
             // repositories
             services.AddSingleton<Func<Context, ITable<Entities.Package>>>((Context context) => context.NodePackages);
+            services.AddSingleton<Func<Context, ITable<Entities.PackageDependency>>>((Context context) => context.NodePackageDependencies);
             services.AddSingleton<Shared.IPackageRepository<Package>, Shared.PackageRepository<Package, Entities.Package, Entities.PackageDependency, Context>>();
         }
 
