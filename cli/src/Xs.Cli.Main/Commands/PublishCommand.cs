@@ -73,7 +73,7 @@ namespace Xs.Cli.Main.Commands
     internal class PublishCommandConfiguration
     {
         [Position(1)]
-        [Help("Registry location.")]
+        [Help("Registry.")]
         public string Registry { get; set; }
 
         [Position(2)]

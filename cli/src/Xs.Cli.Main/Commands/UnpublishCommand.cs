@@ -81,7 +81,7 @@ namespace Xs.Cli.Main.Commands
         public string Mask { get; set; }
 
         [Position(3)]
-        [Help("Version to publish.")]
+        [Help("Version to unpublish.")]
         public Core.Models.Version Version { get; set; }
     }
 }
