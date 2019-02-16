@@ -37,7 +37,6 @@ namespace Xs.Cli.Main.Commands.Ls
         {
             var projects = await discoverTask.RunAsync(cwdCfg.Cwd);
             projects = filterTask.Run(projects, cfg.Mask);
-            var last = projects.Last();
 
             // show deps if explicitly specified, or opposite flag not set
             var showProjects = cfg.Projects || !cfg.Packages;
@@ -51,6 +50,7 @@ namespace Xs.Cli.Main.Commands.Ls
             }
 
             // otherwise - log nice dependencies tree
+            var last = projects.Last();
             foreach (var project in projects)
                 LogProjectWithDependencies(project, showProjects, showPackages, string.Empty, project == last);
         }
@@ -88,7 +88,7 @@ namespace Xs.Cli.Main.Commands.Ls
             var projectDeps = project.ProjectDependencies.OrderBy(e => e.Name).ToArray();
             var node = isLast ? "└─" : "├─";
 
-            var depsCount = showProjects ? projectDeps.Length : packageDeps.Length + projectDeps.Length;
+            var depsCount = (showProjects ? projectDeps.Length : 0) + (showPackages ? packageDeps.Length : 0);
             if (depsCount == 0)
             {
                 Console.WriteLine($"{prefix}{node}─ {project.Name}");
