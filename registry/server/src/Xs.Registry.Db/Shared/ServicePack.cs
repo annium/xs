@@ -19,15 +19,15 @@ namespace Xs.Registry.Db.Shared
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
-            services.AddSingleton<ISharedContext>(p => p.GetRequiredService<Context>());
+            services.AddScoped<ISharedContext>(p => p.GetRequiredService<Context>());
 
             // repositories
-            services.AddSingleton<IMetaPackageRepository, MetaPackageRepository>();
-            services.AddSingleton<IUserRepository, UserRepository>();
-            services.AddSingleton<IUserSessionRepository, UserSessionRepository>();
+            services.AddScoped<IMetaPackageRepository, MetaPackageRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 
             // tools
-            services.AddSingleton<IMetaPackageManager, MetaPackageManager>();
+            services.AddScoped<IMetaPackageManager, MetaPackageManager>();
         }
 
         private MapperConfigurationExpression ConfigureMapping()

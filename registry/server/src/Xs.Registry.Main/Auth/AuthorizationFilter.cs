@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Shared.Helpers;
@@ -13,23 +14,15 @@ namespace Xs.Registry.Main.Auth
     {
         private readonly Func<Instant> getInstant;
 
-        private readonly IUserRepository userRepository;
-
-        private readonly IUserSessionRepository userSessionRepository;
-
-        private readonly ISessionManager sessionManager;
+        private readonly IServiceProvider serviceProvider;
 
         public AuthorizationFilter(
             Func<Instant> getInstant,
-            IUserRepository userRepository,
-            IUserSessionRepository userSessionRepository,
-            ISessionManager sessionManager
+            IServiceProvider serviceProvider
         )
         {
             this.getInstant = getInstant;
-            this.userRepository = userRepository;
-            this.userSessionRepository = userSessionRepository;
-            this.sessionManager = sessionManager;
+            this.serviceProvider = serviceProvider;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -41,28 +34,35 @@ namespace Xs.Registry.Main.Auth
 
         private async Task<IActionResult> HandleAuthorizationAsync(AuthorizationFilterContext context)
         {
-            // try get token
-            var(token, result) = sessionManager.GetToken();
-            if (result != null)
-                return result;
+            using(var scope = serviceProvider.CreateScope())
+            {
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var userSessionRepository = scope.ServiceProvider.GetRequiredService<IUserSessionRepository>();
+                var sessionManager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
 
-            // try to find user session
-            var session = await userSessionRepository.FindByTokenAsync(token);
-            if (session == null)
-                return GetForbiddenResult("Authorization failed. No identity found");
+                // try get token
+                var(token, result) = sessionManager.GetToken();
+                if (result != null)
+                    return result;
 
-            // if token expired - failure
-            if (session.Expires < getInstant())
-                return GetForbiddenResult("Authorization expired. Please login again");
+                // try to find user session
+                var session = await userSessionRepository.FindByTokenAsync(token);
+                if (session == null)
+                    return GetForbiddenResult("Authorization failed. No identity found");
 
-            // refresh session
-            await sessionManager.RefreshSession(session);
+                // if token expired - failure
+                if (session.Expires < getInstant())
+                    return GetForbiddenResult("Authorization expired. Please login again");
 
-            // save user
-            var user = await userRepository.GetById(session.UserId);
-            context.ActionDescriptor.Properties[ServerController<User>.UserProperty] = user;
+                // refresh session
+                await sessionManager.RefreshSession(session);
 
-            return null;
+                // save user
+                var user = await userRepository.GetById(session.UserId);
+                context.ActionDescriptor.Properties[ServerController<User>.UserProperty] = user;
+
+                return null;
+            }
         }
 
         private IActionResult GetForbiddenResult(string error) =>

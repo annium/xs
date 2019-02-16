@@ -19,7 +19,7 @@ namespace Xs.Registry.Main
         {
             // auth
             services.AddSingleton<AuthorizationFilter>();
-            services.AddSingleton<ISessionManager, SessionManager>();
+            services.AddScoped<ISessionManager, SessionManager>();
 
             // tools
             services.AddSingleton<IRegistryManager, RegistryManager>();
