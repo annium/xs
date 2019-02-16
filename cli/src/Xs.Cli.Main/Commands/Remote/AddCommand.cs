@@ -63,7 +63,7 @@ namespace Xs.Cli.Main.Commands.Remote
                 configuration.Registries.Add(registry);
             configurationManager.Save(dir, configuration);
 
-            Console.WriteLine($"Registry '{user}' tracking started");
+            Console.WriteLine($"Registry '{name}' tracking started");
         }
     }
 
