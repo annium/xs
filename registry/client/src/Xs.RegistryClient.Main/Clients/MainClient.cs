@@ -22,11 +22,10 @@ namespace Xs.RegistryClient.Main
                 .AsAsync<string>();
         }
 
-        public Task<Dictionary<string, Uri>> GetRegistryInfoAsync(string token)
+        public Task<Dictionary<string, Uri>> GetRegistryInfoAsync()
         {
             return Http.Open(this.uri)
                 .Get("registry")
-                .BearerAuthorization(token)
                 .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsAsync<Dictionary<string, Uri>>();
         }
