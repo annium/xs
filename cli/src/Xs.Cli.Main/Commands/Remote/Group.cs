@@ -9,6 +9,7 @@ namespace Xs.Cli.Main.Commands.Remote
         public Group()
         {
             Add<DeleteCommand>();
+            Add<RestoreCommand>();
             Add<SetCommand>();
             Add<ShowCommand>();
         }

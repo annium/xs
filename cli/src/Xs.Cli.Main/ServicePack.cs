@@ -37,6 +37,7 @@ namespace Xs.Cli.Main
             // remote
             services.AddSingleton<Commands.Remote.Group>();
             services.AddSingleton<Commands.Remote.DeleteCommand>();
+            services.AddSingleton<Commands.Remote.RestoreCommand>();
             services.AddSingleton<Commands.Remote.SetCommand>();
             services.AddSingleton<Commands.Remote.ShowCommand>();
 

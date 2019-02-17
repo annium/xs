@@ -30,6 +30,17 @@ namespace Xs.Cli.Main.Tools
             this.mainClientFactory = mainClientFactory;
         }
 
+        public Configuration LoadBarebone(string folder)
+        {
+            if (!File.Exists(ConfigurationFile(folder)))
+                return null;
+
+            var configuration = new Configuration();
+            configuration.Location = new Uri(File.ReadAllText(ConfigurationFile(folder)));
+
+            return configuration;
+        }
+
         public async Task<Configuration> Load(string folder)
         {
             if (!File.Exists(ConfigurationFile(folder)) || !File.Exists(CredentialsFile(folder)))
