@@ -74,7 +74,10 @@ namespace Xs.Cli.Node.Projects
             var deps = projectDeps.Concat(packageDeps).ToDictionary(e => e.Key, e => e.Value);
             var devDeps = projectDevDeps.Concat(packageDevDeps).ToDictionary(e => e.Key, e => e.Value);
 
-            info[El.Version] = project.Version?.ToString();
+            if (project.Version == null)
+                info.Property(El.Version)?.Remove();
+            else
+                info[El.Version] = project.Version.ToString();
 
             if (deps.Count > 0)
                 info[El.Dependencies] = JObject.FromObject(deps);

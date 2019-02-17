@@ -9,7 +9,6 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
-
 namespace Xs.Cli.Node.Projects
 {
     internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
@@ -78,7 +77,6 @@ namespace Xs.Cli.Node.Projects
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
-            // TODO: version needs to be in package.json
             var fileName = $"{Name}-{version}.tgz";
             if (Name.StartsWith('@'))
             {
@@ -90,7 +88,30 @@ namespace Xs.Cli.Node.Projects
             if (System.IO.File.Exists(file))
                 System.IO.File.Delete(file);
 
-            await RunAsync("pack", $"npm pack {File.DirectoryName}", token);
+            // for NPM, project dependencies are not swapped with package dependencies when packaged, so need to do that manually
+            var projectDependencies = ProjectDependencies.ToArray();
+            try
+            {
+                Version = version;
+                ProjectDependencies.Clear();
+                foreach (var dependency in projectDependencies)
+                    PackageDependencies.Add(new Dependency(Constants.ProjectType, dependency.Name, version));
+
+                Save();
+
+                await RunAsync("pack", $"npm pack {File.DirectoryName}", token);
+            }
+            finally
+            {
+                Version = null;
+                foreach (var dependency in projectDependencies)
+                {
+                    ProjectDependencies.Add(dependency);
+                    PackageDependencies.RemoveWhere(d => d.Name == dependency.Name);
+                }
+
+                Save();
+            }
 
             return file;
         }
@@ -99,14 +120,26 @@ namespace Xs.Cli.Node.Projects
         {
             var packageFile = await PackAsync(version, token);
 
-            // TODO: set registry in .npmrc to publish
+            // due to NPM limitations, basically allowing single registry per scope, registry here is missing
+            // instead, registry is specified in .npmrc
             await RunAsync("publish", $"npm publish {packageFile}", token);
 
             System.IO.File.Delete(packageFile);
         }
 
-        public Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token) =>
-            RunAsync("unpublish", $"npm unpublish {Name}@{version}", token);
+        public async Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
+        {
+            // blank try/catch due to NPM behavior, that doesn't expect package removal, but unlisting instead
+            // expecting useless package info in response
+            try
+            {
+                await RunAsync("unpublish", $"npm unpublish {Name}@{version}", token);
+            }
+            catch
+            {
+
+            }
+        }
 
         public override bool IsRelated(string path)
         {
