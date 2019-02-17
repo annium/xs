@@ -64,7 +64,7 @@ namespace Xs.Cli.Main.Tools
             // save configuration for each project
             foreach (var(type, uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
                 if (specialManagers.ContainsKey(type))
-                    foreach (var project in projects)
+                    foreach (var project in projects.Where(p => p.Type == type))
                         specialManagers[type].Save(project, uri, configuration.Token);
 
             void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(folder), data);
