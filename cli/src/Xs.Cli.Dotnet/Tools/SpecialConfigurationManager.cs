@@ -13,6 +13,8 @@ namespace Xs.Cli.Dotnet.Tools
     {
         public ProjectType Type { get; } = Constants.ProjectType;
 
+        public string IgnorePattern { get; } = file;
+
         private const string file = "nuget.config";
 
         private readonly string registryName = "registry";

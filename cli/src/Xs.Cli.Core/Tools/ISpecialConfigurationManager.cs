@@ -8,6 +8,8 @@ namespace Xs.Cli.Core.Tools
     {
         ProjectType Type { get; }
 
+        string IgnorePattern { get; }
+
         void Save(IProject project, Uri location, string token);
         
         void Delete(IProject project);

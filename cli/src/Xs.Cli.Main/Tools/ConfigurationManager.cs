@@ -17,6 +17,10 @@ namespace Xs.Cli.Main.Tools
 
         private const string credentialsFile = ".xs.credentials";
 
+        private const string ignoreHeader = "# xs ignore patterns";
+
+        private const string ignoreFile = ".gitignore";
+
         private readonly MainClientFactory mainClientFactory;
 
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
@@ -62,10 +66,45 @@ namespace Xs.Cli.Main.Tools
             Write(CredentialsFile, configuration.Token);
 
             // save configuration for each project
+            var ignorePatterns = new List<string>();
+            ignorePatterns.Add(credentialsFile);
             foreach (var(type, uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
                 if (specialManagers.ContainsKey(type))
-                    foreach (var project in projects.Where(p => p.Type == type))
-                        specialManagers[type].Save(project, uri, configuration.Token);
+                {
+                    var targets = projects.Where(p => p.Type == type);
+                    if (targets.Count() > 0)
+                    {
+                        ignorePatterns.Add(specialManagers[type].IgnorePattern);
+                        foreach (var project in targets)
+                            specialManagers[type].Save(project, uri, configuration.Token);
+                    }
+                }
+
+            var ignoreFile = Path.Combine(folder, ConfigurationManager.ignoreFile);
+
+            if (File.Exists(ignoreFile))
+            {
+                var lines = File.ReadAllLines(ignoreFile).ToList();
+                var index = lines.IndexOf(ignoreHeader);
+                if (index >= 0)
+                {
+                    lines = lines.Where(line => !ignorePatterns.Contains(line)).ToList();
+                    // if(lines.Count==index+1)
+                    lines.InsertRange(index + 1, ignorePatterns);
+                }
+                else
+                {
+                    lines.Add(string.Empty);
+                    lines.Add(ignoreHeader);
+                    lines.AddRange(ignorePatterns);
+                }
+
+                File.WriteAllLines(ignoreFile, lines);
+            }
+            else
+            {
+                File.WriteAllLines(ignoreFile, new [] { ignoreHeader }.Concat(ignorePatterns));
+            }
 
             void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(folder), data);
         }

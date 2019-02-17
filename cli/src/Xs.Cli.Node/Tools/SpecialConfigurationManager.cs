@@ -11,6 +11,8 @@ namespace Xs.Cli.Node.Tools
     {
         public ProjectType Type { get; } = Constants.ProjectType;
 
+        public string IgnorePattern { get; } = file;
+
         private const string file = ".npmrc";
 
         public void Save(IProject project, Uri location, string token)
