@@ -28,7 +28,6 @@ namespace Xs.Cli.Core
 
             // tools
             services.AddSingleton<ILogger, Logger>();
-            services.AddSingleton<IConfigurationManager, ConfigurationManager>();
             services.AddSingleton<IShell, Shell>();
         }
     }

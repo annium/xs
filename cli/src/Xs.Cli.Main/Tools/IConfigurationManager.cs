@@ -1,6 +1,6 @@
 using Xs.Cli.Core.Models;
 
-namespace Xs.Cli.Core.Tools
+namespace Xs.Cli.Main.Tools
 {
     public interface IConfigurationManager
     {

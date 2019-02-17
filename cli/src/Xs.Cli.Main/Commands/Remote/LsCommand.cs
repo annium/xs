@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Xs.Cli.Core.Tools;
+using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {

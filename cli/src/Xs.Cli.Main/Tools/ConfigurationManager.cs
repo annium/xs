@@ -5,8 +5,9 @@ using System.Linq;
 using Annium.Extensions.Configuration;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Tools;
 
-namespace Xs.Cli.Core.Tools
+namespace Xs.Cli.Main.Tools
 {
     internal class ConfigurationManager : IConfigurationManager
     {

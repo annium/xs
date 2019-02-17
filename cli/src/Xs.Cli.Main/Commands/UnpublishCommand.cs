@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
 

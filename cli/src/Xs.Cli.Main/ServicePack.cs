@@ -17,6 +17,7 @@ namespace Xs.Cli.Main
             RegisterTasks(services);
 
             // tools
+            services.AddSingleton<IConfigurationManager, ConfigurationManager>();
             services.AddSingleton<ProjectsRunner>();
             services.AddSingleton<Watcher>();
 
