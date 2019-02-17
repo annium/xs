@@ -1,13 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class ShowCommand : Command<ShowCommandConfiguration, CwdCommandConfiguration>
+    internal class ShowCommand : AsyncCommand<ShowCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "show";
 
@@ -22,7 +23,7 @@ namespace Xs.Cli.Main.Commands.Remote
             this.configurationManager = configurationManager;
         }
 
-        public override void Handle(
+        public override async Task HandleAsync(
             ShowCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
@@ -31,7 +32,7 @@ namespace Xs.Cli.Main.Commands.Remote
             var name = cfg.Name;
             var dir = cwdCfg.Cwd;
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = await configurationManager.Load(dir);
             var registry = configuration.Registries.FirstOrDefault(e => e.Name == name);
 
             if (registry == null)

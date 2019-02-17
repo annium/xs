@@ -1,11 +1,12 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class DeleteCommand : Command<DeleteCommandConfiguration, CwdCommandConfiguration>
+    internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "delete";
 
@@ -20,7 +21,7 @@ namespace Xs.Cli.Main.Commands.Remote
             this.configurationManager = configurationManager;
         }
 
-        public override void Handle(
+        public override async Task HandleAsync(
             DeleteCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
@@ -29,7 +30,7 @@ namespace Xs.Cli.Main.Commands.Remote
             var name = cfg.Name;
             var dir = cwdCfg.Cwd;
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = await configurationManager.Load(dir);
             configuration.Registries.RemoveAll(e => e.Name == name);
             configurationManager.Save(dir, configuration);
 

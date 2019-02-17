@@ -41,7 +41,7 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var registry = configurationManager.Load(cwdCfg.Cwd).Registries
+            var registry = (await configurationManager.Load(cwdCfg.Cwd)).Registries
                 .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Registry.ToLowerInvariant());
             if (registry == null)
                 throw new InvalidOperationException($"Registry {cfg.Registry} is not tracked. Track it to manipulate permissions.");

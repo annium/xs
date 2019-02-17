@@ -55,7 +55,7 @@ namespace Xs.Cli.Main.Commands.Remote
                 Servers = data.ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
             };
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = await configurationManager.Load(dir);
             var index = configuration.Registries.FindIndex(e => e.Name == registry.Name);
             if (index >= 0)
                 configuration.Registries[index] = registry;

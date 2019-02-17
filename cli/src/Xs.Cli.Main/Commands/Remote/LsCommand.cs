@@ -1,11 +1,12 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class LsCommand : Command<CwdCommandConfiguration>
+    internal class LsCommand : AsyncCommand<CwdCommandConfiguration>
     {
         public override string Id { get; } = "ls";
 
@@ -20,14 +21,14 @@ namespace Xs.Cli.Main.Commands.Remote
             this.configurationManager = configurationManager;
         }
 
-        public override void Handle(
+        public override async Task HandleAsync(
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
             var dir = cwdCfg.Cwd;
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = await configurationManager.Load(dir);
             foreach (var registry in configuration.Registries)
                 Console.WriteLine(registry.Name);
         }

@@ -2,28 +2,36 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Annium.Extensions.Configuration;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Main.Models;
+using Xs.RegistryClient.Main;
 
 namespace Xs.Cli.Main.Tools
 {
     internal class ConfigurationManager : IConfigurationManager
     {
-        private const string file = ".xs";
+        private const string configurationFile = ".xs";
+
+        private const string credentialsFile = ".xs.credentials";
+
+        private readonly MainClientFactory mainClientFactory;
 
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
 
         public ConfigurationManager(
+            MainClientFactory mainClientFactory,
             IEnumerable<ISpecialConfigurationManager> specialManagers
         )
         {
             this.specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
+            this.mainClientFactory = mainClientFactory;
         }
 
-        public Configuration Load(string folder)
+        public async Task<Configuration> Load(string folder)
         {
             return new ConfigurationBuilder()
                 .AddJsonFile(FilePath(folder), optional : true)
@@ -60,6 +68,6 @@ namespace Xs.Cli.Main.Tools
                 specialManagers[type].Save(folder, registries);
         }
 
-        private string FilePath(string folder) => Path.Combine(folder, file);
+        private string FilePath(string folder) => Path.Combine(folder, configurationFile);
     }
 }
