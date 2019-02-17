@@ -1,12 +1,11 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands.Ls
 {
-    internal class ListCommand : AsyncCommand<ListCommandConfiguration, CwdCommandConfiguration>
+    internal class ListCommand : Command<ListCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "";
 
@@ -25,13 +24,13 @@ namespace Xs.Cli.Main.Commands.Ls
             this.filterTask = filterTask;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             ListCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var projects = await discoverTask.RunAsync(cwdCfg.Cwd);
+            var projects = discoverTask.Run(cwdCfg.Cwd);
             projects = filterTask.Run(projects, cfg.Mask);
 
             foreach (var project in projects)

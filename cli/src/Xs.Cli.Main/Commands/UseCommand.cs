@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
@@ -9,14 +8,20 @@ using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class UseCommand : AsyncCommand<UseCommandConfiguration, CwdCommandConfiguration>
+    internal class UseCommand : Command<UseCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "use";
+
         public override string Description { get; } = "Set dependency in projects to specific version.";
+
         private readonly DiscoverProjectsTask discoverTask;
+
         private readonly FilterProjectTypeTask filterTypeTask;
+
         private readonly AddPackageDependencyTask addPackageDependencyTask;
+
         private readonly DeletePackageDependencyTask deletePackageDependencyTask;
+
         private readonly ILogger logger;
 
         public UseCommand(
@@ -34,7 +39,7 @@ namespace Xs.Cli.Main.Commands
             this.logger = logger;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             UseCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
@@ -43,7 +48,7 @@ namespace Xs.Cli.Main.Commands
             var nameLow = cfg.Name.ToLowerInvariant();
             var version = cfg.Version;
 
-            var allProjects = await discoverTask.RunAsync(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(cwdCfg.Cwd);
             var updatedDependencies = allProjects
                 .SelectMany(e => e.PackageDependencies)
                 .Where(e => e.Name.ToLowerInvariant() == nameLow && e.Version != version)

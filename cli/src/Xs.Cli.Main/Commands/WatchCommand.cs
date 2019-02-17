@@ -80,7 +80,7 @@ namespace Xs.Cli.Main.Commands
             this.runTests = cfg.Test;
             this.token = token;
 
-            await Discover();
+            Discover();
 
             if (string.IsNullOrWhiteSpace(command))
                 await watcher.WatchAsync(root, FilterChange, HandleChange, HandleDelete, token);
@@ -99,7 +99,7 @@ namespace Xs.Cli.Main.Commands
             if (isProjectFile)
             {
                 logger.LogInfo($"Changed project file: {path}");
-                await Discover();
+                Discover();
 
                 project = GetProjectByPath(path);
                 await InstallAsync(project, includeSelf : true);
@@ -127,7 +127,7 @@ namespace Xs.Cli.Main.Commands
             if (isProjectFile)
             {
                 logger.LogInfo($"Deleted project file: {path}");
-                await Discover();
+                Discover();
 
                 await InstallAsync(project, includeSelf : false);
             }
@@ -197,8 +197,7 @@ namespace Xs.Cli.Main.Commands
             }
         }
 
-        private async Task Discover() =>
-        projects = filterTask.Run(await discoverTask.RunAsync(root), mask).ToArray();
+        private void Discover() => projects = filterTask.Run(discoverTask.Run(root), mask).ToArray();
 
         private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File.FullName == path);
 

@@ -1,14 +1,13 @@
 using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class DeleteCommand : AsyncCommand<CwdCommandConfiguration>
+    internal class DeleteCommand : Command<CwdCommandConfiguration>
     {
         public override string Id { get; } = "delete";
 
@@ -27,14 +26,14 @@ namespace Xs.Cli.Main.Commands.Remote
             this.configurationManager = configurationManager;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
             var dir = cwdCfg.Cwd;
 
-            var projects = (await discoverTask.RunAsync(dir)).ToArray();
+            var projects = discoverTask.Run(dir).ToArray();
 
             configurationManager.Delete(dir, projects);
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -24,13 +23,13 @@ namespace Xs.Cli.Main.Tasks
             this.logger = logger;
         }
 
-        public async Task<IEnumerable<IProject>> RunAsync(string root)
+        public IEnumerable<IProject> Run(string root)
         {
             var directories = new List<string>();
             CollectProjectDirectories(root, directories, projectFactory);
 
-            var projects = new List<IProject>();
-            var dependencies = new List<Dependency>();
+            var projects = new HashSet<IProject>();
+            var dependencies = new HashSet<Dependency>();
 
             logger.LogDebug($"Start discovery of {root}");
 
@@ -41,24 +40,38 @@ namespace Xs.Cli.Main.Tasks
                 previous = projects.Count;
                 exceptions = new List<Exception>();
 
-                var results = await Task.WhenAll(directories
-                    .Where(e => !projects.Any(p => p.File.DirectoryName == e))
-                    .Select(e => Task.Run(() => TryCreateProject(e, projects, dependencies)))
-                );
-
-                foreach (var(project, exception) in results)
+                foreach (var directory in directories.ToArray())
                 {
+                    var(project, exception) = TryCreateProject(directory, projects, dependencies);
                     if (project != null)
                     {
+                        directories.Remove(directory);
                         projects.Add(project);
                         logger.LogDebug($"Project discovered: {project}");
                         foreach (var dependency in project.PackageDependencies)
-                            if (!dependencies.Contains(dependency))
-                                dependencies.Add(dependency);
+                            dependencies.Add(dependency);
                     }
                     if (exception != null)
                         exceptions.Add(exception);
                 }
+                // var results = await Task.WhenAll(directories
+                //     .Where(e => !projects.Any(p => p.File.DirectoryName == e))
+                //     .Select(e => Task.Run(() => TryCreateProject(e, projects, dependencies)))
+                // );
+
+                // foreach (var(project, exception) in results)
+                // {
+                //     if (project != null)
+                //     {
+                //         projects.Add(project);
+                //         logger.LogDebug($"Project discovered: {project}");
+                //         foreach (var dependency in project.PackageDependencies)
+                //             if (!dependencies.Contains(dependency))
+                //                 dependencies.Add(dependency);
+                //     }
+                //     if (exception != null)
+                //         exceptions.Add(exception);
+                // }
             }
             while (projects.Count > previous);
 

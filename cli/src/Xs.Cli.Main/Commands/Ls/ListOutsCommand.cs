@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -10,7 +9,7 @@ using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands.Ls
 {
-    internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, CwdCommandConfiguration>
+    internal class ListOutsCommand : Command<ListOutsCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "outs";
 
@@ -29,13 +28,13 @@ namespace Xs.Cli.Main.Commands.Ls
             this.filterTask = filterTask;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             ListOutsCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var allProjects = await discoverTask.RunAsync(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(cwdCfg.Cwd);
             var projects = filterTask.Run(allProjects, cfg.Mask);
             var last = projects.Last();
 

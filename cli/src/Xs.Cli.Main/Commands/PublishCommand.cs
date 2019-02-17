@@ -45,7 +45,7 @@ namespace Xs.Cli.Main.Commands
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
-            var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
+            var projects = filterTask.Run(discoverTask.Run(cwdCfg.Cwd), cfg.Mask)
                 .OfType<IPublishableProject>()
                 .ToArray();
 

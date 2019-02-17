@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
@@ -9,7 +8,7 @@ using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, CwdCommandConfiguration>
+    internal class AuditCommand : Command<AuditCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "audit";
 
@@ -28,13 +27,13 @@ namespace Xs.Cli.Main.Commands
             this.logger = logger;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             AuditCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var projects = (await discoverTask.RunAsync(cwdCfg.Cwd))
+            var projects = discoverTask.Run(cwdCfg.Cwd)
                 .OfType<IAuditableProject>()
                 .ToArray();
             logger.LogDebug($"Audit {projects.Length} projects.");

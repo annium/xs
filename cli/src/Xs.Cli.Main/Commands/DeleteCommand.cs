@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Main.Tasks;
@@ -8,7 +7,7 @@ using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, CwdCommandConfiguration>
+    internal class DeleteCommand : Command<DeleteCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "delete";
 
@@ -43,7 +42,7 @@ namespace Xs.Cli.Main.Commands
             this.logger = logger;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             DeleteCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
@@ -52,7 +51,7 @@ namespace Xs.Cli.Main.Commands
             var name = cfg.Dependency;
             var nameLow = name.ToLowerInvariant();
 
-            var allProjects = await discoverTask.RunAsync(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(cwdCfg.Cwd);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
 
             var targets = filterTask.Run(allProjects, cfg.Mask).ToArray();

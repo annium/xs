@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
@@ -10,7 +9,7 @@ using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class AddCommand : AsyncCommand<AddCommandConfiguration, CwdCommandConfiguration>
+    internal class AddCommand : Command<AddCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "add";
 
@@ -45,7 +44,7 @@ namespace Xs.Cli.Main.Commands
             this.logger = logger;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             AddCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
@@ -55,7 +54,7 @@ namespace Xs.Cli.Main.Commands
             var nameLow = name.ToLowerInvariant();
             var version = cfg.Version;
 
-            var allProjects = await discoverTask.RunAsync(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(cwdCfg.Cwd);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
 
             var targets = filterTask.Run(allProjects, cfg.Mask).ToArray();

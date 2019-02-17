@@ -44,7 +44,7 @@ namespace Xs.Cli.Main.Commands
         {
             var force = cfg.Force;
 
-            var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask).ToArray();
+            var projects = filterTask.Run(discoverTask.Run(cwdCfg.Cwd), cfg.Mask).ToArray();
 
             if (force)
             {

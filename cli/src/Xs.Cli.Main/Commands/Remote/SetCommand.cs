@@ -55,7 +55,7 @@ namespace Xs.Cli.Main.Commands.Remote
             configuration.Servers = (await client.GetRegistryInfoAsync())
                 .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value);
 
-            var projects = (await discoverTask.RunAsync(dir)).ToArray();
+            var projects = discoverTask.Run(dir).ToArray();
 
             configurationManager.Save(dir, projects, configuration);
 

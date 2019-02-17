@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -10,7 +9,7 @@ using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands.Ls
 {
-    internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, CwdCommandConfiguration>
+    internal class ListInsCommand : Command<ListInsCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "ins";
 
@@ -29,13 +28,13 @@ namespace Xs.Cli.Main.Commands.Ls
             this.filterTask = filterTask;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             ListInsCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var projects = await discoverTask.RunAsync(cwdCfg.Cwd);
+            var projects = discoverTask.Run(cwdCfg.Cwd);
             projects = filterTask.Run(projects, cfg.Mask);
 
             // show deps if explicitly specified, or opposite flag not set

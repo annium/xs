@@ -1,13 +1,12 @@
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, CwdCommandConfiguration>
+    internal class UpdateCommand : Command<UpdateCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "update";
 
@@ -30,13 +29,13 @@ namespace Xs.Cli.Main.Commands
             this.logger = logger;
         }
 
-        public override async Task HandleAsync(
+        public override void Handle(
             UpdateCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var allProjects = await discoverTask.RunAsync(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(cwdCfg.Cwd);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
             var targets = filterTask.Run(allProjects, cfg.Mask).ToArray();
             if (targets.Length == 0)

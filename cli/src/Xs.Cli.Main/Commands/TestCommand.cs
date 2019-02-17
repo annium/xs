@@ -43,7 +43,7 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
+            var projects = filterTask.Run(discoverTask.Run(cwdCfg.Cwd), cfg.Mask)
                 .OfType<ITestableProject>()
                 .ToArray();
             logger.LogDebug($"Test {projects.Length} projects.");
