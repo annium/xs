@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Xs.Cli.Core.Models
+namespace Xs.Cli.Main.Models
 {
     public class Configuration
     {

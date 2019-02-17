@@ -6,6 +6,7 @@ using Annium.Extensions.Configuration;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
+using Xs.Cli.Main.Models;
 
 namespace Xs.Cli.Main.Tools
 {

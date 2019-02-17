@@ -47,7 +47,7 @@ namespace Xs.Cli.Main.Commands.Remote
             var userToken = await client.LoginAsync(user, password);
             var data = await client.GetRegistryInfoAsync(userToken);
 
-            var registry = new Core.Models.Registry
+            var registry = new Models.Registry
             {
                 Name = name,
                 Location = location,

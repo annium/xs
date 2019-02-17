@@ -1,4 +1,4 @@
-using Xs.Cli.Core.Models;
+using Xs.Cli.Main.Models;
 
 namespace Xs.Cli.Main.Tools
 {
