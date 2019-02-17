@@ -17,30 +17,17 @@ namespace Xs.Cli.Dotnet.Projects
     {
         private static object cacheLocker = new object();
 
-        public override ProjectType Type { get; } = Constants.ProjectType;
-
-        public override string Name { get; }
-
-        public override FileInfo File { get; }
-
-        public override HashSet<IProject> ProjectDependencies { get; }
-
-        public override HashSet<Dependency> PackageDependencies { get; }
-
         public TargetFramework TargetFramework { get; }
 
         public OutputType OutputType { get; }
 
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
 
-        protected readonly ILogger logger;
-
         private readonly ProjectMapper mapper;
-
-        protected readonly IShell shell;
 
         public LibraryProject(
             string name,
+            Core.Models.Version version,
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
@@ -50,18 +37,21 @@ namespace Xs.Cli.Dotnet.Projects
             ProjectMapper mapper,
             IShell shell,
             ILogger logger
-        ) : base(shell, logger)
+        ) : base(
+            Constants.ProjectType,
+            name,
+            version,
+            file,
+            projectDependencies,
+            packageDependencies,
+            shell,
+            logger
+        )
         {
-            this.Name = name;
-            this.File = file;
-            this.ProjectDependencies = projectDependencies;
-            this.PackageDependencies = packageDependencies;
-            this.TargetFramework = targetFramework;
-            this.OutputType = outputType;
+            TargetFramework = targetFramework;
+            OutputType = outputType;
             this.auditRules = auditRules;
             this.mapper = mapper;
-            this.shell = shell;
-            this.logger = logger;
         }
 
         public AuditResult[] Audit(bool fix, CancellationToken token)
@@ -132,6 +122,9 @@ namespace Xs.Cli.Dotnet.Projects
             if (System.IO.File.Exists(file))
                 System.IO.File.Delete(file);
 
+            Version = version;
+            Save();
+
             await RunAsync(
                 "pack",
                 $"dotnet pack {File.FullName} --output . -p:PackageVersion={version} -p:SymbolPackageFormat=snupkg",
@@ -169,8 +162,6 @@ namespace Xs.Cli.Dotnet.Projects
         }
 
         public override void Save() => mapper.Save(this);
-
-        public override string ToString() => Name;
 
         private bool IsRelatedDirectory(DirectoryInfo directory) => directory
             .GetFiles("*", SearchOption.AllDirectories)

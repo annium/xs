@@ -12,25 +12,39 @@ namespace Xs.Cli.Core.Projects
 {
     public abstract class ProjectBase : IProject
     {
-        public abstract ProjectType Type { get; }
+        public ProjectType Type { get; }
 
-        public abstract string Name { get; }
+        public string Name { get; }
 
-        public abstract FileInfo File { get; }
+        public Models.Version Version { get; protected set; }
 
-        public abstract HashSet<IProject> ProjectDependencies { get; }
+        public FileInfo File { get; }
 
-        public abstract HashSet<Dependency> PackageDependencies { get; }
+        public HashSet<IProject> ProjectDependencies { get; }
 
-        private readonly IShell shell;
+        public HashSet<Dependency> PackageDependencies { get; }
 
-        private readonly ILogger logger;
+        protected readonly IShell shell;
+
+        protected readonly ILogger logger;
 
         protected ProjectBase(
+            ProjectType type,
+            string name,
+            Models.Version version,
+            FileInfo file,
+            HashSet<IProject> projectDependencies,
+            HashSet<Dependency> packageDependencies,
             IShell shell,
             ILogger logger
         )
         {
+            Type = type;
+            Name = name;
+            Version = version;
+            File = file;
+            ProjectDependencies = projectDependencies;
+            PackageDependencies = packageDependencies;
             this.shell = shell;
             this.logger = logger;
         }
@@ -38,6 +52,8 @@ namespace Xs.Cli.Core.Projects
         public abstract bool IsRelated(string path);
 
         public abstract void Save();
+
+        public override string ToString() => Name;
 
         protected void DeleteDirectory(string path)
         {

@@ -5,10 +5,11 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class ProjectMapper
+    internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
         public RawProject Load(string path)
         {
@@ -18,9 +19,11 @@ namespace Xs.Cli.Node.Projects
             var info = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(file.FullName));
 
             project.Name = info.Property(El.Name)?.Value.ToString() ??
-                throw new InvalidOperationException($"Project is misssing name");
-            project.Version = info.Property(El.Version) == null ? null :
-                new Core.Models.Version(info.Property(El.Version).Value.ToString());
+                throw new InvalidOperationException($"Project {path} is missing name");
+            project.Version = new Core.Models.Version(
+                info.Property(El.Version)?.Value.ToString() ??
+                throw new InvalidOperationException($"Project {path} is missing version")
+            );
 
             var deps = GetPropertyDictionary(info, El.Dependencies)
                 .Concat(GetPropertyDictionary(info, El.DevDependencies))
@@ -74,10 +77,7 @@ namespace Xs.Cli.Node.Projects
             var deps = projectDeps.Concat(packageDeps).ToDictionary(e => e.Key, e => e.Value);
             var devDeps = projectDevDeps.Concat(packageDevDeps).ToDictionary(e => e.Key, e => e.Value);
 
-            if (project.Version == null)
-                info.Property(El.Version)?.Remove();
-            else
-                info[El.Version] = project.Version.ToString();
+            info[El.Version] = project.Version.ToString();
 
             if (deps.Count > 0)
                 info[El.Dependencies] = JObject.FromObject(deps);
@@ -124,11 +124,8 @@ namespace Xs.Cli.Node.Projects
             return new Dependency(Constants.ProjectType, name, new Core.Models.Version(version));
         }
 
-        private IReadOnlyDictionary<string, string> GetPropertyDictionary(JObject raw, string propertyName) => raw
-            .Property(propertyName) ?
-            .Value
-            .ToObject<Dictionary<string, string>>() ??
-            new Dictionary<string, string>();
+        private IReadOnlyDictionary<string, string> GetPropertyDictionary(JObject raw, string propertyName) =>
+        raw.Property(propertyName)?.Value.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
 
         private static class El
         {

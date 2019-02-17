@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xs.Cli.Core.Models;
@@ -37,11 +38,16 @@ namespace Xs.Cli.Core.Projects
             if (factory == null)
                 return null;
 
-            return factory.CreateProject(
+            var project = factory.CreateProject(
                 directory,
                 projects.Where(e => e.Type == factory.Type),
                 dependencies.Where(e => e.Type == factory.Type)
             );
+
+            if (projects.Any(p => p.Version != project.Version))
+                throw new InvalidOperationException($"Project {project} uses different version {project.Version} than others.");
+
+            return project;
         }
     }
 }

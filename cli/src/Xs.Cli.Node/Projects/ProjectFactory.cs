@@ -6,7 +6,6 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
-
 namespace Xs.Cli.Node.Projects
 {
     internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
@@ -79,9 +78,9 @@ namespace Xs.Cli.Node.Projects
                 .ToHashSet();
 
             if (scripts.ContainsKey("test"))
-                return new TestProject(name, file, projectDeps, packageDeps, version, mapper, shell, logger);
+                return new TestProject(name, version, file, projectDeps, packageDeps, mapper, shell, logger);
 
-            return new LibraryProject(name, file, projectDeps, packageDeps, version, mapper, shell, logger);
+            return new LibraryProject(name, version, file, projectDeps, packageDeps, mapper, shell, logger);
         }
     }
 }

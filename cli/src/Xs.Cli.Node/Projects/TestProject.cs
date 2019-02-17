@@ -13,19 +13,19 @@ namespace Xs.Cli.Node.Projects
     {
         public TestProject(
             string name,
+            Version version,
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
-            Core.Models.Version version,
             ProjectMapper mapper,
             IShell shell,
             ILogger logger
         ) : base(
             name,
+            version,
             file,
             projectDependencies,
             packageDependencies,
-            version,
             mapper,
             shell,
             logger

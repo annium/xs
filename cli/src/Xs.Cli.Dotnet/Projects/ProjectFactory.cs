@@ -70,7 +70,7 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());
-            var(name, targetFramework, outputType, projectDependencies, packageDependencies) = mapper.Load(file.FullName);
+            var(name, version, targetFramework, outputType, projectDependencies, packageDependencies) = mapper.Load(file.FullName);
 
             // check TargetFramework consistency
             if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
@@ -85,9 +85,9 @@ namespace Xs.Cli.Dotnet.Projects
                 .ToHashSet();
 
             if (packageDeps.Any(e => e.Name == "Microsoft.NET.Test.Sdk"))
-                return new TestProject(name, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
+                return new TestProject(name, version, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
 
-            return new LibraryProject(name, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
+            return new LibraryProject(name, version, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
         }
     }
 }

@@ -13,43 +13,29 @@ namespace Xs.Cli.Node.Projects
 {
     internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
-        public override ProjectType Type { get; } = Constants.ProjectType;
-
-        public override string Name { get; }
-
-        public override FileInfo File { get; }
-
-        public override HashSet<IProject> ProjectDependencies { get; }
-
-        public override HashSet<Dependency> PackageDependencies { get; }
-
-        public Core.Models.Version Version { get; set; }
-
         private readonly ProjectMapper mapper;
-
-        protected readonly IShell shell;
-
-        protected readonly ILogger logger;
 
         public LibraryProject(
             string name,
+            Core.Models.Version version,
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
-            Core.Models.Version version,
             ProjectMapper mapper,
             IShell shell,
             ILogger logger
-        ) : base(shell, logger)
+        ) : base(
+            Constants.ProjectType,
+            name,
+            version,
+            file,
+            projectDependencies,
+            packageDependencies,
+            shell,
+            logger
+        )
         {
-            Name = name;
-            File = file;
-            ProjectDependencies = projectDependencies;
-            PackageDependencies = packageDependencies;
-            Version = version;
             this.mapper = mapper;
-            this.shell = shell;
-            this.logger = logger;
         }
 
         public Task CleanAsync(CancellationToken token)
@@ -103,7 +89,6 @@ namespace Xs.Cli.Node.Projects
             }
             finally
             {
-                Version = null;
                 foreach (var dependency in projectDependencies)
                 {
                     ProjectDependencies.Add(dependency);
@@ -153,8 +138,6 @@ namespace Xs.Cli.Node.Projects
         }
 
         public override void Save() => mapper.Save(this);
-
-        public override string ToString() => Name;
 
         private bool IsRelatedDirectory(DirectoryInfo directory)
         {

@@ -60,7 +60,7 @@ namespace Xs.Cli.Main.Tasks
                     if (project != null)
                     {
                         projects.Add(project);
-                        logger.LogDebug($"Project discovered: {project.Name}");
+                        logger.LogDebug($"Project discovered: {project}");
                         foreach (var dependency in project.PackageDependencies)
                             if (!dependencies.Contains(dependency))
                                 dependencies.Add(dependency);

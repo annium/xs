@@ -6,11 +6,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Projects;
 using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class ProjectMapper
+    internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
         private static readonly IEnumerable<string> outputTypes = new [] { "Exe", "Library" };
 
@@ -25,6 +26,7 @@ namespace Xs.Cli.Dotnet.Projects
             ValidateProperties(path, properties);
 
             project.Name = Path.GetFileNameWithoutExtension(file.Name);
+            project.Version = new Core.Models.Version(properties.Element(El.PackageVersion).Value);
             project.TargetFramework = TargetFrameworkParser.Parse(properties.Element(El.TargetFramework).Value);
             project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
 
@@ -50,6 +52,8 @@ namespace Xs.Cli.Dotnet.Projects
 
             var info = XElement.Parse(File.ReadAllText(path));
 
+            info.Element(El.PropertyGroup).SetElementValue(El.PackageVersion, project.Version);
+
             // remove project references group
             info.Elements(El.ItemGroup).Where(e => e.Elements(El.ProjectReference).Count() > 0).Remove();
 
@@ -73,7 +77,7 @@ namespace Xs.Cli.Dotnet.Projects
                     project.PackageDependencies.OrderBy(e => e.Name).Select(e => new XElement(
                         El.PackageReference,
                         new XAttribute(El.Include, e.Name),
-                        new XAttribute(El.Version, e.Version)
+                        new XAttribute(El.PackageVersion, e.Version)
                     ))
                 ));
 
@@ -96,11 +100,21 @@ namespace Xs.Cli.Dotnet.Projects
             if (properties == null)
                 throw new InvalidOperationException($"Project {path} has no properties defined.");
 
-            if (properties.Element(El.PackageId) != null)
-                throw new InvalidOperationException($"Project {path} has {El.PackageId} defined.");
+            if (properties.Element(El.PackageId) == null)
+                throw new InvalidOperationException($"Project {path} has no {El.PackageId} defined.");
 
-            if (properties.Element(El.Version) != null)
-                throw new InvalidOperationException($"Project {path} has {El.Version} defined.");
+            var name = properties.Element(El.PackageId).Value;
+
+            var fileName = Path.GetFileNameWithoutExtension(path);
+            if (fileName != name)
+                throw new InvalidOperationException($"Project {path} project file name {fileName} doesn't match declared name {name}.");
+
+            var dirName = Path.GetFileName(Path.GetDirectoryName(path));
+            if (dirName != name)
+                throw new InvalidOperationException($"Project {path} project directory name {dirName} doesn't match declared name {name}.");
+
+            if (properties.Element(El.PackageVersion) == null)
+                throw new InvalidOperationException($"Project {path} has no {El.PackageVersion} defined.");
 
             if (properties.Element(El.TargetFramework) == null)
                 throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined.");
@@ -147,7 +161,7 @@ namespace Xs.Cli.Dotnet.Projects
         {
             public const string PackageId = "PackageId";
 
-            public const string Version = "Version";
+            public const string PackageVersion = "PackageVersion";
 
             public const string TargetFramework = "TargetFramework";
 
@@ -164,6 +178,8 @@ namespace Xs.Cli.Dotnet.Projects
             public const string ProjectReference = "ProjectReference";
 
             public const string Include = "Include";
+
+            public const string Version = "Version";
         }
     }
 }
