@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <PackageId>Xs.RegistryClient.Main</PackageId>
+        <PackageVersion>0.1.0</PackageVersion>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <DebugType>Portable</DebugType>
         <OutputType>Library</OutputType>
+        <DebugType>Portable</DebugType>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Xs.RegistryClient.Shared/Xs.RegistryClient.Shared.csproj" />

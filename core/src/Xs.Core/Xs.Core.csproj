@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <PackageId>Xs.Core</PackageId>
+        <PackageVersion>0.1.0</PackageVersion>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <DebugType>Portable</DebugType>
         <OutputType>Library</OutputType>
+        <DebugType>Portable</DebugType>
     </PropertyGroup>
 </Project>
