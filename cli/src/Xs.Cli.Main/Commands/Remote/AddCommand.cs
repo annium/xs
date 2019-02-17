@@ -17,15 +17,15 @@ namespace Xs.Cli.Main.Commands.Remote
 
         private readonly IConfigurationManager configurationManager;
 
-        private readonly MainClientFactory sharedClientFactory;
+        private readonly MainClientFactory mainClientFactory;
 
         public AddCommand(
             IConfigurationManager configurationManager,
-            MainClientFactory sharedClientFactory
+            MainClientFactory mainClientFactory
         )
         {
             this.configurationManager = configurationManager;
-            this.sharedClientFactory = sharedClientFactory;
+            this.mainClientFactory = mainClientFactory;
         }
 
         public override async Task HandleAsync(
@@ -39,7 +39,7 @@ namespace Xs.Cli.Main.Commands.Remote
             var user = cfg.User;
             var dir = cwdCfg.Cwd;
 
-            var client = sharedClientFactory.Create(location);
+            var client = mainClientFactory.Create(location);
 
             Console.Write("Password: ");
             var password = Console.ReadLine();
