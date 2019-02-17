@@ -2,6 +2,7 @@
     <PropertyGroup>
         <PackageId>Xs.RegistryClient.Node</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
+        <Description>XS registry client for Node.JS.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <OutputType>Library</OutputType>
         <DebugType>Portable</DebugType>

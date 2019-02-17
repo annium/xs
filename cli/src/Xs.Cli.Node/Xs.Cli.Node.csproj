@@ -2,6 +2,7 @@
     <PropertyGroup>
         <PackageId>Xs.Cli.Node</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
+        <Description>XS cli Node.JS project. All staff for Node.JS related things: project parsing, building, publishing, etc.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <OutputType>Library</OutputType>
         <DebugType>Portable</DebugType>

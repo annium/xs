@@ -1,6 +1,7 @@
 {
   "name": "@xs/site.lib",
   "version": "0.1.0",
+  "description": "Registry site lib. Is used to separate some project-independent stuff.",
   "private": true,
   "main": "dist/index.js",
   "dependencies": {

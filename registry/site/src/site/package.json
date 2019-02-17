@@ -1,6 +1,7 @@
 {
   "name": "@xs/site",
   "version": "0.1.0",
+  "description": "Registry site. UI for packages management.",
   "private": true,
   "dependencies": {
     "site.lib": "file:../site.lib",

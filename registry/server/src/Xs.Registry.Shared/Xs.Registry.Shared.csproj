@@ -2,6 +2,7 @@
     <PropertyGroup>
         <PackageId>Xs.Registry.Shared</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
+        <Description>XS registry shared project. Contains all shared between main and project servers, except separated DB stuff.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <OutputType>Library</OutputType>
         <DebugType>Portable</DebugType>
