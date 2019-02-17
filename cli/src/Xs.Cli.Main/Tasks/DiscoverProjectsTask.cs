@@ -30,11 +30,8 @@ namespace Xs.Cli.Main.Tasks
             CancellationToken token = default(CancellationToken)
         )
         {
-            var directories = Directory
-                .GetDirectories(root, "*", SearchOption.AllDirectories)
-                .Where(projectFactory.IsProjectDirectory)
-                .Concat(projectFactory.IsProjectDirectory(root) ? new string[] { root } : Array.Empty<string>())
-                .ToArray();
+            var directories = new List<string>();
+            CollectProjectDirectories(root, directories, projectFactory);
 
             var projects = new List<IProject>();
             var dependencies = new List<Dependency>();
@@ -96,6 +93,19 @@ namespace Xs.Cli.Main.Tasks
             {
                 return (null, exception);
             }
+        }
+
+        private void CollectProjectDirectories(
+            string directory,
+            List<string> directories,
+            IProjectFactory projectFactory
+        )
+        {
+            if (projectFactory.IsProjectDirectory(directory))
+                directories.Add(directory);
+            else
+                foreach (var child in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
+                    CollectProjectDirectories(child, directories, projectFactory);
         }
     }
 }
