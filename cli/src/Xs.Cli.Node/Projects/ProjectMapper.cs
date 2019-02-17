@@ -24,6 +24,8 @@ namespace Xs.Cli.Node.Projects
                 info.Property(El.Version)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing version")
             );
+            project.Description = info.Property(El.Description)?.Value.ToString() ??
+                throw new InvalidOperationException($"Project {path} is missing description");
 
             var deps = GetPropertyDictionary(info, El.Dependencies)
                 .Concat(GetPropertyDictionary(info, El.DevDependencies))
@@ -132,6 +134,8 @@ namespace Xs.Cli.Node.Projects
             public const string Name = "name";
 
             public const string Version = "version";
+
+            public const string Description = "description";
 
             public const string Dependencies = "dependencies";
 

@@ -28,6 +28,7 @@ namespace Xs.Cli.Dotnet.Projects
         public LibraryProject(
             string name,
             Core.Models.Version version,
+            string description,
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
@@ -41,6 +42,7 @@ namespace Xs.Cli.Dotnet.Projects
             Constants.ProjectType,
             name,
             version,
+            description,
             file,
             projectDependencies,
             packageDependencies,

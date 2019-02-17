@@ -18,6 +18,8 @@ namespace Xs.Cli.Core.Projects
 
         public Models.Version Version { get; protected set; }
 
+        public string Description { get; }
+
         public FileInfo File { get; }
 
         public HashSet<IProject> ProjectDependencies { get; }
@@ -32,6 +34,7 @@ namespace Xs.Cli.Core.Projects
             ProjectType type,
             string name,
             Models.Version version,
+            string description,
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
@@ -42,6 +45,7 @@ namespace Xs.Cli.Core.Projects
             Type = type;
             Name = name;
             Version = version;
+            Description = description;
             File = file;
             ProjectDependencies = projectDependencies;
             PackageDependencies = packageDependencies;

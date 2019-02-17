@@ -16,6 +16,7 @@ namespace Xs.Cli.Dotnet.Projects
         public TestProject(
             string name,
             Version version,
+            string description,
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
@@ -28,6 +29,7 @@ namespace Xs.Cli.Dotnet.Projects
         ) : base(
             name,
             version,
+            description,
             file,
             projectDependencies,
             packageDependencies,

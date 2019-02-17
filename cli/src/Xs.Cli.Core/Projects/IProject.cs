@@ -12,6 +12,8 @@ namespace Xs.Cli.Core.Projects
 
         Version Version { get; }
 
+        string Description { get; }
+
         FileInfo File { get; }
 
         HashSet<IProject> ProjectDependencies { get; }

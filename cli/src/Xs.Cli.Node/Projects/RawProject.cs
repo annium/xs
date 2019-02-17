@@ -9,6 +9,8 @@ namespace Xs.Cli.Node.Projects
 
         public Version Version { get; set; }
 
+        public string Description { get; set; }
+
         public IEnumerable<string> ProjectDependencies { get; set; }
 
         public IEnumerable<Dependency> PackageDependencies { get; set; }
@@ -18,6 +20,7 @@ namespace Xs.Cli.Node.Projects
         public void Deconstruct(
             out string name,
             out Version version,
+            out string description,
             out IEnumerable<string> projectDependencies,
             out IEnumerable<Dependency> packageDependencies,
             out IReadOnlyDictionary<string, string> scripts
@@ -25,6 +28,7 @@ namespace Xs.Cli.Node.Projects
         {
             name = Name;
             version = Version;
+            description = Description;
             projectDependencies = ProjectDependencies;
             packageDependencies = PackageDependencies;
             scripts = Scripts;

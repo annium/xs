@@ -72,7 +72,7 @@ namespace Xs.Cli.Node.Projects
         )
         {
             var file = new FileInfo(Path.Combine(directory, ProjectFileName));
-            var(name, version, projectDependencies, packageDependencies, scripts) = mapper.Load(file.FullName);
+            var(name, version, description, projectDependencies, packageDependencies, scripts) = mapper.Load(file.FullName);
 
             var projectDeps = projectDependencies
                 .Select(e => ResolveProjectDependency(name, file, e, projects))
@@ -83,9 +83,9 @@ namespace Xs.Cli.Node.Projects
                 .ToHashSet();
 
             if (scripts.ContainsKey("test"))
-                return new TestProject(name, version, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
+                return new TestProject(name, version, description, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
 
-            return new LibraryProject(name, version, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
+            return new LibraryProject(name, version, description, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Xs.Cli.Dotnet.Projects
         public string Name { get; set; }
 
         public Version Version { get; set; }
+        
+        public string Description { get; set; }
 
         public TargetFramework TargetFramework { get; set; }
 
@@ -21,6 +23,7 @@ namespace Xs.Cli.Dotnet.Projects
         public void Deconstruct(
             out string name,
             out Version version,
+            out string description,
             out TargetFramework targetFramework,
             out OutputType outputType,
             out IEnumerable<string> projectDependencies,
@@ -29,6 +32,7 @@ namespace Xs.Cli.Dotnet.Projects
         {
             name = Name;
             version = Version;
+            description = Description;
             targetFramework = TargetFramework;
             outputType = OutputType;
             projectDependencies = ProjectDependencies;

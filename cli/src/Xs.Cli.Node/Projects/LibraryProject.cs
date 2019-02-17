@@ -21,6 +21,7 @@ namespace Xs.Cli.Node.Projects
         public LibraryProject(
             string name,
             Core.Models.Version version,
+            string description,
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
@@ -32,6 +33,7 @@ namespace Xs.Cli.Node.Projects
             Constants.ProjectType,
             name,
             version,
+            description,
             file,
             projectDependencies,
             packageDependencies,

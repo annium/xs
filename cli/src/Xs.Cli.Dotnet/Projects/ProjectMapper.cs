@@ -27,6 +27,7 @@ namespace Xs.Cli.Dotnet.Projects
 
             project.Name = Path.GetFileNameWithoutExtension(file.Name);
             project.Version = new Core.Models.Version(properties.Element(El.PackageVersion).Value);
+            project.Description = properties.Element(El.Description).Value;
             project.TargetFramework = TargetFrameworkParser.Parse(properties.Element(El.TargetFramework).Value);
             project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
 
@@ -116,6 +117,9 @@ namespace Xs.Cli.Dotnet.Projects
             if (properties.Element(El.PackageVersion) == null)
                 throw new InvalidOperationException($"Project {path} has no {El.PackageVersion} defined.");
 
+            if (properties.Element(El.Description) == null)
+                throw new InvalidOperationException($"Project {path} has no {El.Description} defined.");
+
             if (properties.Element(El.TargetFramework) == null)
                 throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined.");
 
@@ -162,6 +166,8 @@ namespace Xs.Cli.Dotnet.Projects
             public const string PackageId = "PackageId";
 
             public const string PackageVersion = "PackageVersion";
+
+            public const string Description = "Description";
 
             public const string TargetFramework = "TargetFramework";
 
