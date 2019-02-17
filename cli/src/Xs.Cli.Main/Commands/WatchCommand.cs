@@ -198,7 +198,7 @@ namespace Xs.Cli.Main.Commands
         }
 
         private async Task Discover() =>
-        projects = filterTask.Run(await discoverTask.RunAsync(root, token), mask).ToArray();
+        projects = filterTask.Run(await discoverTask.RunAsync(root), mask).ToArray();
 
         private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File.FullName == path);
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
@@ -25,10 +24,7 @@ namespace Xs.Cli.Main.Tasks
             this.logger = logger;
         }
 
-        public async Task<IEnumerable<IProject>> RunAsync(
-            string root,
-            CancellationToken token = default(CancellationToken)
-        )
+        public async Task<IEnumerable<IProject>> RunAsync(string root)
         {
             var directories = new List<string>();
             CollectProjectDirectories(root, directories, projectFactory);
@@ -42,14 +38,12 @@ namespace Xs.Cli.Main.Tasks
             List<Exception> exceptions;
             do
             {
-                token.ThrowIfCancellationRequested();
-
                 previous = projects.Count;
                 exceptions = new List<Exception>();
 
                 var results = await Task.WhenAll(directories
                     .Where(e => !projects.Any(p => p.File.DirectoryName == e))
-                    .Select(e => Task.Run(() => TryCreateProject(e, projects, dependencies, token)))
+                    .Select(e => Task.Run(() => TryCreateProject(e, projects, dependencies)))
                 );
 
                 foreach (var(project, exception) in results)
@@ -79,12 +73,9 @@ namespace Xs.Cli.Main.Tasks
         private ValueTuple<IProject, Exception> TryCreateProject(
             string directory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies,
-            CancellationToken token
+            IEnumerable<Dependency> dependencies
         )
         {
-            token.ThrowIfCancellationRequested();
-
             try
             {
                 return (projectFactory.CreateProject(directory, projects, dependencies), null);
