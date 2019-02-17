@@ -29,9 +29,9 @@ namespace Xs.Registry.Node.Views
             DistributionTags = new Dictionary<string, string>() { { "latest", latest.Version } };
             Versions = packages.Select(e => new PackageVersionView(e, urlHelper)).ToDictionary(e => e.Version, e => e);
 
-            var times = packages.ToDictionary(e => e.Version, e => e.Published.ToDateTimeUtc().ToString(Configuration.DateFormat));
-            times["created"] = packages.First().Published.ToDateTimeUtc().ToString(Configuration.DateFormat);
-            times["modified"] = latest.Published.ToDateTimeUtc().ToString(Configuration.DateFormat);
+            var times = packages.ToDictionary(e => e.Version, e => e.Published.InUtc().ToString(Configuration.DateFormat, null));
+            times["created"] = packages.First().Published.InUtc().ToString(Configuration.DateFormat, null);
+            times["modified"] = latest.Published.InUtc().ToString(Configuration.DateFormat, null);
             Time = times;
         }
     }

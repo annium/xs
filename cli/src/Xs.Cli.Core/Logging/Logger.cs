@@ -2,26 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using NodaTime;
 
 namespace Xs.Cli.Core.Logging
 {
     internal class Logger : ILogger
     {
+        private static readonly DateTimeZone tz = DateTimeZoneProviders.Tzdb.GetSystemDefault();
+
         private static readonly object consoleLock = new object();
 
-        private readonly Func<DateTime> getTime;
+        private readonly Func<Instant> getInstant;
 
         private readonly LoggerConfiguration configuration;
 
         private readonly IReadOnlyDictionary<LogLevel, ConsoleColor> levelColors;
 
         public Logger(
-            Func<DateTime> getTime,
+            Func<Instant> getInstant,
             LoggerConfiguration configuration
         )
         {
             this.configuration = configuration;
-            this.getTime = getTime;
+            this.getInstant = getInstant;
 
             var levelColors = new Dictionary<LogLevel, ConsoleColor>();
             levelColors[LogLevel.Trace] = ConsoleColor.DarkCyan;
@@ -90,7 +93,7 @@ namespace Xs.Cli.Core.Logging
             var builder = new StringBuilder();
 
             if (configuration.PrintTime)
-                builder.Append($"[{getTime().ToString("HH:mm:ss.fff")}] ");
+                builder.Append($"[{getInstant().InZone(tz).LocalDateTime.ToString("HH:mm:ss.fff", null)}] ");
 
             if (configuration.PrintThread)
                 builder.Append($"[{Thread.CurrentThread.ManagedThreadId,3}] ");

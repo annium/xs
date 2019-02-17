@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using NodaTime;
 using Xs.Cli.Core.Logging;
 
 namespace Xs.Cli.Main.Tools
 {
     internal class Watcher
     {
-        private readonly Func<DateTime> getTime;
+        private readonly Func<Instant> getInstant;
 
         private readonly ILogger logger;
 
         public Watcher(
-            Func<DateTime> getTime,
+            Func<Instant> getInstant,
             ILogger logger
         )
         {
-            this.getTime = getTime;
+            this.getInstant = getInstant;
             this.logger = logger;
         }
 
@@ -30,7 +31,7 @@ namespace Xs.Cli.Main.Tools
             CancellationToken token
         )
         {
-            var semaphore = new PathSemaphore(getTime, TimeSpan.FromMilliseconds(100));
+            var semaphore = new PathSemaphore(getInstant, Duration.FromMilliseconds(100));
             var tasks = new Queue<ValueTuple<Func<string, Task>, string>>();
 
             using(var watcher = new FileSystemWatcher(root))
@@ -88,28 +89,28 @@ namespace Xs.Cli.Main.Tools
 
         private class PathSemaphore
         {
-            private readonly IDictionary<string, DateTime> data = new Dictionary<string, DateTime>();
+            private readonly IDictionary<string, Instant> data = new Dictionary<string, Instant>();
 
-            private readonly Func<DateTime> getTime;
+            private readonly Func<Instant> getInstant;
 
-            private readonly TimeSpan duration;
+            private readonly Duration duration;
 
-            public PathSemaphore(Func<DateTime> getTime, TimeSpan duration)
+            public PathSemaphore(Func<Instant> getInstant, Duration duration)
             {
-                this.getTime = getTime;
+                this.getInstant = getInstant;
                 this.duration = duration;
             }
 
             public bool IsAvailable(string path)
             {
-                var now = getTime();
+                var now = getInstant();
 
                 // if cached, and not yet expired - it's not available
                 if (data.ContainsKey(path) && data[path] >= now)
                     return false;
 
                 // else, if not used yet, or expired - it's available
-                data[path] = getTime() + duration;
+                data[path] = getInstant() + duration;
 
                 return true;
             }
