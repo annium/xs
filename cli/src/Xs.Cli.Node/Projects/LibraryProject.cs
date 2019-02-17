@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -11,8 +12,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class LibraryProject : ProjectBase, ISpecialProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
+    internal class LibraryProject : ProjectBase, ISpecialProject, IAuditableProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
+
         private readonly ProjectMapper mapper;
 
         public LibraryProject(
@@ -21,6 +24,7 @@ namespace Xs.Cli.Node.Projects
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
+            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
             ILogger logger
@@ -35,7 +39,18 @@ namespace Xs.Cli.Node.Projects
             logger
         )
         {
+            this.auditRules = auditRules;
             this.mapper = mapper;
+        }
+
+        public AuditResult[] Audit(bool fix, CancellationToken token)
+        {
+            var results = new List<AuditResult>();
+
+            foreach (var rule in auditRules)
+                results.AddRange(rule.Execute(this, fix));
+
+            return results.ToArray();
         }
 
         public Task CleanAsync(CancellationToken token)

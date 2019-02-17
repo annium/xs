@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -17,6 +18,7 @@ namespace Xs.Cli.Node.Projects
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
+            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
             ILogger logger
@@ -26,6 +28,7 @@ namespace Xs.Cli.Node.Projects
             file,
             projectDependencies,
             packageDependencies,
+            auditRules,
             mapper,
             shell,
             logger

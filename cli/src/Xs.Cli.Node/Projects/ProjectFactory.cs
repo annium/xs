@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -20,6 +21,8 @@ namespace Xs.Cli.Node.Projects
 
         public const string ProjectFileName = "package.json";
 
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
+
         private readonly ProjectMapper mapper;
 
         private readonly ILogger logger;
@@ -27,11 +30,13 @@ namespace Xs.Cli.Node.Projects
         private readonly IShell shell;
 
         public ProjectFactory(
+            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             ILogger logger,
             IShell shell
         )
         {
+            this.auditRules = auditRules;
             this.mapper = mapper;
             this.logger = logger;
             this.shell = shell;
@@ -78,9 +83,9 @@ namespace Xs.Cli.Node.Projects
                 .ToHashSet();
 
             if (scripts.ContainsKey("test"))
-                return new TestProject(name, version, file, projectDeps, packageDeps, mapper, shell, logger);
+                return new TestProject(name, version, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
 
-            return new LibraryProject(name, version, file, projectDeps, packageDeps, mapper, shell, logger);
+            return new LibraryProject(name, version, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
         }
     }
 }
