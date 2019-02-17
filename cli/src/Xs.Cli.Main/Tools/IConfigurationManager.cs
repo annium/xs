@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Models;
 
 namespace Xs.Cli.Main.Tools
@@ -7,6 +8,8 @@ namespace Xs.Cli.Main.Tools
     {
         Task<Configuration> Load(string folder);
 
-        void Save(string folder, Configuration configuration);
+        void Save(string folder, IProject[] projects, Configuration configuration);
+
+        void Delete(string folder, IProject[] projects);
     }
 }

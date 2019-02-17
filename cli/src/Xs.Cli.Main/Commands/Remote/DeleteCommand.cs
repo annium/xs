@@ -1,47 +1,44 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, CwdCommandConfiguration>
+    internal class DeleteCommand : AsyncCommand<CwdCommandConfiguration>
     {
         public override string Id { get; } = "delete";
 
         public override string Description { get; } = "Stop tracking registry.";
 
+        private readonly DiscoverProjectsTask discoverTask;
+
         private readonly IConfigurationManager configurationManager;
 
         public DeleteCommand(
+            DiscoverProjectsTask discoverTask,
             IConfigurationManager configurationManager
         )
         {
+            this.discoverTask = discoverTask;
             this.configurationManager = configurationManager;
         }
 
         public override async Task HandleAsync(
-            DeleteCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var name = cfg.Name;
             var dir = cwdCfg.Cwd;
 
-            var configuration = await configurationManager.Load(dir);
-            configuration.Registries.RemoveAll(e => e.Name == name);
-            configurationManager.Save(dir, configuration);
+            var projects = (await discoverTask.RunAsync(dir)).ToArray();
 
-            Console.WriteLine($"Registry '{name}' tracking stopped.");
+            configurationManager.Delete(dir, projects);
+
+            Console.WriteLine("Registry tracking stopped.");
         }
-    }
-
-    internal class DeleteCommandConfiguration
-    {
-        [Position(1)]
-        [Help("Registry name.")]
-        public string Name { get; set; }
     }
 }

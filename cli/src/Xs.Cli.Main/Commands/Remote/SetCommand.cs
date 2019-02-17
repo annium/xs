@@ -4,37 +4,42 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Main.Models;
+using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
 using Xs.RegistryClient.Main;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class AddCommand : AsyncCommand<AddCommandConfiguration, CwdCommandConfiguration>
+    internal class SetCommand : AsyncCommand<SetCommandConfiguration, CwdCommandConfiguration>
     {
-        public override string Id { get; } = "add";
+        public override string Id { get; } = "set";
 
         public override string Description { get; } = "Start tracking registry.";
+
+        private readonly DiscoverProjectsTask discoverTask;
 
         private readonly IConfigurationManager configurationManager;
 
         private readonly MainClientFactory mainClientFactory;
 
-        public AddCommand(
+        public SetCommand(
+            DiscoverProjectsTask discoverTask,
             IConfigurationManager configurationManager,
             MainClientFactory mainClientFactory
         )
         {
+            this.discoverTask = discoverTask;
             this.configurationManager = configurationManager;
             this.mainClientFactory = mainClientFactory;
         }
 
         public override async Task HandleAsync(
-            AddCommandConfiguration cfg,
+            SetCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var name = cfg.Name;
             var location = cfg.Registry;
             var user = cfg.User;
             var dir = cwdCfg.Cwd;
@@ -44,36 +49,23 @@ namespace Xs.Cli.Main.Commands.Remote
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            var userToken = await client.LoginAsync(user, password);
-            var data = await client.GetRegistryInfoAsync(userToken);
+            var configuration = new Configuration();
+            configuration.Location = location;
+            configuration.Token = await client.LoginAsync(user, password);
+            configuration.Servers = (await client.GetRegistryInfoAsync())
+                .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value);
 
-            var registry = new Models.Registry
-            {
-                Name = name,
-                Location = location,
-                Token = userToken,
-                Servers = data.ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
-            };
+            var projects = (await discoverTask.RunAsync(dir)).ToArray();
 
-            var configuration = await configurationManager.Load(dir);
-            var index = configuration.Registries.FindIndex(e => e.Name == registry.Name);
-            if (index >= 0)
-                configuration.Registries[index] = registry;
-            else
-                configuration.Registries.Add(registry);
-            configurationManager.Save(dir, configuration);
+            configurationManager.Save(dir, projects, configuration);
 
-            Console.WriteLine($"Registry '{name}' tracking started");
+            Console.WriteLine("Registry tracking started");
         }
     }
 
-    internal class AddCommandConfiguration
+    internal class SetCommandConfiguration
     {
         [Position(1)]
-        [Help("Registry name.")]
-        public string Name { get; set; }
-
-        [Position(2)]
         [Help("Registry location.")]
         public Uri Registry { get; set; }
 

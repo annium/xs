@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Annium.Extensions.Configuration;
-using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Main.Models;
 using Xs.RegistryClient.Main;
@@ -33,41 +32,51 @@ namespace Xs.Cli.Main.Tools
 
         public async Task<Configuration> Load(string folder)
         {
-            return new ConfigurationBuilder()
-                .AddJsonFile(FilePath(folder), optional : true)
-                .Build<Configuration>();
+            if (!File.Exists(ConfigurationFile(folder)) || !File.Exists(CredentialsFile(folder)))
+                return null;
+
+            var configuration = new Configuration();
+            configuration.Location = new Uri(File.ReadAllText(ConfigurationFile(folder)));
+            configuration.Token = File.ReadAllText(CredentialsFile(folder));
+            configuration.Servers = (await mainClientFactory.Create(configuration.Location).GetRegistryInfoAsync())
+                .OrderBy(s => s.Key)
+                .ToDictionary(s => ProjectType.Get(s.Key), s => s.Value);
+
+            return configuration;
         }
 
-        public void Save(string folder, Configuration configuration)
+        public void Save(string folder, IProject[] projects, Configuration configuration)
         {
-            configuration.Registries = configuration.Registries
-                .OrderBy(r => r.Name)
-                .Select(r =>
-                {
-                    r.Servers = r.Servers.OrderBy(s => s.Key.ToString()).ToDictionary(e => e.Key, e => e.Value);
-                    return r;
-                })
-                .ToList();
+            Write(ConfigurationFile, configuration.Location.ToString());
+            Write(CredentialsFile, configuration.Token);
 
-            Json.WriteFile(FilePath(folder), configuration);
+            // save configuration for each project
+            foreach (var(type, uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
+                if (specialManagers.ContainsKey(type))
+                    foreach (var project in projects)
+                        specialManagers[type].Save(project, uri, configuration.Token);
 
-            // prepare lists of registries by types
-            var typeRegistries = specialManagers.ToDictionary(
-                e => e.Key,
-                _ => new List<ValueTuple<string, Uri, string>>()
-            );
-
-            // add registries of supported types
-            foreach (var registry in configuration.Registries)
-                foreach (var(type, uri) in registry.Servers)
-                    if (typeRegistries.ContainsKey(type))
-                        typeRegistries[type].Add((registry.Name, uri, registry.Token));
-
-            // save registries of each type
-            foreach (var(type, registries) in typeRegistries)
-                specialManagers[type].Save(folder, registries);
+            void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(folder), data);
         }
 
-        private string FilePath(string folder) => Path.Combine(folder, configurationFile);
+        public void Delete(string folder, IProject[] projects)
+        {
+            Delete(ConfigurationFile);
+            Delete(CredentialsFile);
+
+            foreach (var project in projects)
+                if (specialManagers.ContainsKey(project.Type))
+                    specialManagers[project.Type].Delete(project);
+
+            void Delete(Func<string, string> resolve)
+            {
+                var path = resolve(folder);
+                if (File.Exists(path)) File.Delete(path);
+            }
+        }
+
+        private string ConfigurationFile(string folder) => Path.Combine(folder, configurationFile);
+
+        private string CredentialsFile(string folder) => Path.Combine(folder, credentialsFile);
     }
 }

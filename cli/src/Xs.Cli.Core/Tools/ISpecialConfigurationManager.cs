@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tools
 {
@@ -8,6 +8,8 @@ namespace Xs.Cli.Core.Tools
     {
         ProjectType Type { get; }
 
-        void Save(string folder, IEnumerable<ValueTuple<string, Uri, string>> registries);
+        void Save(IProject project, Uri location, string token);
+        
+        void Delete(IProject project);
     }
 }

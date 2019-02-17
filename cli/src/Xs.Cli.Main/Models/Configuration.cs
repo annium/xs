@@ -1,9 +1,15 @@
+using System;
 using System.Collections.Generic;
+using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Main.Models
 {
     public class Configuration
     {
-        public List<Registry> Registries { get; set; } = new List<Registry>();
+        public Uri Location { get; set; }
+
+        public string Token { get; set; }
+
+        public Dictionary<ProjectType, Uri> Servers { get; set; } = new Dictionary<ProjectType, Uri>();
     }
 }

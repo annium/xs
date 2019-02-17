@@ -41,10 +41,9 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var registry = (await configurationManager.Load(cwdCfg.Cwd)).Registries
-                .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Registry.ToLowerInvariant());
-            if (registry == null)
-                throw new InvalidOperationException($"Registry {cfg.Registry} is not tracked. Track it to manipulate permissions.");
+            var configuration = await configurationManager.Load(cwdCfg.Cwd);
+            if (configuration == null)
+                throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
             var projects = filterTask.Run(await discoverTask.RunAsync(cwdCfg.Cwd), cfg.Mask)
                 .OfType<IPublishableProject>()
@@ -57,13 +56,13 @@ namespace Xs.Cli.Main.Commands
             }
 
             foreach (var project in projects)
-                if (!registry.Servers.ContainsKey(project.Type))
-                    throw new InvalidOperationException($"Registry {registry} doesn't support project type '{project.Type}'.");
+                if (!configuration.Servers.ContainsKey(project.Type))
+                    throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
 
             logger.LogDebug($"Publish {projects.Length} projects.");
             await runner.RunAsync(
                 projects,
-                (project, tkn) => project.PublishAsync(registry.Servers[project.Type], registry.Token, cfg.Version, tkn),
+                (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
                 token
             );
         }
@@ -72,14 +71,10 @@ namespace Xs.Cli.Main.Commands
     internal class PublishCommandConfiguration
     {
         [Position(1)]
-        [Help("Registry.")]
-        public string Registry { get; set; }
-
-        [Position(2)]
         [Help("Projects mask.")]
         public string Mask { get; set; }
 
-        [Position(3)]
+        [Position(2)]
         [Help("Version to publish.")]
         public Core.Models.Version Version { get; set; }
     }

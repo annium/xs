@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
@@ -8,7 +7,7 @@ using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class ShowCommand : AsyncCommand<ShowCommandConfiguration, CwdCommandConfiguration>
+    internal class ShowCommand : AsyncCommand<CwdCommandConfiguration>
     {
         public override string Id { get; } = "show";
 
@@ -24,28 +23,18 @@ namespace Xs.Cli.Main.Commands.Remote
         }
 
         public override async Task HandleAsync(
-            ShowCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
         {
-            var name = cfg.Name;
             var dir = cwdCfg.Cwd;
 
             var configuration = await configurationManager.Load(dir);
-            var registry = configuration.Registries.FirstOrDefault(e => e.Name == name);
 
-            if (registry == null)
-                Console.WriteLine($"Registry '{name}' is not tracked.");
+            if (configuration == null)
+                Console.WriteLine("Registry is not tracked.");
             else
-                Console.WriteLine(Json.Write(registry));
+                Console.WriteLine(Json.Write(configuration));
         }
-    }
-
-    internal class ShowCommandConfiguration
-    {
-        [Position(1)]
-        [Help("Registry name.")]
-        public string Name { get; set; }
     }
 }

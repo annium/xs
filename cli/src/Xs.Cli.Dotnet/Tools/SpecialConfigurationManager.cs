@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Tools
@@ -16,30 +15,28 @@ namespace Xs.Cli.Dotnet.Tools
 
         private const string file = "nuget.config";
 
+        private readonly string registryName = "registry";
+
         private readonly string defaultName = "nuget";
 
         private readonly Uri defaultUri = new Uri("https://api.nuget.org/");
 
-        public void Save(string folder, IEnumerable<ValueTuple<string, Uri, string>> registries)
+        public void Save(IProject project, Uri location, string token)
         {
-            // if no registries - delete file
-            if (registries.Count() == 0)
-            {
-                var path = FilePath(folder);
-                if (File.Exists(path))
-                    File.Delete(path);
-                return;
-            }
-
             var sources = new XElement(El.PackageSources);
             sources.Add(new XElement(El.Clear));
 
-            foreach (var(name, uri, _) in registries)
-                sources.Add(GetAddRule(name, uri));
+            sources.Add(GetAddRule(registryName, location));
 
             sources.Add(GetAddRule(defaultName, defaultUri));
 
-            Save(folder, new XElement(El.Configuration, sources));
+            Save(project.File.DirectoryName, new XElement(El.Configuration, sources));
+        }
+
+        public void Delete(IProject project)
+        {
+            var path = FilePath(project.File.DirectoryName);
+            if (File.Exists(path)) File.Delete(path);
         }
 
         private void Save(string folder, XElement info)
