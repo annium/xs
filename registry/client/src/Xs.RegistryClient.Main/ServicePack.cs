@@ -9,7 +9,7 @@ namespace Xs.RegistryClient.Main
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             services.AddSingleton<MainClientFactory>();
-            services.AddSingleton<MainClient>();
+            services.AddTransient<MainClient>();
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Extensions.Net.Http;
+using Xs.RegistryClient.Main.Models;
 using Xs.RegistryClient.Shared;
 
 namespace Xs.RegistryClient.Main
@@ -28,6 +29,17 @@ namespace Xs.RegistryClient.Main
                 .Get("registry")
                 .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsAsync<Dictionary<string, Uri>>();
+        }
+
+        public Task<MetaPackage[]> SearchAsync(string token, string type, string query)
+        {
+            return Http.Open(this.uri)
+                .Get("packages/search")
+                .BearerAuthorization(token)
+                .Param("type", type)
+                .Param("query", query)
+                .EnsureSuccessStatusCode(response => $"Search failed with {response.StatusCode} ({response.ReasonPhrase}).")
+                .AsAsync<MetaPackage[]>();
         }
     }
 }
