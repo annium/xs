@@ -1,81 +1,68 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading;
-// using System.Threading.Tasks;
-// using Annium.Extensions.Arguments;
-// using Xs.Cli.Core.Logging;
-// using Xs.Cli.Core.Models;
-// using Xs.Cli.Core.Tools;
-// using Xs.Registry.Core.Client;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Logging;
+using Xs.Cli.Core.Models;
+using Xs.Cli.Main.Tools;
+using Xs.RegistryClient.Main;
 
-// namespace Xs.Cli.Main.Commands
-// {
-//     internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, CwdCommandConfiguration>
-//     {
-//         public override string Id { get; } = "search";
+namespace Xs.Cli.Main.Commands
+{
+    internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, CwdCommandConfiguration>
+    {
+        public override string Id { get; } = "search";
 
-//         public override string Description { get; } = "Search for packages in tracked registries.";
+        public override string Description { get; } = "Search for packages in tracked registry.";
 
-//         private readonly IEnumerable<IProjectClientFactory> projectClientFactories;
+        private readonly IConfigurationManager configurationManager;
 
-//         private readonly IConfigurationManager configurationManager;
+        private readonly MainClientFactory mainClientFactory;
 
-//         private readonly ILogger logger;
+        private readonly ILogger logger;
 
-//         public SearchCommand(
-//             IEnumerable<IProjectClientFactory> projectClientFactories,
-//             IConfigurationManager configurationManager,
-//             ILogger logger
-//         )
-//         {
-//             this.projectClientFactories = projectClientFactories;
-//             this.configurationManager = configurationManager;
-//             this.logger = logger;
-//         }
+        public SearchCommand(
+            IConfigurationManager configurationManager,
+            MainClientFactory mainClientFactory,
+            ILogger logger
+        )
+        {
+            this.configurationManager = configurationManager;
+            this.mainClientFactory = mainClientFactory;
+            this.logger = logger;
+        }
 
-//         public override async Task HandleAsync(
-//             SearchCommandConfiguration cfg,
-//             CwdCommandConfiguration cwdCfg,
-//             CancellationToken token
-//         )
-//         {
-//             var type = cfg.Type;
+        public override async Task HandleAsync(
+            SearchCommandConfiguration cfg,
+            CwdCommandConfiguration cwdCfg,
+            CancellationToken token
+        )
+        {
+            var type = cfg.Type;
 
-//             var factory = projectClientFactories.FirstOrDefault(e => e.ProjectType == type);
-//             if (factory == null)
-//             {
-//                 logger.LogWarn($"No client registered for project type '{type}'.");
-//                 return;
-//             }
+            var configuration = await configurationManager.Load(cwdCfg.Cwd);
+            if (configuration == null)
+            {
+                logger.LogWarn("Track registry first to search within it.");
+                return;
+            }
 
-//             var registry = configurationManager.Load(cwdCfg.Cwd).Registries
-//                 .FirstOrDefault(e => e.Name.ToLowerInvariant() == cfg.Registry.ToLowerInvariant());
-//             if (registry == null)
-//                 throw new InvalidOperationException($"Registry {cfg.Registry} is not tracked. Track it to manipulate permissions.");
-//             if (!registry.Servers.ContainsKey(type))
-//                 throw new InvalidOperationException($"Registry {cfg.Registry} doesn't support project type '{type}'.");
+            var client = mainClientFactory.Create(configuration.Location);
+            var packages = await client.SearchAsync(configuration.Token, cfg.Type.ToString(), cfg.Query);
 
-//             var client = factory.Create(registry.Servers[type]);
+            foreach (var package in packages)
+                Console.WriteLine($"{package.Name}: {package.Version} ({package.Description})");
+        }
+    }
 
-//             var results = await client.Info.SearchAsync(cfg.Query, registry.Token);
-//             foreach (var(name, version) in results)
-//                 Console.WriteLine($"{name}: {version}");
-//         }
-//     }
+    internal class SearchCommandConfiguration
+    {
+        [Position(1)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
 
-//     internal class SearchCommandConfiguration
-//     {
-//         [Position(1)]
-//         [Help("Tracked registry name to search packages at.")]
-//         public string Registry { get; set; }
-
-//         [Position(2)]
-//         [Help("Project type.")]
-//         public ProjectType Type { get; set; }
-
-//         [Position(3)]
-//         [Help("Search query.")]
-//         public string Query { get; set; }
-//     }
-// }
+        [Position(2)]
+        [Help("Search query.")]
+        public string Query { get; set; }
+    }
+}

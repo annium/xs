@@ -20,7 +20,7 @@ namespace Xs.Cli.Main.Commands
             Add<DeleteCommand>();
             Add<InstallCommand>();
             Add<PublishCommand>();
-            // Add<SearchCommand>();
+            Add<SearchCommand>();
             Add<TestCommand>();
             Add<UnpublishCommand>();
             Add<UpdateCommand>();

@@ -49,8 +49,7 @@ namespace Xs.Cli.Main
             services.AddSingleton<DeleteCommand>();
             services.AddSingleton<InstallCommand>();
             services.AddSingleton<PublishCommand>();
-            // TODO: need to rewrite to use metapackages
-            // services.AddSingleton<SearchCommand>();
+            services.AddSingleton<SearchCommand>();
             services.AddSingleton<TestCommand>();
             services.AddSingleton<UnpublishCommand>();
             services.AddSingleton<UpdateCommand>();
