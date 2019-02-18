@@ -78,7 +78,7 @@ namespace Xs.Cli.Dotnet.Projects
                     project.PackageDependencies.OrderBy(e => e.Name).Select(e => new XElement(
                         El.PackageReference,
                         new XAttribute(El.Include, e.Name),
-                        new XAttribute(El.PackageVersion, e.Version)
+                        new XAttribute(El.Version, e.Version)
                     ))
                 ));
 
