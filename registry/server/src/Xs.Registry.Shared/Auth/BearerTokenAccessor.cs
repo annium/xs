@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
-namespace Xs.Registry.Abstract.Auth
+namespace Xs.Registry.Shared.Auth
 {
     public class BearerTokenAccessor : ITokenAccessor
     {
