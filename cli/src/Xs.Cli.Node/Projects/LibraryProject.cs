@@ -12,7 +12,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class LibraryProject : ProjectBase, ISpecialProject, IAuditableProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
+    internal class LibraryProject : ProjectBase, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject, IPublishableProject
     {
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
 
@@ -54,6 +54,9 @@ namespace Xs.Cli.Node.Projects
 
             return results.ToArray();
         }
+
+        public Task ClearCacheAsync(CancellationToken token) =>
+            RunAsync("cache clean", $"yarn cache clean {string.Join(' ',PackageDependencies.Select(d=>d.Name))}", token);
 
         public Task CleanAsync(CancellationToken token)
         {
