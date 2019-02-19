@@ -1,0 +1,21 @@
+@import 'common.scss';
+
+.header {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+}
+
+.framework {
+    margin-top: 0.7rem;
+    margin-bottom: 0.3rem;
+    font-size: 1.3rem;
+    text-decoration: underline;
+}
+
+.dependency {
+    font-size: 1.2rem;
+
+    a {
+        color: $color-blue;
+    }
+}

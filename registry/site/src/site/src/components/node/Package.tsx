@@ -18,6 +18,8 @@ import PackageStats from '../PackageStats'
 import PackageTitle from '../PackageTitle'
 import PackageVersions from '../PackageVersions'
 
+import Dependencies from './Dependencies'
+
 
 type Props = {
   access: UserMetaPackageAccess
@@ -38,14 +40,12 @@ export default class Package extends React.Component<Props>{
   }
 
   async componentDidMount() {
-    const { metaPackage: { name } } = this.props
+    await this.loadPackages(this.props.metaPackage.name)
+  }
 
-    const packagesResult = await serverApi.get(name)
-
-    if (packagesResult.isSuccess)
-      this.packages = packagesResult.data
-    else
-      message.error(`Package load failed with: ${packagesResult.error}`)
+  async componentDidUpdate(prevProps: Props) {
+    if (this.props.metaPackage !== prevProps.metaPackage)
+      await this.loadPackages(this.props.metaPackage.name)
   }
 
   render() {
@@ -58,6 +58,7 @@ export default class Package extends React.Component<Props>{
       <Row gutter={gutter}>
         <Col span={16}>
           <PackageTitle access={access} metaPackage={metaPackage} pkg={pkg} onDelete={this.handleDelete} />
+          <Dependencies dependencies={pkg.dependencies} />
           <PackageVersions type={metaPackage.type} pkg={pkg} packages={packages} />
         </Col>
         <Col span={8}>
@@ -68,6 +69,15 @@ export default class Package extends React.Component<Props>{
         </Col>
       </Row>
     )
+  }
+
+  private async loadPackages(name: string) {
+    const packagesResult = await serverApi.get(name)
+
+    if (packagesResult.isSuccess)
+      this.packages = packagesResult.data
+    else
+      message.error(`Package load failed with: ${packagesResult.error}`)
   }
 
   private handleDelete = () => {
