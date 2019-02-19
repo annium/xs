@@ -54,7 +54,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [AuthorizeSession]
         public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)
         {
             if (updateModel == null)
@@ -75,7 +75,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpPost("token")]
-        [Authorize]
+        [AuthorizeSession]
         public async Task<IActionResult> UpdateUserApiTokenAsync()
         {
             var user = GetUser();
@@ -88,7 +88,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpDelete]
-        [Authorize]
+        [AuthorizeSession]
         public async Task<IActionResult> DeleteUserAsync()
         {
             var user = GetUser();

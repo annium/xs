@@ -3,6 +3,7 @@ using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Tools;
+using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main
@@ -18,8 +19,9 @@ namespace Xs.Registry.Main
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             // auth
-            services.AddSingleton<AuthorizationFilter>();
+            services.AddSingleton<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access));
             services.AddScoped<ISessionManager, SessionManager>();
+            services.AddSingleton<ITokenAccessor>(new BearerTokenAccessor());
 
             // tools
             services.AddSingleton<IRegistryManager, RegistryManager>();

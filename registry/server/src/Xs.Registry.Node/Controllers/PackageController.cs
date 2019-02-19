@@ -37,7 +37,7 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpGet("{name}")]
-        [Authorize]
+        [AuthorizeApi]
         public async Task<IActionResult> GetPackagesAsync(string name)
         {
             name = HttpUtility.UrlDecode(name);
@@ -53,7 +53,7 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpDelete("{name}/{version}")]
-        [Authorize]
+        [AuthorizeApi]
         public async Task<IActionResult> DeletePackageAsync(string name, string version)
         {
             name = HttpUtility.UrlDecode(name);

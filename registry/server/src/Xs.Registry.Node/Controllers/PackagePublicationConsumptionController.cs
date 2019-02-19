@@ -49,7 +49,7 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpPut("{package}")]
-        [Authorize]
+        [AuthorizeApi]
         public async Task<IActionResult> PublishPackageAsync([FromBody] PackagePayload packagePayload)
         {
             {
@@ -239,7 +239,7 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpGet("{name}")]
-        [Authorize]
+        [AuthorizeApi]
         public Task<IActionResult> GetPackageAsync([FromRoute] string name, [FromQuery] bool write)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
@@ -262,7 +262,7 @@ namespace Xs.Registry.Node.Controllers
         }
 
         [HttpGet("{name}/{version}.tgz")]
-        [Authorize]
+        [AuthorizeApi]
         public async Task<IActionResult> DownloadPackageAsync([FromRoute] string name, [FromRoute] string version)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));

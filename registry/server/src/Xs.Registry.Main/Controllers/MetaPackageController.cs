@@ -27,7 +27,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize]
+        [Authorize(Access.Api | Access.Session)]
         public async Task<IActionResult> FindPackagesAsync(
             Guid ownerId = default(Guid),
             string type = null,
@@ -49,7 +49,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpGet("{type}/{name}")]
-        [Authorize]
+        [AuthorizeSession]
         public async Task<IActionResult> GetPackageAsync(string type, string name)
         {
             name = HttpUtility.UrlDecode(name);
@@ -66,7 +66,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpPost("{type}/{name}/permissions")]
-        [Authorize]
+        [AuthorizeSession]
         public async Task<IActionResult> UpdatePackagePermissionsAsync(string type, string name, [FromBody] MetaPackagePermission[] permissions)
         {
             name = HttpUtility.UrlDecode(name);

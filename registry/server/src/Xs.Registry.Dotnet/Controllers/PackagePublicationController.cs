@@ -44,7 +44,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpPut("api/v2/package")]
-        [Authorize]
+        [AuthorizeApi]
         public async Task<IActionResult> PublishPackageAsync()
         {
             using(var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None))
@@ -202,7 +202,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpDelete("api/v2/package/{name}/{version}")]
-        [Authorize]
+        [AuthorizeApi]
         public async Task<IActionResult> UnpublishPackageAsync(string name, string version)
         {
             // get available versions

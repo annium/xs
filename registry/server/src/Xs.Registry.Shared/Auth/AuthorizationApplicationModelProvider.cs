@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -9,13 +10,13 @@ namespace Xs.Registry.Shared.Auth
     {
         public int Order { get; } = -990;
 
-        private readonly TAuthorizationFilter authorizationFilter;
+        private readonly Func<Access, TAuthorizationFilter> authorizationFilterFactory;
 
         public AuthorizationApplicationModelProvider(
-            TAuthorizationFilter authorizationFilter
+            Func<Access, TAuthorizationFilter> authorizationFilterFactory
         )
         {
-            this.authorizationFilter = authorizationFilter;
+            this.authorizationFilterFactory = authorizationFilterFactory;
         }
 
         public void OnProvidersExecuted(ApplicationModelProviderContext context)
@@ -43,7 +44,7 @@ namespace Xs.Registry.Shared.Auth
             if (attribute == null)
                 return;
 
-            actionModel.Filters.Add(authorizationFilter);
+            actionModel.Filters.Add(authorizationFilterFactory(attribute.Access));
         }
     }
 }

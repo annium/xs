@@ -2,8 +2,8 @@ using System.IO;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.Registry.Abstract.Auth;
 using Xs.Registry.Node.Storage;
+using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Node

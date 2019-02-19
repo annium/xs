@@ -5,8 +5,8 @@ namespace Xs.Registry.Shared.Auth
     [Flags]
     public enum Access
     {
-        Api,
+        Api = 1,
 
-        Session
+        Session = 2,
     }
 }

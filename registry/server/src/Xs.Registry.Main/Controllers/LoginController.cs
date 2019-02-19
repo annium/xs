@@ -58,7 +58,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [AuthorizeSession]
         public IActionResult Info()
         {
             var user = GetUser();
@@ -67,7 +67,7 @@ namespace Xs.Registry.Main.Controllers
         }
 
         [HttpDelete]
-        [Authorize]
+        [AuthorizeSession]
         public async Task<IActionResult> LogoutAsync()
         {
             await sessionManager.DeleteCurrentSession();

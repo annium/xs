@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -6,23 +8,27 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Xs.Registry.Db.Shared;
+using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main.Auth
 {
     internal class AuthorizationFilter : IAsyncAuthorizationFilter
     {
-        private readonly Func<Instant> getInstant;
-
         private readonly IServiceProvider serviceProvider;
 
+        private readonly Func<Instant> getInstant;
+
+        private readonly Func<AuthorizationFilterContext, Task<ValueTuple<IActionResult, User>>>[] authHandlers;
+
         public AuthorizationFilter(
-            Func<Instant> getInstant,
-            IServiceProvider serviceProvider
+            IServiceProvider serviceProvider,
+            Access access
         )
         {
-            this.getInstant = getInstant;
             this.serviceProvider = serviceProvider;
+            getInstant = serviceProvider.GetRequiredService<Func<Instant>>();
+            authHandlers = GetAuthHandlers(access).ToArray();
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -34,6 +40,43 @@ namespace Xs.Registry.Main.Auth
 
         private async Task<IActionResult> HandleAuthorizationAsync(AuthorizationFilterContext context)
         {
+            IActionResult result = null;
+            User user = null;
+            foreach (var handleAuthAsync in authHandlers)
+            {
+                (result, user) = await handleAuthAsync(context);
+                if (result == null)
+                    break;
+            }
+
+            // save user
+            if (user != null)
+                context.ActionDescriptor.Properties[ServerController<User>.UserProperty] = user;
+
+            return result;
+        }
+
+        private async Task<ValueTuple<IActionResult, User>> TryApiAuthorizationAsync(AuthorizationFilterContext context)
+        {
+            using(var scope = serviceProvider.CreateScope())
+            {
+                var tokenAccessor = scope.ServiceProvider.GetRequiredService<ITokenAccessor>();
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
+                // try get token
+                var(token, result) = tokenAccessor.GetToken(context.HttpContext.Request);
+                if (result != null)
+                    return (result, null);
+
+                // try to find user
+                var user = await userRepository.FindByApiTokenAsync(token);
+
+                return user == null ? GetForbiddenResult("No user found with this token.") : (null, user);
+            }
+        }
+
+        private async Task<ValueTuple<IActionResult, User>> TrySessionAuthorizationAsync(AuthorizationFilterContext context)
+        {
             using(var scope = serviceProvider.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
@@ -43,7 +86,7 @@ namespace Xs.Registry.Main.Auth
                 // try get token
                 var(token, result) = sessionManager.GetToken();
                 if (result != null)
-                    return result;
+                    return (result, null);
 
                 // try to find user session
                 var session = await userSessionRepository.FindByTokenAsync(token);
@@ -57,15 +100,19 @@ namespace Xs.Registry.Main.Auth
                 // refresh session
                 await sessionManager.RefreshSession(session);
 
-                // save user
-                var user = await userRepository.GetById(session.UserId);
-                context.ActionDescriptor.Properties[ServerController<User>.UserProperty] = user;
-
-                return null;
+                return (null, await userRepository.GetById(session.UserId));
             }
         }
 
-        private IActionResult GetForbiddenResult(string error) =>
-            new ObjectResult(error) { StatusCode = (int) HttpStatusCode.Forbidden };
+        private IEnumerable<Func<AuthorizationFilterContext, Task<ValueTuple<IActionResult, User>>>> GetAuthHandlers(Access access)
+        {
+            if (access.HasFlag(Access.Api))
+                yield return TryApiAuthorizationAsync;
+            if (access.HasFlag(Access.Session))
+                yield return TrySessionAuthorizationAsync;
+        }
+
+        private ValueTuple<IActionResult, User> GetForbiddenResult(string error) =>
+            (new ObjectResult(error) { StatusCode = (int) HttpStatusCode.Forbidden }, null);
     }
 }
