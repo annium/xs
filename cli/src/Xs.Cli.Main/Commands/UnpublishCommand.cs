@@ -9,7 +9,7 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
-using Xs.RegistryClient.Abstract;
+using Xs.RegistryClient.Server;
 
 namespace Xs.Cli.Main.Commands
 {
@@ -27,7 +27,7 @@ namespace Xs.Cli.Main.Commands
 
         private readonly ProjectsRunner runner;
 
-        private readonly AbstractClientFactory abstractClientFactory;
+        private readonly ServerClientFactory serverClientFactory;
 
         private readonly ILogger logger;
 
@@ -36,7 +36,7 @@ namespace Xs.Cli.Main.Commands
             DiscoverProjectsTask discoverTask,
             FilterProjectsTask filterTask,
             ProjectsRunner runner,
-            AbstractClientFactory abstractClientFactory,
+            ServerClientFactory serverClientFactory,
             ILogger logger
         )
         {
@@ -44,7 +44,7 @@ namespace Xs.Cli.Main.Commands
             this.discoverTask = discoverTask;
             this.filterTask = filterTask;
             this.runner = runner;
-            this.abstractClientFactory = abstractClientFactory;
+            this.serverClientFactory = serverClientFactory;
             this.logger = logger;
         }
 
@@ -68,11 +68,11 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            var clients = new Dictionary<ProjectType, AbstractClient>();
+            var clients = new Dictionary<ProjectType, ServerClient>();
             foreach (var type in projects.Select(p => p.Type).Distinct())
             {
                 if (configuration.Servers.ContainsKey(type))
-                    clients[type] = abstractClientFactory.Create(configuration.Servers[type]);
+                    clients[type] = serverClientFactory.Create(configuration.Servers[type]);
                 else
                     throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
             }

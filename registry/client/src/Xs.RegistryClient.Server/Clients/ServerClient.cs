@@ -3,11 +3,11 @@ using System.Web;
 using Annium.Extensions.Net.Http;
 using Xs.RegistryClient.Shared;
 
-namespace Xs.RegistryClient.Abstract
+namespace Xs.RegistryClient.Server
 {
-    public class AbstractClient : ClientBase
+    public class ServerClient : ClientBase
     {
-        public AbstractClient()
+        public ServerClient()
         {
 
         }

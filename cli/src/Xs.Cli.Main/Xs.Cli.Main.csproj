@@ -10,8 +10,8 @@
     <ItemGroup>
         <ProjectReference Include="../Xs.Cli.Dotnet/Xs.Cli.Dotnet.csproj" />
         <ProjectReference Include="../Xs.Cli.Node/Xs.Cli.Node.csproj" />
-        <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Abstract/Xs.RegistryClient.Abstract.csproj" />
         <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Main/Xs.RegistryClient.Main.csproj" />
+        <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Server/Xs.RegistryClient.Server.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />

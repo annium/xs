@@ -2,14 +2,14 @@ using System;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Xs.RegistryClient.Abstract
+namespace Xs.RegistryClient.Server
 {
     public class ServicePack : ServicePackBase
     {
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
-            services.AddSingleton<AbstractClientFactory>();
-            services.AddTransient<AbstractClient>();
+            services.AddSingleton<ServerClientFactory>();
+            services.AddTransient<ServerClient>();
         }
     }
 }
