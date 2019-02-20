@@ -1,23 +1,22 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.RegistryClient.Shared;
 
-namespace Xs.RegistryClient.Dotnet
+namespace Xs.RegistryClient.Abstract
 {
-    public class DotnetClientFactory : IProjectClientFactory
+    public class AbstractClientFactory
     {
         private readonly IServiceProvider provider;
 
-        public DotnetClientFactory(
+        public AbstractClientFactory(
             IServiceProvider provider
         )
         {
             this.provider = provider;
         }
 
-        public IProjectClient Create(Uri uri)
+        public AbstractClient Create(Uri uri)
         {
-            var client = provider.GetRequiredService<DotnetClient>();
+            var client = provider.GetRequiredService<AbstractClient>();
 
             client.SetUri(uri);
 
