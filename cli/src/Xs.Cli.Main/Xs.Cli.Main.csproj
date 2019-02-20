@@ -10,8 +10,7 @@
     <ItemGroup>
         <ProjectReference Include="../Xs.Cli.Dotnet/Xs.Cli.Dotnet.csproj" />
         <ProjectReference Include="../Xs.Cli.Node/Xs.Cli.Node.csproj" />
-        <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Dotnet/Xs.RegistryClient.Dotnet.csproj" />
-        <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Node/Xs.RegistryClient.Node.csproj" />
+        <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Abstract/Xs.RegistryClient.Abstract.csproj" />
         <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Main/Xs.RegistryClient.Main.csproj" />
     </ItemGroup>
     <ItemGroup>

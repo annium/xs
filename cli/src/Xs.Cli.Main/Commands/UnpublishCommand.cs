@@ -1,23 +1,34 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Logging;
+using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
+using Xs.RegistryClient.Abstract;
 
 namespace Xs.Cli.Main.Commands
 {
     internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, CwdCommandConfiguration>
     {
         public override string Id { get; } = "unpublish";
+
         public override string Description { get; } = "Unpublish package from registry.";
+
         private readonly IConfigurationManager configurationManager;
+
         private readonly DiscoverProjectsTask discoverTask;
+
         private readonly FilterProjectsTask filterTask;
+
         private readonly ProjectsRunner runner;
+
+        private readonly AbstractClientFactory abstractClientFactory;
+
         private readonly ILogger logger;
 
         public UnpublishCommand(
@@ -25,6 +36,7 @@ namespace Xs.Cli.Main.Commands
             DiscoverProjectsTask discoverTask,
             FilterProjectsTask filterTask,
             ProjectsRunner runner,
+            AbstractClientFactory abstractClientFactory,
             ILogger logger
         )
         {
@@ -32,6 +44,7 @@ namespace Xs.Cli.Main.Commands
             this.discoverTask = discoverTask;
             this.filterTask = filterTask;
             this.runner = runner;
+            this.abstractClientFactory = abstractClientFactory;
             this.logger = logger;
         }
 
@@ -55,14 +68,19 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            foreach (var project in projects)
-                if (!configuration.Servers.ContainsKey(project.Type))
-                    throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
+            var clients = new Dictionary<ProjectType, AbstractClient>();
+            foreach (var type in projects.Select(p => p.Type).Distinct())
+            {
+                if (configuration.Servers.ContainsKey(type))
+                    clients[type] = abstractClientFactory.Create(configuration.Servers[type]);
+                else
+                    throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
+            }
 
             logger.LogDebug($"Unpublish {projects.Length} projects.");
             await runner.RunAsync(
                 projects,
-                (project, tkn) => project.UnpublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
+                (project, tkn) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
                 token
             );
         }
