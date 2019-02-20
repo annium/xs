@@ -200,55 +200,5 @@ namespace Xs.Registry.Dotnet.Controllers
                 }
             }
         }
-
-        [HttpDelete("api/v2/package/{name}/{version}")]
-        [AuthorizeApi]
-        public async Task<IActionResult> UnpublishPackageAsync(string name, string version)
-        {
-            // get available versions
-            var versions = await packageRepository.FindAllByNameAsync(name);
-            if (!versions.Any(p => p.Version == version))
-                return NotFound();
-
-            // load metaPackage and check permissions
-            var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
-            var access = metaPackageManager.GetAccess(metaPackage).ForUser(GetUser());
-            if (!access.Has(Permission.Unpublish))
-                return Forbidden("You need unpublish permission to unpublish this package.");
-
-            var executor = Executor.Batch();
-
-            // delete from storage
-            executor.With(() => packageStorage.DeleteAsync(name, version));
-
-            // delete from db
-            executor.With(() => packageRepository.DeleteByNameVersionAsync(name, version));
-
-            // if it was last package - delete metaPackage
-            if (versions.Length == 1)
-                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
-            // else - update metaPackage
-            else
-            {
-                // get latest version of all left except deleted (note - they are sorted from repository)
-                var latest = versions.FirstOrDefault(p => p.Version != version);
-
-                // if latest changed - need to update metaPackage
-                if (latest.Version != metaPackage.Version)
-                    executor.With(() => metaPackageRepository.UpdateInfoAsync(metaPackage.Id, latest));
-
-                // and anyway - recount downloads
-                executor.With(
-                    async() => await metaPackageRepository.SetDownloadsAsync(
-                        metaPackage.Id,
-                        await packageRepository.CountAllDownloadsAsync(metaPackage.Name)
-                    )
-                );
-            }
-
-            await executor.RunAsync();
-
-            return NoContent();
-        }
     }
 }

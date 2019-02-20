@@ -57,10 +57,12 @@ namespace Xs.Registry.Node.Controllers
         public async Task<IActionResult> DeletePackageAsync(string name, string version)
         {
             name = HttpUtility.UrlDecode(name);
+            // get available versions
             var versions = await packageRepository.FindAllByNameAsync(name);
             if (!versions.Any(p => p.Version == version))
                 return NotFound();
 
+            // load metaPackage and check permissions
             var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
             var access = metaPackageManager.GetAccess(metaPackage).ForUser(GetUser());
             if (!access.Has(Permission.Unpublish))
