@@ -147,12 +147,6 @@ namespace Xs.Cli.Dotnet.Projects
             System.IO.File.Delete(packageFile);
         }
 
-        public Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token) =>
-            RunAsync(
-                "unpublish",
-                $"dotnet nuget delete {Name} {version} --source {new Uri(registry, Constants.ServerPathSuffix)} --api-key {accessToken} --non-interactive",
-                token);
-
         public override bool IsRelated(string path)
         {
             if (!path.StartsWith(File.DirectoryName))

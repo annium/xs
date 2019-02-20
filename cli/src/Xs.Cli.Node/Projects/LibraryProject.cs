@@ -132,20 +132,6 @@ namespace Xs.Cli.Node.Projects
             System.IO.File.Delete(packageFile);
         }
 
-        public async Task UnpublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
-        {
-            // blank try/catch due to NPM behavior, that doesn't expect package removal, but unlisting instead
-            // expecting useless package info in response
-            try
-            {
-                await RunAsync("unpublish", $"npm unpublish {Name}@{version}", token);
-            }
-            catch
-            {
-
-            }
-        }
-
         public override bool IsRelated(string path)
         {
             if (!path.StartsWith(File.DirectoryName))
