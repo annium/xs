@@ -125,6 +125,7 @@ namespace Xs.Registry.Db.Shared
             var entities = await context.MetaPackages
                 .LoadWith(m => m.Owner)
                 .Where(m => ids.Contains(m.Id))
+                .OrderBy(m => m.Name)
                 .ToArrayAsync();
 
             var permissions = await context.MetaPackagePermissions
