@@ -15,7 +15,7 @@ namespace Xs.RegistryClient.Server
         public Task DeletePackageAsync(string token, string name, string version)
         {
             return Http.Open(this.uri)
-                .Delete($"{HttpUtility.UrlEncode(name)}/{version}")
+                .Delete($"packages/{HttpUtility.UrlEncode(name)}/{version}")
                 .BearerAuthorization(token)
                 .EnsureSuccessStatusCode(response => $"Delete package failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .RunAsync();
