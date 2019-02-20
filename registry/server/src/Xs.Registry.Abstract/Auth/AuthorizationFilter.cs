@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -32,11 +33,18 @@ namespace Xs.Registry.Abstract.Auth
         {
             using(var scope = serviceProvider.CreateScope())
             {
-                var tokenAccessor = scope.ServiceProvider.GetRequiredService<ITokenAccessor>();
+                var tokenAccessors = scope.ServiceProvider.GetRequiredService<IEnumerable<ITokenAccessor>>();
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
 
                 // try get token
-                var(token, result) = tokenAccessor.GetToken(context.HttpContext.Request);
+                Guid token = default(Guid);
+                IActionResult result = null;
+                foreach (var tokenAccessor in tokenAccessors)
+                {
+                    (token, result) = tokenAccessor.GetToken(context.HttpContext.Request);
+                    if (result == null)
+                        break;
+                }
                 if (result != null)
                     return result;
 

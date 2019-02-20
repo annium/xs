@@ -30,6 +30,7 @@ namespace Xs.Registry.Dotnet
         {
             // auth
             services.AddSingleton<ITokenAccessor>(new HeaderTokenAccessor("X-NuGet-ApiKey"));
+            services.AddSingleton<ITokenAccessor>(new BearerTokenAccessor());
 
             // storage
             services.AddSingleton<IPackageStorage, PackageStorage>();
