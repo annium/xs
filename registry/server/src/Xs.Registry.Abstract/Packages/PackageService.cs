@@ -128,19 +128,26 @@ namespace Xs.Registry.Abstract.Packages
             return new ArrayResult<TPackage>(packages);
         }
 
-        public async Task<IPackageResult> TrackDownloadAsync(User user, string name, string version)
+        public async Task<IPackageResult> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
         {
             var package = await packageRepository.FindByNameVersionAsync(name, version);
 
             if (package == null)
                 return new NotFoundResult();
 
+            var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(user);
+            if (!access.Has(Permission.Read))
+                return new ForbiddenResult("You need read permission to get this package.");
+
             if (!(await packageStorage.ExistsAsync(name, version)))
                 return new InternalErrorResult("Package file missing");
 
-            await packageRepository.IncrementDownloadsAsync(package.Id);
-            var total = await packageRepository.CountAllDownloadsAsync(package.Name);
-            await metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
+            if (countDownload)
+            {
+                await packageRepository.IncrementDownloadsAsync(package.Id);
+                var total = await packageRepository.CountAllDownloadsAsync(package.Name);
+                await metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
+            }
 
             return null;
         }

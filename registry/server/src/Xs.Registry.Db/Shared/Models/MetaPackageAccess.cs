@@ -18,6 +18,8 @@ namespace Xs.Registry.Db.Shared
             Permissions = permissions;
         }
 
-        public UserMetaPackageAccess ForUser(User user) => new UserMetaPackageAccess(user.Id, OwnerId, Permissions);
+        public UserMetaPackageAccess ForUser(User user) =>
+            // for empty user - assume world access
+            new UserMetaPackageAccess(user == null ? Guid.Empty : user.Id, OwnerId, Permissions);
     }
 }

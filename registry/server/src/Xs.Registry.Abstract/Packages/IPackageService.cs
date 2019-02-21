@@ -11,6 +11,6 @@ namespace Xs.Registry.Abstract.Packages
 
         Task<IPackageResult> GetPackagesAsync(User user, string name);
 
-        Task<IPackageResult> TrackDownloadAsync(User user, string name, string version);
+        Task<IPackageResult> ProcessDownloadAsync(User user, string name, string version, bool countDownload);
     }
 }
