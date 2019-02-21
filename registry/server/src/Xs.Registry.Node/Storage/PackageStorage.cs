@@ -24,11 +24,6 @@ namespace Xs.Registry.Node.Storage
             return storage.ExistsAsync(GetPackagePath(name, version));
         }
 
-        public Task<Stream> GetAsync(string name, string version)
-        {
-            return storage.GetAsync(GetPackagePath(name, version));
-        }
-
         public Task SaveAsync(string name, string version, Stream packageStream)
         {
             if (packageStream.CanSeek)
@@ -39,6 +34,12 @@ namespace Xs.Registry.Node.Storage
         public Task DeleteAsync(string name, string version) =>
             storage.DeleteAsync(GetPackagePath(name, version));
 
-        private string GetPackagePath(string name, string version) => $"{name}-{version}.tgz";
+        public Task<Stream> GetAsync(string name, string version)
+        {
+            return storage.GetAsync(GetPackagePath(name, version));
+        }
+
+        private string GetPackagePath(string name, string version) =>
+            Path.Combine(name.ToLowerInvariant().Replace("@", string.Empty).Replace("/", "-"), $"{version}.tgz");
     }
 }

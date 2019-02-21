@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 using NodaTime;
+using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Dotnet;
-using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Dotnet.Payloads
 {
-    internal class PackagePayload : IPackageInfo
+    public class PackagePayload : IPayload
     {
         public string Name { get; }
 
@@ -18,9 +18,7 @@ namespace Xs.Registry.Dotnet.Payloads
 
         public IEnumerable<PackageDependency> Dependencies { get; }
 
-        public Stream PackageStream { get; }
-
-        public Stream NuspecStream { get; }
+        public Stream Stream { get; }
 
         internal PackagePayload(
             string name,
@@ -28,7 +26,7 @@ namespace Xs.Registry.Dotnet.Payloads
             string description,
             Instant published,
             IEnumerable<PackageDependency> dependencies,
-            Stream packageStream,
+            Stream stream,
             Stream nuspecStream
         )
         {
@@ -37,8 +35,7 @@ namespace Xs.Registry.Dotnet.Payloads
             Description = description;
             Published = published;
             Dependencies = dependencies;
-            PackageStream = packageStream;
-            NuspecStream = nuspecStream;
+            Stream = stream;
         }
     }
 }

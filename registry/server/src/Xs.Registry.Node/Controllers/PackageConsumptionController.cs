@@ -2,10 +2,11 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Node;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Node.Models;
-using Xs.Registry.Node.Storage;
+using Xs.Registry.Node.Payloads;
 using Xs.Registry.Node.Views;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
@@ -14,23 +15,19 @@ namespace Xs.Registry.Node.Controllers
 {
     public class PackageConsumptionController : ServerController<User>
     {
-        private readonly IMetaPackageRepository metaPackageRepository;
+        private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
 
-        private readonly IPackageRepository<Package, PackageDependency> packageRepository;
-
-        private readonly IPackageStorage packageStorage;
+        private readonly Storage.IPackageStorage packageStorage;
 
         private readonly IUrlHelper url;
 
         public PackageConsumptionController(
-            IMetaPackageRepository metaPackageRepository,
-            IPackageRepository<Package, PackageDependency> packageRepository,
-            IPackageStorage packageStorage,
+            IPackageService<Package, PackageDependency, PackagePayload> packageService,
+            Storage.IPackageStorage packageStorage,
             IUrlHelper url
         )
         {
-            this.metaPackageRepository = metaPackageRepository;
-            this.packageRepository = packageRepository;
+            this.packageService = packageService;
             this.packageStorage = packageStorage;
             this.url = url;
         }
@@ -40,16 +37,18 @@ namespace Xs.Registry.Node.Controllers
         public async Task<IActionResult> GetPackageAsync([FromRoute] string name)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
-            var packages = await packageRepository.FindAllByNameAsync(packageName);
-            if (packages.Length == 0)
-                return NotFound();
-
-            // try load metaPackage; if exists - check permissions
-            var access = (await metaPackageRepository.GetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(GetUser());
-            if (!access.Has(Permission.Read))
-                return Forbidden("You need read permission to get this package.");
-
-            return Ok(new PackagesView(packages, url));
+            var result = await packageService.GetPackagesAsync(GetUser(), packageName);
+            switch (result)
+            {
+                case Abstract.Packages.NotFoundResult res:
+                    return NotFound();
+                case Abstract.Packages.ForbiddenResult res:
+                    return Forbidden(res.Error);
+                case Abstract.Packages.ArrayResult<Package> res:
+                    return Ok(new PackagesView(res.Packages, url));
+                default:
+                    return NotFound();
+            }
         }
 
         [HttpGet("{name}/{version}.tgz")]
@@ -57,24 +56,16 @@ namespace Xs.Registry.Node.Controllers
         public async Task<IActionResult> DownloadPackageAsync([FromRoute] string name, [FromRoute] string version)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
-
-            var package = await packageRepository.FindByNameVersionAsync(packageName, version);
-            if (package == null)
-                return NotFound();
-
-            var user = GetUser();
-
-            // try load metaPackage; if exists - check permissions
-            var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(GetUser());
-            if (!access.Has(Permission.Read))
-                return Forbidden("You need read permission to get this package.");
-
-            if (!(await packageStorage.ExistsAsync(packageName, version)))
-                return ServerError("Package file missing");
-
-            await packageRepository.IncrementDownloadsAsync(package.Id);
-            var total = await packageRepository.CountAllDownloadsAsync(package.Name);
-            await metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
+            var result = await packageService.ProcessDownloadAsync(GetUser(), packageName, version, true);
+            switch (result)
+            {
+                case Abstract.Packages.NotFoundResult res:
+                    return NotFound();
+                case Abstract.Packages.ForbiddenResult res:
+                    return Forbidden(res.Error);
+                case Abstract.Packages.InternalErrorResult res:
+                    return ServerError(res.Error);
+            }
 
             var content = await packageStorage.GetAsync(packageName, version);
 

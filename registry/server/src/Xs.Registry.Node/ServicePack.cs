@@ -2,6 +2,10 @@ using System.IO;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Abstract.Packages;
+using Xs.Registry.Db.Node;
+using Xs.Registry.Db.Shared;
+using Xs.Registry.Node.Payloads;
 using Xs.Registry.Node.Storage;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
@@ -31,8 +35,14 @@ namespace Xs.Registry.Node
             // auth
             services.AddSingleton<ITokenAccessor>(new BearerTokenAccessor());
 
+            // packages
+            services.AddScoped<IPackageService<Package, PackageDependency, PackagePayload>, PackageService<Package, PackageDependency, PackagePayload>>();
+            services.AddSingleton<IPayloadParser<PackagePayload, Package, PackageDependency>, PayloadParser>();
+            services.AddSingleton<ProjectType>(Constants.ProjectType);
+
             // storage
-            services.AddSingleton<IPackageStorage, PackageStorage>();
+            services.AddSingleton<Abstract.Packages.IPackageStorage, PackageStorage>();
+            services.AddSingleton<Storage.IPackageStorage, PackageStorage>();
 
             // mapping
             services.AddAutoMapper(provider);

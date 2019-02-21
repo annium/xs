@@ -1,28 +1,30 @@
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Shared;
-using Xs.Registry.Dotnet.Storage;
+using Xs.Registry.Dotnet.Payloads;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackageConsumptionController : ServerController<User>
     {
-        private readonly IMetaPackageRepository metaPackageRepository;
+        private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
 
         private readonly IPackageRepository<Package, PackageDependency> packageRepository;
 
-        private readonly IPackageStorage packageStorage;
+        private readonly Storage.IPackageStorage packageStorage;
 
         public PackageConsumptionController(
-            IMetaPackageRepository metaPackageRepository,
+            IPackageService<Package, PackageDependency, PackagePayload> packageService,
             IPackageRepository<Package, PackageDependency> packageRepository,
-            IPackageStorage packageStorage
+            Storage.IPackageStorage packageStorage
         )
         {
-            this.metaPackageRepository = metaPackageRepository;
+            this.packageService = packageService;
             this.packageRepository = packageRepository;
             this.packageStorage = packageStorage;
         }
@@ -30,6 +32,7 @@ namespace Xs.Registry.Dotnet.Controllers
         [HttpGet("v3/package/{name}/index.json")]
         public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken token)
         {
+            name = HttpUtility.UrlDecode(name);
             var versions = await packageRepository.FindAllVersionsByNameAsync(name);
 
             if (versions.Length == 0)
@@ -41,17 +44,17 @@ namespace Xs.Registry.Dotnet.Controllers
         [HttpGet("v3/package/{name}/{version}/{name2}.{version2}.nupkg")]
         public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken token)
         {
-            var package = await packageRepository.FindByNameVersionAsync(name, version);
-
-            if (package == null)
-                return NotFound();
-
-            if (!(await packageStorage.ExistsAsync(name, version)))
-                return ServerError("Package file missing");
-
-            await packageRepository.IncrementDownloadsAsync(package.Id);
-            var total = await packageRepository.CountAllDownloadsAsync(package.Name);
-            await metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
+            name = HttpUtility.UrlDecode(name);
+            var result = await packageService.ProcessDownloadAsync(null, name, version, true);
+            switch (result)
+            {
+                case Abstract.Packages.NotFoundResult res:
+                    return NotFound();
+                case Abstract.Packages.ForbiddenResult res:
+                    return Forbidden(res.Error);
+                case Abstract.Packages.InternalErrorResult res:
+                    return ServerError(res.Error);
+            }
 
             var content = await packageStorage.GetPackageAsync(name, version);
 
@@ -61,11 +64,17 @@ namespace Xs.Registry.Dotnet.Controllers
         [HttpGet("v3/package/{name}/{version}/{name2}.nuspec")]
         public async Task<IActionResult> DownloadNuspecAsync(string name, string version, CancellationToken token)
         {
-            if ((await packageRepository.FindByNameVersionAsync(name, version)) == null)
-                return NotFound();
-
-            if (!(await packageStorage.ExistsAsync(name, version)))
-                return ServerError("Nuspec file missing");
+            name = HttpUtility.UrlDecode(name);
+            var result = await packageService.ProcessDownloadAsync(null, name, version, false);
+            switch (result)
+            {
+                case Abstract.Packages.NotFoundResult res:
+                    return NotFound();
+                case Abstract.Packages.ForbiddenResult res:
+                    return Forbidden(res.Error);
+                case Abstract.Packages.InternalErrorResult res:
+                    return ServerError(res.Error);
+            }
 
             var content = await packageStorage.GetNuspecAsync(name, version);
 

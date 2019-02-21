@@ -2,10 +2,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Execution;
+using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Shared;
-using Xs.Registry.Dotnet.Storage;
+using Xs.Registry.Dotnet.Payloads;
 using Xs.Registry.Dotnet.Views;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
@@ -15,25 +15,13 @@ namespace Xs.Registry.Dotnet.Controllers
     [Route("packages")]
     public class PackageController : ServerController<User>
     {
-        private readonly IMetaPackageManager metaPackageManager;
-
-        private readonly IMetaPackageRepository metaPackageRepository;
-
-        private readonly IPackageRepository<Package, PackageDependency> packageRepository;
-
-        private readonly IPackageStorage packageStorage;
+        private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
 
         public PackageController(
-            IMetaPackageManager metaPackageManager,
-            IMetaPackageRepository metaPackageRepository,
-            IPackageRepository<Package, PackageDependency> packageRepository,
-            IPackageStorage packageStorage
+            IPackageService<Package, PackageDependency, PackagePayload> packageService
         )
         {
-            this.metaPackageManager = metaPackageManager;
-            this.metaPackageRepository = metaPackageRepository;
-            this.packageRepository = packageRepository;
-            this.packageStorage = packageStorage;
+            this.packageService = packageService;
         }
 
         [HttpGet("{name}")]
@@ -41,15 +29,18 @@ namespace Xs.Registry.Dotnet.Controllers
         public async Task<IActionResult> GetPackagesAsync(string name)
         {
             name = HttpUtility.UrlDecode(name);
-            var packages = await packageRepository.FindAllByNameAsync(name);
-            if (packages.Length == 0)
-                return NotFound();
-
-            var access = (await metaPackageRepository.GetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(GetUser());
-            if (!access.Has(Permission.Read))
-                return Forbidden("You need read permission to get this package.");
-
-            return Ok(packages.Select(p => new PackageView(p)).ToArray());
+            var result = await packageService.GetPackagesAsync(GetUser(), name);
+            switch (result)
+            {
+                case Abstract.Packages.NotFoundResult res:
+                    return NotFound();
+                case Abstract.Packages.ForbiddenResult res:
+                    return Forbidden(res.Error);
+                case Abstract.Packages.ArrayResult<Package> res:
+                    return Ok(res.Packages.Select(p => new PackageView(p)).ToArray());
+                default:
+                    return NotFound();
+            }
         }
 
         [HttpDelete("{name}/{version}")]
@@ -57,50 +48,16 @@ namespace Xs.Registry.Dotnet.Controllers
         public async Task<IActionResult> DeletePackageAsync(string name, string version)
         {
             name = HttpUtility.UrlDecode(name);
-            // get available versions
-            var versions = await packageRepository.FindAllByNameAsync(name);
-            if (!versions.Any(p => p.Version == version))
-                return NotFound();
-
-            // load metaPackage and check permissions
-            var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
-            var access = metaPackageManager.GetAccess(metaPackage).ForUser(GetUser());
-            if (!access.Has(Permission.Unpublish))
-                return Forbidden("You need unpublish permission to unpublish this package.");
-
-            var executor = Executor.Batch();
-
-            // delete from storage
-            executor.With(() => packageStorage.DeleteAsync(name, version));
-
-            // delete from db
-            executor.With(() => packageRepository.DeleteByNameVersionAsync(name, version));
-
-            // if it was last package - delete metaPackage
-            if (versions.Length == 1)
-                executor.With(() => metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
-            // else - update metaPackage
-            else
+            var result = await packageService.UnpublishPackageAsync(GetUser(), name, version);
+            switch (result)
             {
-                // get latest version of all left except deleted (note - they are sorted from repository)
-                var latest = versions.FirstOrDefault(p => p.Version != version);
-
-                // if latest changed - need to update metaPackage
-                if (latest.Version != metaPackage.Version)
-                    executor.With(() => metaPackageRepository.UpdateInfoAsync(metaPackage.Id, latest));
-
-                // and anyway - recount downloads
-                executor.With(
-                    async() => await metaPackageRepository.SetDownloadsAsync(
-                        metaPackage.Id,
-                        await packageRepository.CountAllDownloadsAsync(metaPackage.Name)
-                    )
-                );
+                case Abstract.Packages.NotFoundResult res:
+                    return NotFound();
+                case Abstract.Packages.ForbiddenResult res:
+                    return Forbidden(res.Error);
+                default:
+                    return NoContent();
             }
-
-            await executor.RunAsync();
-
-            return NoContent();
         }
     }
 }

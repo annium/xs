@@ -131,7 +131,6 @@ namespace Xs.Registry.Abstract.Packages
         public async Task<IPackageResult> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
         {
             var package = await packageRepository.FindByNameVersionAsync(name, version);
-
             if (package == null)
                 return new NotFoundResult();
 

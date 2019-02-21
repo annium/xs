@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Newtonsoft.Json;
 using NodaTime;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Node.Models;
 
 namespace Xs.Registry.Node.Payloads
 {
-    public class PackagePayload : IPackageInfo
+    public class PackagePayload : IPayload
     {
         [Required]
         [StringLength(100, MinimumLength = 2)]
@@ -35,7 +35,7 @@ namespace Xs.Registry.Node.Payloads
         [JsonProperty("_attachments")]
         public Dictionary<string, PackageAttachmentPayload> Attachments { get; set; }
 
-        public Stream GetAttachment() =>
+        public Stream Stream =>
             new MemoryStream(Convert.FromBase64String(Attachments[$"{Name}-{Version}.tgz"].Data));
 
         [JsonIgnore]
