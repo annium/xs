@@ -19,14 +19,14 @@ namespace Xs.Registry.Dotnet.Controllers
 
         private readonly IMetaPackageRepository metaPackageRepository;
 
-        private readonly IPackageRepository<Package> packageRepository;
+        private readonly IPackageRepository<Package, PackageDependency> packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
         public PackageController(
             IMetaPackageManager metaPackageManager,
             IMetaPackageRepository metaPackageRepository,
-            IPackageRepository<Package> packageRepository,
+            IPackageRepository<Package, PackageDependency> packageRepository,
             IPackageStorage packageStorage
         )
         {

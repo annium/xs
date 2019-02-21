@@ -5,7 +5,7 @@ using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Db.Node
 {
-    public class Package : IPackage
+    public class Package : IPackage<PackageDependency>
     {
         public Guid Id { get; }
 

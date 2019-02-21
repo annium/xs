@@ -16,7 +16,7 @@ namespace Xs.Registry.Node.Controllers
     {
         private readonly IMetaPackageRepository metaPackageRepository;
 
-        private readonly IPackageRepository<Package> packageRepository;
+        private readonly IPackageRepository<Package, PackageDependency> packageRepository;
 
         private readonly IPackageStorage packageStorage;
 
@@ -24,7 +24,7 @@ namespace Xs.Registry.Node.Controllers
 
         public PackageConsumptionController(
             IMetaPackageRepository metaPackageRepository,
-            IPackageRepository<Package> packageRepository,
+            IPackageRepository<Package, PackageDependency> packageRepository,
             IPackageStorage packageStorage,
             IUrlHelper url
         )

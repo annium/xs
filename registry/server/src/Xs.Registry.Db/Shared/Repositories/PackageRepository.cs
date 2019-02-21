@@ -7,8 +7,9 @@ using LinqToDB.Data;
 
 namespace Xs.Registry.Db.Shared
 {
-    internal class PackageRepository<TPackage, TPackageEntity, TPackageDependencyEntity, TContext> : IPackageRepository<TPackage>
-        where TPackage : class, IPackage
+    internal class PackageRepository<TPackage, TPackageDependency, TPackageEntity, TPackageDependencyEntity, TContext> : IPackageRepository<TPackage, TPackageDependency>
+        where TPackage : class, IPackage<TPackageDependency>
+        where TPackageDependency : class, IPackageDependency
     where TPackageEntity : class, Entities.IPackage<TPackageDependencyEntity>, new()
     where TPackageDependencyEntity : class, Entities.IPackageDependency
     where TContext : IContext

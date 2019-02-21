@@ -1,6 +1,8 @@
+using Xs.Registry.Db.Shared;
+
 namespace Xs.Registry.Db.Dotnet
 {
-    public class PackageDependency
+    public class PackageDependency : IPackageDependency
     {
         public string Framework { get; }
 

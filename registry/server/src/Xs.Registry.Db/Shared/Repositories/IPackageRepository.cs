@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Xs.Registry.Db.Shared
 {
-    public interface IPackageRepository<TPackage> where TPackage : class, IPackage
+    public interface IPackageRepository<TPackage, TPackageDependency> where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
     {
         Task<TPackage> CreateAsync(TPackage package);
 

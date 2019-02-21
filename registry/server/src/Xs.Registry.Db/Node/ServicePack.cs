@@ -25,7 +25,7 @@ namespace Xs.Registry.Db.Node
             // repositories
             services.AddSingleton<Func<Context, ITable<Entities.Package>>>((Context context) => context.NodePackages);
             services.AddSingleton<Func<Context, ITable<Entities.PackageDependency>>>((Context context) => context.NodePackageDependencies);
-            services.AddScoped<Shared.IPackageRepository<Package>, Shared.PackageRepository<Package, Entities.Package, Entities.PackageDependency, Context>>();
+            services.AddScoped<Shared.IPackageRepository<Package, PackageDependency>, Shared.PackageRepository<Package, PackageDependency, Entities.Package, Entities.PackageDependency, Context>>();
         }
 
         private MapperConfigurationExpression ConfigureMapping()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NodaTime;
 
 namespace Xs.Registry.Db.Shared.Entities
 {
@@ -7,9 +8,17 @@ namespace Xs.Registry.Db.Shared.Entities
     {
         Guid Id { get; set; }
 
+        Guid MetaPackageId { get; }
+
+        string Name { get; }
+
         string LowerName { get; }
 
         string Version { get; }
+
+        string Description { get; }
+
+        Instant Published { get; }
 
         int Downloads { get; set; }
 
