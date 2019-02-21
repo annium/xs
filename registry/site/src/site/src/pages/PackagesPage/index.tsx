@@ -44,8 +44,8 @@ export default class SearchPage extends React.Component<Props> {
 
     return (
       <div className={styles.page}>
-        <Row>
-          <Col {...getCenteredLayout(22, 22, 20, 18, 14)}>
+        <Row className={styles.row}>
+          <Col className={styles.col} {...getCenteredLayout(22, 22, 20, 18, 14)}>
             <h1>Packages</h1>
             <PackageFilter
               type={type}

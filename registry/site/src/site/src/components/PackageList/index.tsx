@@ -4,6 +4,9 @@ import React from 'react'
 import MetaPackage from '../../models/view/MetaPackage'
 import PackageItem from '../PackageItem'
 
+
+import styles from './index.module.scss'
+
 type Props = {
   packages: MetaPackage[]
 }
@@ -13,17 +16,21 @@ export default class PackageList extends React.Component<Props> {
     const { packages } = this.props
 
     return (
-      <List
-        header={this.renderHeader(packages)}
-        itemLayout="vertical"
-        dataSource={packages}
-        renderItem={this.renderPackage} />
+      <>
+        {this.renderHeader(packages)}
+        <div className={styles.container}>
+          <List
+            itemLayout="vertical"
+            dataSource={packages}
+            renderItem={this.renderPackage} />
+        </div>
+      </>
     )
   }
 
   private renderHeader = (packages: MetaPackage[]) => {
     return (
-      <h3>Total {packages.length} packages:</h3>
+      <h2 className={styles.header}>Total {packages.length} packages:</h2>
     )
   }
 
