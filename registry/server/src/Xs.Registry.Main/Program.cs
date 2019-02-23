@@ -1,7 +1,6 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.Logging;
+using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main
 {
@@ -15,22 +14,10 @@ namespace Xs.Registry.Main
         private static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return new WebHostBuilder()
-                .UseKestrel(ConfigureKestrel)
-                .ConfigureLogging(ConfigureLogging)
+                .UseKestrel(WebHostBuilderHelper.ConfigureKestrel(9901))
+                .ConfigureLogging(WebHostBuilderHelper.ConfigureLogging)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup<ServicePack>>();
-        }
-
-        private static void ConfigureKestrel(KestrelServerOptions options)
-        {
-            options.AddServerHeader = false;
-            options.ListenAnyIP(9901);
-        }
-
-        private static void ConfigureLogging(ILoggingBuilder loggingBuilder)
-        {
-            loggingBuilder.ClearProviders();
-            loggingBuilder.AddConsole();
         }
     }
 }
