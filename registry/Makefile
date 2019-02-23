@@ -1,3 +1,5 @@
+TAG_PREFIX := brutallord.ddns.net:5000/registry
+
 db-up main-up dotnet-up node-up site-up:
 	$(call up,$(subst -up,,$@))
 
@@ -11,7 +13,32 @@ db-log main-log dotnet-log node-log site-log:
 db-drop db-update migrations-add migrations-list migrations-remove:
 	cd server && tools/ef-$@.sh
 
+publish-main:
+	@cp $$(find $$(dirname $$(realpath $$(which dotnet)))/sdk -type f -name ef.dll | grep netcoreapp2.2) server/src
+	@cp server/tools/ef.sh server/src
+	$(call publish,main,server/src,Xs.Registry.Main/Dockerfile)
+	@rm -f server/src/ef.dll
+	@rm -f server/src/ef.sh
 
+publish-dotnet:
+	$(call publish,dotnet,server/src,Xs.Registry.Dotnet/Dockerfile)
+
+publish-node:
+	$(call publish,node,server/src,Xs.Registry.Node/Dockerfile)
+
+publish-site:
+	$(call publish,site,site/src,site/Dockerfile)
+
+define publish
+	@$(eval image := $(1))
+	@$(eval context := $(2))
+	@$(eval dockerfile := $(3))
+	@rm -rf server/src/packages
+	@cp -rf /projects/annium/packages server/src/packages
+	@docker build -t $(TAG_PREFIX)/$(image) -f $(context)/$(dockerfile) $(context)
+	@rm -rf server/src/packages
+	@docker push $(TAG_PREFIX)/$(image)
+endef
 
 define up
 	@$(eval components := $(1))
