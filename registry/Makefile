@@ -29,14 +29,21 @@ publish-node:
 publish-site:
 	$(call publish,site,site/src,site/Dockerfile)
 
+demo:
+	$(call demo)
+
+define demo
+	@echo $(if $(LOCAL_BUILD),local)
+endef
+
+
 define publish
 	@$(eval image := $(1))
 	@$(eval context := $(2))
 	@$(eval dockerfile := $(3))
-	@rm -rf server/src/packages
-	@cp -rf /projects/annium/packages server/src/packages
+	$(if $(LOCAL_BUILD),$(call copy-packages))
 	@docker build -t $(TAG_PREFIX)/$(image) -f $(context)/$(dockerfile) $(context)
-	@rm -rf server/src/packages
+	$(if $(LOCAL_BUILD),$(call delete-packages))
 	@docker push $(TAG_PREFIX)/$(image)
 endef
 
@@ -44,10 +51,9 @@ define up
 	@$(eval components := $(1))
 	@$(eval files := $(foreach component,$(components),-f setup/$(env)/$(component).yml))
 	$(call net-up)
-	@rm -rf server/src/packages
-	@cp -rf /projects/annium/packages server/src/packages
+	$(if $(LOCAL_BUILD),$(call copy-packages))
 	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p registry $(files) up --build -d --force-recreate
-	@rm -rf server/src/packages
+	$(if $(LOCAL_BUILD),$(call delete-packages))
 endef
 
 define down
@@ -55,6 +61,15 @@ define down
 	@$(eval files := $(foreach component,$(components),-f setup/$(env)/$(component).yml))
 	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p registry $(files) down
 	$(call net-down)
+endef
+
+define copy-packages
+	@rm -rf server/src/packages
+	@cp -rf /projects/annium/packages server/src/packages
+endef
+
+define delete-packages
+	@rm -rf server/src/packages
 endef
 
 define log

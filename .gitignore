@@ -1,0 +1,4 @@
+# xs ignore patterns
+.xs.credentials
+nuget.config
+.npmrc
