@@ -8,9 +8,7 @@
         <DebugType>Portable</DebugType>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../Xs.Debug/Xs.Debug.csproj" />
-    </ItemGroup>
-    <ItemGroup>
+        <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="AutoMapper" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
