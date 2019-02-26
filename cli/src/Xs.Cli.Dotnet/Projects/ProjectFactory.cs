@@ -12,15 +12,17 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
     {
-        public ProjectType Type { get; } = Constants.ProjectType;
+        public const string ProjectFileExtension = ".csproj";
 
         public static readonly string[] TrackedFileExtensions = new [] { ".cs" };
 
         public static readonly string[] IgnoredFolders = new [] { "bin", "obj" };
 
-        public const string ProjectFileExtension = ".csproj";
-
         private const string projectFileMask = "*.csproj";
+
+        private static readonly string[] TestDependencies = new [] { "Microsoft.NET.Test.Sdk", "coverlet.msbuild" };
+
+        public ProjectType Type { get; } = Constants.ProjectType;
 
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
 
@@ -84,7 +86,7 @@ namespace Xs.Cli.Dotnet.Projects
                 .Select(e => ResolvePackageDependency(name, e, dependencies))
                 .ToHashSet();
 
-            if (packageDeps.Any(e => e.Name == "Microsoft.NET.Test.Sdk"))
+            if (TestDependencies.All(d => packageDeps.Any(e => e.Name == d)))
                 return new TestProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
 
             return new LibraryProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);

@@ -47,7 +47,7 @@ namespace Xs.Cli.Dotnet.Projects
 
             return RunAsync(
                 "test",
-                $"dotnet test --configuration {configuration} --no-build {File.FullName}",
+                $"dotnet test --configuration {configuration} --no-build {File.FullName} /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov",
                 token);
         }
     }
