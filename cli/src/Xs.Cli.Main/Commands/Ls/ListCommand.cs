@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands.Ls
@@ -33,8 +34,12 @@ namespace Xs.Cli.Main.Commands.Ls
             var projects = discoverTask.Run(cwdCfg.Cwd);
             projects = filterTask.Run(projects, cfg.Mask);
 
+            Func<IProject, string> showProject = project => project.Name;
+            if (cfg.Path)
+                showProject = project => project.File.FullName;
+
             foreach (var project in projects)
-                Console.WriteLine(project.Name);
+                Console.WriteLine(showProject(project));
         }
     }
 
@@ -43,5 +48,9 @@ namespace Xs.Cli.Main.Commands.Ls
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Option("p")]
+        [Help("Show path instead of name.")]
+        public bool Path { get; set; } = false;
     }
 }
