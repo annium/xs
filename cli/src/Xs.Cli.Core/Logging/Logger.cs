@@ -27,8 +27,8 @@ namespace Xs.Cli.Core.Logging
             this.getInstant = getInstant;
 
             var levelColors = new Dictionary<LogLevel, ConsoleColor>();
-            levelColors[LogLevel.Trace] = ConsoleColor.DarkCyan;
-            levelColors[LogLevel.Debug] = ConsoleColor.DarkGray;
+            levelColors[LogLevel.Trace] = ConsoleColor.DarkGray;
+            levelColors[LogLevel.Debug] = ConsoleColor.Gray;
             levelColors[LogLevel.Info] = ConsoleColor.White;
             levelColors[LogLevel.Warn] = ConsoleColor.Yellow;
             levelColors[LogLevel.Error] = ConsoleColor.Red;
