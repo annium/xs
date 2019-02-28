@@ -222,7 +222,7 @@ namespace Xs.Registry.Abstract.Packages
                 )
             );
 
-            if (pkg.Version.CompareTo(metaPackage.Version) > 0)
+            if (pkg.Version.CompareTo(metaPackage.Version) >= 0)
                 executor.Stage(
                     () => metaPackageRepository.UpdateInfoAsync(metaPackage.Id, payload),
                     () => metaPackageRepository.UpdateInfoAsync(metaPackage.Id, metaPackage)
