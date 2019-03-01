@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using NodaTime;
 
 namespace Xs.Cli.Core.Logging
@@ -92,11 +91,7 @@ namespace Xs.Cli.Core.Logging
         {
             var builder = new StringBuilder();
 
-            if (configuration.PrintTime)
-                builder.Append($"[{getInstant().InZone(tz).LocalDateTime.ToString("HH:mm:ss.fff", null)}] ");
-
-            if (configuration.PrintThread)
-                builder.Append($"[{Thread.CurrentThread.ManagedThreadId,3}] ");
+            builder.Append($"[{getInstant().InZone(tz).LocalDateTime.ToString("HH:mm:ss.fff", null)}] ");
 
             builder.Append(message);
 
