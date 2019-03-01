@@ -9,8 +9,6 @@ namespace Xs.Cli.Core.Projects
 
         bool IsProjectFile(string file);
 
-        bool IsTrackablePath(string path);
-
         IProject CreateProject(
             string directory,
             IEnumerable<IProject> projects,

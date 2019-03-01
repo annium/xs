@@ -62,13 +62,6 @@ namespace Xs.Cli.Node.Projects
             return file.EndsWith(ProjectFileName) && IsProjectDirectory(Directory.GetParent(file).FullName);
         }
 
-        public bool IsTrackablePath(string path)
-        {
-            // is tracked, if it's project file or one of tracked file by extension and not in ignore folder
-            return (path.EndsWith(ProjectFileName) || TrackedFileExtensions.Any(path.EndsWith)) &&
-                !IgnoredFolders.Any(path.Contains);
-        }
-
         public IProject CreateProject(
             string directory,
             IEnumerable<IProject> projects,

@@ -26,8 +26,6 @@ namespace Xs.Cli.Core.Projects
             return factories.Any(e => e.IsProjectFile(file));
         }
 
-        public bool IsTrackablePath(string path) => factories.Any(e => e.IsTrackablePath(path));
-
         public IProject CreateProject(
             string directory,
             IEnumerable<IProject> projects,
