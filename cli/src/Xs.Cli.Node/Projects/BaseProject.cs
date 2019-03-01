@@ -57,25 +57,14 @@ namespace Xs.Cli.Node.Projects
         public Task BuildAsync(Env env, CancellationToken token) =>
             RunAsync("build", "yarn run build", token);
 
-        public override bool IsRelated(string path)
-        {
-            if (!path.StartsWith(File.DirectoryName))
-                return false;
-
-            if (Directory.Exists(path))
-                return IsRelatedDirectory(new DirectoryInfo(path));
-
-            return IsRelatedFile(new FileInfo(path));
-        }
-
         public override void Save() => mapper.Save(this);
 
-        private bool IsRelatedDirectory(DirectoryInfo directory)
+        protected override bool IsRelatedDirectory(DirectoryInfo directory)
         {
             return directory.GetFiles("*", SearchOption.AllDirectories).Any(IsRelatedFile);
         }
 
-        private bool IsRelatedFile(FileInfo file) =>
+        protected override bool IsRelatedFile(FileInfo file) =>
             (
                 file.FullName.EndsWith(ProjectFactory.ProjectFileName) ||
                 ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith)

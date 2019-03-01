@@ -46,9 +46,21 @@ namespace Xs.Cli.Core.Projects
             logger = context.Logger;
         }
 
-        public abstract bool IsRelated(string path);
+        public bool IsRelated(string path)
+        {
+            if (!path.StartsWith(File.DirectoryName))
+                return false;
+
+            return Directory.Exists(path) ?
+                IsRelatedDirectory(new DirectoryInfo(path)) :
+                IsRelatedFile(new FileInfo(path));
+        }
 
         public abstract void Save();
+        
+        protected abstract bool IsRelatedDirectory(DirectoryInfo directory);
+        
+        protected abstract bool IsRelatedFile(FileInfo file);
 
         public override string ToString() => Name;
 

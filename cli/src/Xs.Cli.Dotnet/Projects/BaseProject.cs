@@ -93,23 +93,13 @@ namespace Xs.Cli.Dotnet.Projects
                 token);
         }
 
-        public override bool IsRelated(string path)
-        {
-            if (!path.StartsWith(File.DirectoryName))
-                return false;
-
-            return Directory.Exists(path) ?
-                IsRelatedDirectory(new DirectoryInfo(path)) :
-                IsRelatedFile(new FileInfo(path));
-        }
-
         public override void Save() => mapper.Save(this);
 
-        private bool IsRelatedDirectory(DirectoryInfo directory) => directory
+        protected override bool IsRelatedDirectory(DirectoryInfo directory) => directory
             .GetFiles("*", SearchOption.AllDirectories)
             .Any(IsRelatedFile);
 
-        private bool IsRelatedFile(FileInfo file) =>
+        protected override bool IsRelatedFile(FileInfo file) =>
             (
                 file.FullName.EndsWith(ProjectFactory.ProjectFileExtension) ||
                 ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith)
