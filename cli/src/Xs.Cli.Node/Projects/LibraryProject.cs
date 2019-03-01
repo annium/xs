@@ -1,44 +1,16 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xs.Cli.Core.Audit;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
     internal class LibraryProject : BaseProject, IPublishableProject
     {
-        public LibraryProject(
-            string name,
-            Core.Models.Version version,
-            string description,
-            FileInfo file,
-            HashSet<IProject> projectDependencies,
-            HashSet<Dependency> packageDependencies,
-            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
-            ProjectMapper mapper,
-            IShell shell,
-            LoggerConfiguration loggerConfiguration,
-            ILogger logger
-        ) : base(
-            name,
-            version,
-            description,
-            file,
-            projectDependencies,
-            packageDependencies,
-            auditRules,
-            mapper,
-            shell,
-            loggerConfiguration,
-            logger
-        ) { }
+        public LibraryProject(SpecialProjectContext context) : base(context) { }
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {

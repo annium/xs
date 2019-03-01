@@ -5,10 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Audit;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
@@ -25,37 +23,12 @@ namespace Xs.Cli.Dotnet.Projects
 
         private readonly ProjectMapper mapper;
 
-        public BaseProject(
-            string name,
-            Core.Models.Version version,
-            string description,
-            FileInfo file,
-            HashSet<IProject> projectDependencies,
-            HashSet<Dependency> packageDependencies,
-            TargetFramework targetFramework,
-            OutputType outputType,
-            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
-            ProjectMapper mapper,
-            IShell shell,
-            LoggerConfiguration loggerConfiguration,
-            ILogger logger
-        ) : base(
-            Constants.ProjectType,
-            name,
-            version,
-            description,
-            file,
-            projectDependencies,
-            packageDependencies,
-            shell,
-            loggerConfiguration,
-            logger
-        )
+        public BaseProject(SpecialProjectContext context) : base(context)
         {
-            TargetFramework = targetFramework;
-            OutputType = outputType;
-            this.auditRules = auditRules;
-            this.mapper = mapper;
+            TargetFramework = context.TargetFramework;
+            OutputType = context.OutputType;
+            auditRules = context.AuditRules;
+            mapper = context.Mapper;
         }
 
         public AuditResult[] Audit(bool fix, CancellationToken token)

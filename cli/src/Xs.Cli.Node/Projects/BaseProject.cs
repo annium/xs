@@ -4,10 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Audit;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
@@ -17,33 +15,10 @@ namespace Xs.Cli.Node.Projects
 
         private readonly ProjectMapper mapper;
 
-        public BaseProject(
-            string name,
-            Version version,
-            string description,
-            FileInfo file,
-            HashSet<IProject> projectDependencies,
-            HashSet<Dependency> packageDependencies,
-            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
-            ProjectMapper mapper,
-            IShell shell,
-            LoggerConfiguration loggerConfiguration,
-            ILogger logger
-        ) : base(
-            Constants.ProjectType,
-            name,
-            version,
-            description,
-            file,
-            projectDependencies,
-            packageDependencies,
-            shell,
-            loggerConfiguration,
-            logger
-        )
+        public BaseProject(SpecialProjectContext context) : base(context)
         {
-            this.auditRules = auditRules;
-            this.mapper = mapper;
+            auditRules = context.AuditRules;
+            mapper = context.Mapper;
         }
 
         public AuditResult[] Audit(bool fix, CancellationToken token)

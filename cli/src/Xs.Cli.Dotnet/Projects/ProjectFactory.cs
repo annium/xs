@@ -76,24 +76,41 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());
-            var(name, version, description, targetFramework, outputType, projectDependencies, packageDependencies) = mapper.Load(file.FullName);
+            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps) = mapper.Load(file.FullName);
 
             // check TargetFramework consistency
             if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
                 throw new InvalidOperationException($"Project {name} uses different target framework.");
 
-            var projectDeps = projectDependencies
+            var projectDependencies = projectDeps
                 .Select(e => ResolveProjectDependency(name, file, e, projects))
                 .ToHashSet();
 
-            var packageDeps = packageDependencies
+            var packageDependencies = packageDeps
                 .Select(e => ResolvePackageDependency(name, e, dependencies))
                 .ToHashSet();
 
-            if (TestDependencies.All(d => packageDeps.Any(e => e.Name == d)))
-                return new TestProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, loggerConfiguration, logger);
+            var context = new SpecialProjectContext(
+                Constants.ProjectType,
+                name,
+                version,
+                description,
+                file,
+                projectDependencies,
+                packageDependencies,
+                shell,
+                loggerConfiguration,
+                logger,
+                targetFramework,
+                outputType,
+                auditRules,
+                mapper
+            );
 
-            return new LibraryProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, loggerConfiguration, logger);
+            if (TestDependencies.All(d => packageDependencies.Any(e => e.Name == d)))
+                return new TestProject(context);
+
+            return new LibraryProject(context);
         }
     }
 }

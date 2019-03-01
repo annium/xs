@@ -32,29 +32,18 @@ namespace Xs.Cli.Core.Projects
 
         protected readonly ILogger logger;
 
-        protected ProjectBase(
-            ProjectType type,
-            string name,
-            Models.Version version,
-            string description,
-            FileInfo file,
-            HashSet<IProject> projectDependencies,
-            HashSet<Dependency> packageDependencies,
-            IShell shell,
-            LoggerConfiguration loggerConfiguration,
-            ILogger logger
-        )
+        protected ProjectBase(ProjectBaseContext context)
         {
-            Type = type;
-            Name = name;
-            Version = version;
-            Description = description;
-            File = file;
-            ProjectDependencies = projectDependencies;
-            PackageDependencies = packageDependencies;
-            this.shell = shell;
-            this.loggerConfiguration = loggerConfiguration;
-            this.logger = logger;
+            Type = context.Type;
+            Name = context.Name;
+            Version = context.Version;
+            Description = context.Description;
+            File = context.File;
+            ProjectDependencies = context.ProjectDependencies;
+            PackageDependencies = context.PackageDependencies;
+            shell = context.Shell;
+            loggerConfiguration = context.LoggerConfiguration;
+            logger = context.Logger;
         }
 
         public abstract bool IsRelated(string path);

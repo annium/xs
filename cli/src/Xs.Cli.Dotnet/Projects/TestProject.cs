@@ -1,48 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
-using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
     internal class TestProject : BaseProject, ITestableProject
     {
-        public TestProject(
-            string name,
-            Core.Models.Version version,
-            string description,
-            FileInfo file,
-            HashSet<IProject> projectDependencies,
-            HashSet<Dependency> packageDependencies,
-            TargetFramework targetFramework,
-            OutputType outputType,
-            IEnumerable<IAuditRule<ISpecialProject>> auditRules,
-            ProjectMapper mapper,
-            IShell shell,
-            LoggerConfiguration loggerConfiguration,
-            ILogger logger
-        ) : base(
-            name,
-            version,
-            description,
-            file,
-            projectDependencies,
-            packageDependencies,
-            targetFramework,
-            outputType,
-            auditRules,
-            mapper,
-            shell,
-            loggerConfiguration,
-            logger
-        ) { }
+        public TestProject(SpecialProjectContext context) : base(context) { }
 
         public Task TestAsync(Env env, CancellationToken token)
         {
