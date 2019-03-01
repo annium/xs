@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,12 +10,16 @@ namespace Xs.Cli.Core.Tools
 {
     internal class Shell : IShell
     {
+        private readonly LoggerConfiguration loggerConfiguration;
+
         private readonly ILogger logger;
 
         public Shell(
+            LoggerConfiguration loggerConfiguration,
             ILogger logger
         )
         {
+            this.loggerConfiguration = loggerConfiguration;
             this.logger = logger;
         }
 
@@ -65,7 +70,7 @@ namespace Xs.Cli.Core.Tools
             process.StartInfo.FileName = args[0];
             process.StartInfo.Arguments = string.Join(" ", args.Skip(1));
 
-            logger.LogTrace($"shell: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
+            logger.LogDebug($"shell: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
 
             return process;
         }
@@ -75,6 +80,12 @@ namespace Xs.Cli.Core.Tools
             var tcs = new TaskCompletionSource<ShellResult>();
 
             process.Start();
+
+            if (loggerConfiguration.LogLevel <= LogLevel.Debug)
+            {
+                Task.Run(() => PipeToLogger(process.StandardOutput));
+                Task.Run(() => PipeToLogger(process.StandardError));
+            }
 
             // track token cancellation and kill process if requested
             // as far as there's no way to know if process was killed or finished on it's own - track it manually
@@ -97,6 +108,18 @@ namespace Xs.Cli.Core.Tools
             };
 
             return tcs;
+
+            void PipeToLogger(StreamReader src)
+            {
+                while (true)
+                {
+                    var line = src.ReadLine();
+                    if (line == null)
+                        return;
+
+                    logger.LogDebug(line);
+                }
+            }
         }
 
         private ShellResult GetResult(Process process)
