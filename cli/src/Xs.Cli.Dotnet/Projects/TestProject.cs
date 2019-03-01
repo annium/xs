@@ -11,7 +11,7 @@ using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class TestProject : LibraryProject, ITestableProject
+    internal class TestProject : BaseProject, ITestableProject
     {
         public TestProject(
             string name,

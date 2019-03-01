@@ -10,7 +10,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class TestProject : LibraryProject, ITestableProject
+    internal class TestProject : BaseProject, ITestableProject
     {
         public TestProject(
             string name,
