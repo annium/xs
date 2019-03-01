@@ -67,7 +67,7 @@ namespace Xs.Cli.Main.Tools
 
             // save configuration for each project
             var ignorePatterns = new List<string>();
-            ignorePatterns.Add(IgnoreManager.IgnoreMarker);
+            ignorePatterns.Add(FileManager.IgnoreFile);
             ignorePatterns.Add(credentialsFile);
             foreach (var(type, uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
                 if (specialManagers.ContainsKey(type))

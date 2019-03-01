@@ -87,7 +87,7 @@ namespace Xs.Cli.Main.Tasks
             IProjectFactory projectFactory
         )
         {
-            if (IgnoreManager.IsDirectoryIgnored(directory))
+            if (FileManager.IsDirectoryIgnored(directory))
                 return;
 
             if (projectFactory.IsProjectDirectory(directory))
