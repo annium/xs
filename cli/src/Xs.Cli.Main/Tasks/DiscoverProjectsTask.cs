@@ -54,24 +54,6 @@ namespace Xs.Cli.Main.Tasks
                     if (exception != null)
                         exceptions.Add(exception);
                 }
-                // var results = await Task.WhenAll(directories
-                //     .Where(e => !projects.Any(p => p.File.DirectoryName == e))
-                //     .Select(e => Task.Run(() => TryCreateProject(e, projects, dependencies)))
-                // );
-
-                // foreach (var(project, exception) in results)
-                // {
-                //     if (project != null)
-                //     {
-                //         projects.Add(project);
-                //         logger.LogDebug($"Project discovered: {project}");
-                //         foreach (var dependency in project.PackageDependencies)
-                //             if (!dependencies.Contains(dependency))
-                //                 dependencies.Add(dependency);
-                //     }
-                //     if (exception != null)
-                //         exceptions.Add(exception);
-                // }
             }
             while (projects.Count > previous);
 
@@ -105,6 +87,9 @@ namespace Xs.Cli.Main.Tasks
             IProjectFactory projectFactory
         )
         {
+            if (IgnoreManager.IsDirectoryIgnored(directory))
+                return;
+
             if (projectFactory.IsProjectDirectory(directory))
                 directories.Add(directory);
             else
