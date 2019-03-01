@@ -13,7 +13,7 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
-        private static readonly IEnumerable<string> outputTypes = new [] { "Exe", "Library" };
+        private static readonly IEnumerable<string> outputTypes = new [] { "exe", "library" };
 
         public RawProject Load(string path)
         {
