@@ -4,8 +4,9 @@
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry DB project. Encapsulates all DB-related logic. Internally separate per-project contexts.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <OutputType>Library</OutputType>
-        <DebugType>Portable</DebugType>
+        <OutputType>library</OutputType>
+        <DebugType>portable</DebugType>
+        <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />

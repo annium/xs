@@ -4,8 +4,9 @@
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry client for project server.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <OutputType>Library</OutputType>
-        <DebugType>Portable</DebugType>
+        <OutputType>library</OutputType>
+        <DebugType>portable</DebugType>
+        <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Xs.RegistryClient.Shared/Xs.RegistryClient.Shared.csproj" />

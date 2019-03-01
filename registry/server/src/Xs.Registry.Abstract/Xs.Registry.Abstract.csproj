@@ -4,8 +4,9 @@
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry abstract server project. Contains all stuff, shared between project servers. Is not intended to be used in main server.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <OutputType>Library</OutputType>
-        <DebugType>Portable</DebugType>
+        <OutputType>library</OutputType>
+        <DebugType>portable</DebugType>
+        <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Xs.Registry.Db/Xs.Registry.Db.csproj" />

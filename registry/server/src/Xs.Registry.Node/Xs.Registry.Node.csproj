@@ -4,8 +4,9 @@
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry Node.JS project. Handles interaction with npm/yarn.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <OutputType>Exe</OutputType>
-        <DebugType>Portable</DebugType>
+        <OutputType>exe</OutputType>
+        <DebugType>portable</DebugType>
+        <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Xs.Registry.Abstract/Xs.Registry.Abstract.csproj" />
