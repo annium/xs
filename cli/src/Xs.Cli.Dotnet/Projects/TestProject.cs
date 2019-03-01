@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace Xs.Cli.Dotnet.Projects
     {
         public TestProject(
             string name,
-            Version version,
+            Core.Models.Version version,
             string description,
             FileInfo file,
             HashSet<IProject> projectDependencies,
@@ -25,6 +26,7 @@ namespace Xs.Cli.Dotnet.Projects
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
+            LoggerConfiguration loggerConfiguration,
             ILogger logger
         ) : base(
             name,
@@ -38,6 +40,7 @@ namespace Xs.Cli.Dotnet.Projects
             auditRules,
             mapper,
             shell,
+            loggerConfiguration,
             logger
         ) { }
 
@@ -45,10 +48,19 @@ namespace Xs.Cli.Dotnet.Projects
         {
             var configuration = env == Env.Development ? "Debug" : "Release";
 
-            return RunAsync(
-                "test",
-                $"dotnet test --configuration {configuration} --no-build {File.FullName} /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov",
-                token);
+            var cmd = string.Join(' ', new string[]
+            {
+                "dotnet test",
+                $"--configuration {configuration}",
+                $"--no-build {File.FullName}",
+                "/p:CollectCoverage=true",
+                "/p:CoverletOutputFormat=lcov",
+                "/p:CoverletOutput=./lcov",
+                "--",
+                $"logLevel={Enum.GetName(typeof(LogLevel),loggerConfiguration.LogLevel).ToLowerInvariant()}"
+            });
+
+            return RunAsync("test", cmd, token);
         }
     }
 }

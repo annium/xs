@@ -28,6 +28,8 @@ namespace Xs.Cli.Core.Projects
 
         protected readonly IShell shell;
 
+        protected readonly LoggerConfiguration loggerConfiguration;
+
         protected readonly ILogger logger;
 
         protected ProjectBase(
@@ -39,6 +41,7 @@ namespace Xs.Cli.Core.Projects
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
             IShell shell,
+            LoggerConfiguration loggerConfiguration,
             ILogger logger
         )
         {
@@ -50,6 +53,7 @@ namespace Xs.Cli.Core.Projects
             ProjectDependencies = projectDependencies;
             PackageDependencies = packageDependencies;
             this.shell = shell;
+            this.loggerConfiguration = loggerConfiguration;
             this.logger = logger;
         }
 

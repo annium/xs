@@ -27,6 +27,7 @@ namespace Xs.Cli.Node.Projects
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
+            LoggerConfiguration loggerConfiguration,
             ILogger logger
         ) : base(
             Constants.ProjectType,
@@ -37,6 +38,7 @@ namespace Xs.Cli.Node.Projects
             projectDependencies,
             packageDependencies,
             shell,
+            loggerConfiguration,
             logger
         )
         {

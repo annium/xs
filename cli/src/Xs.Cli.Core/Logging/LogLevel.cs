@@ -1,6 +1,6 @@
 namespace Xs.Cli.Core.Logging
 {
-    internal enum LogLevel
+    public enum LogLevel
     {
         Trace = 0,
         Debug = 1,

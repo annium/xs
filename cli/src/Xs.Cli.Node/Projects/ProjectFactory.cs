@@ -25,6 +25,8 @@ namespace Xs.Cli.Node.Projects
 
         private readonly ProjectMapper mapper;
 
+        private readonly LoggerConfiguration loggerConfiguration;
+
         private readonly ILogger logger;
 
         private readonly IShell shell;
@@ -32,12 +34,14 @@ namespace Xs.Cli.Node.Projects
         public ProjectFactory(
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
+            LoggerConfiguration loggerConfiguration,
             ILogger logger,
             IShell shell
         )
         {
             this.auditRules = auditRules;
             this.mapper = mapper;
+            this.loggerConfiguration = loggerConfiguration;
             this.logger = logger;
             this.shell = shell;
         }
@@ -83,9 +87,9 @@ namespace Xs.Cli.Node.Projects
                 .ToHashSet();
 
             if (scripts.ContainsKey("test"))
-                return new TestProject(name, version, description, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
+                return new TestProject(name, version, description, file, projectDeps, packageDeps, auditRules, mapper, shell, loggerConfiguration, logger);
 
-            return new LibraryProject(name, version, description, file, projectDeps, packageDeps, auditRules, mapper, shell, logger);
+            return new LibraryProject(name, version, description, file, projectDeps, packageDeps, auditRules, mapper, shell, loggerConfiguration, logger);
         }
     }
 }

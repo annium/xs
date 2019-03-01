@@ -1,8 +1,8 @@
 namespace Xs.Cli.Core.Logging
 {
-    internal class LoggerConfiguration
+    public class LoggerConfiguration
     {
-        public LogLevel LogLevel { get; set; }
+        public LogLevel LogLevel { get; internal set; }
     }
 
     internal class RawLoggerConfiguration

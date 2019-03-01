@@ -28,21 +28,25 @@ namespace Xs.Cli.Dotnet.Projects
 
         private readonly ProjectMapper mapper;
 
-        private readonly ILogger logger;
-
         private readonly IShell shell;
+
+        private readonly LoggerConfiguration loggerConfiguration;
+
+        private readonly ILogger logger;
 
         public ProjectFactory(
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
-            ILogger logger,
-            IShell shell
+            IShell shell,
+            LoggerConfiguration loggerConfiguration,
+            ILogger logger
         )
         {
             this.auditRules = auditRules;
             this.mapper = mapper;
-            this.logger = logger;
             this.shell = shell;
+            this.loggerConfiguration = loggerConfiguration;
+            this.logger = logger;
         }
 
         public bool IsProjectDirectory(string directory)
@@ -87,9 +91,9 @@ namespace Xs.Cli.Dotnet.Projects
                 .ToHashSet();
 
             if (TestDependencies.All(d => packageDeps.Any(e => e.Name == d)))
-                return new TestProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
+                return new TestProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, loggerConfiguration, logger);
 
-            return new LibraryProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, logger);
+            return new LibraryProject(name, version, description, file, projectDeps, packageDeps, targetFramework, outputType, auditRules, mapper, shell, loggerConfiguration, logger);
         }
     }
 }

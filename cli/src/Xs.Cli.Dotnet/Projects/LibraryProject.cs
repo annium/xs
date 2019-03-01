@@ -26,6 +26,7 @@ namespace Xs.Cli.Dotnet.Projects
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
+            LoggerConfiguration loggerConfiguration,
             ILogger logger
         ) : base(
             name,
@@ -39,6 +40,7 @@ namespace Xs.Cli.Dotnet.Projects
             auditRules,
             mapper,
             shell,
+            loggerConfiguration,
             logger
         ) { }
 
