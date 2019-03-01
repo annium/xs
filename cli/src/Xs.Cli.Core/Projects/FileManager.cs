@@ -1,10 +1,13 @@
 using System.IO;
+using System.Linq;
 
 namespace Xs.Cli.Core.Projects
 {
     public static class FileManager
     {
         public const string IgnoreFile = ".xs.ignore";
+
+        private static readonly string[] ignoredDirectories = new [] { ".git" };
 
         public static bool IsDirectoryIgnored(string directory, bool recursively = false)
         {
@@ -22,7 +25,8 @@ namespace Xs.Cli.Core.Projects
 
             return false;
 
-            bool IsIgnored() => Directory.GetFiles(directory, IgnoreFile, SearchOption.TopDirectoryOnly).Length > 0;
+            bool IsIgnored() => ignoredDirectories.Any(directory.Contains) ||
+                Directory.GetFiles(directory, IgnoreFile, SearchOption.TopDirectoryOnly).Length > 0;
         }
     }
 }
