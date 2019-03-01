@@ -123,12 +123,15 @@ namespace Xs.Cli.Dotnet.Projects
             if (properties.Element(El.TargetFramework) == null)
                 throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined.");
 
-            if (properties.Element(El.DebugType)?.Value != "Portable")
-                throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not Portable.");
+            if (properties.Element(El.DebugType)?.Value != "portable")
+                throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not portable.");
 
             var outputType = properties.Element(El.OutputType)?.Value;
             if (!outputTypes.Contains(outputType))
                 throw new InvalidOperationException($"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}.");
+
+            if (properties.Element(El.WarningsAsErrors)?.Value != "true")
+                throw new InvalidOperationException($"Project {path} has no {El.WarningsAsErrors} defined or it is not true.");
         }
 
         private string ReadProjectDependency(
@@ -174,6 +177,8 @@ namespace Xs.Cli.Dotnet.Projects
             public const string DebugType = "DebugType";
 
             public const string OutputType = "OutputType";
+
+            public const string WarningsAsErrors = "WarningsAsErrors";
 
             public const string PropertyGroup = "PropertyGroup";
 
