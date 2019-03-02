@@ -5,12 +5,13 @@ namespace Xs.Cli.Core.Projects
 {
     public interface IProjectFactory
     {
-        bool IsProjectDirectory(string directory);
+        ISpecialProjectFactory FindFactory(string directory);
 
         bool IsProjectFile(string file);
 
         IProject CreateProject(
             string directory,
+            ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
             IEnumerable<Dependency> dependencies
         );

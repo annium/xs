@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -22,18 +21,18 @@ namespace Xs.Cli.Core.Projects
             {
                 if (IsDirectoryIgnored(directory, ignoredDirectories))
                 {
-                    Console.WriteLine($"walk: {directory} - ignore");
+                    Console.WriteLine($"find: {directory} - ignore");
                     return false;
                 }
 
-                Console.WriteLine($"walk: {directory} - check?");
+                Console.WriteLine($"find: {directory} - check?");
                 if (isMatch(directory))
                 {
-                    Console.WriteLine($"walk: {directory} - found");
+                    Console.WriteLine($"find: {directory} - found");
                     return true;
                 }
                 else
-                    Console.WriteLine($"walk: {directory} - omit");
+                    Console.WriteLine($"find: {directory} - omit");
             }
 
             foreach (var child in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
@@ -43,48 +42,31 @@ namespace Xs.Cli.Core.Projects
             return false;
         }
 
-        public static List<string> CollectDirectories(
+        public static void WalkDirectories(
             string directory,
-            Func<string, bool> isCollected,
-            SearchOptions searchOptions = SearchOptions.None,
-            params string[] ignoredDirectories
-        )
-        {
-            var directories = new List<string>();
-
-            CollectDirectories(directory, directories, isCollected, searchOptions, ignoredDirectories);
-
-            return directories;
-        }
-
-        private static void CollectDirectories(
-            string directory,
-            IList<string> directories,
-            Func<string, bool> isCollected,
+            Func<string, bool> isMatch,
             SearchOptions searchOptions,
-            string[] ignoredDirectories
+            params string[] ignoredDirectories
         )
         {
             if (IsDirectoryIgnored(directory, ignoredDirectories))
             {
-                Console.WriteLine($"collect: {directory} - ignore");
+                Console.WriteLine($"walk: {directory} - ignore");
                 return;
             }
 
-            Console.WriteLine($"collect: {directory} - check?");
-            if (isCollected(directory))
+            Console.WriteLine($"walk: {directory} - check?");
+            if (isMatch(directory))
             {
-                Console.WriteLine($"collect: {directory} - collect");
-                directories.Add(directory);
-
+                Console.WriteLine($"walk: {directory} - collect");
                 if (searchOptions.HasFlag(SearchOptions.IgnoreChildrenOnMatch))
                     return;
             }
             else
-                Console.WriteLine($"collect: {directory} - omit");
+                Console.WriteLine($"walk: {directory} - omit");
 
             foreach (var child in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
-                CollectDirectories(child, directories, isCollected, searchOptions, ignoredDirectories);
+                WalkDirectories(child, isMatch, searchOptions, ignoredDirectories);
         }
 
         private static bool IsDirectoryIgnored(string directory, string[] ignoredDirectories)

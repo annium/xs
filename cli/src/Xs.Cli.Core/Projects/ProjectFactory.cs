@@ -16,9 +16,9 @@ namespace Xs.Cli.Core.Projects
             this.factories = factories;
         }
 
-        public bool IsProjectDirectory(string directory)
+        public ISpecialProjectFactory FindFactory(string directory)
         {
-            return factories.Any(e => e.IsProjectDirectory(directory));
+            return factories.FirstOrDefault(e => e.IsProjectDirectory(directory));
         }
 
         public bool IsProjectFile(string file)
@@ -28,14 +28,11 @@ namespace Xs.Cli.Core.Projects
 
         public IProject CreateProject(
             string directory,
+            ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
             IEnumerable<Dependency> dependencies
         )
         {
-            var factory = factories.FirstOrDefault(e => e.IsProjectDirectory(directory));
-            if (factory == null)
-                return null;
-
             var project = factory.CreateProject(
                 directory,
                 projects.Where(e => e.Type == factory.Type),

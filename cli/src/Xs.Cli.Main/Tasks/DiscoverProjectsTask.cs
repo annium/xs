@@ -26,9 +26,17 @@ namespace Xs.Cli.Main.Tasks
         {
             logger.LogDebug($"Start discovery of {root}");
 
-            var directories = FileManager.CollectDirectories(
+            var results = new Dictionary<string, ISpecialProjectFactory>();
+            FileManager.WalkDirectories(
                 root,
-                projectFactory.IsProjectDirectory,
+                directory =>
+                {
+                    var factory = projectFactory.FindFactory(directory);
+                    if (factory != null)
+                        results[directory] = factory;
+
+                    return factory != null;
+                },
                 SearchOptions.IgnoreChildrenOnMatch
             );
 
@@ -42,12 +50,12 @@ namespace Xs.Cli.Main.Tasks
                 previous = projects.Count;
                 exceptions = new List<Exception>();
 
-                foreach (var directory in directories.ToArray())
+                foreach (var(directory, factory) in results.ToArray())
                 {
-                    var(project, exception) = TryCreateProject(directory, projects, dependencies);
+                    var(project, exception) = TryCreateProject(directory, factory, projects, dependencies);
                     if (project != null)
                     {
-                        directories.Remove(directory);
+                        results.Remove(directory);
                         projects.Add(project);
                         logger.LogDebug($"Project discovered: {project}");
                         foreach (var dependency in project.PackageDependencies)
@@ -69,13 +77,14 @@ namespace Xs.Cli.Main.Tasks
 
         private ValueTuple<IProject, Exception> TryCreateProject(
             string directory,
+            ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
             IEnumerable<Dependency> dependencies
         )
         {
             try
             {
-                return (projectFactory.CreateProject(directory, projects, dependencies), null);
+                return (projectFactory.CreateProject(directory, factory, projects, dependencies), null);
             }
             catch (Exception exception)
             {
