@@ -17,7 +17,7 @@ namespace Xs.Cli.Node.Tools
 
         public ProjectType Type { get; } = Constants.ProjectType;
 
-        public string IgnorePattern { get; } = file;
+        public string[] IgnorePatterns { get; } = new [] { file };
 
         public void Save(IProject project, Uri location, string token)
         {

@@ -11,11 +11,11 @@ namespace Xs.Cli.Dotnet.Tools
 {
     internal class SpecialConfigurationManager : ISpecialConfigurationManager
     {
+        private const string file = "nuget.config";
+
         public ProjectType Type { get; } = Constants.ProjectType;
 
-        public string IgnorePattern { get; } = file;
-
-        private const string file = "nuget.config";
+        public string[] IgnorePatterns { get; } = new [] { file, "lcov.info" };
 
         private readonly string registryName = "registry";
 

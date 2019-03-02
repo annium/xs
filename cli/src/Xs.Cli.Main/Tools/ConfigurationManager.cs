@@ -75,7 +75,7 @@ namespace Xs.Cli.Main.Tools
                     var targets = projects.Where(p => p.Type == type);
                     if (targets.Count() > 0)
                     {
-                        ignorePatterns.Add(specialManagers[type].IgnorePattern);
+                        ignorePatterns.AddRange(specialManagers[type].IgnorePatterns);
                         foreach (var project in targets)
                             specialManagers[type].Save(project, uri, configuration.Token);
                     }
