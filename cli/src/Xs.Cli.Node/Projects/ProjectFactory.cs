@@ -53,7 +53,7 @@ namespace Xs.Cli.Node.Projects
 
             return !directory.Contains(ModulesDirectory) &&
                 Directory.GetFiles(directory, ProjectFileName).Length == 1 &&
-                !FileManager.Find(directory, isMatch, false, IgnoredFolders);
+                !FileManager.FindDirectory(directory, isMatch, IgnoredFolders);
 
             bool isMatch(string dir) => Directory.GetFiles(dir, ProjectFileName).Length > 0;
         }

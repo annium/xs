@@ -11,11 +11,11 @@ namespace Xs.Cli.Core.Projects
 
         private static readonly string[] globallyIgnoredDirectories = new [] { ".git" };
 
-        public static bool Find(
+        public static bool FindDirectory(
             string directory,
             Func<string, bool> isMatch,
-            bool checkSelf = false,
-            params string[] ignoredDirectories
+            string[] ignoredDirectories,
+            bool checkSelf = false
         )
         {
             if (checkSelf)
@@ -37,7 +37,7 @@ namespace Xs.Cli.Core.Projects
             }
 
             foreach (var child in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
-                if (Find(child, isMatch, true, ignoredDirectories))
+                if (FindDirectory(child, isMatch, ignoredDirectories, true))
                     return true;
 
             return false;
