@@ -31,7 +31,10 @@ namespace Xs.Cli.Main.Commands.Ls
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd).FilterMask(cfg.Mask).ToArray();
+            var projects = discoverTask.Run(cwdCfg.Cwd)
+                .FilterMask(cfg.Mask)
+                .FilterType(cfg.Type)
+                .ToArray();
 
             // show deps if explicitly specified, or opposite flag not set
             var showProjects = cfg.Projects || !cfg.Packages;
@@ -124,6 +127,10 @@ namespace Xs.Cli.Main.Commands.Ls
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
 
         [Option]
         [Help("Show only project dependencies (without packages).")]

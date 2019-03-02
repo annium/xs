@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
+using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
@@ -41,8 +42,10 @@ namespace Xs.Cli.Main.Commands
         {
             var projects = discoverTask.Run(cwdCfg.Cwd)
                 .FilterMask(cfg.Mask)
+                .FilterType(cfg.Type)
                 .OfType<ICleanableProject>()
                 .ToArray();
+
             logger.LogDebug($"Clean {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(tkn), token);
         }
@@ -53,5 +56,9 @@ namespace Xs.Cli.Main.Commands
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
     }
 }

@@ -32,7 +32,10 @@ namespace Xs.Cli.Main.Commands.Ls
         )
         {
             var allProjects = discoverTask.Run(cwdCfg.Cwd).ToArray();
-            var projects = allProjects.FilterMask(cfg.Mask).ToArray();
+            var projects = allProjects
+                .FilterMask(cfg.Mask)
+                .FilterType(cfg.Type)
+                .ToArray();
             var last = projects.Last();
 
             // if plain dependants list requested - them in single list
@@ -102,6 +105,10 @@ namespace Xs.Cli.Main.Commands.Ls
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
 
         [Option]
         [Help("Show plain dependants list (no recursion).")]

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
+using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 
@@ -29,7 +30,10 @@ namespace Xs.Cli.Main.Commands.Ls
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd).FilterMask(cfg.Mask).ToArray();
+            var projects = discoverTask.Run(cwdCfg.Cwd)
+                .FilterMask(cfg.Mask)
+                .FilterType(cfg.Type)
+                .ToArray();
 
             Func<IProject, string> showProject = project => project.Name;
             if (cfg.Path)
@@ -45,6 +49,10 @@ namespace Xs.Cli.Main.Commands.Ls
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
 
         [Option("p")]
         [Help("Show path instead of name.")]

@@ -40,7 +40,9 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd).FilterMask(cfg.Mask)
+            var projects = discoverTask.Run(cwdCfg.Cwd)
+                .FilterMask(cfg.Mask)
+                .FilterType(cfg.Type)
                 .OfType<IBuildableProject>()
                 .ToArray();
             logger.LogDebug($"Build {projects.Length} projects.");
@@ -55,6 +57,10 @@ namespace Xs.Cli.Main.Commands
         public string Mask { get; set; } = "all";
 
         [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
+
+        [Option]
         [Help("Environment.")]
         public Env Env { get; set; } = Env.Development;
     }

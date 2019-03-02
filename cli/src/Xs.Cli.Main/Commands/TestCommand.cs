@@ -42,8 +42,10 @@ namespace Xs.Cli.Main.Commands
         {
             var projects = discoverTask.Run(cwdCfg.Cwd)
                 .FilterMask(cfg.Mask)
+                .FilterType(cfg.Type)
                 .OfType<ITestableProject>()
                 .ToArray();
+
             logger.LogDebug($"Test {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, tkn), token);
         }
@@ -56,6 +58,10 @@ namespace Xs.Cli.Main.Commands
         public string Mask { get; set; } = "all";
 
         [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
+
+        [Option]
         [Help("Environment.")]
         public Env Env { get; set; } = Env.Development;
     }
