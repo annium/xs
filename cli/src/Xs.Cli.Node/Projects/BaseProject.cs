@@ -59,16 +59,8 @@ namespace Xs.Cli.Node.Projects
 
         public override void Save() => mapper.Save(this);
 
-        protected override bool IsRelatedDirectory(DirectoryInfo directory)
-        {
-            return directory.GetFiles("*", SearchOption.AllDirectories).Any(IsRelatedFile);
-        }
-
-        protected override bool IsRelatedFile(FileInfo file) =>
-            (
-                file.FullName.EndsWith(ProjectFactory.ProjectFileName) ||
-                ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith)
-            ) &&
-            !ProjectFactory.IgnoredFolders.Any(file.FullName.Contains);
+        protected override bool IsRelated(FileInfo file) =>
+            ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
+            !FileManager.IsDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
     }
 }

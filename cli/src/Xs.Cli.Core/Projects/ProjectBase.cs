@@ -51,18 +51,14 @@ namespace Xs.Cli.Core.Projects
             if (!path.StartsWith(File.DirectoryName))
                 return false;
 
-            return Directory.Exists(path) ?
-                IsRelatedDirectory(new DirectoryInfo(path)) :
-                IsRelatedFile(new FileInfo(path));
+            return IsRelated(new FileInfo(path));
         }
 
         public abstract void Save();
-        
-        protected abstract bool IsRelatedDirectory(DirectoryInfo directory);
-        
-        protected abstract bool IsRelatedFile(FileInfo file);
 
         public override string ToString() => Name;
+
+        protected abstract bool IsRelated(FileInfo file);
 
         protected void DeleteDirectory(string path)
         {

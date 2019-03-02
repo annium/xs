@@ -69,6 +69,27 @@ namespace Xs.Cli.Core.Projects
                 WalkDirectories(child, isMatch, searchOptions, ignoredDirectories);
         }
 
+        public static bool IsDirectoryIgnored(string root, string directory, string[] ignoredDirectories)
+        {
+            root = Path.GetFullPath(root);
+            var dir = Path.GetFullPath(directory);
+
+            do
+            {
+                Console.WriteLine($"ignore: {dir} - check?");
+                if (IsDirectoryIgnored(dir, ignoredDirectories))
+                {
+                    Console.WriteLine($"ignore: {dir} - yes");
+                    return true;
+                }
+                dir = Directory.GetParent(dir)?.FullName;
+            } while (dir != null && dir.Contains(root));
+
+            Console.WriteLine($"ignore: {directory} - false");
+
+            return false;
+        }
+
         private static bool IsDirectoryIgnored(string directory, string[] ignoredDirectories)
         {
             return globallyIgnoredDirectories.Any(directory.Contains) ||
