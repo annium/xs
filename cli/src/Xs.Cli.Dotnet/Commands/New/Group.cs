@@ -12,6 +12,7 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         public Group()
         {
+            Add<ExeCommand>();
             Add<LibCommand>();
             Add<TestsCommand>();
         }
