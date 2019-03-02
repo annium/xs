@@ -16,14 +16,18 @@ namespace Xs.Cli.Main.Commands
 
         private readonly DiscoverProjectsTask discoverTask;
 
+        private readonly FilterProjectsTask filterTask;
+
         private readonly ILogger logger;
 
         public AuditCommand(
             DiscoverProjectsTask discoverTask,
+            FilterProjectsTask filterTask,
             ILogger logger
         )
         {
             this.discoverTask = discoverTask;
+            this.filterTask = filterTask;
             this.logger = logger;
         }
 
@@ -33,7 +37,7 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd)
+            var projects = filterTask.Run(discoverTask.Run(cwdCfg.Cwd), cfg.Mask)
                 .OfType<IAuditableProject>()
                 .ToArray();
             logger.LogDebug($"Audit {projects.Length} projects.");
@@ -53,6 +57,10 @@ namespace Xs.Cli.Main.Commands
 
     internal class AuditCommandConfiguration
     {
+        [Position(1, isRequired : false)]
+        [Help("Projects mask.")]
+        public string Mask { get; set; } = "all";
+
         [Option]
         [Help("Fix errors, if possible.")]
         public bool Fix { get; set; }
