@@ -28,6 +28,7 @@ namespace Xs.Cli.Dotnet
             // new
             services.AddSingleton<Commands.New.Group>();
             services.AddSingleton<Commands.New.LibCommand>();
+            services.AddSingleton<Commands.New.TestsCommand>();
         }
     }
 }
