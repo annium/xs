@@ -20,19 +20,9 @@ namespace Xs.Cli.Core.Projects
             if (checkSelf)
             {
                 if (IsDirectoryIgnored(directory, ignoredDirectories))
-                {
-                    Console.WriteLine($"find: {directory} - ignore");
                     return false;
-                }
-
-                Console.WriteLine($"find: {directory} - check?");
                 if (isMatch(directory))
-                {
-                    Console.WriteLine($"find: {directory} - found");
                     return true;
-                }
-                else
-                    Console.WriteLine($"find: {directory} - omit");
             }
 
             foreach (var child in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
@@ -50,20 +40,13 @@ namespace Xs.Cli.Core.Projects
         )
         {
             if (IsDirectoryIgnored(directory, ignoredDirectories))
-            {
-                Console.WriteLine($"walk: {directory} - ignore");
                 return;
-            }
 
-            Console.WriteLine($"walk: {directory} - check?");
             if (isMatch(directory))
             {
-                Console.WriteLine($"walk: {directory} - collect");
                 if (searchOptions.HasFlag(SearchOptions.IgnoreChildrenOnMatch))
                     return;
             }
-            else
-                Console.WriteLine($"walk: {directory} - omit");
 
             foreach (var child in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
                 WalkDirectories(child, isMatch, searchOptions, ignoredDirectories);
@@ -76,16 +59,11 @@ namespace Xs.Cli.Core.Projects
 
             do
             {
-                Console.WriteLine($"ignore: {dir} - check?");
                 if (IsDirectoryIgnored(dir, ignoredDirectories))
-                {
-                    Console.WriteLine($"ignore: {dir} - yes");
                     return true;
-                }
+
                 dir = Directory.GetParent(dir)?.FullName;
             } while (dir != null && dir.Contains(root));
-
-            Console.WriteLine($"ignore: {directory} - false");
 
             return false;
         }
@@ -96,16 +74,11 @@ namespace Xs.Cli.Core.Projects
 
             do
             {
-                Console.WriteLine($"ignore: {dir} - check?");
                 if (IsDirectoryIgnored(dir, ignoredDirectories))
-                {
-                    Console.WriteLine($"ignore: {dir} - yes");
                     return true;
-                }
+
                 dir = Directory.GetParent(dir)?.FullName;
             } while (dir != null);
-
-            Console.WriteLine($"ignore: {directory} - false");
 
             return false;
         }
