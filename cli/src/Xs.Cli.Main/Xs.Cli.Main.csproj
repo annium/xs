@@ -15,7 +15,6 @@
         <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Server/Xs.RegistryClient.Server.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.Entrypoint" Version="0.1.0" />
     </ItemGroup>
 </Project>
