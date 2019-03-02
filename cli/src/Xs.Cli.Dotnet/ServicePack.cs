@@ -19,6 +19,15 @@ namespace Xs.Cli.Dotnet
 
             // audit rules
             services.AddSingleton<IAuditRule<ISpecialProject>, FindUselessDependenciesRule<ISpecialProject>>();
+
+            RegisterCommands(services);
+        }
+
+        private void RegisterCommands(IServiceCollection services)
+        {
+            // new
+            services.AddSingleton<Commands.New.Group>();
+            services.AddSingleton<Commands.New.LibCommand>();
         }
     }
 }

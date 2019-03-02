@@ -41,6 +41,9 @@ namespace Xs.Cli.Main
             services.AddSingleton<Commands.Remote.SetCommand>();
             services.AddSingleton<Commands.Remote.ShowCommand>();
 
+            // new
+            services.AddSingleton<Commands.New.Group>();
+
             // root
             services.AddSingleton<AddCommand>();
             services.AddSingleton<AuditCommand>();

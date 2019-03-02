@@ -11,6 +11,7 @@ namespace Xs.Cli.Main.Commands
             // groups
             Add<Ls.Group>();
             Add<Remote.Group>();
+            Add<New.Group>();
 
             // commands
             Add<AddCommand>();
