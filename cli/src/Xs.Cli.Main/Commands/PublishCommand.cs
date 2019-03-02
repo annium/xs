@@ -17,21 +17,19 @@ namespace Xs.Cli.Main.Commands
         public override string Description { get; } = "Publish packages to registry.";
         private readonly IConfigurationManager configurationManager;
         private readonly DiscoverProjectsTask discoverTask;
-        private readonly FilterProjectsTask filterTask;
+
         private readonly ProjectsRunner runner;
         private readonly ILogger logger;
 
         public PublishCommand(
             IConfigurationManager configurationManager,
             DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask,
             ProjectsRunner runner,
             ILogger logger
         )
         {
             this.configurationManager = configurationManager;
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
             this.runner = runner;
             this.logger = logger;
         }
@@ -46,7 +44,8 @@ namespace Xs.Cli.Main.Commands
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
-            var projects = filterTask.Run(discoverTask.Run(cwdCfg.Cwd), cfg.Mask)
+            var projects = discoverTask.Run(cwdCfg.Cwd)
+                .FilterMask(cfg.Mask)
                 .OfType<IPublishableProject>()
                 .ToArray();
 

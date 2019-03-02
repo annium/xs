@@ -18,15 +18,11 @@ namespace Xs.Cli.Main.Commands.Ls
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectsTask filterTask;
-
         public ListOutsCommand(
-            DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask
+            DiscoverProjectsTask discoverTask
         )
         {
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
         }
 
         public override void Handle(
@@ -35,8 +31,8 @@ namespace Xs.Cli.Main.Commands.Ls
             CancellationToken token
         )
         {
-            var allProjects = discoverTask.Run(cwdCfg.Cwd);
-            var projects = filterTask.Run(allProjects, cfg.Mask);
+            var allProjects = discoverTask.Run(cwdCfg.Cwd).ToArray();
+            var projects = allProjects.FilterMask(cfg.Mask).ToArray();
             var last = projects.Last();
 
             // if plain dependants list requested - them in single list

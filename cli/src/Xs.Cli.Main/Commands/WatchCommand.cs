@@ -25,8 +25,6 @@ namespace Xs.Cli.Main.Commands
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectsTask filterTask;
-
         private readonly ProjectsRunner runner;
 
         private readonly Watcher watcher;
@@ -52,7 +50,7 @@ namespace Xs.Cli.Main.Commands
         public WatchCommand(
             IProjectFactory projectFactory,
             DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask,
+
             ProjectsRunner runner,
             Watcher watcher,
             IShell shell,
@@ -61,7 +59,7 @@ namespace Xs.Cli.Main.Commands
         {
             this.projectFactory = projectFactory;
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
+
             this.runner = runner;
             this.watcher = watcher;
             this.shell = shell;
@@ -198,7 +196,7 @@ namespace Xs.Cli.Main.Commands
             }
         }
 
-        private void Discover() => projects = filterTask.Run(discoverTask.Run(root), mask).ToArray();
+        private void Discover() => projects = discoverTask.Run(root).FilterMask(mask).ToArray();
 
         private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File.FullName == path);
 

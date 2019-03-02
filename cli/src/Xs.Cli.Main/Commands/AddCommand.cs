@@ -18,8 +18,6 @@ namespace Xs.Cli.Main.Commands
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectsTask filterTask;
-
         private readonly AddPackageDependencyTask addPackageDependencyTask;
 
         private readonly AddProjectDependencyTask addProjectDependencyTask;
@@ -28,7 +26,6 @@ namespace Xs.Cli.Main.Commands
 
         public AddCommand(
             DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask,
             AddPackageDependencyTask addPackageDependencyTask,
             AddProjectDependencyTask addProjectDependencyTask,
             ILogger logger
@@ -37,7 +34,6 @@ namespace Xs.Cli.Main.Commands
             this.addPackageDependencyTask = addPackageDependencyTask;
             this.addProjectDependencyTask = addProjectDependencyTask;
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
             this.logger = logger;
         }
 
@@ -54,7 +50,7 @@ namespace Xs.Cli.Main.Commands
             var allProjects = discoverTask.Run(cwdCfg.Cwd);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
 
-            var targets = filterTask.Run(allProjects, cfg.Mask).ToArray();
+            var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
                 logger.LogInfo($"No projects found to add dependency to.");

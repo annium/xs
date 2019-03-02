@@ -18,15 +18,11 @@ namespace Xs.Cli.Main.Commands.Ls
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectsTask filterTask;
-
         public ListInsCommand(
-            DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask
+            DiscoverProjectsTask discoverTask
         )
         {
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
         }
 
         public override void Handle(
@@ -35,8 +31,7 @@ namespace Xs.Cli.Main.Commands.Ls
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd);
-            projects = filterTask.Run(projects, cfg.Mask);
+            var projects = discoverTask.Run(cwdCfg.Cwd).FilterMask(cfg.Mask).ToArray();
 
             // show deps if explicitly specified, or opposite flag not set
             var showProjects = cfg.Projects || !cfg.Packages;

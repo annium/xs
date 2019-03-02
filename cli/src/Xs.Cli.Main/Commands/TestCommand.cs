@@ -19,21 +19,17 @@ namespace Xs.Cli.Main.Commands
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectsTask filterTask;
-
         private readonly ProjectsRunner runner;
 
         private readonly ILogger logger;
 
         public TestCommand(
             DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask,
             ProjectsRunner runner,
             ILogger logger
         )
         {
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
             this.runner = runner;
             this.logger = logger;
         }
@@ -44,7 +40,8 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var projects = filterTask.Run(discoverTask.Run(cwdCfg.Cwd), cfg.Mask)
+            var projects = discoverTask.Run(cwdCfg.Cwd)
+                .FilterMask(cfg.Mask)
                 .OfType<ITestableProject>()
                 .ToArray();
             logger.LogDebug($"Test {projects.Length} projects.");

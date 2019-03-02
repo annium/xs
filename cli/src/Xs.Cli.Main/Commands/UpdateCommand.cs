@@ -15,18 +15,14 @@ namespace Xs.Cli.Main.Commands
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectsTask filterTask;
-
         private readonly ILogger logger;
 
         public UpdateCommand(
             DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask,
             ILogger logger
         )
         {
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
             this.logger = logger;
         }
 
@@ -38,7 +34,7 @@ namespace Xs.Cli.Main.Commands
         {
             var allProjects = discoverTask.Run(cwdCfg.Cwd);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
-            var targets = filterTask.Run(allProjects, cfg.Mask).ToArray();
+            var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
                 logger.LogInfo($"No projects found to update.");

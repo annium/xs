@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
@@ -15,15 +16,11 @@ namespace Xs.Cli.Main.Commands.Ls
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectsTask filterTask;
-
         public ListCommand(
-            DiscoverProjectsTask discoverTask,
-            FilterProjectsTask filterTask
+            DiscoverProjectsTask discoverTask
         )
         {
             this.discoverTask = discoverTask;
-            this.filterTask = filterTask;
         }
 
         public override void Handle(
@@ -32,8 +29,7 @@ namespace Xs.Cli.Main.Commands.Ls
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd);
-            projects = filterTask.Run(projects, cfg.Mask);
+            var projects = discoverTask.Run(cwdCfg.Cwd).FilterMask(cfg.Mask).ToArray();
 
             Func<IProject, string> showProject = project => project.Name;
             if (cfg.Path)

@@ -70,7 +70,6 @@ namespace Xs.Cli.Main
 
             // root
             services.AddSingleton<DiscoverProjectsTask>();
-            services.AddSingleton<FilterProjectsTask>();
         }
 
         private void RegisterConversions()
