@@ -50,11 +50,12 @@ namespace Xs.Cli.Node.Projects
         {
             // considered project directory, if path doesn't contain modulesDirectory
             // and it's only one in all subdirectories, except those in modulesDirectory
+
             return !directory.Contains(ModulesDirectory) &&
-                Directory.GetFiles(directory, ProjectFileName, SearchOption.TopDirectoryOnly).Length == 1 &&
-                Directory.GetFiles(directory, ProjectFileName, SearchOption.AllDirectories)
-                .Where(path => !path.Contains(ModulesDirectory))
-                .Count() == 1;
+                Directory.GetFiles(directory, ProjectFileName).Length == 1 &&
+                !FileManager.Find(directory, isMatch, false, IgnoredFolders);
+
+            bool isMatch(string dir) => Directory.GetFiles(dir, ProjectFileName).Length > 0;
         }
 
         public bool IsProjectFile(string file)

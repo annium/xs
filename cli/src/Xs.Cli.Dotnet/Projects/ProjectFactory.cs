@@ -53,8 +53,10 @@ namespace Xs.Cli.Dotnet.Projects
         {
             // considered project directory, if in current directory there's single project file
             // and it's only one in all subdirectories
-            return Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).Length == 1 &&
-                Directory.GetFiles(directory, projectFileMask, SearchOption.AllDirectories).Length == 1;
+            return Directory.GetFiles(directory, projectFileMask).Length == 1 &&
+                !FileManager.Find(directory, isMatch, false, IgnoredFolders);
+
+            bool isMatch(string dir) => Directory.GetFiles(dir, projectFileMask).Length > 0;
         }
 
         public bool IsProjectFile(string file)

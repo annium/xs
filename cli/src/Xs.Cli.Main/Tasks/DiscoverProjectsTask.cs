@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
@@ -25,13 +24,16 @@ namespace Xs.Cli.Main.Tasks
 
         public IEnumerable<IProject> Run(string root)
         {
-            var directories = new List<string>();
-            CollectProjectDirectories(root, directories, projectFactory);
+            logger.LogDebug($"Start discovery of {root}");
+
+            var directories = FileManager.CollectDirectories(
+                root,
+                projectFactory.IsProjectDirectory,
+                SearchOptions.IgnoreChildrenOnMatch
+            );
 
             var projects = new HashSet<IProject>();
             var dependencies = new HashSet<Dependency>();
-
-            logger.LogDebug($"Start discovery of {root}");
 
             var previous = 0;
             List<Exception> exceptions;
@@ -79,22 +81,6 @@ namespace Xs.Cli.Main.Tasks
             {
                 return (null, exception);
             }
-        }
-
-        private void CollectProjectDirectories(
-            string directory,
-            List<string> directories,
-            IProjectFactory projectFactory
-        )
-        {
-            if (FileManager.IsDirectoryIgnored(directory))
-                return;
-
-            if (projectFactory.IsProjectDirectory(directory))
-                directories.Add(directory);
-            else
-                foreach (var child in Directory.GetDirectories(directory, "*", SearchOption.TopDirectoryOnly))
-                    CollectProjectDirectories(child, directories, projectFactory);
         }
     }
 }
