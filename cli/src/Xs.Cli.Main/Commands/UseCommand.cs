@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Main.Tasks;

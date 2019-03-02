@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Main.Tools;
 

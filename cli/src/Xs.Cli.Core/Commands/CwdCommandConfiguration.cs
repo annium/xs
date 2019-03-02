@@ -1,9 +1,9 @@
 using System.IO;
 using Annium.Extensions.Arguments;
 
-namespace Xs.Cli.Main.Commands
+namespace Xs.Cli.Core.Commands
 {
-    internal class CwdCommandConfiguration
+    public class CwdCommandConfiguration
     {
         [Option]
         [Help("Allows to run command in specific folder.")]
