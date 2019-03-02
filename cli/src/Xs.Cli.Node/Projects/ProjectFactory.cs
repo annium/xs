@@ -60,7 +60,14 @@ namespace Xs.Cli.Node.Projects
 
         public bool IsProjectFile(string file)
         {
-            return file.EndsWith(ProjectFileName) && IsProjectDirectory(Directory.GetParent(file).FullName);
+            if (!file.EndsWith(ProjectFileName))
+                return false;
+
+            var directory = Directory.GetParent(file).FullName;
+            if (FileManager.IsUnrootedDirectoryIgnored(directory, IgnoredFolders))
+                return false;
+
+            return IsProjectDirectory(directory);
         }
 
         public IProject CreateProject(

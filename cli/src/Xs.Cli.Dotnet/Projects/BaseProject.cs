@@ -97,6 +97,6 @@ namespace Xs.Cli.Dotnet.Projects
 
         protected override bool IsRelated(FileInfo file) =>
             ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-            !FileManager.IsDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
+            !FileManager.IsRootedDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
     }
 }

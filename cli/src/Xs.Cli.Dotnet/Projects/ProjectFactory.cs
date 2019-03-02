@@ -61,7 +61,14 @@ namespace Xs.Cli.Dotnet.Projects
 
         public bool IsProjectFile(string file)
         {
-            return file.EndsWith(ProjectFileExtension) && IsProjectDirectory(Directory.GetParent(file).FullName);
+            if (!file.EndsWith(ProjectFileExtension))
+                return false;
+
+            var directory = Directory.GetParent(file).FullName;
+            if (FileManager.IsUnrootedDirectoryIgnored(directory, IgnoredFolders))
+                return false;
+
+            return IsProjectDirectory(directory);
         }
 
         public IProject CreateProject(
