@@ -1,8 +1,8 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Scriban;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Logging;
@@ -45,10 +45,18 @@ namespace Xs.Cli.Dotnet.Commands.New
             var folder = Path.Combine(location, name);
             Directory.CreateDirectory(folder);
 
-            // write project file
-            var template = resources.First(r => r.Name == Group.ProjectTemplate);
-            var projectData = template.Content;
-            File.WriteAllText(Path.Combine(folder, $"{name}{ProjectFactory.ProjectFileExtension}"), projectData);
+            // setup data
+            var data = new { name };
+
+            // write files
+            write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}");
+
+            void write(string resourceName, string fileName)
+            {
+                var tpl = resources.First(r => r.Name == resourceName);
+                var content = Template.Parse(tpl.Content).Render(data);
+                File.WriteAllText(Path.Combine(folder, fileName), content);
+            }
         }
     }
 
