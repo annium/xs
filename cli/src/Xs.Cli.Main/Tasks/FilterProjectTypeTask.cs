@@ -4,7 +4,6 @@ using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
-
 namespace Xs.Cli.Main.Tasks
 {
     public class FilterProjectTypeTask
@@ -20,6 +19,9 @@ namespace Xs.Cli.Main.Tasks
 
         public IProject[] Run(IEnumerable<IProject> projects, ProjectType type)
         {
+            if (type == null)
+                return projects.ToArray();
+
             var result = projects.Where(e => e.Type == type).ToArray();
 
             logger.LogDebug($"Filtered {result.Length} of {projects.Count()} projects by type {type}.");
