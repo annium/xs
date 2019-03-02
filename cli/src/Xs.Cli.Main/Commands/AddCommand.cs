@@ -20,8 +20,6 @@ namespace Xs.Cli.Main.Commands
 
         private readonly FilterProjectsTask filterTask;
 
-        private readonly FilterProjectTypeTask filterTypeTask;
-
         private readonly AddPackageDependencyTask addPackageDependencyTask;
 
         private readonly AddProjectDependencyTask addProjectDependencyTask;
@@ -31,7 +29,6 @@ namespace Xs.Cli.Main.Commands
         public AddCommand(
             DiscoverProjectsTask discoverTask,
             FilterProjectsTask filterTask,
-            FilterProjectTypeTask filterTypeTask,
             AddPackageDependencyTask addPackageDependencyTask,
             AddProjectDependencyTask addProjectDependencyTask,
             ILogger logger
@@ -41,7 +38,6 @@ namespace Xs.Cli.Main.Commands
             this.addProjectDependencyTask = addProjectDependencyTask;
             this.discoverTask = discoverTask;
             this.filterTask = filterTask;
-            this.filterTypeTask = filterTypeTask;
             this.logger = logger;
         }
 
@@ -71,7 +67,7 @@ namespace Xs.Cli.Main.Commands
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
-                    addProjectDependencyTask.Run(filterTypeTask.Run(targets, project.Type), project);
+                    addProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), project);
 
                 return;
             }
@@ -100,7 +96,7 @@ namespace Xs.Cli.Main.Commands
                 throw new ArgumentException($"Package {name} is already used with different version. Specify already used version, or narrow projects mask.");
 
             foreach (var package in packages.Values)
-                addPackageDependencyTask.Run(filterTypeTask.Run(targets, package.Type), package);
+                addPackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), package);
         }
     }
 

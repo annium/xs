@@ -17,8 +17,6 @@ namespace Xs.Cli.Main.Commands
 
         private readonly DiscoverProjectsTask discoverTask;
 
-        private readonly FilterProjectTypeTask filterTypeTask;
-
         private readonly AddPackageDependencyTask addPackageDependencyTask;
 
         private readonly DeletePackageDependencyTask deletePackageDependencyTask;
@@ -27,14 +25,12 @@ namespace Xs.Cli.Main.Commands
 
         public UseCommand(
             DiscoverProjectsTask discoverTask,
-            FilterProjectTypeTask filterTypeTask,
             AddPackageDependencyTask addPackageDependencyTask,
             DeletePackageDependencyTask deletePackageDependencyTask,
             ILogger logger
         )
         {
             this.discoverTask = discoverTask;
-            this.filterTypeTask = filterTypeTask;
             this.addPackageDependencyTask = addPackageDependencyTask;
             this.deletePackageDependencyTask = deletePackageDependencyTask;
             this.logger = logger;
@@ -69,7 +65,7 @@ namespace Xs.Cli.Main.Commands
             foreach (var old in updatedDependencies)
             {
                 var dependency = new Dependency(old.Type, old.Name, version);
-                var subset = filterTypeTask.Run(targets, dependency.Type);
+                var subset = targets.FilterType(dependency.Type).ToArray();
                 deletePackageDependencyTask.Run(subset, old);
                 addPackageDependencyTask.Run(subset, dependency);
             }

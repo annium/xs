@@ -18,8 +18,6 @@ namespace Xs.Cli.Main.Commands
 
         private readonly FilterProjectsTask filterTask;
 
-        private readonly FilterProjectTypeTask filterTypeTask;
-
         private readonly DeletePackageDependencyTask deletePackageDependencyTask;
 
         private readonly DeleteProjectDependencyTask deleteProjectDependencyTask;
@@ -29,7 +27,6 @@ namespace Xs.Cli.Main.Commands
         public DeleteCommand(
             DiscoverProjectsTask discoverTask,
             FilterProjectsTask filterTask,
-            FilterProjectTypeTask filterTypeTask,
             DeletePackageDependencyTask deletePackageDependencyTask,
             DeleteProjectDependencyTask deleteProjectDependencyTask,
             ILogger logger
@@ -37,7 +34,6 @@ namespace Xs.Cli.Main.Commands
         {
             this.discoverTask = discoverTask;
             this.filterTask = filterTask;
-            this.filterTypeTask = filterTypeTask;
             this.deletePackageDependencyTask = deletePackageDependencyTask;
             this.deleteProjectDependencyTask = deleteProjectDependencyTask;
             this.logger = logger;
@@ -68,7 +64,7 @@ namespace Xs.Cli.Main.Commands
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
-                    deleteProjectDependencyTask.Run(filterTypeTask.Run(targets, project.Type), project);
+                    deleteProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), project);
 
                 return;
             }
@@ -83,7 +79,7 @@ namespace Xs.Cli.Main.Commands
             }
 
             foreach (var package in packages)
-                deletePackageDependencyTask.Run(filterTypeTask.Run(targets, package.Type), package);
+                deletePackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), package);
         }
     }
 
