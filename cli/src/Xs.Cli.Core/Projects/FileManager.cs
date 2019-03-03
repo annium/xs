@@ -87,6 +87,7 @@ namespace Xs.Cli.Core.Projects
         {
             return globallyIgnoredDirectories.Any(directory.Contains) ||
                 ignoredDirectories.Any(directory.Contains) ||
+                !Directory.Exists(directory) ||
                 Directory.GetFiles(directory, IgnoreFile, SearchOption.TopDirectoryOnly).Length > 0;
         }
     }
