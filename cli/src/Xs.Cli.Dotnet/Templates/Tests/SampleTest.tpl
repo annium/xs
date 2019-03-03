@@ -1,5 +1,4 @@
 ﻿using Annium.Testing;
-using static Annium.Testing.Asserts;
 
 namespace {{name}}
 {
@@ -12,7 +11,7 @@ namespace {{name}}
             var value = true;
 
             // assert
-            Assert(value).IsTrue();
+            value.IsTrue();
         }
     }
 }
