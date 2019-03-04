@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageId>{{name}}</PackageId>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Description>{{name}}</Description>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <OutputType>exe</OutputType>
+        <DebugType>portable</DebugType>
+        <WarningsAsErrors>true</WarningsAsErrors>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.Configuration" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
+        <PackageReference Include="NodaTime" Version="2.4.4" />
+        <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.1.0" />
+    </ItemGroup>
+</Project>
