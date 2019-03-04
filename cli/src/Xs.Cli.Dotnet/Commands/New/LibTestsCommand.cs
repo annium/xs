@@ -10,15 +10,15 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class TestsCommand : Command<TestsCommandConfiguration, CwdCommandConfiguration>
+    public class LibTestsCommand : Command<LibTestsCommandConfiguration, CwdCommandConfiguration>
     {
-        public override string Id { get; } = "tests";
+        public override string Id { get; } = "libtests";
 
         public override string Description { get; } = "Create new tests project.";
 
         private readonly ILogger logger;
 
-        public TestsCommand(
+        public LibTestsCommand(
             ILogger logger
         )
         {
@@ -26,7 +26,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         }
 
         public override void Handle(
-            TestsCommandConfiguration cfg,
+            LibTestsCommandConfiguration cfg,
             CwdCommandConfiguration cwdCfg,
             CancellationToken token
         )
@@ -39,7 +39,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             if (!Directory.Exists(location))
                 Directory.CreateDirectory(location);
 
-            var resources = ResourceLoader.Load($"{Group.TemplatesDir}.Tests");
+            var resources = ResourceLoader.Load($"{Group.TemplatesDir}.LibTests");
 
             // create tests folder
             var folder = Path.Combine(location, name);
@@ -61,7 +61,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         }
     }
 
-    public class TestsCommandConfiguration
+    public class LibTestsCommandConfiguration
     {
         [Position(1)]
         [Help("Project name.")]

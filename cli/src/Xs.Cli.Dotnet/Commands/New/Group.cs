@@ -4,7 +4,7 @@ namespace Xs.Cli.Dotnet.Commands.New
     {
         internal const string TemplatesDir = "Templates";
 
-        internal const string ProjectTemplate = "template.csproj";
+        internal const string ProjectTemplate = "project.tpl";
 
         public override string Id { get; } = Constants.ProjectType.ToString();
 
@@ -14,7 +14,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         {
             Add<ExeCommand>();
             Add<LibCommand>();
-            Add<TestsCommand>();
+            Add<LibTestsCommand>();
         }
     }
 }

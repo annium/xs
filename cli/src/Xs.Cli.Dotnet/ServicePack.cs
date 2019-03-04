@@ -29,7 +29,7 @@ namespace Xs.Cli.Dotnet
             services.AddSingleton<Commands.New.Group>();
             services.AddSingleton<Commands.New.ExeCommand>();
             services.AddSingleton<Commands.New.LibCommand>();
-            services.AddSingleton<Commands.New.TestsCommand>();
+            services.AddSingleton<Commands.New.LibTestsCommand>();
         }
     }
 }
