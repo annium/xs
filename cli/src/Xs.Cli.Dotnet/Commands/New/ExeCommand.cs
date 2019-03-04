@@ -51,6 +51,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             // write files
             write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}");
             write("Program.tpl", "Program.cs");
+            write("ServicePack.tpl", "ServicePack.cs");
 
             void write(string resourceName, string fileName)
             {
