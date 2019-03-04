@@ -44,6 +44,15 @@ namespace Xs.Cli.Core.Logging
 
         public void Error(Exception exception) => Log(LogLevel.Error, exception);
 
+        public void Pipe(LogLevel level, string message)
+        {
+            if (level < configuration.LogLevel)
+                return;
+
+            lock(consoleLock)
+            WriteLine(level, message);
+        }
+
         private void Log(LogLevel level, string message)
         {
             if (level < configuration.LogLevel)

@@ -13,5 +13,7 @@ namespace Xs.Cli.Core.Logging
         void Warn(string message);
 
         void Error(Exception exception);
+
+        void Pipe(LogLevel level, string message);
     }
 }

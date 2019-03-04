@@ -117,7 +117,7 @@ namespace Xs.Cli.Core.Tools
                     if (line == null)
                         return;
 
-                    logger.Debug(line);
+                    logger.Pipe(LogLevel.Debug, line);
                 }
             }
         }
