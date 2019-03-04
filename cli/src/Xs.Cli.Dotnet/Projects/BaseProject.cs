@@ -43,7 +43,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         public Task ClearCacheAsync(CancellationToken token)
         {
-            logger.LogInfo($"Start {Name} cache clean.");
+            logger.Info($"Start {Name} cache clean.");
 
             var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
             lock(cacheLocker)
@@ -56,14 +56,14 @@ namespace Xs.Cli.Dotnet.Projects
                 }
             }
 
-            logger.LogInfo($"Finished {Name} cache clean.");
+            logger.Info($"Finished {Name} cache clean.");
 
             return Task.CompletedTask;
         }
 
         public Task CleanAsync(CancellationToken token)
         {
-            logger.LogInfo($"Start {Name} clean.");
+            logger.Info($"Start {Name} clean.");
 
             DeleteDirectory("bin");
             DeleteDirectory("obj");
@@ -71,7 +71,7 @@ namespace Xs.Cli.Dotnet.Projects
             DeleteFiles("*.nupkg");
             DeleteFiles("*.snupkg");
 
-            logger.LogInfo($"Finished {Name} clean.");
+            logger.Info($"Finished {Name} clean.");
 
             return Task.CompletedTask;
         }

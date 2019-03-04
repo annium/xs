@@ -49,14 +49,14 @@ namespace Xs.Cli.Main.Commands
 
             if (force)
             {
-                logger.LogDebug($"Clear {projects.Length} projects cache.");
+                logger.Debug($"Clear {projects.Length} projects cache.");
                 await runner.RunAsync(
                     projects.OfType<ICachingProject>(),
                     (project, tkn) => project.ClearCacheAsync(tkn),
                     token);
             }
 
-            logger.LogDebug($"Install {projects.Length} projects.");
+            logger.Debug($"Install {projects.Length} projects.");
             await runner.RunAsync(
                 projects.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(force, tkn),

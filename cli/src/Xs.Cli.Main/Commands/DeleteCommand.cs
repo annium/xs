@@ -50,11 +50,11 @@ namespace Xs.Cli.Main.Commands
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                logger.LogInfo($"No projects found to add dependency to.");
+                logger.Info($"No projects found to add dependency to.");
                 return;
             }
 
-            logger.LogDebug($"Try delete dependency {name} from {targets.Length} projects.");
+            logger.Debug($"Try delete dependency {name} from {targets.Length} projects.");
 
             var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == nameLow).ToArray();
             if (projects.Length > 0)
@@ -70,7 +70,7 @@ namespace Xs.Cli.Main.Commands
             // if no packages found
             if (packages.Length == 0)
             {
-                logger.LogInfo($"Dependency {name} is neither project nor project dependency. Nothing to do.");
+                logger.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
                 return;
             }
 

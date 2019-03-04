@@ -62,7 +62,7 @@ namespace Xs.Cli.Main.Commands
 
             if (projects.Length == 0)
             {
-                logger.LogInfo($"No projects found unpublish.");
+                logger.Info($"No projects found unpublish.");
                 return;
             }
 
@@ -75,7 +75,7 @@ namespace Xs.Cli.Main.Commands
                     throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
             }
 
-            logger.LogDebug($"Unpublish {projects.Length} projects.");
+            logger.Debug($"Unpublish {projects.Length} projects.");
             await runner.RunAsync(
                 projects,
                 (project, tkn) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),

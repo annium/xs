@@ -46,7 +46,7 @@ namespace Xs.Cli.Main.Commands
                 .OfType<ICleanableProject>()
                 .ToArray();
 
-            logger.LogDebug($"Clean {projects.Length} projects.");
+            logger.Debug($"Clean {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(tkn), token);
         }
     }

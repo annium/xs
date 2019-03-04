@@ -58,7 +58,7 @@ namespace Xs.Cli.Main.Commands
 
             if (targets.Length == 0)
             {
-                logger.LogInfo($"No projects found to update.");
+                logger.Info($"No projects found to update.");
                 return;
             }
 

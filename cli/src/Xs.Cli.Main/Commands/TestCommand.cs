@@ -46,7 +46,7 @@ namespace Xs.Cli.Main.Commands
                 .OfType<ITestableProject>()
                 .ToArray();
 
-            logger.LogDebug($"Test {projects.Length} projects.");
+            logger.Debug($"Test {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, tkn), token);
         }
     }

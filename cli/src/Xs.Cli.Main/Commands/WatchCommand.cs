@@ -97,7 +97,7 @@ namespace Xs.Cli.Main.Commands
 
             if (isProjectFile)
             {
-                logger.LogInfo($"Changed project file: {path}");
+                logger.Info($"Changed project file: {path}");
                 Discover();
 
                 project = GetProjectByPath(path);
@@ -109,13 +109,13 @@ namespace Xs.Cli.Main.Commands
             if (project == null)
                 return;
 
-            logger.LogInfo($"Changed {project.Name} related file: {path}");
+            logger.Info($"Changed {project.Name} related file: {path}");
 
             await BuildAsync(project, includeSelf : true);
             if (runTests)
                 await TestAsync(project, includeSelf : true);
 
-            logger.LogInfo($"Done.");
+            logger.Info($"Done.");
         }
 
         private async Task HandleDelete(string path)
@@ -125,7 +125,7 @@ namespace Xs.Cli.Main.Commands
 
             if (isProjectFile)
             {
-                logger.LogInfo($"Deleted project file: {path}");
+                logger.Info($"Deleted project file: {path}");
                 Discover();
 
                 await InstallAsync(project, includeSelf : false);
@@ -136,13 +136,13 @@ namespace Xs.Cli.Main.Commands
             if (project == null)
                 return;
 
-            logger.LogInfo($"Deleted {project.Name} related file: {path}");
+            logger.Info($"Deleted {project.Name} related file: {path}");
 
             await BuildAsync(project, includeSelf: !isProjectFile);
             if (runTests)
                 await TestAsync(project, includeSelf: !isProjectFile);
 
-            logger.LogInfo($"Done.");
+            logger.Info($"Done.");
         }
 
         private Task InstallAsync(IProject project, bool includeSelf) =>

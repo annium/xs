@@ -70,7 +70,7 @@ namespace Xs.Cli.Core.Tools
             process.StartInfo.FileName = args[0];
             process.StartInfo.Arguments = string.Join(" ", args.Skip(1));
 
-            logger.LogDebug($"shell: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
+            logger.Debug($"shell: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
 
             return process;
         }
@@ -117,7 +117,7 @@ namespace Xs.Cli.Core.Tools
                     if (line == null)
                         return;
 
-                    logger.LogDebug(line);
+                    logger.Debug(line);
                 }
             }
         }

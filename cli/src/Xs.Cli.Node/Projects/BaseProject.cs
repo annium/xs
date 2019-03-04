@@ -36,13 +36,13 @@ namespace Xs.Cli.Node.Projects
 
         public Task CleanAsync(CancellationToken token)
         {
-            logger.LogInfo($"Start {Name} clean.");
+            logger.Info($"Start {Name} clean.");
 
             DeleteDirectory(ProjectFactory.ModulesDirectory);
 
             DeleteFiles("*.tgz");
 
-            logger.LogInfo($"Finished {Name} clean.");
+            logger.Info($"Finished {Name} clean.");
 
             return Task.CompletedTask;
         }

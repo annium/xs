@@ -16,16 +16,16 @@ namespace Xs.Cli.Main.Tasks.Dependencies
 
         public void Run(IProject[] targets, IProject project)
         {
-            logger.LogDebug($"Add project {project} as {project.Type} dependency to {targets.Length} projects.");
+            logger.Debug($"Add project {project} as {project.Type} dependency to {targets.Length} projects.");
             foreach (var target in targets)
             {
                 if (target.ProjectDependencies.Contains(project))
                 {
-                    logger.LogDebug($"Skip adding project {project} as dependency of {target}. {target} already uses {project}.");
+                    logger.Debug($"Skip adding project {project} as dependency of {target}. {target} already uses {project}.");
                     continue;
                 }
 
-                logger.LogDebug($"Add project {project} as dependency of {target}.");
+                logger.Debug($"Add project {project} as dependency of {target}.");
                 target.ProjectDependencies.Add(project);
                 target.Save();
             }

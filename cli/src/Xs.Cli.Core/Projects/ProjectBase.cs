@@ -75,14 +75,14 @@ namespace Xs.Cli.Core.Projects
 
         protected async Task RunAsync(string operation, string command, CancellationToken token)
         {
-            logger.LogInfo($"Start {Name} {operation}.");
+            logger.Info($"Start {Name} {operation}.");
 
             var result = await shell.RunAsync(
                 new ProcessStartInfo() { WorkingDirectory = File.Directory.FullName },
                 command, token);
 
             if (result.IsSuccess)
-                logger.LogInfo($"Finished {Name} {operation}.");
+                logger.Info($"Finished {Name} {operation}.");
             else
                 throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
         }

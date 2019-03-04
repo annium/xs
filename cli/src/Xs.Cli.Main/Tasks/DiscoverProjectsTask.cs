@@ -24,7 +24,7 @@ namespace Xs.Cli.Main.Tasks
 
         public IEnumerable<IProject> Run(string root)
         {
-            logger.LogDebug($"Start discovery of {root}");
+            logger.Debug($"Start discovery of {root}");
 
             var results = new Dictionary<string, ISpecialProjectFactory>();
             FileManager.WalkDirectories(
@@ -57,7 +57,7 @@ namespace Xs.Cli.Main.Tasks
                     {
                         results.Remove(directory);
                         projects.Add(project);
-                        logger.LogDebug($"Project discovered: {project}");
+                        logger.Debug($"Project discovered: {project}");
                         foreach (var dependency in project.PackageDependencies)
                             dependencies.Add(dependency);
                     }
@@ -70,7 +70,7 @@ namespace Xs.Cli.Main.Tasks
             if (exceptions.Count > 0)
                 throw new AggregateException(exceptions);
 
-            logger.LogDebug($"Discovery finished. Found {projects.Count} projects.");
+            logger.Debug($"Discovery finished. Found {projects.Count} projects.");
 
             return projects.OrderBy(e => e.Name).ToArray();
         }

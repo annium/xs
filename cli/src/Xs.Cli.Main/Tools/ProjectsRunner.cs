@@ -33,7 +33,7 @@ namespace Xs.Cli.Main.Tools
             var running = new List<TProject>();
             var errors = new List<Exception>();
 
-            logger.LogTrace($"Start run with {pending.Count} project(s).");
+            logger.Trace($"Start run with {pending.Count} project(s).");
 
             while (pending.Count > 0)
             {
@@ -52,7 +52,7 @@ namespace Xs.Cli.Main.Tools
                     if (running.Count == 0 && starting.Length == 0)
                         throw new InvalidOperationException($"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run.");
 
-                    logger.LogTrace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine,starting.Select(e => e.Name))}");
+                    logger.Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine,starting.Select(e => e.Name))}");
 
                     running.AddRange(starting);
                 }
@@ -63,7 +63,7 @@ namespace Xs.Cli.Main.Tools
                     {
                         try
                         {
-                            logger.LogTrace($"Starting run for {project.Name}");
+                            logger.Trace($"Starting run for {project.Name}");
 
                             // handle project
                             await handle(project, token);
@@ -71,7 +71,7 @@ namespace Xs.Cli.Main.Tools
                             // if succeed - remove from pending
                             lock(locker) pending.Remove(project);
 
-                            logger.LogTrace($"Finished run for {project.Name}");
+                            logger.Trace($"Finished run for {project.Name}");
                         }
                         catch (Exception e)
                         when(e is TaskCanceledException || e is OperationCanceledException)
@@ -79,7 +79,7 @@ namespace Xs.Cli.Main.Tools
                             // if canceled - clear pending
                             lock(locker) pending.Clear();
 
-                            logger.LogTrace($"Cancelled run for {project.Name}");
+                            logger.Trace($"Cancelled run for {project.Name}");
                         }
                         catch (Exception exception)
                         {
@@ -87,14 +87,14 @@ namespace Xs.Cli.Main.Tools
                             errors.Add(exception);
                             lock(locker) pending.Clear();
 
-                            logger.LogTrace($"Failed run for {project.Name}:{Environment.NewLine}{exception.Message}");
+                            logger.Trace($"Failed run for {project.Name}:{Environment.NewLine}{exception.Message}");
                         }
                         finally
                         {
                             // remove from running ones
                             lock(locker) running.Remove(project);
 
-                            logger.LogTrace($"Finalized run for {project.Name}. Signal.");
+                            logger.Trace($"Finalized run for {project.Name}. Signal.");
 
                             // signal for next iteration
                             gate.Set();
@@ -102,12 +102,12 @@ namespace Xs.Cli.Main.Tools
                     });
 
                 // wait for next iteration
-                logger.LogTrace("Waiting for a signal.");
+                logger.Trace("Waiting for a signal.");
                 gate.Wait();
                 gate.Reset();
             }
 
-            logger.LogTrace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
+            logger.Trace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
 
             if (errors.Count > 0)
                 throw new AggregateException(errors);

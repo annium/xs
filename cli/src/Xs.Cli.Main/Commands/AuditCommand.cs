@@ -38,7 +38,7 @@ namespace Xs.Cli.Main.Commands
                 .FilterMask(cfg.Mask)
                 .OfType<IAuditableProject>()
                 .ToArray();
-            logger.LogDebug($"Audit {projects.Length} projects.");
+            logger.Debug($"Audit {projects.Length} projects.");
 
             foreach (var project in projects)
             {

@@ -37,10 +37,10 @@ namespace Xs.Cli.Main.Commands
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                logger.LogInfo($"No projects found to update.");
+                logger.Info($"No projects found to update.");
                 return;
             }
-            logger.LogDebug($"Update dependencies in {targets.Length} projects.");
+            logger.Debug($"Update dependencies in {targets.Length} projects.");
         }
     }
 

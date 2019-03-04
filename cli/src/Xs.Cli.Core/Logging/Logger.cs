@@ -34,15 +34,15 @@ namespace Xs.Cli.Core.Logging
             this.levelColors = levelColors;
         }
 
-        public void LogTrace(string message) => Log(LogLevel.Trace, message);
+        public void Trace(string message) => Log(LogLevel.Trace, message);
 
-        public void LogDebug(string message) => Log(LogLevel.Debug, message);
+        public void Debug(string message) => Log(LogLevel.Debug, message);
 
-        public void LogInfo(string message) => Log(LogLevel.Info, message);
+        public void Info(string message) => Log(LogLevel.Info, message);
 
-        public void LogWarn(string message) => Log(LogLevel.Warn, message);
+        public void Warn(string message) => Log(LogLevel.Warn, message);
 
-        public void LogError(Exception exception) => Log(LogLevel.Error, exception);
+        public void Error(Exception exception) => Log(LogLevel.Error, exception);
 
         private void Log(LogLevel level, string message)
         {

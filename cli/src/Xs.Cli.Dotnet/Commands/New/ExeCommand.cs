@@ -34,7 +34,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = cwdCfg.Cwd;
             var name = cfg.Name;
 
-            logger.LogDebug($"Create exe {name} at {location}");
+            logger.Debug($"Create exe {name} at {location}");
 
             if (!Directory.Exists(location))
                 Directory.CreateDirectory(location);

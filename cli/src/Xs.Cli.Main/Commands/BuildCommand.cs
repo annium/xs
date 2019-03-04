@@ -45,7 +45,7 @@ namespace Xs.Cli.Main.Commands
                 .FilterType(cfg.Type)
                 .OfType<IBuildableProject>()
                 .ToArray();
-            logger.LogDebug($"Build {projects.Length} projects.");
+            logger.Debug($"Build {projects.Length} projects.");
             await runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, tkn), token);
         }
     }

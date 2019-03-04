@@ -44,7 +44,7 @@ namespace Xs.Cli.Main.Commands
             var configuration = await configurationManager.Load(cwdCfg.Cwd);
             if (configuration == null)
             {
-                logger.LogWarn("Track registry first to search within it.");
+                logger.Warn("Track registry first to search within it.");
                 return;
             }
 

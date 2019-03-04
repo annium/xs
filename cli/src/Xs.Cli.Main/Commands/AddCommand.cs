@@ -53,11 +53,11 @@ namespace Xs.Cli.Main.Commands
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                logger.LogInfo($"No projects found to add dependency to.");
+                logger.Info($"No projects found to add dependency to.");
                 return;
             }
 
-            logger.LogDebug($"Try add dependency {name} to {targets.Length} projects.");
+            logger.Debug($"Try add dependency {name} to {targets.Length} projects.");
 
             var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == nameLow).ToArray();
             if (projects.Length > 0)
@@ -68,7 +68,7 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            logger.LogDebug($"Assume dependency {name} as package.");
+            logger.Debug($"Assume dependency {name} as package.");
             var packages = ProjectType.List().Where(t => targets.Count(p => p.Type == t) > 0).ToDictionary(
                 e => e,
                 e => dependencies.FirstOrDefault(d => d.Type == e && d.Name.ToLowerInvariant() == nameLow)

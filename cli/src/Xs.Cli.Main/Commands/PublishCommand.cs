@@ -51,7 +51,7 @@ namespace Xs.Cli.Main.Commands
 
             if (projects.Length == 0)
             {
-                logger.LogInfo($"No projects found publish.");
+                logger.Info($"No projects found publish.");
                 return;
             }
 
@@ -59,7 +59,7 @@ namespace Xs.Cli.Main.Commands
                 if (!configuration.Servers.ContainsKey(project.Type))
                     throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
 
-            logger.LogDebug($"Publish {projects.Length} projects.");
+            logger.Debug($"Publish {projects.Length} projects.");
             await runner.RunAsync(
                 projects,
                 (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
