@@ -34,14 +34,14 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = cwdCfg.Cwd;
             var name = cfg.Name;
 
-            logger.Debug($"Create exe {name} at {location}");
+            logger.Debug($"Create executable project {name} at {location}");
 
             if (!Directory.Exists(location))
                 Directory.CreateDirectory(location);
 
             var resources = ResourceLoader.Load($"{Group.TemplatesDir}.Exe");
 
-            // create lib folder
+            // create project folder
             var folder = Path.Combine(location, name);
             Directory.CreateDirectory(folder);
 

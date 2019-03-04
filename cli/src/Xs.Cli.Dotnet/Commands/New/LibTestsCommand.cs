@@ -34,14 +34,14 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = cwdCfg.Cwd;
             var name = $"{cfg.Name}.Tests";
 
-            logger.Debug($"Create tests {name} at {location}");
+            logger.Debug($"Create library tests project {name} at {location}");
 
             if (!Directory.Exists(location))
                 Directory.CreateDirectory(location);
 
             var resources = ResourceLoader.Load($"{Group.TemplatesDir}.LibTests");
 
-            // create tests folder
+            // create project folder
             var folder = Path.Combine(location, name);
             Directory.CreateDirectory(folder);
 
