@@ -79,7 +79,7 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());
-            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps) = mapper.Load(file.FullName);
+            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable) = mapper.Load(file.FullName);
 
             // check TargetFramework consistency
             if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
@@ -113,7 +113,10 @@ namespace Xs.Cli.Dotnet.Projects
             if (TestDependencies.All(d => packageDependencies.Any(e => e.Name == d)))
                 return new TestProject(context);
 
-            return new LibraryProject(context);
+            if (isPackable)
+                return new LibraryProject(context);
+
+            return new BaseProject(context);
         }
     }
 }

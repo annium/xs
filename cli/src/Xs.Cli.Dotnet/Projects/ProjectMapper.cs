@@ -39,6 +39,10 @@ namespace Xs.Cli.Dotnet.Projects
                 .Select(reference => ReadPackageDependency(project.Name, reference))
                 .ToArray();
 
+            project.IsPackable = properties.Element(El.IsPackable) == null ?
+                true :
+                bool.Parse(properties.Element(El.IsPackable).Value);
+
             return project;
 
             IEnumerable<XElement> GetReferenceElements(string referenceType) => info
@@ -179,6 +183,8 @@ namespace Xs.Cli.Dotnet.Projects
             public const string OutputType = "OutputType";
 
             public const string WarningsAsErrors = "WarningsAsErrors";
+
+            public const string IsPackable = "IsPackable";
 
             public const string PropertyGroup = "PropertyGroup";
 

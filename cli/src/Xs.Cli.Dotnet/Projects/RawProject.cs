@@ -9,7 +9,7 @@ namespace Xs.Cli.Dotnet.Projects
         public string Name { get; set; }
 
         public Version Version { get; set; }
-        
+
         public string Description { get; set; }
 
         public TargetFramework TargetFramework { get; set; }
@@ -20,6 +20,8 @@ namespace Xs.Cli.Dotnet.Projects
 
         public IEnumerable<Dependency> PackageDependencies { get; set; }
 
+        public bool IsPackable { get; set; }
+
         public void Deconstruct(
             out string name,
             out Version version,
@@ -27,7 +29,8 @@ namespace Xs.Cli.Dotnet.Projects
             out TargetFramework targetFramework,
             out OutputType outputType,
             out IEnumerable<string> projectDependencies,
-            out IEnumerable<Dependency> packageDependencies
+            out IEnumerable<Dependency> packageDependencies,
+            out bool isPackable
         )
         {
             name = Name;
@@ -37,6 +40,7 @@ namespace Xs.Cli.Dotnet.Projects
             outputType = OutputType;
             projectDependencies = ProjectDependencies;
             packageDependencies = PackageDependencies;
+            isPackable = IsPackable;
         }
     }
 }
