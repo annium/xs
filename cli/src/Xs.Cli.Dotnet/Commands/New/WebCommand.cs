@@ -1,11 +1,9 @@
 using System.IO;
-using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Scriban;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Logging;
+using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
@@ -16,12 +14,16 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         public override string Description { get; } = "Create new web project.";
 
+        private readonly ITemplateWriter templateWriter;
+
         private readonly ILogger logger;
 
         public WebCommand(
+            ITemplateWriter templateWriter,
             ILogger logger
         )
         {
+            this.templateWriter = templateWriter;
             this.logger = logger;
         }
 
@@ -36,35 +38,18 @@ namespace Xs.Cli.Dotnet.Commands.New
 
             logger.Debug($"Create web project {name} at {location}");
 
-            if (!Directory.Exists(location))
-                Directory.CreateDirectory(location);
-
-            var resources = ResourceLoader.Load($"{Group.TemplatesDir}.Web");
-
-            // create project folder
-            var folder = Path.Combine(location, name);
-            Directory.CreateDirectory(folder);
+            templateWriter.LoadResources($"{Group.TemplatesDir}.Web");
+            templateWriter.SetRoot(Path.Combine(location, name));
 
             // setup data
             var data = new { name };
 
             // write files
-            write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}");
-            write("Program.tpl", "Program.cs");
-            write("ServicePack.tpl", "ServicePack.cs");
-            write("Startup.tpl", "Startup.cs");
-            write("Controllers.IndexController.tpl", Path.Combine("Controllers", "IndexController.cs"));
-
-            void write(string resourceName, string fileName)
-            {
-                var path = Path.GetFullPath(Path.Combine(folder, fileName));
-                Directory.CreateDirectory(Directory.GetParent(path).FullName);
-
-                var tpl = resources.First(r => r.Name == resourceName);
-                var content = Template.Parse(tpl.Content).Render(data);
-
-                File.WriteAllText(path, content);
-            }
+            templateWriter.Write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}", data);
+            templateWriter.Write("Program.tpl", "Program.cs", data);
+            templateWriter.Write("ServicePack.tpl", "ServicePack.cs", data);
+            templateWriter.Write("Startup.tpl", "Startup.cs", data);
+            templateWriter.Write("Controllers.IndexController.tpl", Path.Combine("Controllers", "IndexController.cs"), data);
         }
     }
 

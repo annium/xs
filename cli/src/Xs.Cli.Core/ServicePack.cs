@@ -30,6 +30,7 @@ namespace Xs.Cli.Core
             // tools
             services.AddSingleton<ILogger, Logger>();
             services.AddSingleton<IShell, Shell>();
+            services.AddTransient<ITemplateWriter, TemplateWriter>();
         }
     }
 }
