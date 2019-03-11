@@ -1,7 +1,7 @@
+import * as lib from '@xs/site.lib'
+import { Response } from '@xs/site.lib/dist/api'
 import _ from 'lodash'
 import { when } from 'mobx'
-import * as lib from 'site.lib'
-import { Response } from 'site.lib/dist/api'
 
 import { store } from '../..'
 import PackageData from '../../models/data/PackageData'

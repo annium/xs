@@ -1,5 +1,5 @@
+import { Response } from '@xs/site.lib/dist/api'
 import _ from 'lodash'
-import { Response } from 'site.lib/dist/api'
 
 import api from './api'
 

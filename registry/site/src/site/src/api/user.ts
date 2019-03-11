@@ -1,4 +1,4 @@
-import { Response } from 'site.lib/dist/api'
+import { Response } from '@xs/site.lib/dist/api'
 
 import User from '../models/view/User'
 

@@ -1,4 +1,4 @@
-import * as lib from 'site.lib'
+import * as lib from '@xs/site.lib'
 
 export default lib.api.factory({
   url: {
