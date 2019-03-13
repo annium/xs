@@ -1,9 +1,9 @@
 import { Moment } from 'moment'
 
-import MetaPackagePermission from './MetaPackagePermission'
+import { MetaPackagePermission } from './MetaPackagePermission'
 import { ProjectType } from './ProjectType'
 
-export default interface MetaPackage {
+export type MetaPackage = {
   id: string
   type: ProjectType
   name: string

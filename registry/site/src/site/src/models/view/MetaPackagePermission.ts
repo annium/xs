@@ -1,7 +1,7 @@
 import { Permission } from './Permission'
 import { PermissionCategory } from './PermissionCategory'
 
-export default interface MetaPackagePermission {
+export type MetaPackagePermission = {
   category: PermissionCategory
   permission: Permission
 }

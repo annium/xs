@@ -1,8 +1,8 @@
-import BasePackage from '../Package'
+import { Package as BasePackage } from '../Package'
 
-import PackageDependency from './PackageDependency'
+import { PackageDependency } from './PackageDependency'
 
 
-export default interface Package extends BasePackage {
+export type Package = BasePackage & {
   dependencies: PackageDependency[]
 }

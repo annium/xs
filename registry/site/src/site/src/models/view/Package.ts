@@ -1,6 +1,6 @@
 import { Moment } from 'moment'
 
-export default interface Package {
+export type Package = {
   id: string
   name: string
   version: string

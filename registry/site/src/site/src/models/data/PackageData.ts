@@ -1,9 +1,9 @@
 import moment from 'moment'
 
-import Package from '../view/Package'
+import { Package } from '../view/Package'
 
 
-export default interface PackageData {
+export type PackageData = {
   id: string
   name: string
   version: string
@@ -12,9 +12,7 @@ export default interface PackageData {
   downloads: number
 }
 
-export const toPackage = (data: PackageData): Package => {
-  return {
-    ...data,
-    published: moment(data.published),
-  }
-}
+export const toPackage = (data: PackageData): Package => ({
+  ...data,
+  published: moment(data.published),
+})

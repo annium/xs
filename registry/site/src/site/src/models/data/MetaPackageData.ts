@@ -1,11 +1,11 @@
 import moment from 'moment'
 
-import MetaPackage from '../view/MetaPackage'
-import MetaPackagePermission from '../view/MetaPackagePermission'
+import { MetaPackage } from '../view/MetaPackage'
+import { MetaPackagePermission } from '../view/MetaPackagePermission'
 import { ProjectType } from '../view/ProjectType'
 
 
-export default interface MetaPackageData {
+export type MetaPackageData = {
   id: string,
   type: string
   name: string
@@ -23,6 +23,7 @@ export const toMetaPackage = (data: MetaPackageData): MetaPackage => {
     throw new Error(`Project type ${data.type} is not supported`)
 
   const type = data.type as ProjectType
+
   return {
     ...data,
     type,
