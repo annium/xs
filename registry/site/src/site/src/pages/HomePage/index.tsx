@@ -6,10 +6,10 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
-import metaPackages from '../../api/metaPackages'
-import PackageFilter from '../../components/PackageFilter'
-import PackageList from '../../components/PackageList'
-import MetaPackage from '../../models/view/MetaPackage'
+import * as metaPackagesApi from '../../api/metaPackages'
+import { PackageFilter } from '../../components/PackageFilter'
+import { PackageList } from '../../components/PackageList'
+import { MetaPackage } from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
 import { Store } from '../../store'
 import { updateLocation } from '../../utils/history'
@@ -22,7 +22,7 @@ type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
 
 @inject((stores: Store) => ({ user: stores.user }))
 @observer
-export default class HomePage extends React.Component<Props> {
+export class HomePage extends React.Component<Props> {
   @observable private type: ProjectType
   @observable private query: string
   @observable private packages: MetaPackage[] = []
@@ -37,11 +37,11 @@ export default class HomePage extends React.Component<Props> {
     this.query = params.get('query') || ''
   }
 
-  async componentDidMount() {
-    this.search()
+  public async componentDidMount() {
+    await this.search()
   }
 
-  render() {
+  public render() {
     const { type, query, packages } = this
 
     return (
@@ -54,7 +54,8 @@ export default class HomePage extends React.Component<Props> {
               onTypeChange={this.setType}
               query={query}
               onQueryChange={this.setQuery}
-              onSubmit={this.search} />
+              onSubmit={this.search}
+            />
             <PackageList packages={packages} />
           </Col>
         </Row>
@@ -62,11 +63,11 @@ export default class HomePage extends React.Component<Props> {
     )
   }
 
-  private search = async () => {
+  private readonly search = async () => {
     const { type, query } = this
     const { user } = this.props
     updateLocation(this.props.history, { type, query })
-    const packagesResult = await metaPackages.search(user!.data!.id, type, query, 1)
+    const packagesResult = await metaPackagesApi.search(user!.data!.id, type, query, 1)
 
     if (packagesResult.isSuccess)
       this.packages = packagesResult.data
@@ -74,7 +75,7 @@ export default class HomePage extends React.Component<Props> {
       message.error(`Packages load failed with: ${packagesResult.error}`)
   }
 
-  private setType = (type: ProjectType) => this.type = type
+  private readonly setType = (type: ProjectType) => this.type = type
 
-  private setQuery = (query: string) => this.query = query
+  private readonly setQuery = (query: string) => this.query = query
 }

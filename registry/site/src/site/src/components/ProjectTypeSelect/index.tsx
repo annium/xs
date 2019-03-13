@@ -11,15 +11,15 @@ import styles from './index.module.scss'
 
 type Props = {
   type: ProjectType
-  onSelect: (type: ProjectType) => void
+  onSelect(type: ProjectType): void;
 }
 
-export default class ProjectTypeSelect extends React.Component<Props> {
+export class ProjectTypeSelect extends React.Component<Props> {
   private static readonly keys: (keyof typeof ProjectType)[] = Object.keys(ProjectType)
-    .filter(key => typeof key === 'string')
+    .filter((key: string | number) => typeof key === 'string')
     .map(key => key as keyof typeof ProjectType)
 
-  render() {
+  public render() {
     const { type } = this.props
 
     return (
@@ -29,7 +29,7 @@ export default class ProjectTypeSelect extends React.Component<Props> {
     )
   }
 
-  private renderMenu = () => {
+  private renderMenu() {
     return (
       <Menu onClick={this.handleMenuClick}>
         {ProjectTypeSelect.keys.map(key => (
@@ -52,7 +52,7 @@ export default class ProjectTypeSelect extends React.Component<Props> {
     )
   }
 
-  private handleMenuClick = (param: ClickParam) => {
+  private readonly handleMenuClick = (param: ClickParam) => {
     this.props.onSelect(ProjectType[param.key as keyof typeof ProjectType])
   }
 }

@@ -6,11 +6,11 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import MetaPackage from '../../models/view/MetaPackage'
+import { MetaPackage } from '../../models/view/MetaPackage'
 import { Permission } from '../../models/view/Permission'
-import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
+import { UserMetaPackageAccess } from '../../models/view/UserMetaPackageAccess'
 import { Store } from '../../store'
-import route from '../../utils/route'
+import * as route from '../../utils/route'
 
 import styles from './index.module.scss'
 
@@ -21,12 +21,12 @@ type Props = Partial<Pick<Store, 'user'>> & {
 
 @inject((stores: Store) => ({ user: stores.user }))
 @observer
-export default class PackageItem extends React.Component<Props> {
+export class PackageItem extends React.Component<Props> {
   private static readonly permissionKeys = Object.keys(Permission)
-    .filter(key => typeof key === 'string')
+    .filter((key: string | number) => typeof key === 'string')
     .map(key => key as keyof typeof Permission)
 
-  render() {
+  public render() {
     const { pkg, user } = this.props
 
     const access = new UserMetaPackageAccess(user!.data!.id, pkg.ownerId, pkg.permissions)
@@ -36,22 +36,23 @@ export default class PackageItem extends React.Component<Props> {
         <List.Item.Meta
           avatar={<Avatar src={`/icons/${pkg.type}.svg`} />}
           title={this.renderPackageTitle(pkg, access)}
-          description={this.renderPackageDetails(pkg)} />
+          description={this.renderPackageDetails(pkg)}
+        />
         {pkg.description}
       </List.Item>
     )
   }
 
-  private renderPackageTitle = (pkg: MetaPackage, access: UserMetaPackageAccess) => {
+  private renderPackageTitle(pkg: MetaPackage, access: UserMetaPackageAccess) {
     return (
       <div className={styles.title}>
-        <NavLink className={styles.name} to={route.package(pkg.type, pkg.name)}>{pkg.name}</NavLink>
+        <NavLink className={styles.name} to={route.pkg(pkg.type, pkg.name)}>{pkg.name}</NavLink>
         {this.renderPackageAccess(pkg.owner, access)}
       </div>
     )
   }
 
-  private renderPackageAccess = (owner: string, access: UserMetaPackageAccess) => {
+  private renderPackageAccess(owner: string, access: UserMetaPackageAccess) {
     const ownerCls = cx({
       [styles.isOwner]: access.isOwner,
       [styles.isWorld]: access.isWorld,
@@ -67,7 +68,7 @@ export default class PackageItem extends React.Component<Props> {
     )
   }
 
-  private renderPackageDetails = (pkg: MetaPackage) => {
+  private renderPackageDetails(pkg: MetaPackage) {
     return (
       <div className={styles.details}>
         <span><Icon type="download" /> {pkg.downloads.toLocaleString()} total downloads</span>

@@ -3,9 +3,9 @@ import cx from 'classnames'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import Package from '../../models/view/Package'
+import { Package } from '../../models/view/Package'
 import { ProjectType } from '../../models/view/ProjectType'
-import route from '../../utils/route'
+import * as route from '../../utils/route'
 
 import styles from './index.module.scss'
 
@@ -16,8 +16,8 @@ type Props = {
   packages: Package[]
 }
 
-export default class PackageVersions extends React.PureComponent<Props> {
-  render() {
+export class PackageVersions extends React.PureComponent<Props> {
+  public render() {
     const { type, packages } = this.props
 
     return (
@@ -29,7 +29,8 @@ export default class PackageVersions extends React.PureComponent<Props> {
           dataSource={packages}
           pagination={false}
           size="small"
-          onRow={this.getRowProps} />
+          onRow={this.getRowProps}
+        />
       </>
     )
   }
@@ -38,29 +39,29 @@ export default class PackageVersions extends React.PureComponent<Props> {
     return ([
       {
         title: 'Version',
-        dataIndex: 'version',
         key: 'version',
-        className: styles.link,
+        dataIndex: 'version',
         render: (_, record) => (
-          <NavLink to={route.package(type, record.name, record.version)}>{record.version}</NavLink>
+          <NavLink to={route.pkg(type, record.name, record.version)}>{record.version}</NavLink>
         ),
+        className: styles.link,
       },
       {
         title: 'Downloads',
-        dataIndex: 'downloads',
         key: 'downloads',
+        dataIndex: 'downloads',
         render: (_, record) => record.downloads.toLocaleString(),
       },
       {
         title: 'Published',
-        dataIndex: 'published',
         key: 'published',
+        dataIndex: 'published',
         render: (_, record) => record.published.fromNow(),
       },
     ])
   }
 
-  private getRowProps = (record: Package) => {
+  private readonly getRowProps = (record: Package) => {
     const { pkg } = this.props
 
     return {

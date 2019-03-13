@@ -12,35 +12,8 @@ export type Props = {
   size?: 'big' | 'normal' | 'small'
 }
 
-export default class Loader extends React.Component<Props> {
-  getSize() {
-    const { size } = this.props
-
-    switch (size) {
-      case 'big':
-        return 4
-      case 'small':
-        return 2
-      default:
-        return 3
-    }
-  }
-
-  getIndicator() {
-    const size = this.getSize()
-    const toRem = (value: number) => `${value}rem`
-    const style = {
-      fontSize: toRem(size),
-      width: toRem(size),
-      height: toRem(size),
-      marginTop: toRem(-size / 2),
-      marginLeft: toRem(-size / 2),
-    }
-
-    return <Icon type="sync" style={style} spin />
-  }
-
-  render() {
+export class Loader extends React.Component<Props> {
+  public render() {
     const { className, isLoading } = this.props
 
     const cls = cx(styles.loader, className)
@@ -58,5 +31,32 @@ export default class Loader extends React.Component<Props> {
         {children}
       </Spin>
     )
+  }
+
+  private getSize() {
+    const { size } = this.props
+
+    switch (size) {
+      case 'big':
+        return 4
+      case 'small':
+        return 2
+      default:
+        return 3
+    }
+  }
+
+  private getIndicator() {
+    const size = this.getSize()
+    const toRem = (value: number) => `${value}rem`
+    const style = {
+      fontSize: toRem(size),
+      height: toRem(size),
+      marginLeft: toRem(-size / 2),
+      marginTop: toRem(-size / 2),
+      width: toRem(size),
+    }
+
+    return <Icon type="sync" style={style} spin={true} />
   }
 }

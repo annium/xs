@@ -6,9 +6,9 @@ import { computed, observable } from 'mobx'
 import { observer } from 'mobx-react'
 import React from 'react'
 
-import metaPackagesApi from '../../api/metaPackages'
-import MetaPackage from '../../models/view/MetaPackage'
-import MetaPackagePermission from '../../models/view/MetaPackagePermission'
+import * as metaPackagesApi from '../../api/metaPackages'
+import { MetaPackage } from '../../models/view/MetaPackage'
+import { MetaPackagePermission } from '../../models/view/MetaPackagePermission'
 import { Permission } from '../../models/view/Permission'
 import { PermissionCategory } from '../../models/view/PermissionCategory'
 
@@ -20,7 +20,7 @@ type Props = {
 }
 
 @observer
-export default class PackagePermissions extends React.Component<Props> {
+export class PackagePermissions extends React.Component<Props> {
   private static readonly categories = Object.keys(PermissionCategory)
     .filter(key => isNaN(parseInt(key, 10)))
     .map(key => key as keyof typeof PermissionCategory)
@@ -30,8 +30,8 @@ export default class PackagePermissions extends React.Component<Props> {
     .map(key => key as keyof typeof Permission)
     .filter(key => Permission[key] > 0)
 
+  @observable private readonly permissions: MetaPackagePermission[]
 
-  @observable private permissions: MetaPackagePermission[]
   @computed get hasChanges() {
     return !isEqual(this.permissions, this.props.metaPackage.permissions)
   }
@@ -42,7 +42,7 @@ export default class PackagePermissions extends React.Component<Props> {
     this.permissions = cloneDeep(this.props.metaPackage.permissions)
   }
 
-  render() {
+  public render() {
     const getPermissionChecked = this.getPermissionChecked(this.permissions)
     const setPermissionChecked = this.setPermissionChecked(this.permissions)
 
@@ -58,7 +58,8 @@ export default class PackagePermissions extends React.Component<Props> {
                 <Switch
                   className={styles.switch}
                   checked={getPermissionChecked(PermissionCategory[category], Permission[permission])}
-                  onChange={setPermissionChecked(PermissionCategory[category], Permission[permission])} />
+                  onChange={setPermissionChecked(PermissionCategory[category], Permission[permission])}
+                />
               </div>
             ))}
           </div>
@@ -70,31 +71,32 @@ export default class PackagePermissions extends React.Component<Props> {
     )
   }
 
-  private getPermissionChecked = (permissions: MetaPackagePermission[]) =>
-    (category: PermissionCategory, permission: Permission): boolean => {
+  private getPermissionChecked(permissions: MetaPackagePermission[]) {
+    return (category: PermissionCategory, permission: Permission): boolean => {
       const packagePermission = permissions.find(p => p.category === category)!
 
       return Boolean(packagePermission.permission & permission)
     }
+  }
 
-  private setPermissionChecked = (permissions: MetaPackagePermission[]) =>
-    (category: PermissionCategory, permission: Permission) => (value: boolean): void => {
+  private setPermissionChecked(permissions: MetaPackagePermission[]) {
+    return (category: PermissionCategory, permission: Permission) => (value: boolean): void => {
       const packagePermission = permissions.find(p => p.category === category)!
 
       packagePermission.permission = value
         ? packagePermission.permission | permission
         : packagePermission.permission & ~permission
     }
+  }
 
-  private updatePermissions = () => {
+  private readonly updatePermissions = () => {
     const { metaPackage } = this.props
 
-    metaPackagesApi.setPermissions(metaPackage.type, metaPackage.name, this.permissions).then(
-      () => {
+    metaPackagesApi.setPermissions(metaPackage.type, metaPackage.name, this.permissions)
+      .then(() => {
         message.success('Permissions updated')
         metaPackage.permissions = cloneDeep(this.permissions)
-      },
-      error => message.error(`Permissions update failed with: ${error}`)
-    )
+      })
+      .catch(error => message.error(`Permissions update failed with: ${error}`))
   }
 }

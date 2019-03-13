@@ -6,28 +6,28 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router'
 
-import metaPackages from '../../api/metaPackages'
-import MetaPackage from '../../models/view/MetaPackage'
-import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
+import * as metaPackagesApi from '../../api/metaPackages'
+import { MetaPackage } from '../../models/view/MetaPackage'
+import { UserMetaPackageAccess } from '../../models/view/UserMetaPackageAccess'
 import { Store } from '../../store'
 import { getCenteredLayout } from '../../utils/layout'
 import { parseNameVersion } from '../../utils/nameVersion'
 
 import styles from './index.module.scss'
-import Package from './Package'
+import { Package } from './Package'
 
 
 type Props = Pick<Store, 'user'> & RouteComponentProps<{ type: string, nameVersion: string }>
 
-class PackagePage extends React.Component<Props> {
-  @observable private metaPackage: MetaPackage | null = null
+class PackagePageInternal extends React.Component<Props> {
+  @observable private metaPackage?: MetaPackage
 
-  async componentDidMount() {
+  public async componentDidMount() {
     const { type, nameVersion } = this.props.match.params
     await this.loadMetaPackage(type, nameVersion)
   }
 
-  async componentDidUpdate(prevProps: Props) {
+  public async componentDidUpdate(prevProps: Props) {
     const prevParams = prevProps.match.params
     const params = this.props.match.params
 
@@ -35,7 +35,7 @@ class PackagePage extends React.Component<Props> {
       await this.loadMetaPackage(params.type, params.nameVersion)
   }
 
-  render() {
+  public render() {
     const { metaPackage } = this
     if (!metaPackage) return null
 
@@ -59,7 +59,7 @@ class PackagePage extends React.Component<Props> {
 
   private async loadMetaPackage(type: string, nameVersion: string) {
     const { name } = parseNameVersion(nameVersion)
-    const packageResult = await metaPackages.get(type, name)
+    const packageResult = await metaPackagesApi.get(type, name)
 
     if (packageResult.isSuccess)
       this.metaPackage = packageResult.data
@@ -68,4 +68,4 @@ class PackagePage extends React.Component<Props> {
   }
 }
 
-export default withRouter(inject((stores: Store) => ({ user: stores.user }))(observer(PackagePage)))
+export const PackagePage = withRouter(inject((stores: Store) => ({ user: stores.user }))(observer(PackagePageInternal)))

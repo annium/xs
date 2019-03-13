@@ -1,10 +1,10 @@
 import React from 'react'
 
-import DotnetPackage from '../../components/dotnet/Package'
-import NodePackage from '../../components/node/Package'
-import MetaPackage from '../../models/view/MetaPackage'
+import { Package as DotnetPackage } from '../../components/dotnet/Package'
+import { Package as NodePackage } from '../../components/node/Package'
+import { MetaPackage } from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
-import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
+import { UserMetaPackageAccess } from '../../models/view/UserMetaPackageAccess'
 
 
 type Props = {
@@ -13,13 +13,13 @@ type Props = {
   version?: string
 }
 
-export default function Package({ access, metaPackage, version }: Props) {
+export function Package({ access, metaPackage, version }: Props) {
   switch (metaPackage.type) {
     case ProjectType.Dotnet:
       return <DotnetPackage access={access} metaPackage={metaPackage} version={version} />
     case ProjectType.Node:
       return <NodePackage access={access} metaPackage={metaPackage} version={version} />
     default:
-      return null
+      return <span />
   }
 }

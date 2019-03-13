@@ -2,7 +2,7 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import Root from './components/Root'
+import { Root } from './components/Root'
 import { Store } from './store'
 
 
@@ -14,8 +14,8 @@ const log = console.log.bind(console, 'PersonalArea')
   user: stores.user,
 }))
 @observer
-export default class PersonalArea extends React.Component<Props> {
-  async componentWillMount() {
+export class PersonalArea extends React.Component<Props> {
+  public async componentWillMount() {
     const { startup } = this.props
 
     log('componentWillMount', 'ensure access')
@@ -23,17 +23,18 @@ export default class PersonalArea extends React.Component<Props> {
     await startup.load()
   }
 
-  async componentDidUpdate() {
+  public async componentDidUpdate() {
     log('componentDidUpdate', 'ensure access')
     this.ensureAccess()
   }
 
-  render() {
+  public render() {
     const { user, children } = this.props
     if (!user.hasAccess)
       return null
 
     log('render')
+
     return (
       <Root>
         {children}

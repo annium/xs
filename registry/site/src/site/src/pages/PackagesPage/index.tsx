@@ -6,10 +6,10 @@ import { observer } from 'mobx-react'
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 
-import metaPackages from '../../api/metaPackages'
-import PackageFilter from '../../components/PackageFilter'
-import PackageList from '../../components/PackageList'
-import MetaPackage from '../../models/view/MetaPackage'
+import * as metaPackagesApi from '../../api/metaPackages'
+import { PackageFilter } from '../../components/PackageFilter'
+import { PackageList } from '../../components/PackageList'
+import { MetaPackage } from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
 import { updateLocation } from '../../utils/history'
 import { getCenteredLayout } from '../../utils/layout'
@@ -20,7 +20,7 @@ import styles from './index.module.scss'
 type Props = RouteComponentProps
 
 @observer
-export default class SearchPage extends React.Component<Props> {
+export class PackagesPage extends React.Component<Props> {
   @observable private type: ProjectType
   @observable private query: string
   @observable private packages: MetaPackage[] = []
@@ -35,11 +35,11 @@ export default class SearchPage extends React.Component<Props> {
     this.query = params.get('query') || ''
   }
 
-  componentDidMount() {
-    this.search()
+  public async componentDidMount() {
+    await this.search()
   }
 
-  render() {
+  public render() {
     const { type, query, packages } = this
 
     return (
@@ -52,7 +52,8 @@ export default class SearchPage extends React.Component<Props> {
               onTypeChange={this.setType}
               query={query}
               onQueryChange={this.setQuery}
-              onSubmit={this.search} />
+              onSubmit={this.search}
+            />
             <PackageList packages={packages} />
           </Col>
         </Row>
@@ -60,10 +61,10 @@ export default class SearchPage extends React.Component<Props> {
     )
   }
 
-  private search = async () => {
+  private readonly search = async () => {
     const { type, query } = this
     updateLocation(this.props.history, { type, query })
-    const packagesResult = await metaPackages.search('', type, query, 1)
+    const packagesResult = await metaPackagesApi.search('', type, query, 1)
 
     if (packagesResult.isSuccess)
       this.packages = packagesResult.data
@@ -71,7 +72,7 @@ export default class SearchPage extends React.Component<Props> {
       message.error(`Packages load failed with: ${packagesResult.error}`)
   }
 
-  private setType = (type: ProjectType) => this.type = type
+  private readonly setType = (type: ProjectType) => this.type = type
 
-  private setQuery = (query: string) => this.query = query
+  private readonly setQuery = (query: string) => this.query = query
 }

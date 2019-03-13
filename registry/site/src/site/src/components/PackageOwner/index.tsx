@@ -1,7 +1,7 @@
 import Icon from 'antd/lib/icon'
 import React from 'react'
 
-import MetaPackage from '../../models/view/MetaPackage'
+import { MetaPackage } from '../../models/view/MetaPackage'
 
 import styles from './index.module.scss'
 
@@ -10,8 +10,8 @@ type Props = {
   metaPackage: MetaPackage
 }
 
-export default class PackageOwner extends React.PureComponent<Props> {
-  render() {
+export class PackageOwner extends React.PureComponent<Props> {
+  public render() {
     const { metaPackage } = this.props
 
     return (

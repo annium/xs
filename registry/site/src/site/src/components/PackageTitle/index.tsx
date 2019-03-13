@@ -2,10 +2,10 @@ import Avatar from 'antd/lib/avatar'
 import Button from 'antd/lib/button'
 import React from 'react'
 
-import MetaPackage from '../../models/view/MetaPackage'
-import Package from '../../models/view/Package'
+import { MetaPackage } from '../../models/view/MetaPackage'
+import { Package } from '../../models/view/Package'
 import { Permission } from '../../models/view/Permission'
-import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
+import { UserMetaPackageAccess } from '../../models/view/UserMetaPackageAccess'
 
 import styles from './index.module.scss'
 
@@ -14,10 +14,10 @@ type Props = {
   access: UserMetaPackageAccess
   metaPackage: MetaPackage
   pkg: Package
-  onDelete: () => void
+  onDelete(): void;
 }
 
-export default function PackageTitle({ access, metaPackage, pkg, onDelete: handleDelete }: Props) {
+export function PackageTitle({ access, metaPackage, pkg, onDelete: handleDelete }: Props) {
   return (
     <>
       <div className={styles.header}>
@@ -29,7 +29,7 @@ export default function PackageTitle({ access, metaPackage, pkg, onDelete: handl
         <div className={styles.separator} />
         {access.has(Permission.Unpublish)
           ? <Button type="danger" icon="delete" onClick={handleDelete}>Delete</Button>
-          : null}
+          : undefined}
       </div>
       <div className={styles.description}>{pkg.description}</div>
     </>

@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { Store } from '../../store'
 
-import LoginForm from './Form'
+import { LoginForm } from './Form'
 import styles from './index.module.scss'
 
 
@@ -17,25 +17,25 @@ const log = console.log.bind(console, 'LoginPage')
   user: stores.user,
 }))
 @observer
-export default class LoginPage extends React.Component<Props> {
-  async componentWillMount() {
+export class LoginPage extends React.Component<Props> {
+  public async componentWillMount() {
     log('componentWillMount', 'ensure access')
     this.ensureAccess()
   }
 
-  async componentDidUpdate() {
+  public async componentDidUpdate() {
     log('componentDidUpdate', 'ensure access')
     this.ensureAccess()
   }
 
-  render() {
+  public render() {
     const { user } = this.props
 
     if (user.hasAccess) return null
 
     const handleLogin = (name: string, password: string) => user
       .login(name, password)
-      .catch(error => message.error('login failed: ' + error))
+      .catch(error => message.error(`login failed: ${error}`))
 
     return (
       <div className={styles.page}>

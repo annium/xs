@@ -26,7 +26,7 @@
     "resolveJsonModule": true,
     "rootDir": "src",
     "strict": true,
-    "target": "es5",
+    "target": "es2015",
     "skipLibCheck": true
   },
   "include": [

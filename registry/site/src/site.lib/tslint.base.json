@@ -109,7 +109,6 @@
       true,
       3
     ],
-    "no-console": true,
     "no-construct": true,
     "no-debugger": true,
     "no-default-export": true,
@@ -133,24 +132,12 @@
     "no-internal-module": true,
     "no-invalid-template-strings": true,
     "no-invalid-this": true,
-    "no-magic-numbers": [
-      true,
-      {
-        "allowed-numbers": [
-          -1,
-          0,
-          1
-        ]
-      }
-    ],
     "no-mergeable-namespace": true,
     "no-misused-new": true,
     "no-namespace": [
       true,
       "allow-declarations"
     ],
-    "no-non-null-assertion": true,
-    "no-null-keyword": true,
     "no-object-literal-type-assertion": true,
     "no-parameter-properties": true,
     "no-parameter-reassignment": true,
@@ -174,7 +161,6 @@
       true,
       "ignore-template-strings"
     ],
-    "no-unbound-method": true,
     "no-unnecessary-callback-wrapper": true,
     "no-unnecessary-class": true,
     "no-unnecessary-initializer": true,

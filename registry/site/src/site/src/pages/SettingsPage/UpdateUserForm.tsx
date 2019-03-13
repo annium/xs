@@ -8,21 +8,13 @@ import * as React from 'react'
 import styles from './UpdateUserForm.module.scss'
 
 
-interface FormProps extends FormComponentProps {
+type FormProps = FormComponentProps & {
   name: string
-  onSubmit: (name: string, password: string) => void
+  onSubmit(name: string, password: string): void;
 }
 
-class UpdateUserForm extends React.PureComponent<FormProps>{
-  handleSubmit = (e: React.FormEvent<any>) => {
-    e.preventDefault()
-    this.props.form.validateFields((err, values) => {
-      if (!err)
-        this.props.onSubmit(values.login, values.password)
-    })
-  }
-
-  render() {
+class UpdateUserFormInternal extends React.PureComponent<FormProps> {
+  public render() {
     const { name, form: { getFieldDecorator } } = this.props
 
     const inputLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
@@ -33,21 +25,25 @@ class UpdateUserForm extends React.PureComponent<FormProps>{
         <Form.Item label="Name" {...inputLayout}>
           {getFieldDecorator('login', {
             initialValue: name,
-            rules: [{ required: true, message: 'Please input your Login!' }],
+            rules: [{ message: 'Please input your Login!', required: true }],
           })(
-            <Input prefix={<Icon type="user" />}
+            <Input
+              prefix={<Icon type="user" />}
               placeholder="name"
-              autoComplete="username" />
+              autoComplete="username"
+            />,
           )}
         </Form.Item>
         <Form.Item label="Password" {...inputLayout}>
           {getFieldDecorator('password', {
-            rules: [{ required: true, message: 'Please input your Password!' }],
+            rules: [{ message: 'Please input your Password!', required: true }],
           })(
-            <Input prefix={<Icon type="lock" />}
+            <Input
+              prefix={<Icon type="lock" />}
               type="password"
               placeholder="password"
-              autoComplete="current-password" />
+              autoComplete="current-password"
+            />,
           )}
         </Form.Item>
         <Form.Item {...buttonLayout}>
@@ -58,6 +54,14 @@ class UpdateUserForm extends React.PureComponent<FormProps>{
       </Form>
     )
   }
+
+  private readonly handleSubmit = (e: React.FormEvent<unknown>) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values: { login: string, password: string }) => {
+      if (!err)
+        this.props.onSubmit(values.login, values.password)
+    })
+  }
 }
 
-export default Form.create()(UpdateUserForm)
+export const UpdateUserForm = Form.create()(UpdateUserFormInternal)

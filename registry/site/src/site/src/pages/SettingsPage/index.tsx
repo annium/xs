@@ -11,7 +11,7 @@ import { Store } from '../../store'
 import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
-import UpdateUserForm from './UpdateUserForm'
+import { UpdateUserForm } from './UpdateUserForm'
 
 
 type Props = Pick<Store, 'user'> & RouteComponentProps
@@ -19,20 +19,20 @@ type Props = Pick<Store, 'user'> & RouteComponentProps
 const log = console.log.bind(console, 'SettingsPage')
 @inject((stores: Store) => ({ user: stores.user }))
 @observer
-export default class SettingsPage extends React.Component<Props> {
-  render() {
+export class SettingsPage extends React.Component<Props> {
+  public render() {
     log('render')
     const { user } = this.props
 
     const handleUpdate = (name: string, password: string) => user
       .update(name, password)
-      .then(() => message.success('credentials updated'),
-        error => message.error('credentials save failed: ' + error))
+      .then(() => message.success('credentials updated'))
+      .catch(error => message.error(`credentials save failed: ${error}`))
 
     const handleUpdateToken = () => user
       .updateToken()
-      .then(() => message.success('token updated'),
-        error => message.error('token update failed: ' + error))
+      .then(() => message.success('token updated'))
+      .catch(error => message.error(`token update failed: ${error}`))
 
     return (
       <div className={styles.page}>
@@ -42,7 +42,11 @@ export default class SettingsPage extends React.Component<Props> {
             <h2>Credentials</h2>
             <UpdateUserForm name={user.data!.name} onSubmit={handleUpdate} />
             <h2>API Token</h2>
-            <Input disabled value={user.data!.apiToken} suffix={<Icon type="sync" onClick={handleUpdateToken} />} />
+            <Input
+              disabled={true}
+              value={user.data!.apiToken}
+              suffix={<Icon type="sync" onClick={handleUpdateToken} />}
+            />
           </Col>
         </Row>
       </div >

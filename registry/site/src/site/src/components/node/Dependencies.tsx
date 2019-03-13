@@ -3,9 +3,9 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { DependencyType } from '../../models/view/node/DependencyType'
-import PackageDependency from '../../models/view/node/PackageDependency'
+import { PackageDependency } from '../../models/view/node/PackageDependency'
 import { ProjectType } from '../../models/view/ProjectType'
-import route from '../../utils/route'
+import * as route from '../../utils/route'
 
 import styles from './Dependencies.module.scss'
 
@@ -14,8 +14,8 @@ type Props = {
   dependencies: PackageDependency[]
 }
 
-export default class Dependencies extends React.PureComponent<Props> {
-  render() {
+export class Dependencies extends React.PureComponent<Props> {
+  public render() {
     return (
       <>
         <div className={styles.header}>Dependencies</div>
@@ -36,7 +36,7 @@ export default class Dependencies extends React.PureComponent<Props> {
         <div className={styles.type}>{label}</div>
         {_.chain(dependencies).sortBy().map(d => (
           <div className={styles.dependency} key={d.name}>
-            <NavLink to={route.package(ProjectType.Node, d.name)}>{d.name}</NavLink> ({d.version})
+            <NavLink to={route.pkg(ProjectType.Node, d.name)}>{d.name}</NavLink> ({d.version})
           </div>
         )).value()}
       </div>

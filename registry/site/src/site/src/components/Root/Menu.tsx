@@ -11,22 +11,22 @@ import styles from './Menu.module.scss'
 
 type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
 
-class Menu extends React.Component<Props> {
-  render() {
+class MenuInternal extends React.Component<Props> {
+  public render() {
     const { data, logout } = this.props.user!
 
     return (
       <div className={styles.menu}>
-        <NavLink className={styles.item} exact activeClassName={styles.isActiveItem} to="/">
+        <NavLink className={styles.item} exact={true} activeClassName={styles.isActiveItem} to="/">
           <Icon type="home" /> Home
         </NavLink>
-        <NavLink className={styles.item} exact activeClassName={styles.isActiveItem} to="/packages">
+        <NavLink className={styles.item} exact={true} activeClassName={styles.isActiveItem} to="/packages">
           <Icon type="search" /> Packages
         </NavLink>
         <div className={styles.separator} />
         <div className={styles.info}>Hi, {data!.name}</div>
         <div className={styles.separator} />
-        <NavLink className={styles.item} exact activeClassName={styles.isActiveItem} to="/settings">
+        <NavLink className={styles.item} exact={true} activeClassName={styles.isActiveItem} to="/settings">
           <Icon type="setting" /> Settings
         </NavLink>
         <NavLink className={styles.item} to="/login" onClick={logout}>
@@ -37,4 +37,4 @@ class Menu extends React.Component<Props> {
   }
 }
 
-export default withRouter(inject((stores: Store) => ({ user: stores.user }))(observer(Menu)))
+export const Menu = withRouter(inject((stores: Store) => ({ user: stores.user }))(observer(MenuInternal)))

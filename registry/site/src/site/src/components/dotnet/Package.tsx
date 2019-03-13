@@ -6,19 +6,19 @@ import { computed, observable } from 'mobx'
 import { observer } from 'mobx-react'
 import React from 'react'
 
-import serverApi from '../../api/server/dotnet'
-import PackageModel from '../../models/view/dotnet/Package'
-import MetaPackage from '../../models/view/MetaPackage'
-import UserMetaPackageAccess from '../../models/view/UserMetaPackageAccess'
+import { api as serverApi } from '../../api/server/dotnet'
+import { Package as PackageModel } from '../../models/view/dotnet/Package'
+import { MetaPackage } from '../../models/view/MetaPackage'
+import { UserMetaPackageAccess } from '../../models/view/UserMetaPackageAccess'
 import { gutter } from '../../utils/layout'
-import PackageInfo from '../PackageInfo'
-import PackageOwner from '../PackageOwner'
-import PackagePermissions from '../PackagePermissions'
-import PackageStats from '../PackageStats'
-import PackageTitle from '../PackageTitle'
-import PackageVersions from '../PackageVersions'
+import { PackageInfo } from '../PackageInfo'
+import { PackageOwner } from '../PackageOwner'
+import { PackagePermissions } from '../PackagePermissions'
+import { PackageStats } from '../PackageStats'
+import { PackageTitle } from '../PackageTitle'
+import { PackageVersions } from '../PackageVersions'
 
-import Dependencies from './Dependencies'
+import { Dependencies } from './Dependencies'
 
 
 type Props = {
@@ -28,7 +28,7 @@ type Props = {
 }
 
 @observer
-export default class Package extends React.Component<Props>{
+export class Package extends React.Component<Props> {
   @observable private packages: PackageModel[] = []
 
   @computed public get pkg() {
@@ -39,16 +39,16 @@ export default class Package extends React.Component<Props>{
       _.sortBy(this.packages, (pkg: PackageModel) => pkg.version)[this.packages.length - 1]
   }
 
-  async componentDidMount() {
+  public async componentDidMount() {
     await this.loadPackages(this.props.metaPackage.name)
   }
 
-  async componentDidUpdate(prevProps: Props) {
+  public async componentDidUpdate(prevProps: Props) {
     if (this.props.metaPackage !== prevProps.metaPackage)
       await this.loadPackages(this.props.metaPackage.name)
   }
 
-  render() {
+  public render() {
     const { pkg, packages } = this
     const { access, metaPackage } = this.props
 
@@ -63,7 +63,7 @@ export default class Package extends React.Component<Props>{
         </Col>
         <Col span={8}>
           <PackageInfo pkg={pkg} />
-          {access.isOwner ? <PackagePermissions metaPackage={metaPackage} /> : null}
+          {access.isOwner ? <PackagePermissions metaPackage={metaPackage} /> : undefined}
           <PackageStats pkg={pkg} packages={packages} />
           <PackageOwner metaPackage={metaPackage} />
         </Col>
@@ -80,15 +80,14 @@ export default class Package extends React.Component<Props>{
       message.error(`Package load failed with: ${packagesResult.error}`)
   }
 
-  private handleDelete = () => {
+  private readonly handleDelete = () => {
     const { name, version } = this.pkg
     confirm({
       title: 'Confirm delete',
       content: <span>Confirm, if you really want to delete package <b>{name} {version}</b></span>,
-      onOk: () => serverApi.delete(name, version).then(
-        () => message.success('Package successfully deleted'),
-        error => message.error(`Package deletion failed with: ${error}`)
-      ),
+      onOk: () => serverApi.delete(name, version)
+        .then(() => message.success('Package successfully deleted'))
+        .catch(error => message.error(`Package deletion failed with: ${error}`)),
       maskClosable: true,
     })
   }

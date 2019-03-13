@@ -48,10 +48,10 @@ export class Client {
     body?: Body,
     headers?: RawHeaders,
   ): Promise<DataResponse<T>> {
-    return fetch(
-      this.baseUrl + this.withQuery(url, query),
-      this.prepareOptions(method, headers || {}, body),
-    )
+    const uri = `${this.baseUrl}${this.withQuery(url, query)}`
+    const init = this.prepareOptions(method, headers || {}, body)
+
+    return fetch(uri, init)
       .then(
         (response: Response) => this.readResponse(response).then(raw => this.parseResponse<T>(raw)),
         (reason: Stringifiable) => this.parseFailure<T>(reason),
@@ -73,7 +73,7 @@ export class Client {
     if (typeof preparedBody === 'string')
       headers['Content-Type'] = 'application/json'
 
-    return merge(this.baseOptions, { method, headers, body: preparedBody })
+    return merge({}, this.baseOptions, { method, headers }, preparedBody ? { body: preparedBody } : undefined)
   }
 
   private prepareBody(body: Body): FormData | string {
