@@ -1,24 +1,21 @@
 import { Response } from '@xs/site.lib/dist/api'
 
-import User from '../models/view/User'
+import { User } from '../models/view/User'
 
-import api from './api'
+import { api } from './api'
 
 
-export default {
-  login(name: string, password: string): Promise<Response> {
-    return api.post('login', undefined, { name, password })
-  },
-  load(): Promise<Response<User | null>> {
-    return api.get<User>('login')
-  },
-  logout(): Promise<Response> {
-    return api.delete('login')
-  },
-  update(name: string, password: string): Promise<Response> {
-    return api.post('user', undefined, { name, password })
-  },
-  updateToken(): Promise<Response> {
-    return api.post('user/token')
-  },
-}
+export const login = (name: string, password: string): Promise<Response> =>
+  api.post('login', undefined, { name, password })
+
+export const load = (): Promise<Response<User | undefined>> =>
+  api.get<User>('login')
+
+export const logout = (): Promise<Response> =>
+  api.delete('login')
+
+export const update = (name: string, password: string): Promise<Response> =>
+  api.post('user', undefined, { name, password })
+
+export const updateToken = (): Promise<Response> =>
+  api.post('user/token')
