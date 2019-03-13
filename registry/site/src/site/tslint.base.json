@@ -39,7 +39,7 @@
     ],
     "cyclomatic-complexity": [
       true,
-      10
+      20
     ],
     "deprecation": true,
     "encoding": true,
@@ -268,7 +268,7 @@
           "multiline": {
             "arrays": "always",
             "exports": "always",
-            "functions": "never",
+            "functions": "always",
             "imports": "always",
             "objects": "always",
             "typeLiterals": "never"
@@ -327,8 +327,7 @@
       "check-type",
       "check-typecast",
       "check-type-operator",
-      "check-preblock",
-      "check-postbrace"
+      "check-preblock"
     ]
   }
 }
