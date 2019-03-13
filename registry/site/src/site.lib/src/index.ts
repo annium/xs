@@ -1,4 +1,4 @@
-import * as api from 'src/api'
+import * as api from './api'
 
 export {
   api,
