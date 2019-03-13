@@ -39,6 +39,9 @@ namespace Xs.Cli.Core.Projects
                 dependencies.Where(e => e.Type == factory.Type)
             );
 
+            if (projects.Any(p => p.Name == project.Name))
+                throw new InvalidOperationException($"Project {project} name is not unique.");
+
             if (projects.Any(p => p.Version != project.Version))
                 throw new InvalidOperationException($"Project {project} uses different version {project.Version} than others.");
 
