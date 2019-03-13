@@ -96,6 +96,7 @@ namespace Xs.Cli.Node.Projects
                 file,
                 projectDependencies,
                 packageDependencies,
+                scripts,
                 shell,
                 loggerConfiguration,
                 logger,

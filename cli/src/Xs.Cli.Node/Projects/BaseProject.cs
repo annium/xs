@@ -11,12 +11,15 @@ namespace Xs.Cli.Node.Projects
 {
     internal class BaseProject : ProjectBase, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject
     {
+        protected readonly IReadOnlyDictionary<string, string> scripts;
+
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
 
         private readonly ProjectMapper mapper;
 
         public BaseProject(SpecialProjectContext context) : base(context)
         {
+            scripts = context.Scripts;
             auditRules = context.AuditRules;
             mapper = context.Mapper;
         }
@@ -55,7 +58,7 @@ namespace Xs.Cli.Node.Projects
         }
 
         public Task BuildAsync(Env env, CancellationToken token) =>
-            RunAsync("build", "yarn run build", token);
+            scripts.ContainsKey("build") ? RunAsync("build", "yarn run build", token) : Task.CompletedTask;
 
         public override void Save() => mapper.Save(this);
 

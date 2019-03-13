@@ -10,6 +10,8 @@ namespace Xs.Cli.Node.Projects
 {
     internal class SpecialProjectContext : ProjectBaseContext
     {
+        public IReadOnlyDictionary<string, string> Scripts { get; }
+
         public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
 
         public ProjectMapper Mapper { get; }
@@ -22,6 +24,7 @@ namespace Xs.Cli.Node.Projects
             FileInfo file,
             HashSet<IProject> projectDependencies,
             HashSet<Dependency> packageDependencies,
+            IReadOnlyDictionary<string, string> scripts,
             IShell shell,
             LoggerConfiguration loggerConfiguration,
             ILogger logger,
@@ -40,6 +43,7 @@ namespace Xs.Cli.Node.Projects
             logger
         )
         {
+            Scripts = scripts;
             AuditRules = auditRules;
             Mapper = mapper;
         }
