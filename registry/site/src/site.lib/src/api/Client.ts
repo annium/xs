@@ -1,56 +1,60 @@
 import { merge } from 'lodash'
-import 'whatwg-fetch'
 
 import { Query, Response as DataResponse } from '.'
 
 
 type RawHeaders = Record<string, string>
+type Body = { [key: string]: unknown }
+type Stringifiable = { toString(): string }
 
-export default class Client {
-  private baseUrl: string
-  private baseOptions: RequestInit
+export class Client {
+  private readonly baseUrl: string
+  private readonly baseOptions: RequestInit
 
   constructor(baseUrl: URL, baseOptions: RequestInit) {
     this.baseUrl = baseUrl.href
-    this.baseOptions = merge({
-      headers: {
-        'Accept': 'application/json',
+    this.baseOptions = merge(
+      {
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json',
+        },
+        mode: 'cors',
       },
-      credentials: 'include',
-      mode: 'cors',
-    }, baseOptions)
+      baseOptions,
+    )
   }
 
   public get<T>(url: string, query?: Query, headers?: RawHeaders): Promise<DataResponse<T>> {
-    return this.send<T>('get', url, query, null, headers)
+    return this.send<T>('get', url, query, undefined, headers)
   }
 
-  public post<T = void>(url: string, query?: Query, body?: any, headers?: RawHeaders): Promise<DataResponse<T>> {
+  public post<T = void>(url: string, query?: Query, body?: Body, headers?: RawHeaders): Promise<DataResponse<T>> {
     return this.send<T>('post', url, query, body, headers)
   }
 
-  public put<T = void>(url: string, query?: Query, body?: any, headers?: RawHeaders): Promise<DataResponse<T>> {
+  public put<T = void>(url: string, query?: Query, body?: Body, headers?: RawHeaders): Promise<DataResponse<T>> {
     return this.send<T>('put', url, query, body, headers)
   }
 
   public delete<T = void>(url: string, query?: Query, headers?: RawHeaders): Promise<DataResponse<T>> {
-    return this.send<T>('delete', url, query, null, headers)
+    return this.send<T>('delete', url, query, undefined, headers)
   }
 
   private send<T>(
     method: string,
     url: string,
     query?: Query,
-    body?: any,
-    headers?: RawHeaders
+    body?: Body,
+    headers?: RawHeaders,
   ): Promise<DataResponse<T>> {
     return fetch(
       this.baseUrl + this.withQuery(url, query),
-      this.prepareOptions(method, headers || {}, body)
+      this.prepareOptions(method, headers || {}, body),
     )
       .then(
-        response => this.readResponse(response).then(raw => this.parseResponse<T>(raw)),
-        reason => this.parseFailure<T>(reason)
+        (response: Response) => this.readResponse(response).then(raw => this.parseResponse<T>(raw)),
+        (reason: Stringifiable) => this.parseFailure<T>(reason),
       )
   }
 
@@ -63,8 +67,8 @@ export default class Client {
     return `${url}?${params}`
   }
 
-  private prepareOptions(method: string, headers: RawHeaders, body: any): RequestInit {
-    const preparedBody = body ? this.prepareBody(body) : null
+  private prepareOptions(method: string, headers: RawHeaders, body?: Body): RequestInit {
+    const preparedBody = body ? this.prepareBody(body) : undefined
 
     if (typeof preparedBody === 'string')
       headers['Content-Type'] = 'application/json'
@@ -72,9 +76,9 @@ export default class Client {
     return merge(this.baseOptions, { method, headers, body: preparedBody })
   }
 
-  private prepareBody(body: any): FormData | string {
+  private prepareBody(body: Body): FormData | string {
     // if no files - send as json
-    if (!Object.values(body).some(f => f instanceof Blob))
+    if (!Object.values(body as {}).some(f => f instanceof Blob))
       return JSON.stringify(body)
 
     const data = new FormData()
@@ -83,60 +87,60 @@ export default class Client {
     return data
   }
 
-  private prepareFormData(data: FormData, object: any, prefix?: string): void {
+  private prepareFormData(data: FormData, object: Body, prefix?: string): void {
     for (const name in object)
       if (object.hasOwnProperty(name)) {
-        const value = object[name]
+        const value: unknown = object[name] as unknown
         const prefixedName = prefix ? `${prefix}[${name}]` : name
         if (typeof value === 'string' || typeof value === 'number')
           data.append(prefixedName, value.toString())
         else if (typeof value === 'boolean')
           data.append(prefixedName, value ? '1' : '0')
-        else if (value === null)
-          data.append(prefixedName, 'null')
+        else if (value === undefined)
+          data.append(prefixedName, 'undefined')
         else if (value instanceof File)
           data.append(prefixedName, value, value.name)
         else if (value instanceof Blob)
           data.append(prefixedName, value, name)
         else
-          this.prepareFormData(data, value, prefixedName)
+          this.prepareFormData(data, value as Body, prefixedName)
       }
   }
 
   private readResponse(response: Response): Promise<RawResponse> {
     return response.text().then(body => ({
+      body: this.parseBody(body, response.headers.get('content-type') || undefined),
       isOk: response.ok,
       status: response.status,
       statusText: response.statusText,
-      body: this.parseBody(body, response.headers.get('content-type')),
     }))
   }
 
-  private parseBody(body: string, contentType: string | null) {
+  private parseBody(body: string, contentType?: string): Object | string {
     if (!contentType)
       return body
 
     if (contentType.includes('application/json'))
-      return JSON.parse(body)
+      return JSON.parse(body) as Object
 
     return body
   }
 
   private parseResponse<T>(raw: RawResponse): DataResponse<T> {
     if (raw.isOk)
-      return new DataResponse<T>(raw.body as T, null)
+      return new DataResponse<T>(raw.body as T, undefined)
 
-    return new DataResponse<T>(null as any as T, raw.body.toString() || raw.statusText)
+    return new DataResponse<T>(undefined as unknown as T, raw.body.toString() || raw.statusText)
   }
 
-  private parseFailure<T>(reason: any): DataResponse<T> {
-    return new DataResponse<T>(null as any as T, reason.toString())
+  private parseFailure<T>(reason: Stringifiable): DataResponse<T> {
+    return new DataResponse<T>(undefined as unknown as T, reason.toString())
   }
 }
 
-interface RawResponse {
+type RawResponse = {
   isOk: boolean
   status: number
   statusText: string
-  body: any
+  body: Stringifiable
 }

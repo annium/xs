@@ -1,21 +1,19 @@
-import 'whatwg-fetch'
-
 import { Client } from '.'
 
 
-interface FactoryOptions {
+type FactoryOptions = {
   url: URL | UrlOptions | string
   init?: RequestInit
 }
 
-interface UrlOptions {
+type UrlOptions = {
   protocol: string,
   host: string
   port?: number
   basePath?: string
 }
 
-export default function factory(options: FactoryOptions): Client {
+export function factory(options: FactoryOptions): Client {
   const url = options.url instanceof URL
     ? options.url
     : new URL(typeof options.url === 'string' ? options.url : buildUrl(options.url))
@@ -23,18 +21,23 @@ export default function factory(options: FactoryOptions): Client {
   return new Client(url, options.init || {})
 }
 
+enum DefaultPort {
+  Http = 80,
+  Https = 443,
+}
+
 function buildUrl({ protocol, host, port, basePath }: UrlOptions) {
   let url = `${protocol}//${host}`
 
   switch (protocol) {
     case 'http:':
-      if (port !== 80) url += `:${port}`
+      if (port !== DefaultPort.Http) url += `:${port}`
       break
     case 'https:':
-      if (port !== 443) url += `:${port}`
+      if (port !== DefaultPort.Https) url += `:${port}`
       break
     default:
-      throw `Protocol ${protocol} is not supported`
+      throw new Error(`Protocol ${protocol} is not supported`)
   }
 
   if (basePath) url += `/${basePath}`
