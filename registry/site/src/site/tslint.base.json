@@ -119,7 +119,6 @@
     "no-dynamic-delete": true,
     "no-empty": true,
     "no-eval": true,
-    "no-floating-promises": true,
     "no-for-in-array": true,
     "no-implicit-dependencies": false,
     "no-import-side-effect": true,
@@ -146,7 +145,21 @@
     "no-reference-import": true,
     "no-require-imports": true,
     "no-return-await": true,
-    "no-shadowed-variable": true,
+    "no-shadowed-variable": [
+      true,
+      {
+        "class": true,
+        "enum": true,
+        "function": false,
+        "import": true,
+        "interface": true,
+        "namespace": true,
+        "typeAlias": true,
+        "typeParameter": true,
+        "temporalDeadZone": true,
+        "underscore": true
+      }
+    ],
     "no-sparse-arrays": true,
     "no-string-literal": true,
     "no-string-throw": true,
