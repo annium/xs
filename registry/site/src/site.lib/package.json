@@ -8,9 +8,9 @@
     "lodash": "4.17.11"
   },
   "devDependencies": {
-    "@types/lodash": "4.14.122",
-    "@types/node": "11.11.0",
-    "tslint": "5.13.1",
+    "@types/lodash": "4.14.123",
+    "@types/node": "11.11.3",
+    "tslint": "5.14.0",
     "typescript": "3.3.3333"
   },
   "scripts": {
