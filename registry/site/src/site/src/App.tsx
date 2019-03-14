@@ -1,34 +1,32 @@
-import { inject, observer } from 'mobx-react'
-import * as React from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Loader } from './components/Loader'
-import { Store } from './store'
+import { inject, Store } from './store'
 
 
-type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
+type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps & { children?: ReactNode }
 
 const log = console.log.bind(console, 'App')
-@inject((stores: Store) => ({
-  startup: stores.startup,
-  user: stores.user,
-}))
-@observer
-export class App extends React.Component<Props> {
-  public async componentWillMount() {
-    const { startup, user, location } = this.props
-    startup.location = location
-    log('componentWillMount', 'load user')
-    await user.load()
-  }
+export const App = inject<Props, Store>(
+  ({ startup, user }) => ({ startup, user }),
+  function App(props: Props) {
+    const { startup, user, location, children } = props
 
-  public render() {
-    const { user, children } = this.props
-    log('render')
+    useEffect(
+      () => {
+        startup.location = location
+        log('effect', 'load user')
+        user.load()
+      },
+      [user.isLoaded],
+    )
+
+    log('render', user.data)
 
     if (!user.isLoaded)
       return <Loader isLoading={!user.isLoaded} size="big" />
 
-    return children
-  }
-}
+    return children as JSX.Element
+  },
+)

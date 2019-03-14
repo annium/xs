@@ -3,11 +3,11 @@ import { Response } from '@xs/site.lib/dist/api'
 import _ from 'lodash'
 import { when } from 'mobx'
 
-import { store } from '../..'
 import { PackageData } from '../../models/data/PackageData'
 import { Package } from '../../models/view/Package'
 import { ProjectType } from '../../models/view/ProjectType'
 import { User } from '../../models/view/User'
+import { store } from '../../store'
 
 
 export function createApi<TPackageData extends PackageData, TPackage extends Package>(
