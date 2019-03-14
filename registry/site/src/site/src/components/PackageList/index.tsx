@@ -11,33 +11,23 @@ type Props = {
   packages: MetaPackage[]
 }
 
-export class PackageList extends React.Component<Props> {
-  public render() {
-    const { packages } = this.props
+export const PackageList = ({ packages }: Props) => (
+  <>
+    {renderHeader(packages)}
+    <div className={styles.container}>
+      <List
+        itemLayout="vertical"
+        dataSource={packages}
+        renderItem={renderPackage}
+      />
+    </div>
+  </>
+)
 
-    return (
-      <>
-        {this.renderHeader(packages)}
-        <div className={styles.container}>
-          <List
-            itemLayout="vertical"
-            dataSource={packages}
-            renderItem={this.renderPackage}
-          />
-        </div>
-      </>
-    )
-  }
+const renderHeader = (packages: MetaPackage[]) => (
+  <h2 className={styles.header}>Total {packages.length} packages:</h2>
+)
 
-  private renderHeader(packages: MetaPackage[]) {
-    return (
-      <h2 className={styles.header}>Total {packages.length} packages:</h2>
-    )
-  }
-
-  private renderPackage(pkg: MetaPackage, index: number) {
-    return (
-      <PackageItem key={index} pkg={pkg} />
-    )
-  }
-}
+const renderPackage = (pkg: MetaPackage, index: number) => (
+  <PackageItem key={index} pkg={pkg} />
+)

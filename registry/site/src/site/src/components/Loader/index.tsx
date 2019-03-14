@@ -1,7 +1,7 @@
 import Icon from 'antd/lib/icon'
 import Spin from 'antd/lib/spin'
 import cx from 'classnames'
-import * as React from 'react'
+import React, { Children, ReactNode } from 'react'
 
 import styles from './index.module.scss'
 
@@ -10,53 +10,47 @@ export type Props = {
   isLoading: boolean
   className?: string
   size?: 'big' | 'normal' | 'small'
+} & { children?: ReactNode }
+
+export const Loader = ({ isLoading, className, size, children }: Props) => {
+  const cls = cx(styles.loader, className)
+  const childrenResult = Children.count(children) ? children : <span />
+
+  if (!isLoading)
+    return (
+      <div className={cls}>
+        {childrenResult}
+      </div>
+    )
+
+  return (
+    <Spin className={cls} wrapperClassName={cls} indicator={getIndicator(size)}>
+      {childrenResult}
+    </Spin>
+  )
 }
 
-export class Loader extends React.Component<Props> {
-  public render() {
-    const { className, isLoading } = this.props
-
-    const cls = cx(styles.loader, className)
-    const children = React.Children.count(this.props.children) ? this.props.children : <span />
-
-    if (!isLoading)
-      return (
-        <div className={cls}>
-          {children}
-        </div>
-      )
-
-    return (
-      <Spin className={cls} wrapperClassName={cls} indicator={this.getIndicator()}>
-        {children}
-      </Spin>
-    )
+function getIndicator(size: Props['size']) {
+  const sizeValue = getSize(size)
+  const toRem = (value: number) => `${value}rem`
+  const style = {
+    fontSize: toRem(sizeValue),
+    height: toRem(sizeValue),
+    marginLeft: toRem(-sizeValue / 2),
+    marginTop: toRem(-sizeValue / 2),
+    width: toRem(sizeValue),
   }
 
-  private getSize() {
-    const { size } = this.props
+  return <Icon type="sync" style={style} spin={true} />
+}
 
-    switch (size) {
-      case 'big':
-        return 4
-      case 'small':
-        return 2
-      default:
-        return 3
-    }
-  }
-
-  private getIndicator() {
-    const size = this.getSize()
-    const toRem = (value: number) => `${value}rem`
-    const style = {
-      fontSize: toRem(size),
-      height: toRem(size),
-      marginLeft: toRem(-size / 2),
-      marginTop: toRem(-size / 2),
-      width: toRem(size),
-    }
-
-    return <Icon type="sync" style={style} spin={true} />
+function getSize(size: Props['size']) {
+  switch (size) {
+    case 'big':
+      return 4
+    case 'small':
+      return 2
+    default:
+      return 3
   }
 }

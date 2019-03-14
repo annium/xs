@@ -16,58 +16,47 @@ type Props = {
   packages: Package[]
 }
 
-export class PackageVersions extends React.PureComponent<Props> {
-  public render() {
-    const { type, packages } = this.props
+export const PackageVersions = ({ type, pkg, packages }: Props) => (
+  <>
+    <div className={styles.header}>Version History</div>
+    <Table<Package>
+      rowKey="version"
+      columns={getColumns(type)}
+      dataSource={packages}
+      pagination={false}
+      size="small"
+      onRow={getRowProps(pkg)}
+    />
+  </>
+)
 
-    return (
-      <>
-        <div className={styles.header}>Version History</div>
-        <Table<Package>
-          rowKey="version"
-          columns={this.getColumns(type)}
-          dataSource={packages}
-          pagination={false}
-          size="small"
-          onRow={this.getRowProps}
-        />
-      </>
-    )
-  }
+const getColumns = (type: ProjectType): ColumnProps<Package>[] => ([
+  {
+    title: 'Version',
+    key: 'version',
+    dataIndex: 'version',
+    render: (_, record) => (
+      <NavLink to={route.pkg(type, record.name, record.version)}>{record.version}</NavLink>
+    ),
+    className: styles.link,
+  },
+  {
+    title: 'Downloads',
+    key: 'downloads',
+    dataIndex: 'downloads',
+    render: (_, record) => record.downloads.toLocaleString(),
+  },
+  {
+    title: 'Published',
+    key: 'published',
+    dataIndex: 'published',
+    render: (_, record) => record.published.fromNow(),
+  },
+])
 
-  private getColumns(type: ProjectType): ColumnProps<Package>[] {
-    return ([
-      {
-        title: 'Version',
-        key: 'version',
-        dataIndex: 'version',
-        render: (_, record) => (
-          <NavLink to={route.pkg(type, record.name, record.version)}>{record.version}</NavLink>
-        ),
-        className: styles.link,
-      },
-      {
-        title: 'Downloads',
-        key: 'downloads',
-        dataIndex: 'downloads',
-        render: (_, record) => record.downloads.toLocaleString(),
-      },
-      {
-        title: 'Published',
-        key: 'published',
-        dataIndex: 'published',
-        render: (_, record) => record.published.fromNow(),
-      },
-    ])
-  }
 
-  private readonly getRowProps = (record: Package) => {
-    const { pkg } = this.props
-
-    return {
-      className: cx({
-        [styles.current]: record.version === pkg.version,
-      }),
-    }
-  }
-}
+const getRowProps = (pkg: Package) => (record: Package) => ({
+  className: cx({
+    [styles.current]: record.version === pkg.version,
+  }),
+})

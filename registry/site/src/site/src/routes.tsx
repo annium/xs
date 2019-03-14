@@ -1,5 +1,5 @@
 import createBrowserHistory from 'history/createBrowserHistory'
-import * as React from 'react'
+import React from 'react'
 import { Route, Router, Switch } from 'react-router-dom'
 
 import { App } from './App'

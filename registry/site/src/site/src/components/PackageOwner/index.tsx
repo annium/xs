@@ -10,18 +10,12 @@ type Props = {
   metaPackage: MetaPackage
 }
 
-export class PackageOwner extends React.PureComponent<Props> {
-  public render() {
-    const { metaPackage } = this.props
-
-    return (
-      <div>
-        <div className={styles.header}>Owner</div>
-        <div className={styles.item}>
-          <Icon className={styles.icon} type="user" />
-          <span className={styles.label}>{metaPackage.owner}</span>
-        </div>
-      </div>
-    )
-  }
-}
+export const PackageOwner = ({ metaPackage }: Props) => (
+  <div>
+    <div className={styles.header}>Owner</div>
+    <div className={styles.item}>
+      <Icon className={styles.icon} type="user" />
+      <span className={styles.label}>{metaPackage.owner}</span>
+    </div>
+  </div>
+)

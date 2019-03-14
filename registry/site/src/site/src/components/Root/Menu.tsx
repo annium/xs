@@ -1,9 +1,8 @@
 import Icon from 'antd/lib/icon'
-import { inject, observer } from 'mobx-react'
-import * as React from 'react'
+import React from 'react'
 import { NavLink, RouteComponentProps, withRouter } from 'react-router-dom'
 
-import { Store } from '../../store'
+import { inject, Store } from '../../store'
 
 
 import styles from './Menu.module.scss'
@@ -11,9 +10,10 @@ import styles from './Menu.module.scss'
 
 type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
 
-class MenuInternal extends React.Component<Props> {
-  public render() {
-    const { data, logout } = this.props.user!
+export const Menu = withRouter(inject(
+  ({ user }) => ({ user }),
+  function Menu({ user }: Props) {
+    const { data, logout } = user!
 
     return (
       <div className={styles.menu}>
@@ -34,7 +34,5 @@ class MenuInternal extends React.Component<Props> {
         </NavLink>
       </div>
     )
-  }
-}
-
-export const Menu = withRouter(inject((stores: Store) => ({ user: stores.user }))(observer(MenuInternal)))
+  },
+))

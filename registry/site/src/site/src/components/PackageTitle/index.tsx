@@ -17,21 +17,19 @@ type Props = {
   onDelete(): void;
 }
 
-export function PackageTitle({ access, metaPackage, pkg, onDelete: handleDelete }: Props) {
-  return (
-    <>
-      <div className={styles.header}>
-        <Avatar src={`/icons/${metaPackage.type}.svg`} size="large" />
-        <div className={styles.nameVersion}>
-          <span className={styles.name}>{pkg.name}</span>
-          <span className={styles.version}>{pkg.version}</span>
-        </div>
-        <div className={styles.separator} />
-        {access.has(Permission.Unpublish)
-          ? <Button type="danger" icon="delete" onClick={handleDelete}>Delete</Button>
-          : undefined}
+export const PackageTitle = ({ access, metaPackage, pkg, onDelete: handleDelete }: Props) => (
+  <>
+    <div className={styles.header}>
+      <Avatar src={`/icons/${metaPackage.type}.svg`} size="large" />
+      <div className={styles.nameVersion}>
+        <span className={styles.name}>{pkg.name}</span>
+        <span className={styles.version}>{pkg.version}</span>
       </div>
-      <div className={styles.description}>{pkg.description}</div>
-    </>
-  )
-}
+      <div className={styles.separator} />
+      {access.has(Permission.Unpublish)
+        ? <Button type="danger" icon="delete" onClick={handleDelete}>Delete</Button>
+        : undefined}
+    </div>
+    <div className={styles.description}>{pkg.description}</div>
+  </>
+)

@@ -2,7 +2,7 @@ import Button from 'antd/lib/button'
 import Form, { FormComponentProps } from 'antd/lib/form'
 import Icon from 'antd/lib/icon'
 import Input from 'antd/lib/input'
-import * as React from 'react'
+import React from 'react'
 
 
 import styles from './Form.module.scss'

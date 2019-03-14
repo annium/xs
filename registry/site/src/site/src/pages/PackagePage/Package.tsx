@@ -13,7 +13,7 @@ type Props = {
   version?: string
 }
 
-export function Package({ access, metaPackage, version }: Props) {
+export const Package = ({ access, metaPackage, version }: Props) => {
   switch (metaPackage.type) {
     case ProjectType.Dotnet:
       return <DotnetPackage access={access} metaPackage={metaPackage} version={version} />

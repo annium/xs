@@ -14,7 +14,7 @@ type Props = {
   onQueryChange(query: string): void;
 }
 
-export function PackageFilter({ type, onTypeChange, query, onQueryChange, onSubmit }: Props) {
+export const PackageFilter = ({ type, onTypeChange, query, onQueryChange, onSubmit }: Props) => {
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => onQueryChange(e.target.value)
 
   return (

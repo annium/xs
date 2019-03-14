@@ -13,7 +13,7 @@ type Props = {
   dependencies: PackageDependency[]
 }
 
-export function Dependencies({ dependencies }: Props) {
+export const Dependencies = ({ dependencies }: Props) => {
   const frameworks = _.chain(dependencies).map(d => d.framework).uniq().sortBy().value()
 
   return (

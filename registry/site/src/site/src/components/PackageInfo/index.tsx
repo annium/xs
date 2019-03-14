@@ -10,14 +10,12 @@ type Props = {
   pkg: Package
 }
 
-export function PackageInfo({ pkg }: Props) {
-  return (
-    <div>
-      <div className={styles.header}>Info</div>
-      <div className={styles.item}>
-        <Icon className={styles.icon} type="clock-circle" />
-        <span className={styles.label}>published {pkg.published.fromNow()}</span>
-      </div>
-    </div >
-  )
-}
+export const PackageInfo = ({ pkg }: Props) => (
+  <div>
+    <div className={styles.header}>Info</div>
+    <div className={styles.item}>
+      <Icon className={styles.icon} type="clock-circle" />
+      <span className={styles.label}>published {pkg.published.fromNow()}</span>
+    </div>
+  </div>
+)

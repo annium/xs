@@ -12,21 +12,19 @@ type Props = {
   packages: Package[]
 }
 
-export function PackageStats({ pkg, packages }: Props) {
-  return (
-    <div>
-      <div className={styles.header}>Stats</div>
-      <div className={styles.item}>
-        <Icon className={styles.icon} type="download" />
-        <span className={styles.label}>
-          {_.sum(packages.map(p => p.downloads)).toLocaleString()} total downloads
+export const PackageStats = ({ pkg, packages }: Props) => (
+  <div>
+    <div className={styles.header}>Stats</div>
+    <div className={styles.item}>
+      <Icon className={styles.icon} type="download" />
+      <span className={styles.label}>
+        {_.sum(packages.map(p => p.downloads)).toLocaleString()} total downloads
           </span>
-      </div>
-      <div className={styles.item}>
-        <Icon className={styles.icon} type="gift" />
-        <span className={styles.label}>
-          {pkg.downloads.toLocaleString()} downloads of current version</span>
-      </div>
     </div>
-  )
-}
+    <div className={styles.item}>
+      <Icon className={styles.icon} type="gift" />
+      <span className={styles.label}>
+        {pkg.downloads.toLocaleString()} downloads of current version</span>
+    </div>
+  </div>
+)

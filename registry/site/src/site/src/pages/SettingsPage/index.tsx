@@ -4,7 +4,7 @@ import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
 import { inject, observer } from 'mobx-react'
-import * as React from 'react'
+import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Store } from '../../store'
