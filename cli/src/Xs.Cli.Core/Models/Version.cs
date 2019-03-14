@@ -27,7 +27,7 @@ namespace Xs.Cli.Core.Models
                 throw new ArgumentNullException(version);
 
             var parts = version.Split('.');
-            if (parts.Length != 3)
+            if (parts.Length < 3)
                 throwException();
 
             try
