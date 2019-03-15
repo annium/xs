@@ -14,7 +14,7 @@ namespace Xs.Registry.Node
         private static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return new WebHostBuilder()
-                .UseKestrel(WebHostBuilderHelper.ConfigureKestrel(9901))
+                .UseKestrel(WebHostBuilderHelper.ConfigureKestrel(9903))
                 .ConfigureLogging(WebHostBuilderHelper.ConfigureLogging)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup<ServicePack>>();
