@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -25,13 +26,17 @@ namespace Xs.Cli.Main.Tools
 
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
 
+        private readonly ILogger logger;
+
         public ConfigurationManager(
             MainClientFactory mainClientFactory,
-            IEnumerable<ISpecialConfigurationManager> specialManagers
+            IEnumerable<ISpecialConfigurationManager> specialManagers,
+            ILogger logger
         )
         {
             this.specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
             this.mainClientFactory = mainClientFactory;
+            this.logger = logger;
         }
 
         public Configuration LoadBarebone(string folder)
@@ -47,8 +52,12 @@ namespace Xs.Cli.Main.Tools
 
         public async Task<Configuration> Load(string folder)
         {
+            logger.Trace($"Load configuration from {folder}");
             if (!File.Exists(ConfigurationFile(folder)) || !File.Exists(CredentialsFile(folder)))
+            {
+                logger.Trace($"Configuration or credentials missing in {folder}");
                 return null;
+            }
 
             var configuration = new Configuration();
             configuration.Location = new Uri(File.ReadAllText(ConfigurationFile(folder)));
@@ -57,11 +66,14 @@ namespace Xs.Cli.Main.Tools
                 .OrderBy(s => s.Key)
                 .ToDictionary(s => ProjectType.Get(s.Key), s => s.Value);
 
+            logger.Trace($"Configuration loaded {folder}");
+
             return configuration;
         }
 
         public void Save(string folder, IProject[] projects, Configuration configuration)
         {
+            logger.Trace($"Save configuration in {folder}");
             Write(ConfigurationFile, configuration.Location.ToString());
             Write(CredentialsFile, configuration.Token);
 
@@ -70,17 +82,25 @@ namespace Xs.Cli.Main.Tools
             ignorePatterns.Add(FileManager.IgnoreFile);
             ignorePatterns.Add(credentialsFile);
             foreach (var(type, uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
+            {
                 if (specialManagers.ContainsKey(type))
                 {
                     var targets = projects.Where(p => p.Type == type);
                     if (targets.Count() > 0)
                     {
+                        logger.Trace($"Save {type} -> {uri} configuration");
                         ignorePatterns.AddRange(specialManagers[type].IgnorePatterns);
                         foreach (var project in targets)
                             specialManagers[type].Save(project, uri, configuration.Token);
                     }
+                    else
+                        logger.Trace($"No {type} projects discovered to save configuration for");
                 }
+                else
+                    logger.Trace($"{type} configuration manager not found");
+            }
 
+            logger.Trace($"Update ignore file in {folder}");
             var ignoreFile = Path.Combine(folder, ConfigurationManager.ignoreFile);
 
             if (File.Exists(ignoreFile))
@@ -90,7 +110,6 @@ namespace Xs.Cli.Main.Tools
                 if (index >= 0)
                 {
                     lines = lines.Where(line => !ignorePatterns.Contains(line)).ToList();
-                    // if(lines.Count==index+1)
                     lines.InsertRange(index + 1, ignorePatterns);
                 }
                 else

@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -23,8 +24,19 @@ namespace Xs.Cli.Dotnet.Tools
 
         private readonly Uri defaultUri = new Uri("https://api.nuget.org/");
 
+        private readonly ILogger logger;
+
+        public SpecialConfigurationManager(
+            ILogger logger
+        )
+        {
+            this.logger = logger;
+        }
+
         public void Save(IProject project, Uri location, string token)
         {
+            logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+
             var sources = new XElement(El.PackageSources);
             sources.Add(new XElement(El.Clear));
 
