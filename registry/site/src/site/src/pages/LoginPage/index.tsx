@@ -1,9 +1,8 @@
 import message from 'antd/lib/message'
-import { inject, observer } from 'mobx-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { Store } from '../../store'
+import { inject, Store } from '../../store'
 
 import { LoginForm } from './Form'
 import styles from './index.module.scss'
@@ -12,45 +11,44 @@ import styles from './index.module.scss'
 type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
 
 const log = console.log.bind(console, 'LoginPage')
-@inject((stores: Store) => ({
-  startup: stores.startup,
-  user: stores.user,
-}))
-@observer
-export class LoginPage extends React.Component<Props> {
-  public async componentWillMount() {
-    log('componentWillMount', 'ensure access')
-    this.ensureAccess()
-  }
 
-  public async componentDidUpdate() {
-    log('componentDidUpdate', 'ensure access')
-    this.ensureAccess()
-  }
+export const LoginPage = inject<RouteComponentProps, Pick<Store, 'startup' | 'user'>>(
+  ({ startup, user }) => ({ startup, user }),
+  (props: Props) => {
+    useEffect(
+      () => {
+        log('mount', 'ensure access')
+        ensureAccess(props)
+      },
+      [],
+    )
 
-  public render() {
-    const { user } = this.props
+    useEffect(() => {
+      log('update', 'ensure access')
+      ensureAccess(props)
+    })
+
+    const { user } = props
 
     if (user.hasAccess) return null
 
-    const handleLogin = (name: string, password: string) => user
-      .login(name, password)
-      .catch(error => message.error(`login failed: ${error}`))
-
     return (
       <div className={styles.page}>
-        <LoginForm onSubmit={handleLogin} />
+        <LoginForm onSubmit={handleLogin(user)} />
       </div>
     )
-  }
+  },
+)
 
-  private ensureAccess() {
-    const { startup, user, history } = this.props
-    log('checkAccess', user.hasAccess)
-    if (user.isLoaded && user.hasAccess)
-      if (startup.location.pathname.startsWith('/login'))
-        history.replace('/')
-      else
-        history.replace(startup.location)
-  }
+const handleLogin = (user: Props['user']) => (name: string, password: string) => user
+  .login(name, password)
+  .catch(error => message.error(`login failed: ${error}`))
+
+const ensureAccess = ({ startup, user, history }: Props) => {
+  log('checkAccess', user.hasAccess)
+  if (user.isLoaded && user.hasAccess)
+    if (startup.location.pathname.startsWith('/login'))
+      history.replace('/')
+    else
+      history.replace(startup.location)
 }

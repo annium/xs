@@ -1,9 +1,7 @@
 import Col from 'antd/lib/col'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
-import { observable } from 'mobx'
-import { inject, observer } from 'mobx-react'
-import React from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 
 import * as metaPackagesApi from '../../api/metaPackages'
@@ -11,7 +9,7 @@ import { PackageFilter } from '../../components/PackageFilter'
 import { PackageList } from '../../components/PackageList'
 import { MetaPackage } from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
-import { Store } from '../../store'
+import { inject, Store } from '../../store'
 import { updateLocation } from '../../utils/history'
 import { getCenteredLayout } from '../../utils/layout'
 
@@ -20,62 +18,51 @@ import styles from './index.module.scss'
 
 type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
 
-@inject((stores: Store) => ({ user: stores.user }))
-@observer
-export class HomePage extends React.Component<Props> {
-  @observable private type: ProjectType
-  @observable private query: string
-  @observable private packages: MetaPackage[] = []
-
-  constructor(props: Props) {
-    super(props)
-
-    const params = new URLSearchParams(props.location.search)
-    this.type = Object.values(ProjectType).includes(params.get('type'))
+export const HomePage = inject<RouteComponentProps, Pick<Store, 'user'>>(
+  ({ user }) => ({ user }),
+  ({ user, history, location }: Props) => {
+    const [packages, setPackages] = useState<MetaPackage[]>([])
+    const params = new URLSearchParams(location.search)
+    const [type, setType] = useState<ProjectType>(Object.values(ProjectType).includes(params.get('type'))
       ? params.get('type') as ProjectType
-      : ProjectType.Any
-    this.query = params.get('query') || ''
-  }
+      : ProjectType.Any)
+    const [query, setQuery] = useState(params.get('query') || '')
+    const runSearch = () => search(user, history, type, query, setPackages)
 
-  public async componentDidMount() {
-    await this.search()
-  }
-
-  public render() {
-    const { type, query, packages } = this
+    useEffect(() => { runSearch() }, [])
 
     return (
-      <div className={styles.page}>
+      <div className={styles.page} >
         <Row className={styles.row}>
           <Col className={styles.col} {...getCenteredLayout(22, 22, 20, 18, 14)}>
             <h1>My packages</h1>
             <PackageFilter
               type={type}
-              onTypeChange={this.setType}
+              onTypeChange={setType}
               query={query}
-              onQueryChange={this.setQuery}
-              onSubmit={this.search}
+              onQueryChange={setQuery}
+              onSubmit={runSearch}
             />
             <PackageList packages={packages} />
           </Col>
         </Row>
-      </div>
+      </div >
     )
-  }
+  },
+)
 
-  private readonly search = async () => {
-    const { type, query } = this
-    const { user } = this.props
-    updateLocation(this.props.history, { type, query })
-    const packagesResult = await metaPackagesApi.search(user!.data!.id, type, query, 1)
+const search = async (
+  user: Props['user'],
+  history: Props['history'],
+  type: ProjectType,
+  query: string,
+  setPackages: Dispatch<SetStateAction<MetaPackage[]>>,
+) => {
+  updateLocation(history, { type, query })
+  const packagesResult = await metaPackagesApi.search(user!.data!.id, type, query, 1)
 
-    if (packagesResult.isSuccess)
-      this.packages = packagesResult.data
-    else
-      message.error(`Packages load failed with: ${packagesResult.error}`)
-  }
-
-  private readonly setType = (type: ProjectType) => this.type = type
-
-  private readonly setQuery = (query: string) => this.query = query
+  if (packagesResult.isSuccess)
+    setPackages(packagesResult.data)
+  else
+    message.error(`Packages load failed with: ${packagesResult.error}`)
 }

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { chain } from 'lodash'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -14,32 +14,29 @@ type Props = {
   dependencies: PackageDependency[]
 }
 
-export class Dependencies extends React.PureComponent<Props> {
-  public render() {
-    return (
-      <>
-        <div className={styles.header}>Dependencies</div>
-        {this.renderTypeDependencies(DependencyType.Normal, 'Base dependencies')}
-        {this.renderTypeDependencies(DependencyType.Dev, 'Development dependencies')}
-      </>
-    )
-  }
+export const Dependencies = ({ dependencies }: Props) => (
+  <>
+    <div className={styles.header}>Dependencies</div>
+    {renderTypeDependencies(dependencies, DependencyType.Normal, 'Base dependencies')}
+    {renderTypeDependencies(dependencies, DependencyType.Dev, 'Development dependencies')}
+  </>
+)
 
-  private renderTypeDependencies(type: DependencyType, label: string) {
-    const dependencies = this.props.dependencies.filter(d => d.type === type)
 
-    if (!dependencies.length)
-      return null
+const renderTypeDependencies = (dependencies: Props['dependencies'], type: DependencyType, label: string) => {
+  const deps = dependencies.filter(d => d.type === type)
 
-    return (
-      <div>
-        <div className={styles.type}>{label}</div>
-        {_.chain(dependencies).sortBy().map(d => (
-          <div className={styles.dependency} key={d.name}>
-            <NavLink to={route.pkg(ProjectType.Node, d.name)}>{d.name}</NavLink> ({d.version})
+  if (!deps.length)
+    return null
+
+  return (
+    <div>
+      <div className={styles.type}>{label}</div>
+      {chain(dependencies).sortBy().map(d => (
+        <div className={styles.dependency} key={d.name}>
+          <NavLink to={route.pkg(ProjectType.Node, d.name)}>{d.name}</NavLink> ({d.version})
           </div>
-        )).value()}
-      </div>
-    )
-  }
+      )).value()}
+    </div>
+  )
 }

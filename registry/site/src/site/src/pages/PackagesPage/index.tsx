@@ -1,9 +1,7 @@
 import Col from 'antd/lib/col'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
-import { observable } from 'mobx'
-import { observer } from 'mobx-react'
-import React from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 
 import * as metaPackagesApi from '../../api/metaPackages'
@@ -19,60 +17,47 @@ import styles from './index.module.scss'
 
 type Props = RouteComponentProps
 
-@observer
-export class PackagesPage extends React.Component<Props> {
-  @observable private type: ProjectType
-  @observable private query: string
-  @observable private packages: MetaPackage[] = []
+export const PackagesPage = ({ history, location }: Props) => {
+  const [packages, setPackages] = useState<MetaPackage[]>([])
+  const params = new URLSearchParams(location.search)
+  const [type, setType] = useState<ProjectType>(Object.values(ProjectType).includes(params.get('type'))
+    ? params.get('type') as ProjectType
+    : ProjectType.Any)
+  const [query, setQuery] = useState(params.get('query') || '')
+  const runSearch = () => search(history, type, query, setPackages)
 
-  constructor(props: Props) {
-    super(props)
+  useEffect(() => { runSearch() }, [])
 
-    const params = new URLSearchParams(props.location.search)
-    this.type = Object.values(ProjectType).includes(params.get('type'))
-      ? params.get('type') as ProjectType
-      : ProjectType.Any
-    this.query = params.get('query') || ''
-  }
+  return (
+    <div className={styles.page} >
+      <Row className={styles.row}>
+        <Col className={styles.col} {...getCenteredLayout(22, 22, 20, 18, 14)}>
+          <h1>My packages</h1>
+          <PackageFilter
+            type={type}
+            onTypeChange={setType}
+            query={query}
+            onQueryChange={setQuery}
+            onSubmit={runSearch}
+          />
+          <PackageList packages={packages} />
+        </Col>
+      </Row>
+    </div >
+  )
+}
 
-  public async componentDidMount() {
-    await this.search()
-  }
+const search = async (
+  history: Props['history'],
+  type: ProjectType,
+  query: string,
+  setPackages: Dispatch<SetStateAction<MetaPackage[]>>,
+) => {
+  updateLocation(history, { type, query })
+  const packagesResult = await metaPackagesApi.search('', type, query, 1)
 
-  public render() {
-    const { type, query, packages } = this
-
-    return (
-      <div className={styles.page}>
-        <Row className={styles.row}>
-          <Col className={styles.col} {...getCenteredLayout(22, 22, 20, 18, 14)}>
-            <h1>Packages</h1>
-            <PackageFilter
-              type={type}
-              onTypeChange={this.setType}
-              query={query}
-              onQueryChange={this.setQuery}
-              onSubmit={this.search}
-            />
-            <PackageList packages={packages} />
-          </Col>
-        </Row>
-      </div >
-    )
-  }
-
-  private readonly search = async () => {
-    const { type, query } = this
-    updateLocation(this.props.history, { type, query })
-    const packagesResult = await metaPackagesApi.search('', type, query, 1)
-
-    if (packagesResult.isSuccess)
-      this.packages = packagesResult.data
-    else
-      message.error(`Packages load failed with: ${packagesResult.error}`)
-  }
-
-  private readonly setType = (type: ProjectType) => this.type = type
-
-  private readonly setQuery = (query: string) => this.query = query
+  if (packagesResult.isSuccess)
+    setPackages(packagesResult.data)
+  else
+    message.error(`Packages load failed with: ${packagesResult.error}`)
 }

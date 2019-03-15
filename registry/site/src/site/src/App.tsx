@@ -19,7 +19,7 @@ export const App = inject<Props, Store>(
         log('effect', 'load user')
         user.load()
       },
-      [user.isLoaded],
+      [],
     )
 
     log('render', user.data)

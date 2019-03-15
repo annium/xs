@@ -1,10 +1,8 @@
 import { Col, Row } from 'antd/lib/grid'
 import message from 'antd/lib/message'
 import confirm from 'antd/lib/modal/confirm'
-import _ from 'lodash'
-import { computed, observable } from 'mobx'
-import { observer } from 'mobx-react'
-import React from 'react'
+import { chain } from 'lodash'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import { api as serverApi } from '../../api/server/node'
 import { MetaPackage } from '../../models/view/MetaPackage'
@@ -27,68 +25,49 @@ type Props = {
   version?: string
 }
 
-@observer
-export class Package extends React.Component<Props> {
-  @computed public get pkg() {
-    const { version } = this.props
+export const Package = ({ access, metaPackage, version }: Props) => {
+  const [packages, setPackages] = useState<PackageModel[]>([])
 
-    return version ?
-      this.packages.filter(p => p.version === version)[0] :
-      _.sortBy(this.packages, (pkg: PackageModel) => pkg.version)[this.packages.length - 1]
-  }
+  const pkg: PackageModel = version ?
+    packages.filter(p => p.version === version)[0] :
+    chain(packages).sortBy((p: PackageModel) => p.version).value()[packages.length - 1]
 
-  @observable private packages: PackageModel[] = []
+  useEffect(() => { loadPackages(metaPackage.name, setPackages) }, [])
+  useEffect(() => { loadPackages(metaPackage.name, setPackages) }, [metaPackage])
 
-  public async componentDidMount() {
-    await this.loadPackages(this.props.metaPackage.name)
-  }
+  if (!pkg) return null
 
-  public async componentDidUpdate(prevProps: Props) {
-    if (this.props.metaPackage !== prevProps.metaPackage)
-      await this.loadPackages(this.props.metaPackage.name)
-  }
-
-  public render() {
-    const { pkg, packages } = this
-    const { access, metaPackage } = this.props
-
-    if (!pkg) return null
-
-    return (
-      <Row gutter={gutter}>
-        <Col span={16}>
-          <PackageTitle access={access} metaPackage={metaPackage} pkg={pkg} onDelete={this.handleDelete} />
-          <Dependencies dependencies={pkg.dependencies} />
-          <PackageVersions type={metaPackage.type} pkg={pkg} packages={packages} />
-        </Col>
-        <Col span={8}>
-          <PackageInfo pkg={pkg} />
-          {access.isOwner ? <PackagePermissions metaPackage={metaPackage} /> : undefined}
-          <PackageStats pkg={pkg} packages={packages} />
-          <PackageOwner metaPackage={metaPackage} />
-        </Col>
-      </Row>
-    )
-  }
-
-  private async loadPackages(name: string) {
-    const packagesResult = await serverApi.get(name)
-
-    if (packagesResult.isSuccess)
-      this.packages = packagesResult.data
-    else
-      message.error(`Package load failed with: ${packagesResult.error}`)
-  }
-
-  private readonly handleDelete = () => {
-    const { name, version } = this.pkg
-    confirm({
-      title: 'Confirm delete',
-      content: <span>Confirm, if you really want to delete package <b>{name} {version}</b></span>,
-      onOk: () => serverApi.delete(name, version)
-        .then(() => message.success('Package successfully deleted'))
-        .catch(error => message.error(`Package deletion failed with: ${error}`)),
-      maskClosable: true,
-    })
-  }
+  return (
+    <Row gutter={gutter}>
+      <Col span={16}>
+        <PackageTitle access={access} metaPackage={metaPackage} pkg={pkg} onDelete={handleDelete(pkg)} />
+        <Dependencies dependencies={pkg.dependencies} />
+        <PackageVersions type={metaPackage.type} pkg={pkg} packages={packages} />
+      </Col>
+      <Col span={8}>
+        <PackageInfo pkg={pkg} />
+        {access.isOwner ? <PackagePermissions metaPackage={metaPackage} /> : undefined}
+        <PackageStats pkg={pkg} packages={packages} />
+        <PackageOwner metaPackage={metaPackage} />
+      </Col>
+    </Row>
+  )
 }
+
+const loadPackages = async (name: string, setPackages: Dispatch<SetStateAction<PackageModel[]>>) => {
+  const packagesResult = await serverApi.get(name)
+
+  if (packagesResult.isSuccess)
+    setPackages(packagesResult.data)
+  else
+    message.error(`Package load failed with: ${packagesResult.error}`)
+}
+
+const handleDelete = ({ name, version }: PackageModel) => () => confirm({
+  title: 'Confirm delete',
+  content: <span>Confirm, if you really want to delete package <b>{name} {version}</b></span>,
+  onOk: () => serverApi.delete(name, version)
+    .then(() => message.success('Package successfully deleted'))
+    .catch(error => message.error(`Package deletion failed with: ${error}`)),
+  maskClosable: true,
+})

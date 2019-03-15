@@ -1,37 +1,32 @@
-import { inject, observer } from 'mobx-react'
-import React from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Root } from './components/Root'
-import { Store } from './store'
+import { inject, Store } from './store'
 
 
-type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
+type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps & { children?: ReactNode }
 
 const log = console.log.bind(console, 'PersonalArea')
-@inject((stores: Store) => ({
-  startup: stores.startup,
-  user: stores.user,
-}))
-@observer
-export class PersonalArea extends React.Component<Props> {
-  public async componentWillMount() {
-    const { startup } = this.props
 
-    log('componentWillMount', 'ensure access')
-    this.ensureAccess()
-    await startup.load()
-  }
+export const PersonalArea = inject<RouteComponentProps, Pick<Store, 'startup' | 'user'>>(
+  ({ startup, user }) => ({ startup, user }),
+  ({ startup, user, history, children }: Props) => {
+    useEffect(
+      () => {
+        log('mount', 'ensure access')
+        ensureAccess(user, history)
+        startup.load()
+      },
+      [],
+    )
 
-  public async componentDidUpdate() {
-    log('componentDidUpdate', 'ensure access')
-    this.ensureAccess()
-  }
+    useEffect(() => {
+      log('update', 'ensure access')
+      ensureAccess(user, history)
+    })
 
-  public render() {
-    const { user, children } = this.props
-    if (!user.hasAccess)
-      return null
+    if (!user.hasAccess) return null
 
     log('render')
 
@@ -40,12 +35,12 @@ export class PersonalArea extends React.Component<Props> {
         {children}
       </Root>
     )
-  }
+  },
+)
 
-  private ensureAccess(): void {
-    const { user, history } = this.props
-    log('checkAccess', user.hasAccess)
-    if (user.isLoaded && !user.hasAccess)
-      history.replace('/login')
-  }
+const ensureAccess = (user: Props['user'], history: Props['history']) => {
+  log('checkAccess', user.hasAccess)
+  if (user.isLoaded && !user.hasAccess)
+    history.replace('/login')
 }
+

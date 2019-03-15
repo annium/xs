@@ -16,4 +16,3 @@ export const store = observable({
 })
 
 export const inject = createInject(React.createContext(store))
-console.warn(inject)
