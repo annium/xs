@@ -1,4 +1,5 @@
-TAG_PREFIX := brutallord.ddns.net:5000/registry
+PROJECT_NAME := registry
+TAG_PREFIX := brutallord.ddns.net:5000/$(PROJECT_NAME)
 
 db-up main-up dotnet-up node-up site-up:
 	$(call up,$(subst -up,,$@))
@@ -29,13 +30,6 @@ publish-node:
 publish-site:
 	$(call publish,site,site/src,site/Dockerfile)
 
-demo:
-	$(call demo)
-
-define demo
-	@echo $(if $(LOCAL_BUILD),local)
-endef
-
 
 define publish
 	@$(eval image := $(1))
@@ -52,14 +46,14 @@ define up
 	@$(eval files := $(foreach component,$(components),-f setup/$(env)/$(component).yml))
 	$(call net-up)
 	$(if $(LOCAL_BUILD),$(call copy-packages))
-	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p registry $(files) up --build -d --force-recreate
+	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p $(PROJECT_NAME) $(files) up --build -d --force-recreate
 	$(if $(LOCAL_BUILD),$(call delete-packages))
 endef
 
 define down
 	@$(eval components := $(1))
 	@$(eval files := $(foreach component,$(components),-f setup/$(env)/$(component).yml))
-	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p registry $(files) down
+	@COMPOSE_IGNORE_ORPHANS=true docker-compose -p $(PROJECT_NAME) $(files) down
 	$(call net-down)
 endef
 
@@ -74,19 +68,19 @@ endef
 
 define log
 	@$(eval component := $(1))
-	@docker logs -f registry_$(component)
+	@docker logs -f $(PROJECT_NAME)_$(component)
 endef
 
 define net-up
-	@if [[ $$(docker network ls -q -f "name=registry" | wc -l) -eq 0 ]]; then \
-		docker network create --attachable --driver bridge --scope local registry; \
+	@if [[ $$(docker network ls -q -f "name=$(PROJECT_NAME)" | wc -l) -eq 0 ]]; then \
+		docker network create --attachable --driver bridge --scope local $(PROJECT_NAME); \
 	fi
 endef
 
 define net-down
-	@if [[ $$(docker network ls -q -f "name=registry" | wc -l) -gt 0 ]]; then \
-		if [[ $$(docker network inspect -f "{{len .Containers}}" registry) -eq 0 ]]; then \
-			docker network rm registry; \
+	@if [[ $$(docker network ls -q -f "name=$(PROJECT_NAME)" | wc -l) -gt 0 ]]; then \
+		if [[ $$(docker network inspect -f "{{len .Containers}}" $(PROJECT_NAME)) -eq 0 ]]; then \
+			docker network rm $(PROJECT_NAME); \
 		fi \
 	fi
 endef
