@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NodaTime;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Node;
@@ -17,24 +19,34 @@ namespace Xs.Registry.Node.Controllers
 
         private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
 
+        private readonly ILogger<PackagePublicationController> logger;
+
         public PackagePublicationController(
             Func<Instant> getInstant,
-            IPackageService<Package, PackageDependency, PackagePayload> packageService
+            IPackageService<Package, PackageDependency, PackagePayload> packageService,
+            ILogger<PackagePublicationController> logger
         )
         {
             this.getInstant = getInstant;
             this.packageService = packageService;
+            this.logger = logger;
         }
 
         [HttpPut("{package}")]
         [AuthorizeApi]
-        public async Task<IActionResult> PublishPackageAsync([FromBody] PackagePayload payload)
+        public async Task<IActionResult> PublishPackageAsync(string package, [FromBody] PackagePayload payload)
         {
             if (payload == null)
+            {
+                logger.LogInformation($"Publication of {package} declined: Empty payload");
                 return BadRequest("Empty data");
+            }
 
             if (!ModelState.IsValid)
+            {
+                logger.LogInformation($"Publication of {package} declined: {JsonConvert.SerializeObject(ModelState)}");
                 return BadRequest("Incorrect data");
+            }
 
             payload.Published = getInstant();
 
