@@ -1,7 +1,4 @@
 {
-  "extends": [
-    "tslint"
-  ],
   "rules": {
     "adjacent-overload-signatures": true,
     "align": [
@@ -130,7 +127,6 @@
     "no-inferred-empty-object-type": true,
     "no-internal-module": true,
     "no-invalid-template-strings": true,
-    "no-invalid-this": true,
     "no-mergeable-namespace": true,
     "no-misused-new": true,
     "no-namespace": [
