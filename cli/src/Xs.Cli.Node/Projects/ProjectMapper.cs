@@ -29,6 +29,7 @@ namespace Xs.Cli.Node.Projects
 
             var deps = GetPropertyDictionary(info, El.Dependencies)
                 .Concat(GetPropertyDictionary(info, El.DevDependencies))
+                .Concat(GetPropertyDictionary(info, El.PeerDependencies))
                 .ToDictionary(e => e.Key, e => e.Value);
 
             project.ProjectDependencies = deps
@@ -140,6 +141,8 @@ namespace Xs.Cli.Node.Projects
             public const string Dependencies = "dependencies";
 
             public const string DevDependencies = "devDependencies";
+
+            public const string PeerDependencies = "peerDependencies";
 
             public const string FilePrefix = "file:";
 
