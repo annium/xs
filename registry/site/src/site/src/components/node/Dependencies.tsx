@@ -32,7 +32,7 @@ const renderTypeDependencies = (dependencies: Props['dependencies'], type: Depen
   return (
     <div>
       <div className={styles.type}>{label}</div>
-      {chain(dependencies).sortBy().map(d => (
+      {chain(deps).sortBy().map(d => (
         <div className={styles.dependency} key={d.name}>
           <NavLink to={route.pkg(ProjectType.Node, d.name)}>{d.name}</NavLink> ({d.version})
           </div>
