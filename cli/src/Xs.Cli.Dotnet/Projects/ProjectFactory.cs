@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xs.Cli.Core.Audit;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -75,7 +76,8 @@ namespace Xs.Cli.Dotnet.Projects
         public IProject CreateProject(
             string directory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies
+            IEnumerable<Dependency> dependencies,
+            DiscoverConfiguration configuration
         )
         {
             var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());

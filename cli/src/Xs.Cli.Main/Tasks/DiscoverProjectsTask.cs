@@ -87,7 +87,7 @@ namespace Xs.Cli.Main.Tasks
         {
             try
             {
-                return (projectFactory.CreateProject(directory, factory, projects, dependencies), null);
+                return (projectFactory.CreateProject(directory, factory, projects, dependencies, configuration), null);
             }
             catch (Exception exception)
             {

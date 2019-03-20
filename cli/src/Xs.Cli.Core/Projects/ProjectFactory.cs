@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects
@@ -30,13 +31,15 @@ namespace Xs.Cli.Core.Projects
             string directory,
             ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies
+            IEnumerable<Dependency> dependencies,
+            DiscoverConfiguration configuration
         )
         {
             var project = factory.CreateProject(
                 directory,
                 projects.Where(e => e.Type == factory.Type),
-                dependencies.Where(e => e.Type == factory.Type)
+                dependencies.Where(e => e.Type == factory.Type),
+                configuration
             );
 
             if (projects.Any(p => p.Name == project.Name))
