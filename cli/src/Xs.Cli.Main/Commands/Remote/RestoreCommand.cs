@@ -11,7 +11,7 @@ using Xs.RegistryClient.Main;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class RestoreCommand : AsyncCommand<RestoreCommandConfiguration, CwdCommandConfiguration>
+    internal class RestoreCommand : AsyncCommand<RestoreCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "restore";
 
@@ -36,12 +36,12 @@ namespace Xs.Cli.Main.Commands.Remote
 
         public override async Task HandleAsync(
             RestoreCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
             var user = cfg.User;
-            var dir = cwdCfg.Cwd;
+            var dir = discoverCfg.Root;
 
             var configuration = configurationManager.LoadBarebone(dir);
             if (configuration == null)
@@ -59,7 +59,7 @@ namespace Xs.Cli.Main.Commands.Remote
             configuration.Servers = (await client.GetRegistryInfoAsync())
                 .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value);
 
-            var projects = discoverTask.Run(dir).ToArray();
+            var projects = discoverTask.Run(discoverCfg).ToArray();
 
             configurationManager.Save(dir, projects, configuration);
 

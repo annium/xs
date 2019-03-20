@@ -8,7 +8,7 @@ using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class DeleteCommand : Command<CwdCommandConfiguration>
+    internal class DeleteCommand : Command<DiscoverConfiguration>
     {
         public override string Id { get; } = "delete";
 
@@ -28,13 +28,13 @@ namespace Xs.Cli.Main.Commands.Remote
         }
 
         public override void Handle(
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var dir = cwdCfg.Cwd;
+            var dir = discoverCfg.Root;
 
-            var projects = discoverTask.Run(dir).ToArray();
+            var projects = discoverTask.Run(discoverCfg).ToArray();
 
             configurationManager.Delete(dir, projects);
 

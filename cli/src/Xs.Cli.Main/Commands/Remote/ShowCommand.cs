@@ -8,7 +8,7 @@ using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class ShowCommand : AsyncCommand<CwdCommandConfiguration>
+    internal class ShowCommand : AsyncCommand<DiscoverConfiguration>
     {
         public override string Id { get; } = "show";
 
@@ -24,11 +24,11 @@ namespace Xs.Cli.Main.Commands.Remote
         }
 
         public override async Task HandleAsync(
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var dir = cwdCfg.Cwd;
+            var dir = discoverCfg.Root;
 
             var configuration = await configurationManager.Load(dir);
 

@@ -15,7 +15,7 @@ using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, CwdCommandConfiguration>
+    internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "watch";
 
@@ -33,8 +33,6 @@ namespace Xs.Cli.Main.Commands
 
         private readonly ILogger logger;
 
-        private string root;
-
         private string mask;
 
         private string command;
@@ -42,6 +40,8 @@ namespace Xs.Cli.Main.Commands
         private bool force;
 
         private bool runTests;
+
+        private DiscoverConfiguration discoverCfg;
 
         private CancellationToken token;
 
@@ -68,23 +68,23 @@ namespace Xs.Cli.Main.Commands
 
         public override async Task HandleAsync(
             WatchCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            this.root = cwdCfg.Cwd;
             this.mask = cfg.Mask;
             this.command = cfg.Command;
             this.force = cfg.Force;
             this.runTests = cfg.Test;
+            this.discoverCfg = discoverCfg;
             this.token = token;
 
             Discover();
 
             if (string.IsNullOrWhiteSpace(command))
-                await watcher.WatchAsync(root, FilterChange, HandleChange, HandleDelete, token);
+                await watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChange, HandleDelete, token);
             else
-                await watcher.WatchAsync(root, FilterChange, CallCommand, CallCommand, token);
+                await watcher.WatchAsync(discoverCfg.Root, FilterChange, CallCommand, CallCommand, token);
         }
 
         private bool FilterChange(string path) =>
@@ -196,7 +196,7 @@ namespace Xs.Cli.Main.Commands
             }
         }
 
-        private void Discover() => projects = discoverTask.Run(root).FilterMask(mask).ToArray();
+        private void Discover() => projects = discoverTask.Run(discoverCfg).FilterMask(mask).ToArray();
 
         private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File.FullName == path);
 

@@ -11,7 +11,7 @@ using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, CwdCommandConfiguration>
+    internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "publish";
         public override string Description { get; } = "Publish packages to registry.";
@@ -36,15 +36,15 @@ namespace Xs.Cli.Main.Commands
 
         public override async Task HandleAsync(
             PublishCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var configuration = await configurationManager.Load(cwdCfg.Cwd);
+            var configuration = await configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
-            var projects = discoverTask.Run(cwdCfg.Cwd)
+            var projects = discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .OfType<IPublishableProject>()
                 .ToArray();

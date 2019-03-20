@@ -8,7 +8,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class ExeCommand : Command<ExeCommandConfiguration, CwdCommandConfiguration>
+    public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "exe";
 
@@ -29,11 +29,11 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         public override void Handle(
             ExeCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var location = cwdCfg.Cwd;
+            var location = discoverCfg.Root;
             var name = cfg.Name;
 
             logger.Debug($"Create executable project {name} at {location}");

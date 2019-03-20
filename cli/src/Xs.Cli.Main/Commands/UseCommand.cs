@@ -9,7 +9,7 @@ using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class UseCommand : Command<UseCommandConfiguration, CwdCommandConfiguration>
+    internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "use";
 
@@ -38,14 +38,14 @@ namespace Xs.Cli.Main.Commands
 
         public override void Handle(
             UseCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
             var nameLow = cfg.Name.ToLowerInvariant();
             var version = cfg.Version;
 
-            var allProjects = discoverTask.Run(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(discoverCfg);
             var updatedDependencies = allProjects
                 .SelectMany(e => e.PackageDependencies)
                 .Where(e => e.Name.ToLowerInvariant() == nameLow && e.Version != version)

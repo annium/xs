@@ -9,7 +9,7 @@ using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands.Ls
 {
-    internal class ListCommand : Command<ListCommandConfiguration, CwdCommandConfiguration>
+    internal class ListCommand : Command<ListCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "";
 
@@ -26,11 +26,11 @@ namespace Xs.Cli.Main.Commands.Ls
 
         public override void Handle(
             ListCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd)
+            var projects = discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToArray();

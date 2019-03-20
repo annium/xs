@@ -11,7 +11,7 @@ using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, CwdCommandConfiguration>
+    internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "build";
 
@@ -36,11 +36,11 @@ namespace Xs.Cli.Main.Commands
 
         public override async Task HandleAsync(
             BuildCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd)
+            var projects = discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .OfType<IBuildableProject>()

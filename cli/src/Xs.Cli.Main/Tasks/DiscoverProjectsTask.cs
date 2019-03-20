@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -22,8 +23,9 @@ namespace Xs.Cli.Main.Tasks
             this.logger = logger;
         }
 
-        public IEnumerable<IProject> Run(string root)
+        public IEnumerable<IProject> Run(DiscoverConfiguration configuration)
         {
+            var root = configuration.Root;
             logger.Debug($"Start discovery of {root}");
 
             var results = new Dictionary<string, ISpecialProjectFactory>();
@@ -52,7 +54,7 @@ namespace Xs.Cli.Main.Tasks
 
                 foreach (var(directory, factory) in results.ToArray())
                 {
-                    var(project, exception) = TryCreateProject(directory, factory, projects, dependencies);
+                    var(project, exception) = TryCreateProject(directory, factory, projects, dependencies, configuration);
                     if (project != null)
                     {
                         results.Remove(directory);
@@ -79,7 +81,8 @@ namespace Xs.Cli.Main.Tasks
             string directory,
             ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies
+            IEnumerable<Dependency> dependencies,
+            DiscoverConfiguration configuration
         )
         {
             try

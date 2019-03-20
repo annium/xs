@@ -11,7 +11,7 @@ using Xs.Cli.Main.Tools;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, CwdCommandConfiguration>
+    internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "install";
 
@@ -36,13 +36,13 @@ namespace Xs.Cli.Main.Commands
 
         public override async Task HandleAsync(
             InstallCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
             var force = cfg.Force;
 
-            var projects = discoverTask.Run(cwdCfg.Cwd)
+            var projects = discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToArray();

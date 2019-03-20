@@ -8,7 +8,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class WebCommand : Command<WebCommandConfiguration, CwdCommandConfiguration>
+    public class WebCommand : Command<WebCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "web";
 
@@ -29,11 +29,11 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         public override void Handle(
             WebCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var location = cwdCfg.Cwd;
+            var location = discoverCfg.Root;
             var name = cfg.Name;
 
             logger.Debug($"Create web project {name} at {location}");

@@ -10,7 +10,7 @@ using Xs.RegistryClient.Main;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, CwdCommandConfiguration>
+    internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "search";
 
@@ -35,13 +35,13 @@ namespace Xs.Cli.Main.Commands
 
         public override async Task HandleAsync(
             SearchCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
             var type = cfg.Type;
 
-            var configuration = await configurationManager.Load(cwdCfg.Cwd);
+            var configuration = await configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
             {
                 logger.Warn("Track registry first to search within it.");

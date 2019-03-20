@@ -8,7 +8,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class LibTestsCommand : Command<LibTestsCommandConfiguration, CwdCommandConfiguration>
+    public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "libtests";
 
@@ -29,11 +29,11 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         public override void Handle(
             LibTestsCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var location = cwdCfg.Cwd;
+            var location = discoverCfg.Root;
             var name = $"{cfg.Name}.Tests";
 
             logger.Debug($"Create library tests project {name} at {location}");

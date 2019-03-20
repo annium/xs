@@ -14,7 +14,7 @@ using Xs.RegistryClient.Server;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, CwdCommandConfiguration>
+    internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "unpublish";
 
@@ -47,15 +47,15 @@ namespace Xs.Cli.Main.Commands
 
         public override async Task HandleAsync(
             UnpublishCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var configuration = await configurationManager.Load(cwdCfg.Cwd);
+            var configuration = await configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to unpublish.");
 
-            var projects = discoverTask.Run(cwdCfg.Cwd)
+            var projects = discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .OfType<IPublishableProject>()
                 .ToArray();

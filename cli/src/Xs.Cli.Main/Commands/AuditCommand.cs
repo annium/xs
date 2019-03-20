@@ -9,7 +9,7 @@ using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class AuditCommand : Command<AuditCommandConfiguration, CwdCommandConfiguration>
+    internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "audit";
 
@@ -30,11 +30,11 @@ namespace Xs.Cli.Main.Commands
 
         public override void Handle(
             AuditCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(cwdCfg.Cwd)
+            var projects = discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .OfType<IAuditableProject>()
                 .ToArray();

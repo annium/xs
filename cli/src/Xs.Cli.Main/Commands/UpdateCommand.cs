@@ -7,7 +7,7 @@ using Xs.Cli.Main.Tasks;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class UpdateCommand : Command<UpdateCommandConfiguration, CwdCommandConfiguration>
+    internal class UpdateCommand : Command<UpdateCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "update";
 
@@ -28,11 +28,11 @@ namespace Xs.Cli.Main.Commands
 
         public override void Handle(
             UpdateCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var allProjects = discoverTask.Run(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(discoverCfg);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)

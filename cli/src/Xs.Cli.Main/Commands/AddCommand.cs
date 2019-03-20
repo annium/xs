@@ -10,7 +10,7 @@ using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class AddCommand : Command<AddCommandConfiguration, CwdCommandConfiguration>
+    internal class AddCommand : Command<AddCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "add";
 
@@ -39,7 +39,7 @@ namespace Xs.Cli.Main.Commands
 
         public override void Handle(
             AddCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
@@ -47,7 +47,7 @@ namespace Xs.Cli.Main.Commands
             var nameLow = name.ToLowerInvariant();
             var version = cfg.Version;
 
-            var allProjects = discoverTask.Run(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(discoverCfg);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();

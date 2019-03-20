@@ -8,7 +8,7 @@ using Xs.Cli.Main.Tasks.Dependencies;
 
 namespace Xs.Cli.Main.Commands
 {
-    internal class DeleteCommand : Command<DeleteCommandConfiguration, CwdCommandConfiguration>
+    internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "delete";
 
@@ -37,14 +37,14 @@ namespace Xs.Cli.Main.Commands
 
         public override void Handle(
             DeleteCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
             var name = cfg.Dependency;
             var nameLow = name.ToLowerInvariant();
 
-            var allProjects = discoverTask.Run(cwdCfg.Cwd);
+            var allProjects = discoverTask.Run(discoverCfg);
             var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();

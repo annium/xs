@@ -12,7 +12,7 @@ using Xs.RegistryClient.Main;
 
 namespace Xs.Cli.Main.Commands.Remote
 {
-    internal class SetCommand : AsyncCommand<SetCommandConfiguration, CwdCommandConfiguration>
+    internal class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "set";
 
@@ -37,13 +37,13 @@ namespace Xs.Cli.Main.Commands.Remote
 
         public override async Task HandleAsync(
             SetCommandConfiguration cfg,
-            CwdCommandConfiguration cwdCfg,
+            DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
             var location = cfg.Registry;
             var user = cfg.User;
-            var dir = cwdCfg.Cwd;
+            var dir = discoverCfg.Root;
 
             var client = mainClientFactory.Create(location);
 
@@ -56,7 +56,7 @@ namespace Xs.Cli.Main.Commands.Remote
             configuration.Servers = (await client.GetRegistryInfoAsync())
                 .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value);
 
-            var projects = discoverTask.Run(dir).ToArray();
+            var projects = discoverTask.Run(discoverCfg).ToArray();
 
             configurationManager.Save(dir, projects, configuration);
 
