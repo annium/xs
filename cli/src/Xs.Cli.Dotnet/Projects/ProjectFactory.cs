@@ -15,13 +15,17 @@ namespace Xs.Cli.Dotnet.Projects
     {
         public const string ProjectFileExtension = ".csproj";
 
+        public const string TestSDK = "Microsoft.NET.Test.Sdk";
+
+        public const string TestCoveragePackage = "coverlet.msbuild";
+
         public static readonly string[] TrackedFileExtensions = new [] { ".cs" };
 
         public static readonly string[] IgnoredFolders = new [] { "bin", "obj" };
 
         private const string projectFileMask = "*.csproj";
 
-        private static readonly string[] TestDependencies = new [] { "Microsoft.NET.Test.Sdk", "coverlet.msbuild" };
+        private static readonly string[] TestDependencies = new [] { TestSDK, TestCoveragePackage };
 
         public ProjectType Type { get; } = Constants.ProjectType;
 
@@ -81,7 +85,7 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());
-            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable) = mapper.Load(file.FullName);
+            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable) = mapper.Load(file.FullName, configuration);
 
             // check TargetFramework consistency
             if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
@@ -112,7 +116,11 @@ namespace Xs.Cli.Dotnet.Projects
                 mapper
             );
 
-            if (TestDependencies.All(d => packageDependencies.Any(e => e.Name == d)))
+            var isTestProject = configuration.SkipChecks ?
+                packageDependencies.Any(d => d.Name == TestSDK) :
+                TestDependencies.All(d => packageDependencies.Any(e => e.Name == d));
+
+            if (isTestProject)
                 return new TestProject(context);
 
             if (isPackable)

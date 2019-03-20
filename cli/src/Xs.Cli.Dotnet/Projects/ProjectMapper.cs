@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Dotnet.Models;
@@ -13,9 +14,11 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
-        private static readonly IEnumerable<string> outputTypes = new [] { "exe", "library" };
+        private static readonly string[] implicitPackages = new [] { "Microsoft.AspNetCore.App" };
 
-        public RawProject Load(string path)
+        private static readonly IEnumerable<string> outputTypes = new [] { "Exe", "Library" };
+
+        public RawProject Load(string path, DiscoverConfiguration configuration)
         {
             var project = new RawProject();
             var file = new FileInfo(path);
@@ -23,20 +26,25 @@ namespace Xs.Cli.Dotnet.Projects
             var info = XElement.Load(file.OpenRead());
 
             var properties = info.Element(El.PropertyGroup);
-            ValidateProperties(path, properties);
+            if (!configuration.SkipChecks)
+                ValidateProperties(path, properties);
 
             project.Name = Path.GetFileNameWithoutExtension(file.Name);
-            project.Version = new Core.Models.Version(properties.Element(El.PackageVersion).Value);
-            project.Description = properties.Element(El.Description).Value;
+            if (!configuration.SkipChecks)
+            {
+                project.Version = new Core.Models.Version(properties.Element(El.PackageVersion).Value);
+                project.Description = properties.Element(El.Description).Value;
+            }
             project.TargetFramework = TargetFrameworkParser.Parse(properties.Element(El.TargetFramework).Value);
-            project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
+            if (!configuration.SkipChecks)
+                project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
 
             project.ProjectDependencies = GetReferenceElements(El.ProjectReference)
-                .Select(reference => ReadProjectDependency(project.Name, file, reference))
+                .Select(reference => ReadProjectDependency(project.Name, file, reference, configuration))
                 .ToArray();
 
             project.PackageDependencies = GetReferenceElements(El.PackageReference)
-                .Select(reference => ReadPackageDependency(project.Name, reference))
+                .Select(reference => ReadPackageDependency(project.Name, reference, configuration))
                 .ToArray();
 
             project.IsPackable = properties.Element(El.IsPackable) == null ?
@@ -140,14 +148,18 @@ namespace Xs.Cli.Dotnet.Projects
 
         private string ReadProjectDependency(
             string project,
-            FileInfo location,
-            XElement reference
+            FileInfo file,
+            XElement reference,
+            DiscoverConfiguration configuration
         )
         {
             var relativePath = reference.Attribute(El.Include)?.Value ??
                 throw new InvalidOperationException($"Project {project} has empty project dependency.");
 
-            var path = Path.Combine(location.DirectoryName, relativePath);
+            if (configuration.SkipChecks)
+                relativePath = relativePath.Replace('\\', '/');
+
+            var path = Path.GetFullPath(Path.Combine(file.DirectoryName, relativePath));
             if (!File.Exists(path))
                 throw new InvalidOperationException($"Project {project} has broken project dependency {relativePath}.");
 
@@ -156,13 +168,19 @@ namespace Xs.Cli.Dotnet.Projects
 
         private static Dependency ReadPackageDependency(
             string project,
-            XElement reference
+            XElement reference,
+            DiscoverConfiguration configuration
         )
         {
             var name = reference.Attribute(El.Include)?.Value ??
                 throw new InvalidOperationException($"Project {project} has empty package dependency name.");
 
-            var version = new Core.Models.Version(reference.Attribute(El.Version)?.Value ??
+            Core.Models.Version version = null;
+
+            if (configuration.SkipChecks && implicitPackages.Any(p => p == name))
+                version = new Core.Models.Version("1.0.0");
+
+            version = version ?? new Core.Models.Version(reference.Attribute(El.Version)?.Value ??
                 throw new InvalidOperationException($"Project {project} has empty package dependency {name} version."));
 
             return new Dependency(Constants.ProjectType, name, version);

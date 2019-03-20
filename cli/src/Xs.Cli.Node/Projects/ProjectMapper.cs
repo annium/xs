@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
@@ -11,7 +12,7 @@ namespace Xs.Cli.Node.Projects
 {
     internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
-        public RawProject Load(string path)
+        public RawProject Load(string path, DiscoverConfiguration configuration)
         {
             var project = new RawProject();
             var file = new FileInfo(path);
@@ -24,7 +25,9 @@ namespace Xs.Cli.Node.Projects
                 info.Property(El.Version)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing version")
             );
-            project.Description = info.Property(El.Description)?.Value.ToString() ??
+
+            if (!configuration.SkipChecks)
+                project.Description = info.Property(El.Description)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing description");
 
             var deps = GetPropertyDictionary(info, El.Dependencies)
@@ -105,7 +108,7 @@ namespace Xs.Cli.Node.Projects
             string location
         )
         {
-            var path = Path.Combine(file.DirectoryName, location, ProjectFactory.ProjectFileName);
+            var path = Path.GetFullPath(Path.Combine(file.DirectoryName, location, ProjectFactory.ProjectFileName));
             if (!File.Exists(path))
                 throw new InvalidOperationException($"Project {project} has broken project dependency {location}.");
 

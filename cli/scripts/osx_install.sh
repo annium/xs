@@ -15,3 +15,11 @@ rm -f $entry
 echo '#!/usr/bin/env sh' > $entry
 echo $root'/Xs.Cli.Main $@' >> $entry
 chmod +x $entry
+
+# prepare relaxed launcher
+relaxed=/usr/local/bin/ass
+echo "Write relaxed launcher."
+rm -f $relaxed
+echo '#!/usr/bin/env sh' > $relaxed
+echo $root'/Xs.Cli.Main $@ --skip-checks' >> $relaxed
+chmod +x $relaxed

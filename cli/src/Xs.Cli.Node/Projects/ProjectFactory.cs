@@ -80,7 +80,7 @@ namespace Xs.Cli.Node.Projects
         )
         {
             var file = new FileInfo(Path.Combine(directory, ProjectFileName));
-            var(name, version, description, projectDeps, packageDeps, scripts) = mapper.Load(file.FullName);
+            var(name, version, description, projectDeps, packageDeps, scripts) = mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
                 .Select(e => ResolveProjectDependency(name, file, e, projects))

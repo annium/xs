@@ -15,7 +15,7 @@ namespace Xs.Cli.Core.Projects
             IEnumerable<IProject> projects
         )
         {
-            var directory = Directory.GetParent(Path.Combine(location.DirectoryName, reference)).FullName;
+            var directory = Directory.GetParent(Path.GetFullPath(Path.Combine(location.DirectoryName, reference))).FullName;
 
             var dependency = projects.OfType<TProject>()
                 .FirstOrDefault(e => e.File.DirectoryName == directory);
