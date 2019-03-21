@@ -4,7 +4,7 @@
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS cli main project. Entrypoint, contains all commands and tasks. Uses registry client and type-related projects for work.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <OutputType>exe</OutputType>
+        <OutputType>Exe</OutputType>
         <DebugType>portable</DebugType>
         <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>

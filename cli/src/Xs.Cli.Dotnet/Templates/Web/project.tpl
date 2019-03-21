@@ -4,7 +4,7 @@
         <PackageVersion>0.1.0</PackageVersion>
         <Description>{{name}}</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <OutputType>exe</OutputType>
+        <OutputType>Exe</OutputType>
         <DebugType>portable</DebugType>
         <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>

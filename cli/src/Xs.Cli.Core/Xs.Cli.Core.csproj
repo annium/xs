@@ -4,7 +4,7 @@
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS cli core project. Provides access to base models, tools, projects, etc.</Description>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <OutputType>library</OutputType>
+        <OutputType>Library</OutputType>
         <DebugType>portable</DebugType>
         <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
