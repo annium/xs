@@ -12,11 +12,11 @@ import styles from './index.module.scss'
 import { UpdateUserForm } from './UpdateUserForm'
 
 
-type Props = Pick<Store, 'user'>
+type Props = Pick<Store, 'auth'>
 
-export const SettingsPage = inject<{}, Pick<Store, 'user'>>(
-  ({ user }) => ({ user }),
-  ({ user }: Props) => (
+export const SettingsPage = inject<{}, Pick<Store, 'auth'>>(
+  ({ auth: user }) => ({ auth: user }),
+  ({ auth: user }: Props) => (
     <div className={styles.page}>
       <Row>
         <Col {...getCenteredLayout(24, 16, 12, 10, 8)}>
@@ -35,12 +35,12 @@ export const SettingsPage = inject<{}, Pick<Store, 'user'>>(
   ),
 )
 
-const handleUpdate = (user: Props['user']) => (name: string, password: string) => user
+const handleUpdate = (user: Props['auth']) => (name: string, password: string) => user
   .update(name, password)
   .then(() => message.success('credentials updated'))
   .catch(error => message.error(`credentials save failed: ${error}`))
 
-const handleUpdateToken = (user: Props['user']) => () => user
+const handleUpdateToken = (user: Props['auth']) => () => user
   .updateToken()
   .then(() => message.success('token updated'))
   .catch(error => message.error(`token update failed: ${error}`))

@@ -14,7 +14,7 @@ import * as route from '../../utils/route'
 import styles from './index.module.scss'
 
 
-type Props = Partial<Pick<Store, 'user'>> & {
+type Props = Partial<Pick<Store, 'auth'>> & {
   pkg: MetaPackage
 }
 
@@ -22,9 +22,9 @@ const permissionKeys = Object.keys(Permission)
   .filter((key: string | number) => typeof key === 'string')
   .map(key => key as keyof typeof Permission)
 
-export const PackageItem = inject<Props, Pick<Store, 'user'>>(
-  ({ user }) => ({ user }),
-  function PackageItem({ pkg, user }: Props) {
+export const PackageItem = inject<Props, Pick<Store, 'auth'>>(
+  ({ auth: user }) => ({ auth: user }),
+  function PackageItem({ pkg, auth: user }: Props) {
     const access = new UserMetaPackageAccess(user!.data!.id, pkg.ownerId, pkg.permissions)
 
     return (

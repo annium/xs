@@ -17,7 +17,7 @@ import styles from './index.module.scss'
 import { Package } from './Package'
 
 
-type Props = Pick<Store, 'user'> & RouteComponentProps<{ type: string, nameVersion: string }>
+type Props = Pick<Store, 'auth'> & RouteComponentProps<{ type: string, nameVersion: string }>
 
 class PackagePageInternal extends React.Component<Props> {
   @observable private metaPackage?: MetaPackage
@@ -39,7 +39,7 @@ class PackagePageInternal extends React.Component<Props> {
     const { metaPackage } = this
     if (!metaPackage) return null
 
-    const { match, user } = this.props
+    const { match, auth: user } = this.props
 
     const { version } = parseNameVersion(match.params.nameVersion)
     const access = new UserMetaPackageAccess(user.data!.id, metaPackage.ownerId, metaPackage.permissions)
@@ -68,4 +68,4 @@ class PackagePageInternal extends React.Component<Props> {
   }
 }
 
-export const PackagePage = withRouter(inject((stores: Store) => ({ user: stores.user }))(observer(PackagePageInternal)))
+export const PackagePage = withRouter(inject((stores: Store) => ({ user: stores.auth }))(observer(PackagePageInternal)))

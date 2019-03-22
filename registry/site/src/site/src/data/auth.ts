@@ -4,18 +4,15 @@ import * as user from '../api/user'
 import { User } from '../models/view/User'
 
 
-export class UserStore {
+export class AuthStore {
   @observable public data?: User
   @observable public accessError?: string
-
   @computed public get isLoaded(): boolean {
     return this.data !== undefined || this.accessError !== undefined
   }
-
   @computed public get hasAccess(): boolean {
     return this.data !== undefined && this.accessError === undefined
   }
-
   @action.bound public async login(name: string, password: string) {
     const result = await user.login(name, password)
 
@@ -24,7 +21,6 @@ export class UserStore {
     else
       await this.load()
   }
-
   @action public async load() {
     const result = await user.load()
     runInAction(() => {
@@ -33,19 +29,16 @@ export class UserStore {
       this.accessError = result.error
     })
   }
-
   @action.bound public async logout() {
     await user.logout()
     await this.load()
   }
-
   @action.bound public async update(name: string, password: string) {
     const result = await user.update(name, password)
 
     if (!result.isFailure)
       await this.load()
   }
-
   @action.bound public async updateToken() {
     const result = await user.updateToken()
 

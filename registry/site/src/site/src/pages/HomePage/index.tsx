@@ -16,11 +16,11 @@ import { getCenteredLayout } from '../../utils/layout'
 import styles from './index.module.scss'
 
 
-type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
+type Props = Partial<Pick<Store, 'auth'>> & RouteComponentProps
 
-export const HomePage = inject<RouteComponentProps, Pick<Store, 'user'>>(
-  ({ user }) => ({ user }),
-  ({ user, history, location }: Props) => {
+export const HomePage = inject<RouteComponentProps, Pick<Store, 'auth'>>(
+  ({ auth: user }) => ({ auth: user }),
+  ({ auth: user, history, location }: Props) => {
     const [packages, setPackages] = useState<MetaPackage[]>([])
     const params = new URLSearchParams(location.search)
     const [type, setType] = useState<ProjectType>(Object.values(ProjectType).includes(params.get('type'))
@@ -52,7 +52,7 @@ export const HomePage = inject<RouteComponentProps, Pick<Store, 'user'>>(
 )
 
 const search = async (
-  user: Props['user'],
+  user: Props['auth'],
   history: Props['history'],
   type: ProjectType,
   query: string,

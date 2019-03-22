@@ -8,11 +8,11 @@ import { inject, Store } from '../../store'
 import styles from './Menu.module.scss'
 
 
-type Props = Partial<Pick<Store, 'user'>> & RouteComponentProps
+type Props = Partial<Pick<Store, 'auth'>> & RouteComponentProps
 
 export const Menu = withRouter(inject(
-  ({ user }) => ({ user }),
-  function Menu({ user }: Props) {
+  ({ auth: user }) => ({ user }),
+  function Menu({ auth: user }: Props) {
     const { data, logout } = user!
 
     return (

@@ -8,12 +8,12 @@ import { LoginForm } from './Form'
 import styles from './index.module.scss'
 
 
-type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps
+type Props = Pick<Store, 'auth' | 'startup'> & RouteComponentProps
 
 const log = console.log.bind(console, 'LoginPage')
 
-export const LoginPage = inject<RouteComponentProps, Pick<Store, 'startup' | 'user'>>(
-  ({ startup, user }) => ({ startup, user }),
+export const LoginPage = inject<RouteComponentProps, Pick<Store, 'auth' | 'startup'>>(
+  ({ auth, startup }) => ({ auth, startup }),
   (props: Props) => {
     useEffect(
       () => {
@@ -28,7 +28,7 @@ export const LoginPage = inject<RouteComponentProps, Pick<Store, 'startup' | 'us
       ensureAccess(props)
     })
 
-    const { user } = props
+    const { auth: user } = props
 
     if (user.hasAccess) return null
 
@@ -40,13 +40,13 @@ export const LoginPage = inject<RouteComponentProps, Pick<Store, 'startup' | 'us
   },
 )
 
-const handleLogin = (user: Props['user']) => (name: string, password: string) => user
+const handleLogin = (user: Props['auth']) => (name: string, password: string) => user
   .login(name, password)
   .catch(error => message.error(`login failed: ${error}`))
 
-const ensureAccess = ({ startup, user, history }: Props) => {
-  log('checkAccess', user.hasAccess)
-  if (user.isLoaded && user.hasAccess)
+const ensureAccess = ({ auth, startup, history }: Props) => {
+  log('checkAccess', auth.hasAccess)
+  if (auth.isLoaded && auth.hasAccess)
     if (startup.location.pathname.startsWith('/login'))
       history.replace('/')
     else

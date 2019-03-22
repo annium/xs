@@ -5,17 +5,17 @@ import { Root } from './components/Root'
 import { inject, Store } from './store'
 
 
-type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps & { children?: ReactNode }
+type Props = Pick<Store, 'auth' | 'startup'> & RouteComponentProps & { children?: ReactNode }
 
 const log = console.log.bind(console, 'PersonalArea')
 
-export const PersonalArea = inject<RouteComponentProps, Pick<Store, 'startup' | 'user'>>(
-  ({ startup, user }) => ({ startup, user }),
-  ({ startup, user, history, children }: Props) => {
+export const PersonalArea = inject<RouteComponentProps, Pick<Store, 'auth' | 'startup'>>(
+  ({ auth, startup }) => ({ auth, startup }),
+  ({ auth, startup, history, children }: Props) => {
     useEffect(
       () => {
         log('mount', 'ensure access')
-        ensureAccess(user, history)
+        ensureAccess(auth, history)
         startup.load()
       },
       [],
@@ -23,10 +23,10 @@ export const PersonalArea = inject<RouteComponentProps, Pick<Store, 'startup' | 
 
     useEffect(() => {
       log('update', 'ensure access')
-      ensureAccess(user, history)
+      ensureAccess(auth, history)
     })
 
-    if (!user.hasAccess) return null
+    if (!auth.hasAccess) return null
 
     log('render')
 
@@ -38,7 +38,7 @@ export const PersonalArea = inject<RouteComponentProps, Pick<Store, 'startup' | 
   },
 )
 
-const ensureAccess = (user: Props['user'], history: Props['history']) => {
+const ensureAccess = (user: Props['auth'], history: Props['history']) => {
   log('checkAccess', user.hasAccess)
   if (user.isLoaded && !user.hasAccess)
     history.replace('/login')

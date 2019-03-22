@@ -1,18 +1,18 @@
 import { observable } from 'mobx'
 import React from 'react'
 
+import { AuthStore } from './data/auth'
 import { StartupStore } from './data/startup'
-import { UserStore } from './data/user'
 import { createInject } from './utils/inject'
 
 export type Store = {
+  auth: AuthStore
   startup: StartupStore
-  user: UserStore
 }
 
 export const store = observable({
+  auth: new AuthStore(),
   startup: new StartupStore(),
-  user: new UserStore(),
 })
 
 export const inject = createInject(React.createContext(store))

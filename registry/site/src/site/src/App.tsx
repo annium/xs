@@ -5,27 +5,27 @@ import { Loader } from './components/Loader'
 import { inject, Store } from './store'
 
 
-type Props = Pick<Store, 'startup' | 'user'> & RouteComponentProps & { children?: ReactNode }
+type Props = Pick<Store, 'auth' | 'startup'> & RouteComponentProps & { children?: ReactNode }
 
 const log = console.log.bind(console, 'App')
 export const App = inject<Props, Store>(
-  ({ startup, user }) => ({ startup, user }),
+  ({ auth, startup }) => ({ auth, startup }),
   function App(props: Props) {
-    const { startup, user, location, children } = props
+    const { auth, startup, location, children } = props
 
     useEffect(
       () => {
         startup.location = location
         log('effect', 'load user')
-        user.load()
+        auth.load()
       },
       [],
     )
 
-    log('render', user.data)
+    log('render', auth.data)
 
-    if (!user.isLoaded)
-      return <Loader isLoading={!user.isLoaded} size="big" />
+    if (!auth.isLoaded)
+      return <Loader isLoading={!auth.isLoaded} size="big" />
 
     return children as JSX.Element
   },
