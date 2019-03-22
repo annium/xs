@@ -39,10 +39,10 @@ class PackagePageInternal extends React.Component<Props> {
     const { metaPackage } = this
     if (!metaPackage) return null
 
-    const { match, auth: user } = this.props
+    const { match, auth } = this.props
 
     const { version } = parseNameVersion(match.params.nameVersion)
-    const access = new UserMetaPackageAccess(user.data!.id, metaPackage.ownerId, metaPackage.permissions)
+    const access = new UserMetaPackageAccess(auth.user.data!.id, metaPackage.ownerId, metaPackage.permissions)
 
     console.warn('RENDER PackagePage')
 

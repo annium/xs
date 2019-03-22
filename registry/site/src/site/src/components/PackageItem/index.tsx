@@ -23,9 +23,9 @@ const permissionKeys = Object.keys(Permission)
   .map(key => key as keyof typeof Permission)
 
 export const PackageItem = inject<Props, Pick<Store, 'auth'>>(
-  ({ auth: user }) => ({ auth: user }),
-  function PackageItem({ pkg, auth: user }: Props) {
-    const access = new UserMetaPackageAccess(user!.data!.id, pkg.ownerId, pkg.permissions)
+  ({ auth }) => ({ auth }),
+  function PackageItem({ pkg, auth }: Props) {
+    const access = new UserMetaPackageAccess(auth!.user.data!.id, pkg.ownerId, pkg.permissions)
 
     return (
       <List.Item>

@@ -39,10 +39,10 @@ async function getApi(
   getTokenHeader: (token: string) => Record<string, string>,
 ): Promise<lib.api.Client> {
   await when(() => Boolean(store))
-  await when(() => Boolean(store.auth.data))
+  await when(() => Boolean(store.auth.user.data))
 
   const { servers } = store.startup
-  const { apiToken } = store.auth.data as User
+  const { apiToken } = store.auth.user.data as User
 
   const server = servers[type]
 

@@ -15,19 +15,19 @@ import { UpdateUserForm } from './UpdateUserForm'
 type Props = Pick<Store, 'auth'>
 
 export const SettingsPage = inject<{}, Pick<Store, 'auth'>>(
-  ({ auth: user }) => ({ auth: user }),
-  ({ auth: user }: Props) => (
+  ({ auth }) => ({ auth }),
+  ({ auth }: Props) => (
     <div className={styles.page}>
       <Row>
         <Col {...getCenteredLayout(24, 16, 12, 10, 8)}>
           <h1>Settings</h1>
           <h2>Credentials</h2>
-          <UpdateUserForm name={user.data!.name} onSubmit={handleUpdate(user)} />
+          <UpdateUserForm name={auth.user.data!.name} onSubmit={handleUpdate(auth)} />
           <h2>API Token</h2>
           <Input
             disabled={true}
-            value={user.data!.apiToken}
-            suffix={<Icon type="sync" onClick={handleUpdateToken(user)} />}
+            value={auth.user.data!.apiToken}
+            suffix={<Icon type="sync" onClick={handleUpdateToken(auth)} />}
           />
         </Col>
       </Row>
@@ -35,7 +35,7 @@ export const SettingsPage = inject<{}, Pick<Store, 'auth'>>(
   ),
 )
 
-const handleUpdate = (user: Props['auth']) => (name: string, password: string) => user
+const handleUpdate = (auth: Props['auth']) => (name: string, password: string) => auth
   .update(name, password)
   .then(() => message.success('credentials updated'))
   .catch(error => message.error(`credentials save failed: ${error}`))

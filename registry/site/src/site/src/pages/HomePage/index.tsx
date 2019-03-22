@@ -19,15 +19,15 @@ import styles from './index.module.scss'
 type Props = Partial<Pick<Store, 'auth'>> & RouteComponentProps
 
 export const HomePage = inject<RouteComponentProps, Pick<Store, 'auth'>>(
-  ({ auth: user }) => ({ auth: user }),
-  ({ auth: user, history, location }: Props) => {
+  ({ auth }) => ({ auth }),
+  ({ auth, history, location }: Props) => {
     const [packages, setPackages] = useState<MetaPackage[]>([])
     const params = new URLSearchParams(location.search)
     const [type, setType] = useState<ProjectType>(Object.values(ProjectType).includes(params.get('type'))
       ? params.get('type') as ProjectType
       : ProjectType.Any)
     const [query, setQuery] = useState(params.get('query') || '')
-    const runSearch = () => search(user, history, type, query, setPackages)
+    const runSearch = () => search(auth, history, type, query, setPackages)
 
     useEffect(() => { runSearch() }, [])
 
@@ -52,14 +52,14 @@ export const HomePage = inject<RouteComponentProps, Pick<Store, 'auth'>>(
 )
 
 const search = async (
-  user: Props['auth'],
+  auth: Props['auth'],
   history: Props['history'],
   type: ProjectType,
   query: string,
   setPackages: Dispatch<SetStateAction<MetaPackage[]>>,
 ) => {
   updateLocation(history, { type, query })
-  const packagesResult = await metaPackagesApi.search(user!.data!.id, type, query, 1)
+  const packagesResult = await metaPackagesApi.search(auth!.user.data!.id, type, query, 1)
 
   if (packagesResult.isSuccess)
     setPackages(packagesResult.data)

@@ -22,10 +22,10 @@ export const App = inject<Props, Store>(
       [],
     )
 
-    log('render', auth.data)
+    log('render', auth.user.data)
 
-    if (!auth.isLoaded)
-      return <Loader isLoading={!auth.isLoaded} size="big" />
+    if (auth.isRunning)
+      return <Loader isLoading={auth.isRunning} size="big" />
 
     return children as JSX.Element
   },

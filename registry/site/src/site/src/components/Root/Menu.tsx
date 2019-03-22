@@ -11,9 +11,9 @@ import styles from './Menu.module.scss'
 type Props = Partial<Pick<Store, 'auth'>> & RouteComponentProps
 
 export const Menu = withRouter(inject(
-  ({ auth: user }) => ({ user }),
-  function Menu({ auth: user }: Props) {
-    const { data, logout } = user!
+  ({ auth }) => ({ auth }),
+  function Menu({ auth }: Props) {
+    const { user, logout } = auth!
 
     return (
       <div className={styles.menu}>
@@ -24,7 +24,7 @@ export const Menu = withRouter(inject(
           <Icon type="search" /> Packages
         </NavLink>
         <div className={styles.separator} />
-        <div className={styles.info}>Hi, {data!.name}</div>
+        <div className={styles.info}>Hi, {user.data!.name}</div>
         <div className={styles.separator} />
         <NavLink className={styles.item} exact={true} activeClassName={styles.isActiveItem} to="/settings">
           <Icon type="setting" /> Settings

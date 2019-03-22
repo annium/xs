@@ -28,19 +28,19 @@ export const LoginPage = inject<RouteComponentProps, Pick<Store, 'auth' | 'start
       ensureAccess(props)
     })
 
-    const { auth: user } = props
+    const { auth } = props
 
-    if (user.hasAccess) return null
+    if (auth.hasAccess) return null
 
     return (
       <div className={styles.page}>
-        <LoginForm onSubmit={handleLogin(user)} />
+        <LoginForm onSubmit={handleLogin(auth)} />
       </div>
     )
   },
 )
 
-const handleLogin = (user: Props['auth']) => (name: string, password: string) => user
+const handleLogin = (auth: Props['auth']) => (name: string, password: string) => auth
   .login(name, password)
   .catch(error => message.error(`login failed: ${error}`))
 

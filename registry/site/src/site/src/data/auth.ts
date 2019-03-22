@@ -2,31 +2,34 @@ import { action, computed, observable, runInAction } from 'mobx'
 
 import * as user from '../api/user'
 import { User } from '../models/view/User'
+import { AsyncState, complete, create, load } from '../utils/async'
 
 
 export class AuthStore {
-  @observable public data?: User
-  @observable public accessError?: string
+  @observable public user: AsyncState<User | undefined> = create<User | undefined>(undefined)
+  @computed public get isRunning(): boolean {
+    return this.user.isRunning
+  }
   @computed public get isLoaded(): boolean {
-    return this.data !== undefined || this.accessError !== undefined
+    return this.user.isSuccess || this.user.isFailure
   }
   @computed public get hasAccess(): boolean {
-    return this.data !== undefined && this.accessError === undefined
+    return this.user.data !== undefined && this.user.isSuccess
   }
   @action.bound public async login(name: string, password: string) {
     const result = await user.login(name, password)
 
     if (result.isFailure)
-      runInAction(() => { throw this.accessError = result.error })
+      runInAction(() => { throw complete(this.user, result).error })
     else
       await this.load()
   }
   @action public async load() {
+    load(this.user)
     const result = await user.load()
     runInAction(() => {
       console.warn('user loaded', result)
-      this.data = result.data
-      this.accessError = result.error
+      complete(this.user, result)
     })
   }
   @action.bound public async logout() {
