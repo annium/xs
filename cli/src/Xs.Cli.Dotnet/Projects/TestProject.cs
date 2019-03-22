@@ -24,7 +24,7 @@ namespace Xs.Cli.Dotnet.Projects
                 $"--no-build {File.FullName}",
             };
 
-            if (ProjectDependencies.Any(d => d.Name == ProjectFactory.TestCoveragePackage))
+            if (PackageDependencies.Any(d => d.Name == ProjectFactory.TestCoveragePackage))
                 cmd.AddRange(new []
                 {
                     "/p:CollectCoverage=true",
