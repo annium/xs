@@ -1,4 +1,3 @@
-import { Provider } from 'mobx-react'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -8,11 +7,6 @@ import { store } from './store'
 import './styles/layout.scss'
 
 
-ReactDOM.render(
-  <Provider {...store}>
-    <Routes />
-  </Provider>,
-  document.getElementById('root'),
-)
+ReactDOM.render(<Routes />, document.getElementById('root'))
 
 Object.defineProperty(window, 's', { get: () => store })
