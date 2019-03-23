@@ -106,10 +106,10 @@ namespace Xs.Cli.Main.Tools
             if (File.Exists(ignoreFile))
             {
                 var lines = File.ReadAllLines(ignoreFile).ToList();
-                var index = lines.IndexOf(ignoreHeader);
-                if (index >= 0)
+                if (lines.IndexOf(ignoreHeader) >= 0)
                 {
                     lines = lines.Where(line => !ignorePatterns.Contains(line)).ToList();
+                    var index = lines.IndexOf(ignoreHeader);
                     lines.InsertRange(index + 1, ignorePatterns);
                 }
                 else
