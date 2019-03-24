@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Audit
@@ -31,7 +32,7 @@ namespace Xs.Cli.Core.Audit
             }
 
             // check package dependencies
-            foreach (var dependency in project.Packages.ToArray())
+            foreach (var dependency in project.Packages.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer).ToArray())
             {
                 var foundDependencies = FindProjectDependenciesDeep(project, p => p.Packages.Contains(dependency));
                 if (foundDependencies.Length == 0)
