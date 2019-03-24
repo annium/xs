@@ -18,7 +18,7 @@ namespace Xs.Cli.Dotnet
             services.AddSingleton<ISpecialConfigurationManager, SpecialConfigurationManager>();
 
             // audit rules
-            services.AddSingleton<IAuditRule<ISpecialProject>, FindUselessDependenciesRule<ISpecialProject>>();
+            services.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
 
             RegisterCommands(services);
         }
