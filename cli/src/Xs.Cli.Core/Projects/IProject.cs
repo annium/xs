@@ -8,9 +8,9 @@ namespace Xs.Cli.Core.Projects
     {
         ProjectType Type { get; }
 
-        string Name { get; }
+        string Name { get; set; }
 
-        Version Version { get; }
+        Version Version { get; set; }
 
         string Description { get; }
 

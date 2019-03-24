@@ -14,9 +14,9 @@ namespace Xs.Cli.Core.Projects
     {
         public ProjectType Type { get; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public Models.Version Version { get; protected set; }
+        public Models.Version Version { get; set; }
 
         public string Description { get; }
 
