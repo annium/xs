@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models
 {
-    public class Version : Equatable<Version>
+    public class Version : Comparable<Version>
     {
         public uint Major { get; }
 
@@ -65,6 +66,14 @@ namespace Xs.Cli.Core.Models
 
                 return hash;
             }
+        }
+
+        protected override IEnumerable<Func<Version, IComparable>> GetComparables()
+        {
+            yield return x => x.Major;
+            yield return x => x.Minor;
+            yield return x => x.Patch;
+            yield return x => x.Suffix;
         }
     }
 }
