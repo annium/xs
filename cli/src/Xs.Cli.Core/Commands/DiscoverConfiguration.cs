@@ -19,9 +19,13 @@ namespace Xs.Cli.Core.Commands
             }
         }
 
-        [Option]
-        [Help("Allows to disable useless checks.")]
+        [Option("-s")]
+        [Help("Allows to disable normally forced checks.")]
         public bool SkipChecks { get; set; }
+
+        [Option("-i")]
+        [Help("Allows to ignore inconsistency to fix fursther.")]
+        public bool IgnoreConsistency { get; set; }
 
         private string root = Directory.GetCurrentDirectory();
     }

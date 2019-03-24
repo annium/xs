@@ -87,7 +87,7 @@ namespace Xs.Cli.Node.Projects
                 .ToHashSet();
 
             var packageDependencies = packageDeps
-                .Select(e => ResolvePackageDependency(name, e, dependencies))
+                .Select(e => ResolvePackageDependency(name, e, dependencies, configuration))
                 .ToHashSet();
 
             var context = new SpecialProjectContext(

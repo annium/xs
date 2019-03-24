@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects
@@ -29,16 +30,17 @@ namespace Xs.Cli.Core.Projects
         protected static Dependency ResolvePackageDependency(
             string project,
             Dependency raw,
-            IEnumerable<Dependency> dependencies
+            IEnumerable<Dependency> dependencies,
+            DiscoverConfiguration configuration
         )
         {
             var dependency = dependencies.FirstOrDefault(e => e.Name.ToLowerInvariant() == raw.Name.ToLowerInvariant()) ??
                 raw;
 
-            if (raw.Name != dependency.Name)
+            if (!configuration.IgnoreConsistency && raw.Name != dependency.Name)
                 throw new InvalidOperationException($"Project {project} uses different dependency naming: {raw.Name} -> {dependency.Name}.");
 
-            if (!raw.Version.Equals(dependency.Version))
+            if (!configuration.IgnoreConsistency && !raw.Version.Equals(dependency.Version))
                 throw new InvalidOperationException($"Project {project} uses different dependency {raw.Name} version: {raw.Version} -> {dependency.Version}.");
 
             return dependency;

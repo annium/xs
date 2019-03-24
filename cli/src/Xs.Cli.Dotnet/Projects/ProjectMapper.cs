@@ -30,13 +30,20 @@ namespace Xs.Cli.Dotnet.Projects
                 ValidateProperties(path, properties);
 
             project.Name = Path.GetFileNameWithoutExtension(file.Name);
-            if (!configuration.SkipChecks)
+            if (configuration.SkipChecks)
+            {
+                project.Version = new Core.Models.Version(properties.Element(El.PackageVersion)?.Value ?? "0.1.0");
+                project.Description = properties.Element(El.Description)?.Value ?? string.Empty;
+            }
+            else
             {
                 project.Version = new Core.Models.Version(properties.Element(El.PackageVersion).Value);
                 project.Description = properties.Element(El.Description).Value;
             }
             project.TargetFramework = TargetFrameworkParser.Parse(properties.Element(El.TargetFramework).Value);
-            if (!configuration.SkipChecks)
+            if (configuration.SkipChecks)
+                project.OutputType = properties.Element(El.OutputType)?.Value == "Exe" ? OutputType.Executable : OutputType.Library;
+            else
                 project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
 
             project.ProjectDependencies = GetReferenceElements(El.ProjectReference)

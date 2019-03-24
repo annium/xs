@@ -26,7 +26,9 @@ namespace Xs.Cli.Node.Projects
                 throw new InvalidOperationException($"Project {path} is missing version")
             );
 
-            if (!configuration.SkipChecks)
+            if (configuration.SkipChecks)
+                project.Description = info.Property(El.Description)?.Value.ToString() ?? string.Empty;
+            else
                 project.Description = info.Property(El.Description)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing description");
 
