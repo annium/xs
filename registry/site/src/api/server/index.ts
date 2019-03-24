@@ -1,6 +1,4 @@
-import * as lib from '@xs/site.lib'
-import { Response } from '@xs/site.lib/dist/api'
-import _ from 'lodash'
+import { Client, factory, Response } from '@annium/server-http'
 import { when } from 'mobx'
 
 import { PackageData } from '../../models/data/PackageData'
@@ -37,7 +35,7 @@ export function createApi<TPackageData extends PackageData, TPackage extends Pac
 async function getApi(
   type: ProjectType,
   getTokenHeader: (token: string) => Record<string, string>,
-): Promise<lib.api.Client> {
+): Promise<Client> {
   await when(() => Boolean(store))
   await when(() => Boolean(store.auth.user.data))
 
@@ -48,7 +46,7 @@ async function getApi(
 
   if (!server) throw new Error('Server is not registered')
 
-  return lib.api.factory({
+  return factory({
     url: server,
     init: {
       headers: getTokenHeader(apiToken),

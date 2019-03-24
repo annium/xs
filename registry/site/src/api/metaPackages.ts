@@ -1,4 +1,4 @@
-import { Response } from '@xs/site.lib/dist/api'
+import { Response } from '@annium/server-http'
 import { identity, pickBy } from 'lodash'
 
 import { MetaPackageData, toMetaPackage } from '../models/data/MetaPackageData'

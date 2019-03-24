@@ -1,4 +1,4 @@
-import { Response } from '@xs/site.lib/dist/api'
+import { Response } from '@annium/server-http'
 
 import { User } from '../models/view/User'
 
