@@ -8,7 +8,7 @@ using Xs.Cli.Core.Logging;
 
 namespace Xs.Cli.Main.Commands.Audit
 {
-    internal class AuditRulesCommand : Command
+    internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>
     {
         public override string Id { get; } = "rules";
 
@@ -28,12 +28,34 @@ namespace Xs.Cli.Main.Commands.Audit
         }
 
         public override void Handle(
+            AuditRulesCommandConfiguration cfg,
             CancellationToken token
         )
         {
-            var width = rules.Max(r => r.Code.Length) + 5;
-            foreach (var rule in rules)
+            var usedRules = (cfg.Include.Length > 0 ? rules.Where(r => cfg.Include.Contains(r.Code)) : rules)
+                .Where(r => !cfg.Exclude.Contains(r.Code))
+                .ToArray();
+
+            if (usedRules.Length == 0)
+            {
+                Console.WriteLine("No matching rules found.");
+                return;
+            }
+
+            var width = usedRules.Max(r => r.Code.Length) + 5;
+            foreach (var rule in usedRules)
                 Console.WriteLine($"{rule.Code.PadRight(width)}{rule.Description}");
         }
+    }
+
+    internal class AuditRulesCommandConfiguration
+    {
+        [Option("i")]
+        [Help("Include specific rules.")]
+        public string[] Include { get; set; } = Array.Empty<string>();
+
+        [Option("e")]
+        [Help("Exclude specific rules.")]
+        public string[] Exclude { get; set; } = Array.Empty<string>();
     }
 }

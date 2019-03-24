@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
@@ -17,14 +19,18 @@ namespace Xs.Cli.Main.Commands.Audit
 
         private readonly DiscoverProjectsTask discoverTask;
 
+        private readonly IAuditRule[] rules;
+
         private readonly ILogger logger;
 
         public AuditCommand(
             DiscoverProjectsTask discoverTask,
+            IEnumerable<IAuditRule> rules,
             ILogger logger
         )
         {
             this.discoverTask = discoverTask;
+            this.rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
             this.logger = logger;
         }
 
@@ -41,6 +47,16 @@ namespace Xs.Cli.Main.Commands.Audit
                 .OfType<IAuditableProject>()
                 .ToArray();
             logger.Debug($"Audit {auditedProjects.Length} projects.");
+
+            var usedRules = (cfg.Include.Length > 0 ? rules.Where(r => cfg.Include.Contains(r.Code)) : rules)
+                .Where(r => !cfg.Exclude.Contains(r.Code))
+                .ToArray();
+
+            if (usedRules.Length == 0)
+            {
+                Console.WriteLine("No matching rules found.");
+                return;
+            }
 
             foreach (var project in auditedProjects)
             {
@@ -60,6 +76,14 @@ namespace Xs.Cli.Main.Commands.Audit
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Option("i")]
+        [Help("Include specific rules.")]
+        public string[] Include { get; set; }
+
+        [Option("e")]
+        [Help("Exclude specific rules.")]
+        public string[] Exclude { get; set; }
 
         [Option]
         [Help("Fix errors, if possible.")]
