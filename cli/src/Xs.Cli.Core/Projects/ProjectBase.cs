@@ -22,9 +22,9 @@ namespace Xs.Cli.Core.Projects
 
         public FileInfo File { get; }
 
-        public HashSet<IProject> ProjectDependencies { get; }
+        public HashSet<Dependency<IProject>> Projects { get; }
 
-        public HashSet<Dependency> PackageDependencies { get; }
+        public HashSet<Dependency<Package>> Packages { get; }
 
         protected readonly IShell shell;
 
@@ -39,8 +39,8 @@ namespace Xs.Cli.Core.Projects
             Version = context.Version;
             Description = context.Description;
             File = context.File;
-            ProjectDependencies = context.ProjectDependencies;
-            PackageDependencies = context.PackageDependencies;
+            Projects = context.Projects;
+            Packages = context.Packages;
             shell = context.Shell;
             loggerConfiguration = context.LoggerConfiguration;
             logger = context.Logger;

@@ -16,9 +16,9 @@ namespace Xs.Cli.Core.Projects
 
         FileInfo File { get; }
 
-        HashSet<IProject> ProjectDependencies { get; }
+        HashSet<Dependency<IProject>> Projects { get; }
 
-        HashSet<Dependency> PackageDependencies { get; }
+        HashSet<Dependency<Package>> Packages { get; }
 
         bool IsRelated(string path);
 

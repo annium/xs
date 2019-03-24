@@ -52,7 +52,7 @@ namespace Xs.Cli.Main.Commands.Ls
         private void LogPlainDependants(IEnumerable<IProject> projects, IEnumerable<IProject> allProjects)
         {
             var dependants = allProjects
-                .Where(e => e.ProjectDependencies.Intersect(projects).Count() > 0)
+                .Where(e => e.Projects.Select(p => p.Value).Intersect(projects).Count() > 0)
                 .OrderBy(e => e.Name)
                 .ToArray();
             foreach (var dependant in dependants)
@@ -67,17 +67,17 @@ namespace Xs.Cli.Main.Commands.Ls
         )
         {
             var dependants = projects
-                .Where(e => e.ProjectDependencies.Contains(project))
+                .Where(e => e.Projects.Any(p => p.Value == project))
                 .OrderBy(e => e.Name)
                 .ToArray();
             var node = isLast ? "└─" : "├─";
             if (dependants.Length == 0)
             {
-                Console.WriteLine($"{prefix}{node}─ {project.Name}");
+                Console.WriteLine($"{prefix}{node}─ {project}");
                 return;
             }
 
-            Console.WriteLine($"{prefix}{node}┬ {project.Name}");
+            Console.WriteLine($"{prefix}{node}┬ {project}");
             prefix += isLast ? "  " : "│ ";
             var last = dependants.Last();
             foreach (var dependant in dependants)
@@ -89,14 +89,14 @@ namespace Xs.Cli.Main.Commands.Ls
                 );
         }
 
-        private void LogDependency(
-            Dependency dependency,
+        private void LogPackage(
+            Dependency<Package> package,
             string prefix,
             bool isLast
         )
         {
             var node = isLast ? "└─" : "├─";
-            Console.WriteLine($"{prefix}{node}─ {dependency}");
+            Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
         }
     }
 

@@ -35,7 +35,7 @@ namespace Xs.Cli.Node.Projects
         }
 
         public Task ClearCacheAsync(CancellationToken token) =>
-            RunAsync("cache clean", $"yarn cache clean {string.Join(' ',PackageDependencies.Select(d=>d.Name))}", token);
+            RunAsync("cache clean", $"yarn cache clean {string.Join(' ', Packages.Select(d => d.Value.Name))}", token);
 
         public Task CleanAsync(CancellationToken token)
         {

@@ -15,7 +15,7 @@ namespace Xs.Cli.Core.Projects
         IProject CreateProject(
             string directory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies,
+            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         );
     }

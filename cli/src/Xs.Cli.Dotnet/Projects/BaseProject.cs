@@ -48,7 +48,7 @@ namespace Xs.Cli.Dotnet.Projects
             var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
             lock(cacheLocker)
             {
-                foreach (var(_, name, version) in PackageDependencies)
+                foreach (var(_, (_, name, version)) in Packages)
                 {
                     var cachePath = Path.Combine(cache, name.ToLowerInvariant(), version.ToString());
                     if (Directory.Exists(cachePath))

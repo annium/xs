@@ -46,12 +46,14 @@ namespace Xs.Cli.Dotnet.Projects
             else
                 project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
 
-            project.ProjectDependencies = GetReferenceElements(El.ProjectReference)
+            project.Projects = GetReferenceElements(El.ProjectReference)
                 .Select(reference => ReadProjectDependency(project.Name, file, reference, configuration))
+                .Select(reference => new Dependency<string>(DependencyType.Normal, reference))
                 .ToArray();
 
-            project.PackageDependencies = GetReferenceElements(El.PackageReference)
+            project.Packages = GetReferenceElements(El.PackageReference)
                 .Select(reference => ReadPackageDependency(project.Name, reference, configuration))
+                .Select(package => new Dependency<Package>(DependencyType.Normal, package))
                 .ToArray();
 
             project.IsPackable = properties.Element(El.IsPackable) == null ?
@@ -81,23 +83,23 @@ namespace Xs.Cli.Dotnet.Projects
             info.Elements(El.ItemGroup).Where(e => e.Elements(El.PackageReference).Count() > 0).Remove();
 
             // add project references group
-            if (project.ProjectDependencies.Count > 0)
+            if (project.Projects.Count > 0)
                 info.Add(new XElement(
                     El.ItemGroup,
-                    project.ProjectDependencies.OrderBy(e => e.Name).Select(e => new XElement(
+                    project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
                         El.ProjectReference,
-                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.File.FullName))
+                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File.FullName))
                     ))
                 ));
 
             // add package references group
-            if (project.PackageDependencies.Count > 0)
+            if (project.Packages.Count > 0)
                 info.Add(new XElement(
                     El.ItemGroup,
-                    project.PackageDependencies.OrderBy(e => e.Name).Select(e => new XElement(
+                    project.Packages.OrderBy(e => e.Value.Name).Select(e => new XElement(
                         El.PackageReference,
-                        new XAttribute(El.Include, e.Name),
-                        new XAttribute(El.Version, e.Version)
+                        new XAttribute(El.Include, e.Value.Name),
+                        new XAttribute(El.Version, e.Value.Version)
                     ))
                 ));
 
@@ -173,7 +175,7 @@ namespace Xs.Cli.Dotnet.Projects
             return path;
         }
 
-        private static Dependency ReadPackageDependency(
+        private Package ReadPackageDependency(
             string project,
             XElement reference,
             DiscoverConfiguration configuration
@@ -190,7 +192,7 @@ namespace Xs.Cli.Dotnet.Projects
             version = version ?? new Core.Models.Version(reference.Attribute(El.Version)?.Value ??
                 throw new InvalidOperationException($"Project {project} has empty package dependency {name} version."));
 
-            return new Dependency(Constants.ProjectType, name, version);
+            return new Package(Constants.ProjectType, name, version);
         }
 
         private static class El

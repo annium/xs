@@ -33,7 +33,7 @@ namespace Xs.Cli.Main.Commands
         )
         {
             var allProjects = discoverTask.Run(discoverCfg);
-            var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
+            var dependencies = allProjects.SelectMany(e => e.Packages).Distinct().ToArray();
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {

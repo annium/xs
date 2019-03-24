@@ -9,14 +9,14 @@ namespace Xs.Cli.Core.Projects
 {
     public class SpecialProjectFactoryBase<TProject> where TProject : IProject
     {
-        protected IProject ResolveProjectDependency(
+        protected Dependency<IProject> ResolveProjectDependency(
             string project,
             FileInfo location,
-            string reference,
+            Dependency<string> reference,
             IEnumerable<IProject> projects
         )
         {
-            var directory = Directory.GetParent(Path.GetFullPath(Path.Combine(location.DirectoryName, reference))).FullName;
+            var directory = Directory.GetParent(Path.GetFullPath(Path.Combine(location.DirectoryName, reference.Value))).FullName;
 
             var dependency = projects.OfType<TProject>()
                 .FirstOrDefault(e => e.File.DirectoryName == directory);
@@ -24,17 +24,18 @@ namespace Xs.Cli.Core.Projects
             if (dependency == null)
                 throw new InvalidOperationException($"Project {project} has unresolved project dependency {reference}.");
 
-            return dependency;
+            return new Dependency<IProject>(reference.Type, dependency);
         }
 
-        protected static Dependency ResolvePackageDependency(
+        protected static Dependency<Package> ResolvePackageDependency(
             string project,
-            Dependency raw,
-            IEnumerable<Dependency> dependencies,
+            Dependency<Package> dep,
+            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
-            var dependency = dependencies.FirstOrDefault(e => e.Name.ToLowerInvariant() == raw.Name.ToLowerInvariant()) ??
+            var raw = dep.Value;
+            var dependency = packages.FirstOrDefault(e => e.Name.ToLowerInvariant() == raw.Name.ToLowerInvariant()) ??
                 raw;
 
             if (!configuration.IgnoreConsistency && raw.Name != dependency.Name)
@@ -43,7 +44,7 @@ namespace Xs.Cli.Core.Projects
             if (!configuration.IgnoreConsistency && !raw.Version.Equals(dependency.Version))
                 throw new InvalidOperationException($"Project {project} uses different dependency {raw.Name} version: {raw.Version} -> {dependency.Version}.");
 
-            return dependency;
+            return new Dependency<Package>(dep.Type, dependency);
         }
     }
 }

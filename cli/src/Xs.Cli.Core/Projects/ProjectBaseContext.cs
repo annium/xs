@@ -18,9 +18,9 @@ namespace Xs.Cli.Core.Projects
 
         public FileInfo File { get; }
 
-        public HashSet<IProject> ProjectDependencies { get; }
+        public HashSet<Dependency<IProject>> Projects { get; }
 
-        public HashSet<Dependency> PackageDependencies { get; }
+        public HashSet<Dependency<Package>> Packages { get; }
 
         public IShell Shell { get; }
 
@@ -34,8 +34,8 @@ namespace Xs.Cli.Core.Projects
             Version version,
             string description,
             FileInfo file,
-            HashSet<IProject> projectDependencies,
-            HashSet<Dependency> packageDependencies,
+            HashSet<Dependency<IProject>> projects,
+            HashSet<Dependency<Package>> packages,
             IShell shell,
             LoggerConfiguration loggerConfiguration,
             ILogger logger
@@ -46,8 +46,8 @@ namespace Xs.Cli.Core.Projects
             Version = version;
             Description = description;
             File = file;
-            ProjectDependencies = projectDependencies;
-            PackageDependencies = packageDependencies;
+            Projects = projects;
+            Packages = packages;
             Shell = shell;
             LoggerConfiguration = loggerConfiguration;
             Logger = logger;

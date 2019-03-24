@@ -16,9 +16,9 @@ namespace Xs.Cli.Dotnet.Projects
 
         public OutputType OutputType { get; set; }
 
-        public IEnumerable<string> ProjectDependencies { get; set; }
+        public IEnumerable<Dependency<string>> Projects { get; set; }
 
-        public IEnumerable<Dependency> PackageDependencies { get; set; }
+        public IEnumerable<Dependency<Package>> Packages { get; set; }
 
         public bool IsPackable { get; set; }
 
@@ -28,8 +28,8 @@ namespace Xs.Cli.Dotnet.Projects
             out string description,
             out TargetFramework targetFramework,
             out OutputType outputType,
-            out IEnumerable<string> projectDependencies,
-            out IEnumerable<Dependency> packageDependencies,
+            out IEnumerable<Dependency<string>> projects,
+            out IEnumerable<Dependency<Package>> packages,
             out bool isPackable
         )
         {
@@ -38,8 +38,8 @@ namespace Xs.Cli.Dotnet.Projects
             description = Description;
             targetFramework = TargetFramework;
             outputType = OutputType;
-            projectDependencies = ProjectDependencies;
-            packageDependencies = PackageDependencies;
+            projects = Projects;
+            packages = Packages;
             isPackable = IsPackable;
         }
     }

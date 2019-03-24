@@ -80,7 +80,7 @@ namespace Xs.Cli.Dotnet.Projects
         public IProject CreateProject(
             string directory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies,
+            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
@@ -96,7 +96,7 @@ namespace Xs.Cli.Dotnet.Projects
                 .ToHashSet();
 
             var packageDependencies = packageDeps
-                .Select(e => ResolvePackageDependency(name, e, dependencies, configuration))
+                .Select(e => ResolvePackageDependency(name, e, packages, configuration))
                 .ToHashSet();
 
             var context = new SpecialProjectContext(
@@ -117,8 +117,8 @@ namespace Xs.Cli.Dotnet.Projects
             );
 
             var isTestProject = configuration.SkipChecks ?
-                packageDependencies.Any(d => d.Name == TestSDK) :
-                TestDependencies.All(d => packageDependencies.Any(e => e.Name == d));
+                packageDependencies.Any(d => d.Value.Name == TestSDK) :
+                TestDependencies.All(d => packageDependencies.Any(e => e.Value.Name == d));
 
             if (isTestProject)
                 return new TestProject(context);

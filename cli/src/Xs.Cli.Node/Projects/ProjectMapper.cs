@@ -32,24 +32,34 @@ namespace Xs.Cli.Node.Projects
                 project.Description = info.Property(El.Description)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing description");
 
-            var deps = GetPropertyDictionary(info, El.Dependencies)
-                .Concat(GetPropertyDictionary(info, El.DevDependencies))
-                .Concat(GetPropertyDictionary(info, El.PeerDependencies))
-                .ToDictionary(e => e.Key, e => e.Value);
+            var projects = new List<Dependency<string>>();
+            projects.AddRange(GetProjectDependencies(El.Dependencies, DependencyType.Normal));
+            projects.AddRange(GetProjectDependencies(El.DevDependencies, DependencyType.Dev));
+            projects.AddRange(GetProjectDependencies(El.PeerDependencies, DependencyType.Peer));
+            project.Projects = projects;
 
-            project.ProjectDependencies = deps
-                .Where(e => e.Value.StartsWith(El.FilePrefix))
-                .Select(e => ReadProjectDependency(project.Name, file, e.Value.Substring(El.FilePrefix.Length)))
-                .ToArray();
+            var packages = new List<Dependency<Package>>();
+            packages.AddRange(GetPackageDependencies(El.Dependencies, DependencyType.Normal));
+            packages.AddRange(GetPackageDependencies(El.DevDependencies, DependencyType.Dev));
+            packages.AddRange(GetPackageDependencies(El.PeerDependencies, DependencyType.Peer));
+            project.Packages = packages;
 
-            project.PackageDependencies = deps
-                .Where(e => !e.Value.StartsWith(El.FilePrefix))
-                .Select(e => ReadPackageDependency(project.Name, e.Key, e.Value))
-                .ToArray();
-
-            project.Scripts = GetPropertyDictionary(info, El.Scripts);
+            project.Scripts = getPropertyDictionary(info, El.Scripts);
 
             return project;
+
+            IReadOnlyDictionary<string, string> getPropertyDictionary(JObject raw, string propertyName) =>
+                raw.Property(propertyName)?.Value.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+
+            IEnumerable<Dependency<string>> GetProjectDependencies(string el, DependencyType type) =>
+                getPropertyDictionary(info, el)
+                .Where(e => e.Value.StartsWith(El.FilePrefix))
+                .Select(e => new Dependency<string>(type, ReadProjectDependency(project.Name, file, e.Value.Substring(El.FilePrefix.Length))));
+
+            IEnumerable<Dependency<Package>> GetPackageDependencies(string el, DependencyType type) =>
+                getPropertyDictionary(info, el)
+                .Where(e => !e.Value.StartsWith(El.FilePrefix))
+                .Select(e => new Dependency<Package>(type, ReadPackageDependency(project.Name, e.Key, e.Value)));
         }
 
         public void Save(ISpecialProject project)
@@ -59,36 +69,14 @@ namespace Xs.Cli.Node.Projects
 
             var info = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(path));
 
-            var currentDeps = GetPropertyDictionary(info, El.Dependencies);
-            var currentDevDeps = GetPropertyDictionary(info, El.DevDependencies);
-
-            var projectDeps = project.ProjectDependencies
-                .Where(e => !currentDevDeps.ContainsKey(e.Name))
-                .OrderBy(e => e.Name)
-                .ToDictionary(e => e.Name, e => El.FilePrefix + Path.GetRelativePath(dir, e.File.DirectoryName));
-
-            var projectDevDeps = project.ProjectDependencies
-                .Where(e => currentDevDeps.ContainsKey(e.Name))
-                .OrderBy(e => e.Name)
-                .ToDictionary(e => e.Name, e => El.FilePrefix + Path.GetRelativePath(dir, e.File.DirectoryName));
-
-            var packageDeps = project.PackageDependencies
-                .Where(e => !currentDevDeps.ContainsKey(e.Name))
-                .OrderBy(e => e.Name)
-                .ToDictionary(e => e.Name, e => e.Version.ToString());
-
-            var packageDevDeps = project.PackageDependencies
-                .Where(e => currentDevDeps.ContainsKey(e.Name))
-                .OrderBy(e => e.Name)
-                .ToDictionary(e => e.Name, e => e.Version.ToString());
-
-            var deps = projectDeps.Concat(packageDeps).ToDictionary(e => e.Key, e => e.Value);
-            var devDeps = projectDevDeps.Concat(packageDevDeps).ToDictionary(e => e.Key, e => e.Value);
+            var normalDeps = getDeps(DependencyType.Normal);
+            var devDeps = getDeps(DependencyType.Dev);
+            var peerDeps = getDeps(DependencyType.Peer);
 
             info[El.Version] = project.Version.ToString();
 
-            if (deps.Count > 0)
-                info[El.Dependencies] = JObject.FromObject(deps);
+            if (normalDeps.Count > 0)
+                info[El.Dependencies] = JObject.FromObject(normalDeps);
             else
                 info.Remove(El.Dependencies);
 
@@ -97,11 +85,29 @@ namespace Xs.Cli.Node.Projects
             else
                 info.Remove(El.DevDependencies);
 
+            if (peerDeps.Count > 0)
+                info[El.PeerDependencies] = JObject.FromObject(peerDeps);
+            else
+                info.Remove(El.PeerDependencies);
+
             File.WriteAllText(path, JsonConvert.SerializeObject(info, new JsonSerializerSettings()
             {
                 Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore,
             }));
+            File.AppendAllText(path, Environment.NewLine);
+
+            Dictionary<string, string> getDeps(DependencyType type) =>
+                project.Projects
+                .Where(e => e.Type == type)
+                .Select(e => (name: e.Value.Name, value: El.FilePrefix + Path.GetRelativePath(dir, e.Value.File.DirectoryName)))
+                .Concat(
+                    project.Packages
+                    .Where(e => e.Type == type)
+                    .Select(e => (name: e.Value.Name, value: e.Value.Version.ToString()))
+                )
+                .OrderBy(e => e.name)
+                .ToDictionary(e => e.name, e => e.value);
         }
 
         private string ReadProjectDependency(
@@ -117,7 +123,7 @@ namespace Xs.Cli.Node.Projects
             return path;
         }
 
-        private static Dependency ReadPackageDependency(
+        private static Package ReadPackageDependency(
             string project,
             string name,
             string version
@@ -129,11 +135,8 @@ namespace Xs.Cli.Node.Projects
             if (string.IsNullOrWhiteSpace(version))
                 throw new InvalidOperationException($"Project {project} has empty package dependency {name} version.");
 
-            return new Dependency(Constants.ProjectType, name, new Core.Models.Version(version));
+            return new Package(Constants.ProjectType, name, new Core.Models.Version(version));
         }
-
-        private IReadOnlyDictionary<string, string> GetPropertyDictionary(JObject raw, string propertyName) =>
-        raw.Property(propertyName)?.Value.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
 
         private static class El
         {

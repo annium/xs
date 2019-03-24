@@ -1,48 +1,44 @@
+using Annium.Data.Models;
+
 namespace Xs.Cli.Core.Models
 {
-    public class Dependency
+    public class Dependency<T> : Equatable<Dependency<T>>
     {
-        public ProjectType Type { get; }
+        public DependencyType Type { get; }
 
-        public string Name { get; }
-
-        public Version Version { get; }
+        public T Value { get; }
 
         public Dependency(
-            ProjectType type,
-            string name,
-            Version version
+            DependencyType type,
+            T value
         )
         {
             Type = type;
-            Name = name;
-            Version = version;
+            Value = value;
         }
 
         public void Deconstruct(
-            out ProjectType type,
-            out string name,
-            out Version version
+            out DependencyType type,
+            out T value
         )
         {
             type = Type;
-            name = Name;
-            version = Version;
+            value = Value;
         }
 
-        public override string ToString() => $"{Name} {Version}";
-
-        public override bool Equals(object obj) => GetType() == obj.GetType() && GetHashCode() == obj.GetHashCode();
+        public override string ToString() => Value.ToString();
 
         public override int GetHashCode()
         {
-            var hash = 7;
+            unchecked
+            {
+                var hash = 7;
 
-            hash = hash * 31 + Type.GetHashCode();
-            hash = hash * 31 + Name.GetHashCode();
-            hash = hash * 31 + Version.GetHashCode();
+                hash = hash * 31 + Type.GetHashCode();
+                hash = hash * 31 + Value.GetHashCode();
 
-            return hash;
+                return hash;
+            }
         }
     }
 }

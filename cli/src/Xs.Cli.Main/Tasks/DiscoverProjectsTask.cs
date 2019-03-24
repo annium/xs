@@ -43,7 +43,7 @@ namespace Xs.Cli.Main.Tasks
             );
 
             var projects = new HashSet<IProject>();
-            var dependencies = new HashSet<Dependency>();
+            var packages = new HashSet<Package>();
 
             var previous = 0;
             List<Exception> exceptions;
@@ -54,14 +54,14 @@ namespace Xs.Cli.Main.Tasks
 
                 foreach (var(directory, factory) in results.ToArray())
                 {
-                    var(project, exception) = TryCreateProject(directory, factory, projects, dependencies, configuration);
+                    var(project, exception) = TryCreateProject(directory, factory, projects, packages, configuration);
                     if (project != null)
                     {
                         results.Remove(directory);
                         projects.Add(project);
                         logger.Debug($"Project discovered: {project}");
-                        foreach (var dependency in project.PackageDependencies)
-                            dependencies.Add(dependency);
+                        foreach (var package in project.Packages)
+                            packages.Add(package.Value);
                     }
                     if (exception != null)
                         exceptions.Add(exception);
@@ -81,13 +81,13 @@ namespace Xs.Cli.Main.Tasks
             string directory,
             ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies,
+            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
             try
             {
-                return (projectFactory.CreateProject(directory, factory, projects, dependencies, configuration), null);
+                return (projectFactory.CreateProject(directory, factory, projects, packages, configuration), null);
             }
             catch (Exception exception)
             {

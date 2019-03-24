@@ -26,13 +26,13 @@ namespace Xs.Cli.Node.Projects
                 System.IO.File.Delete(file);
 
             // for NPM, project dependencies are not swapped with package dependencies when packaged, so need to do that manually
-            var projectDependencies = ProjectDependencies.ToArray();
+            var projectDependencies = Projects.ToArray();
             try
             {
                 Version = version;
-                ProjectDependencies.Clear();
-                foreach (var dependency in projectDependencies)
-                    PackageDependencies.Add(new Dependency(Constants.ProjectType, dependency.Name, version));
+                Projects.Clear();
+                foreach (var(type, dependency) in projectDependencies)
+                    Packages.Add(new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version)));
 
                 Save();
 
@@ -42,8 +42,8 @@ namespace Xs.Cli.Node.Projects
             {
                 foreach (var dependency in projectDependencies)
                 {
-                    ProjectDependencies.Add(dependency);
-                    PackageDependencies.RemoveWhere(d => d.Name == dependency.Name);
+                    Projects.Add(dependency);
+                    Packages.RemoveWhere(d => d.Type == dependency.Type && d.Value.Name == dependency.Value.Name);
                 }
 
                 Save();

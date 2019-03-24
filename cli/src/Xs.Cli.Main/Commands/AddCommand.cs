@@ -5,6 +5,7 @@ using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tasks.Dependencies;
 
@@ -43,12 +44,13 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var name = cfg.Dependency;
+            var name = cfg.Name;
             var nameLow = name.ToLowerInvariant();
             var version = cfg.Version;
+            var type = cfg.Type;
 
             var allProjects = discoverTask.Run(discoverCfg);
-            var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
+            var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
@@ -63,15 +65,15 @@ namespace Xs.Cli.Main.Commands
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
-                    addProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), project);
+                    addProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), new Dependency<IProject>(type, project));
 
                 return;
             }
 
             logger.Debug($"Assume dependency {name} as package.");
             var packages = ProjectType.List().Where(t => targets.Count(p => p.Type == t) > 0).ToDictionary(
-                e => e,
-                e => dependencies.FirstOrDefault(d => d.Type == e && d.Name.ToLowerInvariant() == nameLow)
+                t => t,
+                t => allPackages.FirstOrDefault(d => d.Type == t && d.Name.ToLowerInvariant() == nameLow)
             );
 
             // if at least one package not found
@@ -84,7 +86,7 @@ namespace Xs.Cli.Main.Commands
                     );
                 // else - new dependencies is added
                 else
-                    packages = packages.ToDictionary(e => e.Key, e => new Dependency(e.Key, name, version));
+                    packages = packages.ToDictionary(e => e.Key, e => new Package(e.Key, name, version));
             }
 
             // if package already exists: if version exists - check it's same, otherwise - nothing to do.
@@ -92,7 +94,7 @@ namespace Xs.Cli.Main.Commands
                 throw new ArgumentException($"Package {name} is already used with different version. Specify already used version, or narrow projects mask.");
 
             foreach (var package in packages.Values)
-                addPackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), package);
+                addPackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), new Dependency<Package>(type, package));
         }
     }
 
@@ -104,10 +106,14 @@ namespace Xs.Cli.Main.Commands
 
         [Position(2)]
         [Help("Dependency name.")]
-        public string Dependency { get; set; }
+        public string Name { get; set; }
 
         [Position(3, isRequired : false)]
         [Help("Dependency version (for package dependencies).")]
         public Core.Models.Version Version { get; set; }
+
+        [Position(4, isRequired : false)]
+        [Help("Dependency type.")]
+        public DependencyType Type { get; set; } = DependencyType.Normal;
     }
 }

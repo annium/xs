@@ -61,14 +61,14 @@ namespace Xs.Cli.Main.Commands.Ls
         {
             if (showProjects)
             {
-                var projectDeps = projects.SelectMany(p => p.ProjectDependencies).Distinct().OrderBy(e => e.Name).ToArray();
+                var projectDeps = projects.SelectMany(p => p.Projects).Select(d => d.Value).Distinct().OrderBy(e => e.Name).ToArray();
                 foreach (var dependency in projectDeps)
                     Console.WriteLine(dependency);
             }
 
             if (showPackages)
             {
-                var packageDeps = projects.SelectMany(p => p.PackageDependencies).Distinct().OrderBy(e => e.Name).ToArray();
+                var packageDeps = projects.SelectMany(p => p.Packages).Select(d => d.Value).Distinct().OrderBy(e => e.Name).ToArray();
                 foreach (var dependency in packageDeps)
                     Console.WriteLine(dependency);
             }
@@ -82,43 +82,43 @@ namespace Xs.Cli.Main.Commands.Ls
             bool isLast
         )
         {
-            var packageDeps = project.PackageDependencies.OrderBy(e => e.Name).ToArray();
-            var projectDeps = project.ProjectDependencies.OrderBy(e => e.Name).ToArray();
+            var packageDeps = project.Packages.OrderBy(e => e.Type).ThenBy(e => e.Value.Name).ToArray();
+            var projectDeps = project.Projects.OrderBy(e => e.Type).ThenBy(e => e.Value.Name).ToArray();
             var node = isLast ? "└─" : "├─";
 
             var depsCount = (showProjects ? projectDeps.Length : 0) + (showPackages ? packageDeps.Length : 0);
             if (depsCount == 0)
             {
-                Console.WriteLine($"{prefix}{node}─ {project.Name}");
+                Console.WriteLine($"{prefix}{node}─ {project}");
                 return;
             }
 
-            Console.WriteLine($"{prefix}{node}┬ {project.Name}");
+            Console.WriteLine($"{prefix}{node}┬ {project}");
             prefix += isLast ? "  " : "│ ";
 
             if (showPackages && packageDeps.Length > 0)
             {
                 var last = projectDeps.Length > 0 ? null : packageDeps.Last();
                 foreach (var dependency in packageDeps)
-                    LogDependency(dependency, prefix, dependency == last);
+                    LogPackage(dependency, prefix, dependency == last);
             }
 
             if (showProjects && projectDeps.Length > 0)
             {
                 var last = projectDeps.Last();
                 foreach (var dependency in projectDeps)
-                    LogProjectWithDependencies(dependency, showProjects, showPackages, prefix, dependency == last);
+                    LogProjectWithDependencies(dependency.Value, showProjects, showPackages, prefix, dependency == last);
             }
         }
 
-        private void LogDependency(
-            Dependency dependency,
+        private void LogPackage(
+            Dependency<Package> package,
             string prefix,
             bool isLast
         )
         {
             var node = isLast ? "└─" : "├─";
-            Console.WriteLine($"{prefix}{node}─ {dependency}");
+            Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
         }
     }
 

@@ -75,7 +75,7 @@ namespace Xs.Cli.Node.Projects
         public IProject CreateProject(
             string directory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies,
+            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
@@ -87,7 +87,7 @@ namespace Xs.Cli.Node.Projects
                 .ToHashSet();
 
             var packageDependencies = packageDeps
-                .Select(e => ResolvePackageDependency(name, e, dependencies, configuration))
+                .Select(e => ResolvePackageDependency(name, e, packages, configuration))
                 .ToHashSet();
 
             var context = new SpecialProjectContext(

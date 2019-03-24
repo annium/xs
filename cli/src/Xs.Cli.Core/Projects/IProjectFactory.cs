@@ -14,7 +14,7 @@ namespace Xs.Cli.Core.Projects
             string directory,
             ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies,
+            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         );
     }

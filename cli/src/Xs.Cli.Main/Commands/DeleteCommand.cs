@@ -3,6 +3,7 @@ using System.Threading;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
+using Xs.Cli.Core.Models;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tasks.Dependencies;
 
@@ -45,7 +46,7 @@ namespace Xs.Cli.Main.Commands
             var nameLow = name.ToLowerInvariant();
 
             var allProjects = discoverTask.Run(discoverCfg);
-            var dependencies = allProjects.SelectMany(e => e.PackageDependencies).Distinct().ToArray();
+            var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
@@ -65,7 +66,7 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            var packages = dependencies.Where(e => e.Name.ToLowerInvariant() == nameLow).Distinct().ToArray();
+            var packages = allPackages.Where(e => e.Name.ToLowerInvariant() == nameLow).Distinct().ToArray();
 
             // if no packages found
             if (packages.Length == 0)
@@ -88,5 +89,9 @@ namespace Xs.Cli.Main.Commands
         [Position(2)]
         [Help("Dependency.")]
         public string Dependency { get; set; }
+
+        [Position(3, isRequired : false)]
+        [Help("Dependency type.")]
+        public DependencyType Type { get; set; } = DependencyType.Normal;
     }
 }

@@ -11,9 +11,9 @@ namespace Xs.Cli.Node.Projects
 
         public string Description { get; set; }
 
-        public IEnumerable<string> ProjectDependencies { get; set; }
+        public IEnumerable<Dependency<string>> Projects { get; set; }
 
-        public IEnumerable<Dependency> PackageDependencies { get; set; }
+        public IEnumerable<Dependency<Package>> Packages { get; set; }
 
         public IReadOnlyDictionary<string, string> Scripts { get; set; }
 
@@ -21,16 +21,16 @@ namespace Xs.Cli.Node.Projects
             out string name,
             out Version version,
             out string description,
-            out IEnumerable<string> projectDependencies,
-            out IEnumerable<Dependency> packageDependencies,
+            out IEnumerable<Dependency<string>> projects,
+            out IEnumerable<Dependency<Package>> packages,
             out IReadOnlyDictionary<string, string> scripts
         )
         {
             name = Name;
             version = Version;
             description = Description;
-            projectDependencies = ProjectDependencies;
-            packageDependencies = PackageDependencies;
+            projects = Projects;
+            packages = Packages;
             scripts = Scripts;
         }
     }

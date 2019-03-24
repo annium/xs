@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
+using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models
 {
-    public class Version
+    public class Version : Equatable<Version>
     {
         public uint Major { get; }
 
@@ -52,8 +53,6 @@ namespace Xs.Cli.Core.Models
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}{Suffix}";
 
-        public override bool Equals(object obj) => GetType() == obj?.GetType() && GetHashCode() == obj.GetHashCode();
-
         public override int GetHashCode()
         {
             unchecked
@@ -67,9 +66,5 @@ namespace Xs.Cli.Core.Models
                 return hash;
             }
         }
-
-        public static bool operator ==(Version v1, Version v2) => v1?.GetHashCode() == v2?.GetHashCode();
-
-        public static bool operator !=(Version v1, Version v2) => !(v1 == v2);
     }
 }

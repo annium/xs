@@ -46,14 +46,14 @@ namespace Xs.Cli.Main.Commands
             var version = cfg.Version;
 
             var allProjects = discoverTask.Run(discoverCfg);
-            var updatedDependencies = allProjects
-                .SelectMany(e => e.PackageDependencies)
-                .Where(e => e.Name.ToLowerInvariant() == nameLow && e.Version != version)
+            var updatedPackages = allProjects
+                .SelectMany(e => e.Packages)
+                .Where(e => e.Value.Name.ToLowerInvariant() == nameLow && e.Value.Version != version)
                 .Distinct()
                 .ToArray();
 
             var targets = allProjects
-                .Where(e => e.PackageDependencies.Any(d => updatedDependencies.Contains(d)))
+                .Where(e => e.Packages.Any(d => updatedPackages.Contains(d)))
                 .ToArray();
 
             if (targets.Length == 0)
@@ -62,11 +62,11 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            foreach (var old in updatedDependencies)
+            foreach (var old in updatedPackages)
             {
-                var dependency = new Dependency(old.Type, old.Name, version);
-                var subset = targets.FilterType(dependency.Type).ToArray();
-                deletePackageDependencyTask.Run(subset, old);
+                var dependency = new Dependency<Package>(old.Type, new Package(old.Value.Type, old.Value.Name, version));
+                var subset = targets.FilterType(dependency.Value.Type).ToArray();
+                deletePackageDependencyTask.Run(subset, old.Value);
                 addPackageDependencyTask.Run(subset, dependency);
             }
         }

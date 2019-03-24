@@ -16,14 +16,14 @@ namespace Xs.Cli.Core.Audit
             var results = new List<AuditResult>();
 
             // check project dependencies
-            foreach (var dependency in project.ProjectDependencies.ToArray())
+            foreach (var dependency in project.Projects.ToArray())
             {
-                var foundDependencies = FindProjectDependenciesDeep(project, p => p.ProjectDependencies.Contains(dependency));
+                var foundDependencies = FindProjectDependenciesDeep(project, p => p.Projects.Contains(dependency));
                 if (foundDependencies.Length == 0)
                     continue;
 
                 if (fix)
-                    project.ProjectDependencies.Remove(dependency);
+                    project.Projects.Remove(dependency);
 
                 results.Add(new AuditResult(fix,
                     $"Useless project {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
@@ -31,14 +31,14 @@ namespace Xs.Cli.Core.Audit
             }
 
             // check package dependencies
-            foreach (var dependency in project.PackageDependencies.ToArray())
+            foreach (var dependency in project.Packages.ToArray())
             {
-                var foundDependencies = FindProjectDependenciesDeep(project, p => p.PackageDependencies.Contains(dependency));
+                var foundDependencies = FindProjectDependenciesDeep(project, p => p.Packages.Contains(dependency));
                 if (foundDependencies.Length == 0)
                     continue;
 
                 if (fix)
-                    project.PackageDependencies.Remove(dependency);
+                    project.Packages.Remove(dependency);
 
                 results.Add(new AuditResult(fix,
                     $"Useless package {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
@@ -53,16 +53,16 @@ namespace Xs.Cli.Core.Audit
 
         private IProject[] FindProjectDependenciesDeep(IProject project, Func<IProject, bool> isMatch)
         {
-            if (project.ProjectDependencies.Count == 0)
+            if (project.Projects.Count == 0)
                 return Array.Empty<IProject>();
 
             var matches = new List<IProject>();
-            foreach (var dependency in project.ProjectDependencies)
+            foreach (var dependency in project.Projects)
             {
-                if (isMatch(dependency))
-                    matches.Add(dependency);
+                if (isMatch(dependency.Value))
+                    matches.Add(dependency.Value);
 
-                var nestedMatches = FindProjectDependenciesDeep(dependency, isMatch);
+                var nestedMatches = FindProjectDependenciesDeep(dependency.Value, isMatch);
                 if (nestedMatches.Length > 0)
                     matches.AddRange(nestedMatches);
             }

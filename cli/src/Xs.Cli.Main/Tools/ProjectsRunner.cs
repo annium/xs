@@ -44,7 +44,7 @@ namespace Xs.Cli.Main.Tools
                 {
                     // get projects, that have no pending dependencies and exclude those already running
                     starting = pending
-                        .Where(e => e.ProjectDependencies.All(d => !pending.Any(c => c as IProject == d)))
+                        .Where(e => e.Projects.All(d => !pending.Any(p => p as IProject == d.Value)))
                         .Except(running)
                         .ToArray();
 
@@ -63,7 +63,7 @@ namespace Xs.Cli.Main.Tools
                     {
                         try
                         {
-                            logger.Trace($"Starting run for {project.Name}");
+                            logger.Trace($"Starting run for {project}");
 
                             // handle project
                             await handle(project, token);
@@ -71,7 +71,7 @@ namespace Xs.Cli.Main.Tools
                             // if succeed - remove from pending
                             lock(locker) pending.Remove(project);
 
-                            logger.Trace($"Finished run for {project.Name}");
+                            logger.Trace($"Finished run for {project}");
                         }
                         catch (Exception e)
                         when(e is TaskCanceledException || e is OperationCanceledException)
@@ -79,7 +79,7 @@ namespace Xs.Cli.Main.Tools
                             // if canceled - clear pending
                             lock(locker) pending.Clear();
 
-                            logger.Trace($"Cancelled run for {project.Name}");
+                            logger.Trace($"Cancelled run for {project}");
                         }
                         catch (Exception exception)
                         {
@@ -87,14 +87,14 @@ namespace Xs.Cli.Main.Tools
                             errors.Add(exception);
                             lock(locker) pending.Clear();
 
-                            logger.Trace($"Failed run for {project.Name}:{Environment.NewLine}{exception.Message}");
+                            logger.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
                         }
                         finally
                         {
                             // remove from running ones
                             lock(locker) running.Remove(project);
 
-                            logger.Trace($"Finalized run for {project.Name}. Signal.");
+                            logger.Trace($"Finalized run for {project}. Signal.");
 
                             // signal for next iteration
                             gate.Set();

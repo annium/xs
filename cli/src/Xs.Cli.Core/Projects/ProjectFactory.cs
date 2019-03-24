@@ -31,14 +31,14 @@ namespace Xs.Cli.Core.Projects
             string directory,
             ISpecialProjectFactory factory,
             IEnumerable<IProject> projects,
-            IEnumerable<Dependency> dependencies,
+            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
             var project = factory.CreateProject(
                 directory,
                 projects.Where(e => e.Type == factory.Type),
-                dependencies.Where(e => e.Type == factory.Type),
+                packages.Where(e => e.Type == factory.Type),
                 configuration
             );
 

@@ -1,3 +1,4 @@
+using System.Linq;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 
@@ -19,14 +20,14 @@ namespace Xs.Cli.Main.Tasks.Dependencies
             logger.Debug($"Delete project {project} as {project.Type} dependency from {targets.Length} projects.");
             foreach (var target in targets)
             {
-                if (!target.ProjectDependencies.Contains(project))
+                if (!target.Projects.Any(p => p.Value == project))
                 {
                     logger.Debug($"Skip deleting project {project} as dependency of {target}. {target} doesn't use {project}.");
                     continue;
                 }
 
                 logger.Debug($"Delete project {project} from dependencies of {target}.");
-                target.ProjectDependencies.Remove(project);
+                target.Projects.RemoveWhere(p => p.Value == project);
                 target.Save();
             }
         }

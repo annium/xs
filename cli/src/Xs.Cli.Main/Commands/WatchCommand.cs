@@ -109,7 +109,7 @@ namespace Xs.Cli.Main.Commands
             if (project == null)
                 return;
 
-            logger.Info($"Changed {project.Name} related file: {path}");
+            logger.Info($"Changed {project} related file: {path}");
 
             await BuildAsync(project, includeSelf : true);
             if (runTests)
@@ -136,7 +136,7 @@ namespace Xs.Cli.Main.Commands
             if (project == null)
                 return;
 
-            logger.Info($"Deleted {project.Name} related file: {path}");
+            logger.Info($"Deleted {project} related file: {path}");
 
             await BuildAsync(project, includeSelf: !isProjectFile);
             if (runTests)
@@ -173,7 +173,7 @@ namespace Xs.Cli.Main.Commands
             if (includeSelf)
                 list.Add(project);
 
-            var dependants = projects.Where(candidate => candidate.ProjectDependencies.Contains(project)).ToArray();
+            var dependants = projects.Where(candidate => candidate.Projects.Any(d => d.Value == project)).ToArray();
             foreach (var dependant in dependants)
                 list.AddRange(CollectDependants(dependant, true));
 
