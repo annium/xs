@@ -18,6 +18,7 @@ namespace Xs.Cli.Node
             services.AddSingleton<ISpecialConfigurationManager, SpecialConfigurationManager>();
 
             // audit rules
+            services.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
             services.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
         }
     }

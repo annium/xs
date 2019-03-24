@@ -35,16 +35,19 @@ namespace Xs.Cli.Core.Projects
         )
         {
             var raw = dep.Value;
-            var dependency = packages.FirstOrDefault(e => e.Name.ToLowerInvariant() == raw.Name.ToLowerInvariant()) ??
+            var(_, name, version) = raw;
+            var nameLow = name.ToLowerInvariant();
+
+            var dependency = packages.FirstOrDefault(e => e.Name.ToLowerInvariant() == nameLow) ??
                 raw;
 
-            if (!configuration.IgnoreConsistency && raw.Name != dependency.Name)
-                throw new InvalidOperationException($"Project {project} uses different dependency naming: {raw.Name} -> {dependency.Name}.");
+            if (!configuration.IgnoreConsistency && name != dependency.Name)
+                throw new InvalidOperationException($"Project {project} uses different package naming: {name} != {dependency.Name}.");
 
-            if (!configuration.IgnoreConsistency && !raw.Version.Equals(dependency.Version))
-                throw new InvalidOperationException($"Project {project} uses different dependency {raw.Name} version: {raw.Version} -> {dependency.Version}.");
+            if (!configuration.IgnoreConsistency && version != dependency.Version)
+                throw new InvalidOperationException($"Project {project} uses different package {name} version: {version} != {dependency.Version}.");
 
-            return new Dependency<Package>(dep.Type, dependency);
+            return new Dependency<Package>(dep.Type, raw);
         }
     }
 }
