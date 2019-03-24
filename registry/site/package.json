@@ -4,8 +4,6 @@
   "description": "Registry site. UI for packages management.",
   "private": true,
   "dependencies": {
-    "@annium/env-tsconfig-react-app": "0.1.0",
-    "@annium/env-tslint-react": "0.1.0",
     "@annium/forms": "0.1.0",
     "@annium/server-http": "0.1.0",
     "@annium/utils": "0.1.0",
@@ -20,6 +18,8 @@
     "react-router-dom": "5.0.0"
   },
   "devDependencies": {
+    "@annium/env-tsconfig-react-app": "0.1.0",
+    "@annium/env-tslint-react": "0.1.0",
     "@types/classnames": "2.2.7",
     "@types/lodash": "4.14.123",
     "@types/node": "11.11.6",
