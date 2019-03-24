@@ -5,6 +5,6 @@ namespace Xs.Cli.Core.Audit
 {
     public interface IAuditRule<TProject> where TProject : IProject
     {
-        IEnumerable<AuditResult> Execute(TProject project, bool fix);
+        IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix);
     }
 }

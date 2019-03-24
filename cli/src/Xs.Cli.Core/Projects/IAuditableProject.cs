@@ -5,6 +5,6 @@ namespace Xs.Cli.Core.Projects
 {
     public interface IAuditableProject : IProject
     {
-        AuditResult[] Audit(bool fix, CancellationToken token);
+        AuditResult[] Audit(IProject[] projects, bool fix, CancellationToken token);
     }
 }

@@ -35,14 +35,16 @@ namespace Xs.Cli.Main.Commands
         )
         {
             var projects = discoverTask.Run(discoverCfg)
+                .ToArray();
+            var auditedProjects = projects
                 .FilterMask(cfg.Mask)
                 .OfType<IAuditableProject>()
                 .ToArray();
-            logger.Debug($"Audit {projects.Length} projects.");
+            logger.Debug($"Audit {auditedProjects.Length} projects.");
 
-            foreach (var project in projects)
+            foreach (var project in auditedProjects)
             {
-                var results = project.Audit(cfg.Fix, token);
+                var results = project.Audit(projects, cfg.Fix, token);
                 if (results.Length > 0)
                 {
                     Console.WriteLine($"{project}: {results.Length} result(s):");

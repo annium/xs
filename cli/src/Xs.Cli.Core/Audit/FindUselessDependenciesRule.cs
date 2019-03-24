@@ -7,7 +7,7 @@ namespace Xs.Cli.Core.Audit
 {
     public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where TProject : IProject
     {
-        public IEnumerable<AuditResult> Execute(TProject project, bool fix)
+        public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
         {
             var results = new List<AuditResult>();
 
