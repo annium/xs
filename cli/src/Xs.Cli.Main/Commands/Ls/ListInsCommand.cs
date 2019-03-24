@@ -89,7 +89,7 @@ namespace Xs.Cli.Main.Commands.Ls
             var depsCount = (showProjects ? projectDeps.Length : 0) + (showPackages ? packageDeps.Length : 0);
             if (depsCount == 0)
             {
-                Console.WriteLine($"{prefix}{node}─ {project}");
+                Console.WriteLine($"{prefix}{node}─ {project} ({project.Version})");
                 return;
             }
 

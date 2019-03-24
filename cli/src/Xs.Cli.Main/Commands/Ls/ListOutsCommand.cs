@@ -73,7 +73,7 @@ namespace Xs.Cli.Main.Commands.Ls
             var node = isLast ? "└─" : "├─";
             if (dependants.Length == 0)
             {
-                Console.WriteLine($"{prefix}{node}─ {project}");
+                Console.WriteLine($"{prefix}{node}─ {project} ({project.Version})");
                 return;
             }
 
