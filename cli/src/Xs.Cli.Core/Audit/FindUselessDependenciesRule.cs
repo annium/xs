@@ -17,7 +17,7 @@ namespace Xs.Cli.Core.Audit
             var results = new List<AuditResult>();
 
             // check project dependencies
-            foreach (var dependency in project.Projects.ToArray())
+            foreach (var dependency in project.Projects.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer).ToArray())
             {
                 var foundDependencies = FindProjectDependenciesDeep(project, p => p.Projects.Contains(dependency));
                 if (foundDependencies.Length == 0)
