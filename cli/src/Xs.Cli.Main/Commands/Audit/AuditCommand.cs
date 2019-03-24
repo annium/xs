@@ -59,6 +59,10 @@ namespace Xs.Cli.Main.Commands.Audit
                 return;
             }
 
+            logger.Debug($"Use {usedRules.Length} rule(s):");
+            foreach (var rule in usedRules)
+                logger.Debug(rule);
+
             foreach (var project in auditedProjects)
             {
                 var results = project.Audit(projects, usedRules, cfg.Fix, token);
