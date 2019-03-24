@@ -24,11 +24,11 @@ namespace Xs.Cli.Node.Projects
             mapper = context.Mapper;
         }
 
-        public AuditResult[] Audit(IProject[] projects, bool fix, CancellationToken token)
+        public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
         {
             var results = new List<AuditResult>();
 
-            foreach (var rule in auditRules)
+            foreach (var rule in auditRules.Where(r => rules.Contains(r.Code)))
                 results.AddRange(rule.Execute(projects, this, fix));
 
             return results.ToArray();

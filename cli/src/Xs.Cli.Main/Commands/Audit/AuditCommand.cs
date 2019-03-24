@@ -50,6 +50,7 @@ namespace Xs.Cli.Main.Commands.Audit
 
             var usedRules = (cfg.Include.Length > 0 ? rules.Where(r => cfg.Include.Contains(r.Code)) : rules)
                 .Where(r => !cfg.Exclude.Contains(r.Code))
+                .Select(r => r.Code)
                 .ToArray();
 
             if (usedRules.Length == 0)
@@ -60,7 +61,7 @@ namespace Xs.Cli.Main.Commands.Audit
 
             foreach (var project in auditedProjects)
             {
-                var results = project.Audit(projects, cfg.Fix, token);
+                var results = project.Audit(projects, usedRules, cfg.Fix, token);
                 if (results.Length > 0)
                 {
                     Console.WriteLine($"{project}: {results.Length} result(s):");
@@ -79,11 +80,11 @@ namespace Xs.Cli.Main.Commands.Audit
 
         [Option("i")]
         [Help("Include specific rules.")]
-        public string[] Include { get; set; }
+        public string[] Include { get; set; } = Array.Empty<string>();
 
         [Option("e")]
         [Help("Exclude specific rules.")]
-        public string[] Exclude { get; set; }
+        public string[] Exclude { get; set; } = Array.Empty<string>();
 
         [Option]
         [Help("Fix errors, if possible.")]
