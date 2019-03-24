@@ -7,11 +7,11 @@ using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 
-namespace Xs.Cli.Main.Commands
+namespace Xs.Cli.Main.Commands.Audit
 {
     internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>
     {
-        public override string Id { get; } = "audit";
+        public override string Id { get; } = "";
 
         public override string Description { get; } = "Audit projects.";
 

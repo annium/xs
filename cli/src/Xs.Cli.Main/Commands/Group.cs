@@ -9,13 +9,13 @@ namespace Xs.Cli.Main.Commands
         public Group()
         {
             // groups
+            Add<Audit.Group>();
             Add<Ls.Group>();
             Add<Remote.Group>();
             Add<New.Group>();
 
             // commands
             Add<AddCommand>();
-            Add<AuditCommand>();
             Add<BuildCommand>();
             Add<CleanCommand>();
             Add<DeleteCommand>();

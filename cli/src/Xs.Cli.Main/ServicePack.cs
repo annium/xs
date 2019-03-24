@@ -28,6 +28,11 @@ namespace Xs.Cli.Main
         {
             services.AddSingleton<Group>();
 
+            // audit
+            services.AddSingleton<Commands.Audit.Group>();
+            services.AddSingleton<Commands.Audit.AuditCommand>();
+            services.AddSingleton<Commands.Audit.AuditRulesCommand>();
+
             // ls
             services.AddSingleton<Commands.Ls.Group>();
             services.AddSingleton<Commands.Ls.ListCommand>();
@@ -46,7 +51,6 @@ namespace Xs.Cli.Main
 
             // root
             services.AddSingleton<AddCommand>();
-            services.AddSingleton<AuditCommand>();
             services.AddSingleton<BuildCommand>();
             services.AddSingleton<CleanCommand>();
             services.AddSingleton<DeleteCommand>();
