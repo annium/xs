@@ -77,7 +77,7 @@ namespace Xs.Cli.Main.Commands.Ls
                 return;
             }
 
-            Console.WriteLine($"{prefix}{node}┬ {project}");
+            Console.WriteLine($"{prefix}{node}┬ {project} ({project.Version})");
             prefix += isLast ? "  " : "│ ";
             var last = dependants.Last();
             foreach (var dependant in dependants)

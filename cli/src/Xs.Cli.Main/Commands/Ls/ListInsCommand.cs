@@ -93,7 +93,7 @@ namespace Xs.Cli.Main.Commands.Ls
                 return;
             }
 
-            Console.WriteLine($"{prefix}{node}┬ {project}");
+            Console.WriteLine($"{prefix}{node}┬ {project} ({project.Version})");
             prefix += isLast ? "  " : "│ ";
 
             if (showPackages && packageDeps.Length > 0)
