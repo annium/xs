@@ -2,4 +2,5 @@
 .xs.ignore
 .xs.credentials
 nuget.config
+lcov.info
 .npmrc
