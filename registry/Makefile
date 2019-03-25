@@ -28,7 +28,7 @@ publish-node:
 	$(call publish,node,server/src,Xs.Registry.Node/Dockerfile)
 
 publish-site:
-	$(call publish,site,site/src,site/Dockerfile)
+	$(call publish,site,site,Dockerfile)
 
 
 define publish
