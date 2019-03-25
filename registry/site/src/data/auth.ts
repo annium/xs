@@ -1,12 +1,13 @@
+import { async } from '@annium/utils'
+import { AsyncState } from '@annium/utils/dist/async'
 import { action, computed, observable, runInAction } from 'mobx'
 
 import * as user from '../api/user'
 import { User } from '../models/view/User'
-import { AsyncState, complete, create, load } from '../utils/async'
 
 
 export class AuthStore {
-  @observable public user: AsyncState<User | undefined> = create<User | undefined>(undefined)
+  @observable public user: AsyncState<User | undefined> = async.create<User | undefined>(undefined)
   @computed public get isRunning(): boolean {
     return this.user.isRunning
   }
@@ -20,16 +21,16 @@ export class AuthStore {
     const result = await user.login(name, password)
 
     if (result.isFailure)
-      runInAction(() => { throw complete(this.user, result).error })
+      runInAction(() => { throw async.complete(this.user, result).error })
     else
       await this.load()
   }
   @action public async load() {
-    load(this.user)
+    async.load(this.user)
     const result = await user.load()
     runInAction(() => {
       console.warn('user loaded', result)
-      complete(this.user, result)
+      async.complete(this.user, result)
     })
   }
   @action.bound public async logout() {

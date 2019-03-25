@@ -1,3 +1,4 @@
+import * as utils from '@annium/utils'
 import Col from 'antd/lib/col'
 import message from 'antd/lib/message'
 import Row from 'antd/lib/row'
@@ -9,7 +10,6 @@ import { PackageFilter } from '../../components/PackageFilter'
 import { PackageList } from '../../components/PackageList'
 import { MetaPackage } from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
-import { updateLocation } from '../../utils/history'
 import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
@@ -53,7 +53,7 @@ const search = async (
   query: string,
   setPackages: Dispatch<SetStateAction<MetaPackage[]>>,
 ) => {
-  updateLocation(history, { type, query })
+  utils.history.updateLocation(history, { type, query })
   const packagesResult = await metaPackagesApi.search('', type, query, 1)
 
   if (packagesResult.isSuccess)

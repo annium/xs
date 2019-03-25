@@ -7,12 +7,12 @@ import { inject, Store } from '../../store'
 
 import styles from './Menu.module.scss'
 
+type SelectorProps = Partial<Pick<Store, 'auth'>>
+type Props = SelectorProps & RouteComponentProps
 
-type Props = Partial<Pick<Store, 'auth'>> & RouteComponentProps
-
-export const Menu = withRouter(inject(
+export const Menu = withRouter(inject<RouteComponentProps, SelectorProps>(
   ({ auth }) => ({ auth }),
-  function Menu({ auth }: Props) {
+  ({ auth }: Props) => {
     const { user, logout } = auth!
 
     return (

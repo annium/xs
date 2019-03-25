@@ -14,10 +14,11 @@ import { parseNameVersion } from '../../utils/nameVersion'
 import styles from './index.module.scss'
 import { Package } from './Package'
 
+type SelectorProps = Partial<Pick<Store, 'auth'>>
+type RouteProps = RouteComponentProps<{ type: string, nameVersion: string }>
+type Props = SelectorProps & RouteProps
 
-type Props = Pick<Store, 'auth'> & RouteComponentProps<{ type: string, nameVersion: string }>
-
-export const PackagePage = withRouter(inject(
+export const PackagePage = withRouter(inject<RouteProps, SelectorProps>(
   ({ auth }) => ({ auth }),
   ({ auth, match: { params: { type, nameVersion } } }: Props) => {
     const [metaPackage, setMetaPackage] = useState<MetaPackage>()
@@ -27,7 +28,7 @@ export const PackagePage = withRouter(inject(
     if (!metaPackage) return null
 
     const { version } = parseNameVersion(nameVersion)
-    const access = new UserMetaPackageAccess(auth.user.data!.id, metaPackage!.ownerId, metaPackage!.permissions)
+    const access = new UserMetaPackageAccess(auth!.user.data!.id, metaPackage!.ownerId, metaPackage!.permissions)
 
 
     console.warn('RENDER PackagePage')

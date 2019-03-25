@@ -1,9 +1,9 @@
+import { createInject } from '@annium/utils'
 import { observable } from 'mobx'
 import React from 'react'
 
 import { AuthStore } from './data/auth'
 import { StartupStore } from './data/startup'
-import { createInject } from './utils/inject'
 
 export type Store = {
   auth: AuthStore
