@@ -5,6 +5,7 @@ using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Node.Projects;
+using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New
 {
@@ -39,7 +40,7 @@ namespace Xs.Cli.Node.Commands.New
             logger.Debug($"Create library project {name} at {location}");
 
             templateWriter.LoadResources($"{Group.TemplatesDir}.Lib");
-            templateWriter.SetRoot(Path.Combine(location, name));
+            templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));
 
             // setup data
             var data = new { name };
