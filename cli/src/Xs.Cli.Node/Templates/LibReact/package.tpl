@@ -10,8 +10,13 @@
     "@types/react": "16.8.8",
     "@types/react-dom": "16.8.3",
     "tslint": "5.14.0",
+    "tslint-react": "3.6.0",
     "typescript": "3.3.4000",
     "typescript-tslint-plugin": "0.3.1"
+  },
+  "peerDependencies": {
+    "react": "16.8.5",
+    "react-dom": "16.8.5"
   },
   "scripts": {
     "build": "tslint -p . && tsc -b",
