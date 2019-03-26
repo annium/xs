@@ -68,6 +68,14 @@ namespace Xs.Cli.Node.Projects
             var dir = Directory.GetParent(path).FullName;
 
             var info = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(path));
+            var scripts = info[El.Scripts];
+            var browsersList = info[El.BrowsersList];
+
+            info.Remove(El.Dependencies);
+            info.Remove(El.DevDependencies);
+            info.Remove(El.PeerDependencies);
+            info.Remove(El.Scripts);
+            info.Remove(El.BrowsersList);
 
             var normalDeps = getDeps(DependencyType.Normal);
             var devDeps = getDeps(DependencyType.Dev);
@@ -76,19 +84,18 @@ namespace Xs.Cli.Node.Projects
             info[El.Version] = project.Version.ToString();
 
             if (normalDeps.Count > 0)
-                info[El.Dependencies] = JObject.FromObject(normalDeps);
-            else
-                info.Remove(El.Dependencies);
+                info.Add(El.Dependencies, JObject.FromObject(normalDeps));
 
             if (devDeps.Count > 0)
-                info[El.DevDependencies] = JObject.FromObject(devDeps);
-            else
-                info.Remove(El.DevDependencies);
+                info.Add(El.DevDependencies, JObject.FromObject(devDeps));
 
             if (peerDeps.Count > 0)
-                info[El.PeerDependencies] = JObject.FromObject(peerDeps);
-            else
-                info.Remove(El.PeerDependencies);
+                info.Add(El.PeerDependencies, JObject.FromObject(peerDeps));
+
+            if (scripts != null)
+                info.Add(El.Scripts, scripts);
+            if (browsersList != null)
+                info.Add(El.BrowsersList, browsersList);
 
             File.WriteAllText(path, JsonConvert.SerializeObject(info, new JsonSerializerSettings()
             {
@@ -155,6 +162,8 @@ namespace Xs.Cli.Node.Projects
             public const string FilePrefix = "file:";
 
             public const string Scripts = "scripts";
+
+            public const string BrowsersList = "browserslist";
         }
     }
 }
