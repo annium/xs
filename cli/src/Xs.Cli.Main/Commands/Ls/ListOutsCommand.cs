@@ -46,7 +46,7 @@ namespace Xs.Cli.Main.Commands.Ls
             }
 
             foreach (var project in projects)
-                LogProjectWithDependants(project, allProjects, string.Empty, project == last);
+                LogProjectWithDependants(new Dependency<IProject>(DependencyType.Normal, project), allProjects, string.Empty, project == last);
         }
 
         private void LogPlainDependants(IEnumerable<IProject> projects, IEnumerable<IProject> allProjects)
@@ -60,24 +60,31 @@ namespace Xs.Cli.Main.Commands.Ls
         }
 
         private void LogProjectWithDependants(
-            IProject project,
+            Dependency<IProject> projectDependency,
             IEnumerable<IProject> projects,
             string prefix,
             bool isLast
         )
         {
+            var(dependencyType, project) = projectDependency;
             var dependants = projects
-                .Where(e => e.Projects.Any(p => p.Value == project))
-                .OrderBy(e => e.Name)
+                .Select(e =>
+                {
+                    var dep = e.Projects.FirstOrDefault(p => p.Value == project);
+
+                    return dep == null ? null : new Dependency<IProject>(dep.Type, e);
+                })
+                .OfType<Dependency<IProject>>()
+                .OrderBy(e => e.Value.Name)
                 .ToArray();
             var node = isLast ? "└─" : "├─";
             if (dependants.Length == 0)
             {
-                Console.WriteLine($"{prefix}{node}─ {project} ({project.Version})");
+                Console.WriteLine($"{prefix}{node}─ {project} {project.Version} ({dependencyType})");
                 return;
             }
 
-            Console.WriteLine($"{prefix}{node}┬ {project} ({project.Version})");
+            Console.WriteLine($"{prefix}{node}┬ {project} {project.Version} ({dependencyType})");
             prefix += isLast ? "  " : "│ ";
             var last = dependants.Last();
             foreach (var dependant in dependants)

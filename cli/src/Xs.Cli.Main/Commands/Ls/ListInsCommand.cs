@@ -50,7 +50,7 @@ namespace Xs.Cli.Main.Commands.Ls
             // otherwise - log nice dependencies tree
             var last = projects.Last();
             foreach (var project in projects)
-                LogProjectWithDependencies(project, showProjects, showPackages, string.Empty, project == last);
+                LogProjectWithDependencies(new Dependency<IProject>(DependencyType.Normal, project), showProjects, showPackages, string.Empty, project == last);
         }
 
         private void LogPlainDependencies(
@@ -75,13 +75,14 @@ namespace Xs.Cli.Main.Commands.Ls
         }
 
         private void LogProjectWithDependencies(
-            IProject project,
+            Dependency<IProject> projectDependency,
             bool showProjects,
             bool showPackages,
             string prefix,
             bool isLast
         )
         {
+            var(dependencyType, project) = projectDependency;
             var packageDeps = project.Packages.OrderBy(e => e.Type).ThenBy(e => e.Value.Name).ToArray();
             var projectDeps = project.Projects.OrderBy(e => e.Type).ThenBy(e => e.Value.Name).ToArray();
             var node = isLast ? "└─" : "├─";
@@ -89,11 +90,11 @@ namespace Xs.Cli.Main.Commands.Ls
             var depsCount = (showProjects ? projectDeps.Length : 0) + (showPackages ? packageDeps.Length : 0);
             if (depsCount == 0)
             {
-                Console.WriteLine($"{prefix}{node}─ {project} ({project.Version})");
+                Console.WriteLine($"{prefix}{node}─ {project} {project.Version} ({dependencyType})");
                 return;
             }
 
-            Console.WriteLine($"{prefix}{node}┬ {project} ({project.Version})");
+            Console.WriteLine($"{prefix}{node}┬ {project} {project.Version} ({dependencyType})");
             prefix += isLast ? "  " : "│ ";
 
             if (showPackages && packageDeps.Length > 0)
@@ -107,7 +108,7 @@ namespace Xs.Cli.Main.Commands.Ls
             {
                 var last = projectDeps.Last();
                 foreach (var dependency in projectDeps)
-                    LogProjectWithDependencies(dependency.Value, showProjects, showPackages, prefix, dependency == last);
+                    LogProjectWithDependencies(dependency, showProjects, showPackages, prefix, dependency == last);
             }
         }
 
