@@ -7,5 +7,7 @@ namespace Xs.Cli.Core.Tools
         void LoadResources(string prefix);
 
         void Write(string resourceName, string fileName, object data);
+
+        void Copy(string resourceName, string fileName);
     }
 }

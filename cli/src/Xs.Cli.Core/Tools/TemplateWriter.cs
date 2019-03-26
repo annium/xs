@@ -33,5 +33,15 @@ namespace Xs.Cli.Core.Tools
 
             File.WriteAllText(path, content);
         }
+
+        public void Copy(string resourceName, string fileName)
+        {
+            var path = Path.GetFullPath(Path.Combine(root, fileName));
+            Directory.CreateDirectory(Directory.GetParent(path).FullName);
+
+            var tpl = resources.First(r => r.Name == resourceName);
+
+            File.WriteAllText(path, tpl.Content);
+        }
     }
 }
