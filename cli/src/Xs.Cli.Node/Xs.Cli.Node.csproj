@@ -9,6 +9,10 @@
         <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
+        <EmbeddedResource Include="Templates/**" />
+        <EmbeddedResource Remove="Templates/.*" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="../Xs.Cli.Core/Xs.Cli.Core.csproj" />
     </ItemGroup>
 </Project>
