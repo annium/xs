@@ -1,0 +1,3 @@
+{
+  "extends": "@annium/env-tslint"
+}
