@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# production
+dist/
+
+# packages
+*.tgz
+
+# misc
+yarn-debug.log*
+yarn-error.log*
