@@ -6,6 +6,7 @@ namespace Xs.Registry.Node.Payloads
 {
     public class PackageVersionPayload
     {
+        [Required]
         [StringLength(100, MinimumLength = 3)]
         public string Main { get; set; }
 
