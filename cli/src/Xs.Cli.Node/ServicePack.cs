@@ -20,6 +20,17 @@ namespace Xs.Cli.Node
             // audit rules
             services.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
             services.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
+
+            RegisterCommands(services);
+        }
+
+        private void RegisterCommands(IServiceCollection services)
+        {
+            // new
+            services.AddSingleton<Commands.New.Group>();
+            services.AddSingleton<Commands.New.AppReactCommand>();
+            services.AddSingleton<Commands.New.LibCommand>();
+            services.AddSingleton<Commands.New.LibReactCommand>();
         }
     }
 }

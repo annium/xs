@@ -1,0 +1,43 @@
+{
+  "name": "{{name}}",
+  "version": "0.1.0",
+  "description": "{{name}}.",
+  "main": "dist",
+  "dependencies": {
+    "classnames": "2.2.6",
+    "lodash": "4.17.11",
+    "mobx": "5.9.0",
+    "mobx-react-lite": "1.1.1",
+    "moment": "2.24.0",
+    "react": "16.8.5",
+    "react-dom": "16.8.5",
+    "react-router-dom": "5.0.0"
+  },
+  "devDependencies": {
+    "@annium/env-tsconfig-app-react": "0.1.0",
+    "@annium/env-tslint-react": "0.1.0",
+    "@types/classnames": "2.2.7",
+    "@types/lodash": "4.14.123",
+    "@types/node": "11.11.6",
+    "@types/react": "16.8.8",
+    "@types/react-dom": "16.8.3",
+    "@types/react-router-dom": "4.3.1",
+    "node-sass": "4.11.0",
+    "react-scripts": "2.1.8",
+    "tslint": "5.14.0",
+    "tslint-react": "3.6.0",
+    "typescript": "3.3.4000",
+    "typescript-tslint-plugin": "0.3.1"
+  },
+  "scripts": {
+    "build": "tslint -p . && react-scripts build",
+    "lint": "tslint -p .",
+    "start": "react-scripts start"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

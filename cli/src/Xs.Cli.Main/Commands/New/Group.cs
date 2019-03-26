@@ -9,6 +9,7 @@ namespace Xs.Cli.Main.Commands.New
         public Group()
         {
             Add<Dotnet.Commands.New.Group>();
+            Add<Node.Commands.New.Group>();
         }
     }
 }
