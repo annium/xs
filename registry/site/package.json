@@ -18,7 +18,7 @@
     "react-router-dom": "5.0.0"
   },
   "devDependencies": {
-    "@annium/env-tsconfig-react-app": "0.1.0",
+    "@annium/env-tsconfig-app-react": "0.1.0",
     "@annium/env-tslint-react": "0.1.0",
     "@types/classnames": "2.2.7",
     "@types/lodash": "4.14.123",
