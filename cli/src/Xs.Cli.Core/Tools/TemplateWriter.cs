@@ -94,7 +94,9 @@ namespace Xs.Cli.Core.Tools
         public void EnsureAllWritten()
         {
             if (resources.Count > 0)
-                throw new InvalidOperationException($" { resources.Count } not written: { Environment.NewLine } { string.Join(Environment.NewLine, resources) } ");
+                throw new InvalidOperationException(
+                    $"{resources.Count} not written:{Environment.NewLine}{string.Join(Environment.NewLine, resources.Select(r => r.Name))}"
+                );
         }
     }
 }

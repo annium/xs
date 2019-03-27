@@ -11,13 +11,13 @@ namespace Xs.Cli.Core.Helpers
             if (assembly == null)
                 assembly = Assembly.GetCallingAssembly();
 
-            prefix = $"{assembly.GetName().Name}.{prefix}";
+            prefix = $"{assembly.GetName().Name}.{prefix}.";
 
             return assembly.GetManifestResourceNames()
                 .Where(r => r.StartsWith(prefix))
                 .Select(r =>
                 {
-                    var name = r.Substring(prefix.Length + 1);
+                    var name = r.Substring(prefix.Length);
                     var rs = assembly.GetManifestResourceStream(r);
                     rs.Seek(0, SeekOrigin.Begin);
 
