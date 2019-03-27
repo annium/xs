@@ -4,10 +4,14 @@ namespace Xs.Cli.Core.Tools
     {
         void SetRoot(string root);
 
+        void AddExtensions(params string[] extensions);
+
         void LoadResources(string prefix);
 
         void Write(string resourceName, string fileName, object data);
 
-        void Copy(string resourceName, string fileName);
+        void WriteAll(object data);
+
+        void EnsureAllWritten();
     }
 }

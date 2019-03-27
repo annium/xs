@@ -18,9 +18,10 @@ namespace Xs.Cli.Core.Helpers
                 .Select(r =>
                 {
                     var name = r.Substring(prefix.Length + 1);
-                    var content = new StreamReader(assembly.GetManifestResourceStream(r)).ReadToEnd();
+                    var rs = assembly.GetManifestResourceStream(r);
+                    rs.Seek(0, SeekOrigin.Begin);
 
-                    return new Resource(name, content);
+                    return new Resource(name, rs);
                 })
                 .ToArray();
         }

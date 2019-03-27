@@ -1,14 +1,16 @@
+using System.IO;
+
 namespace Xs.Cli.Core.Helpers
 {
     public class Resource
     {
         public string Name { get; }
 
-        public string Content { get; }
+        public Stream Content { get; }
 
         public Resource(
             string name,
-            string content
+            Stream content
         )
         {
             Name = name;
@@ -17,7 +19,7 @@ namespace Xs.Cli.Core.Helpers
 
         public void Deconstruct(
             out string name,
-            out string content
+            out Stream content
         )
         {
             name = Name;
