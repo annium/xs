@@ -18,7 +18,7 @@ namespace Xs.Cli.Core.Tools
         private string root = Directory.GetCurrentDirectory();
 
         private string[] extensions =
-            new string[] { "cs", "d.ts", "dockerignore", "gitignore", "html", "ico", "js", "json", "ts", "tsx" };
+            new string[] { "cs", "css", "d.ts", "dockerignore", "env", "gitignore", "html", "ico", "js", "json", "scss", "ts", "tsx" };
 
         private IList<Resource> resources;
 
@@ -77,7 +77,7 @@ namespace Xs.Cli.Core.Tools
             string toPath(string name)
             {
                 var extension = extensions
-                    .Where(ext => name.EndsWith(ext))
+                    .Where(ext => endsWithExtension(name, ext))
                     .OrderByDescending(ext => ext.Length)
                     .FirstOrDefault();
 
@@ -88,7 +88,10 @@ namespace Xs.Cli.Core.Tools
             }
 
             string stripExtension(string name, string extension) =>
-                name.EndsWith(extension) ? name.Substring(0, name.Length - extension.Length - 1) : name;
+                endsWithExtension(name, extension) ? name.Substring(0, name.Length - extension.Length - 1) : name;
+
+            bool endsWithExtension(string name, string extension) => name.EndsWith(extension) &&
+                (name[name.Length - extension.Length - 1] == '_' || name[name.Length - extension.Length - 1] == '.');
         }
 
         public void EnsureAllWritten()
