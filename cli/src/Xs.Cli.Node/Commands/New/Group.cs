@@ -4,7 +4,7 @@ namespace Xs.Cli.Node.Commands.New
     {
         internal const string TemplatesDir = "Templates";
 
-        internal const string ProjectTemplate = "package.tpl";
+        internal const string ProjectTemplate = "package_tpl";
 
         public override string Id { get; } = Constants.ProjectType.ToString();
 

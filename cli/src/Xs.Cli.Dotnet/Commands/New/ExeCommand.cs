@@ -46,8 +46,8 @@ namespace Xs.Cli.Dotnet.Commands.New
 
             // write files
             templateWriter.Write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}", data);
-            templateWriter.Write("Program.tpl", "Program.cs", data);
-            templateWriter.Write("ServicePack.tpl", "ServicePack.cs", data);
+            templateWriter.WriteAll(data);
+            templateWriter.EnsureAllWritten();
         }
     }
 

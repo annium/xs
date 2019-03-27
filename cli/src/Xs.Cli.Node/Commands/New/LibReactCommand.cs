@@ -47,9 +47,8 @@ namespace Xs.Cli.Node.Commands.New
 
             // write files
             templateWriter.Write(Group.ProjectTemplate, ProjectFactory.ProjectFileName, data);
-            templateWriter.Write("tsconfig.json.tpl", "tsconfig.json", data);
-            templateWriter.Write("tslint.json.tpl", "tslint.json", data);
-            templateWriter.Write(".gitignore.tpl", ".gitignore", data);
+            templateWriter.WriteAll(data);
+            templateWriter.EnsureAllWritten();
         }
     }
 

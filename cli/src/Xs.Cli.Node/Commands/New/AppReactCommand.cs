@@ -47,18 +47,8 @@ namespace Xs.Cli.Node.Commands.New
 
             // write files
             templateWriter.Write(Group.ProjectTemplate, ProjectFactory.ProjectFileName, data);
-
-            templateWriter.Copy("public.favicon.ico", Path.Combine("public", "favicon.ico"));
-            templateWriter.Write("public.index.html.tpl", Path.Combine("public", "index.html"), data);
-            templateWriter.Write("public.manifest.json.tpl", Path.Combine("public", "manifest.json"), data);
-
-            templateWriter.Write("src.App.tsx.tpl", Path.Combine("src", "App.tsx"), data);
-            templateWriter.Write("src.index.tsx.tpl", Path.Combine("src", "index.tsx"), data);
-            templateWriter.Write("src.react-app-env.d.ts.tpl", Path.Combine("src", "react-app-env.d.ts"), data);
-
-            templateWriter.Write("tsconfig.json.tpl", "tsconfig.json", data);
-            templateWriter.Write("tslint.json.tpl", "tslint.json", data);
-            templateWriter.Write(".gitignore.tpl", ".gitignore", data);
+            templateWriter.WriteAll(data);
+            templateWriter.EnsureAllWritten();
         }
     }
 
