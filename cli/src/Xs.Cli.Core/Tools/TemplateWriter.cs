@@ -17,8 +17,24 @@ namespace Xs.Cli.Core.Tools
 
         private string root = Directory.GetCurrentDirectory();
 
-        private string[] extensions =
-            new string[] { "cs", "css", "d.ts", "dockerignore", "env", "gitignore", "html", "ico", "js", "json", "scss", "ts", "tsx" };
+        private string[] extensions = new string[]
+        {
+            "cs",
+            "css",
+            "d.ts",
+            "dockerignore",
+            "env",
+            "gitignore",
+            "html",
+            "ico",
+            "js",
+            "json",
+            "module.css",
+            "module.scss",
+            "scss",
+            "ts",
+            "tsx"
+        };
 
         private IList<Resource> resources;
 

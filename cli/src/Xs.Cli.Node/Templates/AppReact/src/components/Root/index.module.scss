@@ -1,0 +1,6 @@
+@import 'common.scss';
+
+.root {
+    flex: 1;
+    @include flex(column, stretch);
+}
