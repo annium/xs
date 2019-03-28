@@ -14,6 +14,8 @@ namespace Xs.Cli.Node.Projects
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
+            await BuildAsync(Env.Production, token);
+
             var fileName = $"{Name}-{version}.tgz";
             if (Name.StartsWith('@'))
             {

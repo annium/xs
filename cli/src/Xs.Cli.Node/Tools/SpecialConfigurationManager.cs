@@ -44,7 +44,7 @@ namespace Xs.Cli.Node.Tools
             var sb = new StringBuilder();
             sb.AppendLine($"@{scope}:registry={location}");
             // add all used scopes except reserved
-            foreach (var dependencyScope in project.Packages.Select(d => GetScope(d.Value.Name)).OfType<string>())
+            foreach (var dependencyScope in project.Packages.Select(d => GetScope(d.Value.Name)).Distinct().OfType<string>())
                 if (!reservedScopes.Contains(dependencyScope))
                     sb.AppendLine($"@{dependencyScope}:registry={location}");
             sb.AppendLine($"//{location.Authority}/:_authToken=\"{token}\"");
