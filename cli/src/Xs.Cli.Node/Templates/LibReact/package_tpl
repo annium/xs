@@ -3,23 +3,32 @@
   "version": "0.1.0",
   "description": "Library {{name}}.",
   "main": "dist",
+  "jest": {
+    "coverageReporters": [
+      "lcov"
+    ]
+  },
   "devDependencies": {
     "@annium/env-tsconfig-react": "0.1.0",
     "@annium/env-tslint-react": "0.1.0",
-    "@types/node": "11.11.6",
-    "@types/react": "16.8.8",
+    "@types/jest": "24.0.11",
+    "@types/node": "11.13.0",
+    "@types/react": "16.8.10",
     "@types/react-dom": "16.8.3",
-    "tslint": "5.14.0",
-    "tslint-react": "3.6.0",
-    "typescript": "3.3.4000",
+    "jest": "24.6.0",
+    "ts-jest": "24.0.1",
+    "tslint": "5.15.0",
+    "tslint-react": "4.0.0",
+    "typescript": "3.4.1",
     "typescript-tslint-plugin": "0.3.1"
   },
   "peerDependencies": {
-    "react": "16.8.5",
-    "react-dom": "16.8.5"
+    "react": "16.8.6",
+    "react-dom": "16.8.6"
   },
   "scripts": {
     "build": "tslint -p . && tsc -b",
-    "lint": "tslint -p ."
+    "lint": "tslint -p .",
+    "test": "jest"
   }
 }
