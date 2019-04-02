@@ -5,7 +5,7 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class TestProject : BaseProject, ITestableProject
+    internal class TestProject : LibraryProject, ITestableProject
     {
         public TestProject(SpecialProjectContext context) : base(context) { }
 
