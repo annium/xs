@@ -1,10 +1,10 @@
 using System;
-using System.Net;
+using Annium.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Xs.Registry.Shared.Helpers
 {
-    public class ServerController<TUser> : ControllerBase
+    public class ServerController<TUser> : ServerController
     {
         public const string UserProperty = "serverUser";
 
@@ -15,14 +15,5 @@ namespace Xs.Registry.Shared.Helpers
 
             throw new InvalidOperationException($"User is not authenticated.");
         }
-
-        protected IActionResult Created(object result) =>
-            new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Created };
-
-        protected IActionResult Forbidden(object result) =>
-            new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-
-        protected IActionResult ServerError(object result) =>
-            new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
     }
 }

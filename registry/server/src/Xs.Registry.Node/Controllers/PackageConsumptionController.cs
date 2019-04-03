@@ -38,14 +38,14 @@ namespace Xs.Registry.Node.Controllers
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
             var result = await packageService.GetPackagesAsync(GetUser(), packageName);
-            switch (result)
+            switch (result.Status)
             {
-                case Abstract.Packages.NotFoundResult res:
+                case PackageStatus.NotFound:
                     return NotFound();
-                case Abstract.Packages.ForbiddenResult res:
-                    return Forbidden(res.Error);
-                case Abstract.Packages.ArrayResult<Package> res:
-                    return Ok(new PackagesView(res.Packages, url));
+                case PackageStatus.Forbidden:
+                    return Forbidden(result);
+                case PackageStatus.OK:
+                    return Ok(new PackagesView(result.Data, url));
                 default:
                     return NotFound();
             }
@@ -57,14 +57,14 @@ namespace Xs.Registry.Node.Controllers
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
             var result = await packageService.ProcessDownloadAsync(GetUser(), packageName, version, true);
-            switch (result)
+            switch (result.Status)
             {
-                case Abstract.Packages.NotFoundResult res:
+                case PackageStatus.NotFound:
                     return NotFound();
-                case Abstract.Packages.ForbiddenResult res:
-                    return Forbidden(res.Error);
-                case Abstract.Packages.InternalErrorResult res:
-                    return ServerError(res.Error);
+                case PackageStatus.Forbidden:
+                    return Forbidden(result);
+                case PackageStatus.InternalError:
+                    return ServerError(result);
             }
 
             var content = await packageStorage.GetAsync(packageName, version);

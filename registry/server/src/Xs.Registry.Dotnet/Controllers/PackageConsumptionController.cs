@@ -46,14 +46,14 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             name = HttpUtility.UrlDecode(name);
             var result = await packageService.ProcessDownloadAsync(null, name, version, true);
-            switch (result)
+            switch (result.Status)
             {
-                case Abstract.Packages.NotFoundResult res:
+                case PackageStatus.NotFound:
                     return NotFound();
-                case Abstract.Packages.ForbiddenResult res:
-                    return Forbidden(res.Error);
-                case Abstract.Packages.InternalErrorResult res:
-                    return ServerError(res.Error);
+                case PackageStatus.Forbidden:
+                    return Forbidden(result);
+                case PackageStatus.InternalError:
+                    return ServerError(result);
             }
 
             var content = await packageStorage.GetPackageAsync(name, version);
@@ -66,14 +66,14 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             name = HttpUtility.UrlDecode(name);
             var result = await packageService.ProcessDownloadAsync(null, name, version, false);
-            switch (result)
+            switch (result.Status)
             {
-                case Abstract.Packages.NotFoundResult res:
+                case PackageStatus.NotFound:
                     return NotFound();
-                case Abstract.Packages.ForbiddenResult res:
-                    return Forbidden(res.Error);
-                case Abstract.Packages.InternalErrorResult res:
-                    return ServerError(res.Error);
+                case PackageStatus.Forbidden:
+                    return Forbidden(result);
+                case PackageStatus.InternalError:
+                    return ServerError(result);
             }
 
             var content = await packageStorage.GetNuspecAsync(name, version);

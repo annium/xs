@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Annium.Data.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Views;
@@ -60,7 +61,7 @@ namespace Xs.Registry.Main.Controllers
 
             var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.Has(Permission.Read))
-                return Forbidden("You need read permission to get this package.");
+                return Forbidden(Result.Failure().Error("You need read permission to get this package."));
 
             return Ok(new MetaPackageView(package));
         }
@@ -77,7 +78,7 @@ namespace Xs.Registry.Main.Controllers
 
             var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.IsOwner)
-                return Forbidden($"You need to be owner to update package permissions");
+                return Forbidden(Result.Failure().Error("You need to be owner to update package permissions."));
 
             await metaPackageRepository.UpdatePermissionsAsync(package.Id, permissions);
 

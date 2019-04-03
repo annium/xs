@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Annium.Data.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Xs.Registry.Db.Shared;
@@ -78,21 +79,21 @@ namespace Xs.Registry.Main.Controllers
         private async Task<ValueTuple<User, IActionResult>> LoginUserInternalAsync(UserLoginPayload loginPayload)
         {
             if (loginPayload == null)
-                return (null, BadRequest("Pass login data"));
+                return (null, BadRequest(Result.Failure().Error("Pass login data")));
 
             var name = loginPayload.Name;
             var password = loginPayload.Password;
 
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
-                return (null, BadRequest("Pass login data"));
+                return (null, BadRequest(Result.Failure().Error("Pass login data")));
 
             var user = await userRepository.FindByNameAsync(name);
             if (user == null)
-                return (null, NotFound("User not found"));
+                return (null, NotFound(Result.Failure().Error("User not found")));
 
             var passwordHash = securityManager.Hash(password);
             if (user.PasswordHash != passwordHash)
-                return (null, Forbidden("Invalid password"));
+                return (null, Forbidden(Result.Failure().Error("Invalid password")));
 
             return (user, null);
         }

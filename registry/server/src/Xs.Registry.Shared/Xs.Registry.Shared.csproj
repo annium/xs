@@ -9,6 +9,8 @@
         <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Annium.AspNetCore.Extensions" Version="0.1.0" />
+        <PackageReference Include="Annium.Data.Operations.Serialization" Version="0.1.0" />
         <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="AutoMapper" Version="8.0.0" />

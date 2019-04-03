@@ -51,12 +51,12 @@ namespace Xs.Registry.Node.Controllers
             payload.Published = getInstant();
 
             var result = await packageService.PublishPackageAsync(GetUser(), payload);
-            switch (result)
+            switch (result.Status)
             {
-                case Abstract.Packages.ForbiddenResult res:
-                    return Forbidden(res.Error);
-                case Abstract.Packages.ConflictResult res:
-                    return Conflict(res.Error);
+                case PackageStatus.Forbidden:
+                    return Forbidden(result);
+                case PackageStatus.Conflict:
+                    return Conflict(result);
                 default:
                     return NoContent();
             }

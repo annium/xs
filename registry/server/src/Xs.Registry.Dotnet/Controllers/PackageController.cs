@@ -30,14 +30,14 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             name = HttpUtility.UrlDecode(name);
             var result = await packageService.GetPackagesAsync(GetUser(), name);
-            switch (result)
+            switch (result.Status)
             {
-                case Abstract.Packages.NotFoundResult res:
+                case PackageStatus.NotFound:
                     return NotFound();
-                case Abstract.Packages.ForbiddenResult res:
-                    return Forbidden(res.Error);
-                case Abstract.Packages.ArrayResult<Package> res:
-                    return Ok(res.Packages.Select(p => new PackageView(p)).ToArray());
+                case PackageStatus.Forbidden:
+                    return Forbidden(result);
+                case PackageStatus.OK:
+                    return Ok(result.Data.Select(p => new PackageView(p)).ToArray());
                 default:
                     return NotFound();
             }
@@ -49,12 +49,12 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             name = HttpUtility.UrlDecode(name);
             var result = await packageService.UnpublishPackageAsync(GetUser(), name, version);
-            switch (result)
+            switch (result.Status)
             {
-                case Abstract.Packages.NotFoundResult res:
+                case PackageStatus.NotFound:
                     return NotFound();
-                case Abstract.Packages.ForbiddenResult res:
-                    return Forbidden(res.Error);
+                case PackageStatus.Forbidden:
+                    return Forbidden(result);
                 default:
                     return NoContent();
             }
