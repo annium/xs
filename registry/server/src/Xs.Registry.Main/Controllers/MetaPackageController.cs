@@ -40,9 +40,9 @@ namespace Xs.Registry.Main.Controllers
             var projectType = type == null ? null : ProjectType.Get(type);
             query = HttpUtility.UrlDecode(query);
             if (page < 1)
-                return BadRequest("Page must be positive integer");
+                return BadRequest(Result.Failure().Error("Page must be positive integer"));
             if (count < 1)
-                return BadRequest("Count must be positive integer");
+                return BadRequest(Result.Failure().Error("Count must be positive integer"));
 
             var packages = await metaPackageRepository.FindAsync(GetUser().Id, ownerId, projectType, query, page, count);
 

@@ -33,11 +33,8 @@ namespace Xs.Registry.Main.Controllers
         [HttpPut]
         public async Task<IActionResult> CreateUserAsync([FromBody] UserRegistrationPayload registrationModel)
         {
-            if (registrationModel == null)
-                return BadRequest("Specify user data");
-
             if (!ModelState.IsValid)
-                return BadRequest("Check user data");
+                return BadRequest(ModelState);
 
             var name = registrationModel.Name;
 
@@ -57,11 +54,8 @@ namespace Xs.Registry.Main.Controllers
         [AuthorizeSession]
         public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)
         {
-            if (updateModel == null)
-                return BadRequest("Specify user data");
-
             if (!ModelState.IsValid)
-                return BadRequest("Check user data");
+                return BadRequest(ModelState);
 
             var user = GetUser();
 
