@@ -2,7 +2,8 @@ import message from 'antd/lib/message'
 import React, { useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { inject, Store } from '../../store'
+import { authActions } from '../../data/auth'
+import { connect, Store } from '../../store'
 
 import { LoginForm } from './Form'
 import styles from './index.module.scss'
@@ -12,7 +13,7 @@ type Props = Pick<Store, 'auth' | 'startup'> & RouteComponentProps
 
 const log = console.log.bind(console, 'LoginPage')
 
-export const LoginPage = inject<RouteComponentProps, Pick<Store, 'auth' | 'startup'>>(
+export const LoginPage = connect<RouteComponentProps, Pick<Store, 'auth' | 'startup'>>(
   ({ auth, startup }) => ({ auth, startup }),
   (props: Props) => {
     useEffect(
@@ -30,7 +31,7 @@ export const LoginPage = inject<RouteComponentProps, Pick<Store, 'auth' | 'start
 
     const { auth } = props
 
-    if (auth.hasAccess) return null
+    if (auth.access) return null
 
     return (
       <div className={styles.page}>
@@ -40,13 +41,13 @@ export const LoginPage = inject<RouteComponentProps, Pick<Store, 'auth' | 'start
   },
 )
 
-const handleLogin = (auth: Props['auth']) => (name: string, password: string) => auth
-  .login(name, password)
+const handleLogin = (auth: Props['auth']) => (name: string, password: string) => authActions
+  .login({ name, password })
   .catch(error => message.error(`login failed: ${error}`))
 
 const ensureAccess = ({ auth, startup, history }: Props) => {
-  log('checkAccess', auth.hasAccess)
-  if (auth.isLoaded && auth.hasAccess)
+  log('checkAccess', auth.access)
+  if ((auth.user.isSuccess || auth.user.isFailure) && auth.access)
     if (startup.location.pathname.startsWith('/login'))
       history.replace('/')
     else

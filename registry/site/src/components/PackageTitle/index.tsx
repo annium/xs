@@ -27,7 +27,7 @@ export const PackageTitle = ({ access, metaPackage, pkg, onDelete: handleDelete 
       </div>
       <div className={styles.separator} />
       {access.has(Permission.Unpublish)
-        ? <Button type="danger" icon="delete" onClick={handleDelete}>Delete</Button>
+        ? <Button icon="delete" onClick={handleDelete}>Delete</Button>
         : undefined}
     </div>
     <div className={styles.description}>{pkg.description}</div>

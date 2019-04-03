@@ -1,52 +1,76 @@
-import { async } from '@annium/utils'
-import { AsyncState } from '@annium/utils/dist/async'
-import { action, computed, observable, runInAction } from 'mobx'
+import { combinationFactory, reducerFactory } from '@annium/store'
+import { AsyncState, createAsync } from '@annium/utils'
+import { pick } from 'lodash'
 
-import * as user from '../api/user'
+import * as userApi from '../api/user'
+import { context } from '../context'
 import { User } from '../models/view/User'
 
 
-export class AuthStore {
-  @observable public user: AsyncState<User | undefined> = async.create<User | undefined>(undefined)
-  @computed public get isRunning(): boolean {
-    return this.user.isRunning
-  }
-  @computed public get isLoaded(): boolean {
-    return this.user.isSuccess || this.user.isFailure
-  }
-  @computed public get hasAccess(): boolean {
-    return this.user.data !== undefined && this.user.isSuccess
-  }
-  @action.bound public async login(name: string, password: string) {
-    const result = await user.login(name, password)
-
-    if (result.isFailure)
-      runInAction(() => { throw async.complete(this.user, result).error })
-    else
-      await this.load()
-  }
-  @action public async load() {
-    async.load(this.user)
-    const result = await user.load()
-    runInAction(() => {
-      console.warn('user loaded', result)
-      async.complete(this.user, result)
-    })
-  }
-  @action.bound public async logout() {
-    await user.logout()
-    await this.load()
-  }
-  @action.bound public async update(name: string, password: string) {
-    const result = await user.update(name, password)
-
-    if (!result.isFailure)
-      await this.load()
-  }
-  @action.bound public async updateToken() {
-    const result = await user.updateToken()
-
-    if (!result.isFailure)
-      await this.load()
-  }
+export type Auth = {
+  user: AsyncState<User | undefined>
+  access: boolean
 }
+
+const user = createAsync<User | undefined>(context, undefined)
+
+const raw = reducerFactory(context, false)
+  .action('setAccess', (store, access: boolean) => access)
+  .function('load', ({ setAccess }) => async () => {
+    user.actions.start({})
+    const userResult = await userApi.load()
+    user.actions.complete(userResult)
+    setAccess(userResult.isSuccess)
+  })
+  .function('login', ({ setAccess }) => async ({ name, password }: { name: string, password: string }) => {
+    user.actions.start({})
+    const loginResult = await userApi.login(name, password)
+    if (loginResult.isFailure) {
+      user.actions.complete({ ...loginResult, data: undefined })
+      setAccess(false)
+
+      return
+    }
+
+    const userResult = await userApi.load()
+    user.actions.complete(userResult)
+    setAccess(userResult.isSuccess)
+  })
+  .function('logout', ({ setAccess }) => async () => {
+    user.actions.start({})
+    await userApi.logout()
+    user.actions.complete({ data: undefined, plainErrors: [], labeledErrors: {}, isSuccess: false, isFailure: false })
+    setAccess(false)
+  })
+  .function('update', ({ setAccess }) => async ({ name, password }: { name: string, password: string }) => {
+    user.actions.start({})
+    const updateResult = await userApi.update(name, password)
+    if (updateResult.isFailure) {
+      user.actions.complete({ ...updateResult, data: undefined })
+      setAccess(false)
+
+      return
+    }
+
+    const userResult = await userApi.load()
+    user.actions.complete(userResult)
+    setAccess(userResult.isSuccess)
+  })
+  .function('updateToken', ({ setAccess }) => async () => {
+    user.actions.start({})
+    const updateResult = await userApi.updateToken()
+    if (updateResult.isFailure) {
+      user.actions.complete({ ...updateResult, data: undefined })
+      setAccess(false)
+
+      return
+    }
+
+    const userResult = await userApi.load()
+    user.actions.complete(userResult)
+    setAccess(userResult.isSuccess)
+  })
+  .build()
+
+export const authActions = pick(raw.actions, ['load', 'login', 'logout', 'update', 'updateToken'])
+export const authReducer = combinationFactory().add('user', user.reducer).add('access', raw.reducer).build()

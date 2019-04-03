@@ -60,7 +60,7 @@ const loadPackages = async (name: string, setPackages: Dispatch<SetStateAction<P
   if (packagesResult.isSuccess)
     setPackages(packagesResult.data)
   else
-    message.error(`Package load failed with: ${packagesResult.error}`)
+    message.error(`Package load failed with: ${packagesResult.plainErrors.join(', ')}`)
 }
 
 const handleDelete = ({ name, version }: PackageModel) => () => confirm({

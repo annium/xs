@@ -1,11 +1,10 @@
 import { Client, factory, Response } from '@annium/server-http'
-import { when } from 'mobx'
+import { when } from '@annium/utils'
 
+import { context } from '../../context'
 import { PackageData } from '../../models/data/PackageData'
 import { Package } from '../../models/view/Package'
 import { ProjectType } from '../../models/view/ProjectType'
-import { User } from '../../models/view/User'
-import { store } from '../../store'
 
 
 export function createApi<TPackageData extends PackageData, TPackage extends Package>(
@@ -18,9 +17,8 @@ export function createApi<TPackageData extends PackageData, TPackage extends Pac
       const api = await getApi(type, getTokenHeader)
 
       const packageName = encodeURIComponent(name)
-      const { data, error } = await api.get<TPackageData[]>(`packages/${packageName}`)
 
-      return new Response(data.map(toPackage), error)
+      return (await api.get<TPackageData[]>(`packages/${packageName}`)).map(data => data.map(toPackage))
     },
     async delete(name: string, version: string): Promise<Response> {
       const api = await getApi(type, getTokenHeader)
@@ -36,11 +34,10 @@ async function getApi(
   type: ProjectType,
   getTokenHeader: (token: string) => Record<string, string>,
 ): Promise<Client> {
-  await when(() => Boolean(store))
-  await when(() => Boolean(store.auth.user.data))
+  await when(() => Boolean(context.getState().auth.user.data))
 
-  const { servers } = store.startup
-  const { apiToken } = store.auth.user.data as User
+  const { servers } = context.getState().startup
+  const { apiToken } = context.getState().auth.user.data!
 
   const server = servers[type]
 

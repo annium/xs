@@ -7,7 +7,7 @@ import { RouteComponentProps, withRouter } from 'react-router'
 import * as metaPackagesApi from '../../api/metaPackages'
 import { MetaPackage } from '../../models/view/MetaPackage'
 import { UserMetaPackageAccess } from '../../models/view/UserMetaPackageAccess'
-import { inject, Store } from '../../store'
+import { connect, Store } from '../../store'
 import { getCenteredLayout } from '../../utils/layout'
 import { parseNameVersion } from '../../utils/nameVersion'
 
@@ -18,7 +18,7 @@ type SelectorProps = Partial<Pick<Store, 'auth'>>
 type RouteProps = RouteComponentProps<{ type: string, nameVersion: string }>
 type Props = SelectorProps & RouteProps
 
-export const PackagePage = withRouter(inject<RouteProps, SelectorProps>(
+export const PackagePage = withRouter(connect<RouteProps, SelectorProps>(
   ({ auth }) => ({ auth }),
   ({ auth, match: { params: { type, nameVersion } } }: Props) => {
     const [metaPackage, setMetaPackage] = useState<MetaPackage>()
@@ -57,5 +57,5 @@ const loadMetaPackage = async (
   if (packageResult.isSuccess)
     setMetaPackage(packageResult.data)
   else
-    message.error(`Package load failed with: ${packageResult.error}`)
+    message.error(`Package load failed with: ${packageResult.plainErrors.join(', ')}`)
 }

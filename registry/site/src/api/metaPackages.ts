@@ -15,16 +15,14 @@ export const search = async (
   page: number,
 ): Promise<Response<MetaPackage[]>> => {
   const q = pickBy({ ownerId, type, query: encodeURIComponent(query), page }, identity)
-  const { data, error } = await api.get<MetaPackageData[]>('packages/search', q)
 
-  return new Response(data.map(toMetaPackage), error)
+  return (await api.get<MetaPackageData[]>('packages/search', q)).map(data => data.map(toMetaPackage))
 }
 
 export const get = async (type: string, name: string): Promise<Response<MetaPackage | undefined>> => {
   const packageName = encodeURIComponent(name)
-  const { data, error } = await api.get<MetaPackageData>(`packages/${type}/${packageName}`)
 
-  return new Response(data ? toMetaPackage(data) : undefined, error)
+  return (await api.get<MetaPackageData>(`packages/${type}/${packageName}`)).map(toMetaPackage)
 }
 
 export const setPermissions = async (

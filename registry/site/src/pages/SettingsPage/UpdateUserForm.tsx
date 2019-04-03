@@ -47,7 +47,7 @@ class UpdateUserFormInternal extends React.PureComponent<FormProps> {
           )}
         </Form.Item>
         <Form.Item {...buttonLayout}>
-          <Button type="primary" htmlType="submit" className="submit">
+          <Button htmlType="submit" className="submit">
             Update credentials
           </Button>
         </Form.Item>

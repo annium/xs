@@ -49,7 +49,7 @@ class LoginFormInternal extends React.PureComponent<FormProps> {
             />,
           )}
         </Form.Item>
-        <Button type="primary" htmlType="submit" className="submit">
+        <Button htmlType="submit" className="submit">
           Log in
         </Button>
       </Form>

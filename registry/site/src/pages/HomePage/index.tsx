@@ -10,7 +10,7 @@ import { PackageFilter } from '../../components/PackageFilter'
 import { PackageList } from '../../components/PackageList'
 import { MetaPackage } from '../../models/view/MetaPackage'
 import { ProjectType } from '../../models/view/ProjectType'
-import { inject, Store } from '../../store'
+import { connect, Store } from '../../store'
 import { getCenteredLayout } from '../../utils/layout'
 
 import styles from './index.module.scss'
@@ -18,7 +18,7 @@ import styles from './index.module.scss'
 
 type Props = Partial<Pick<Store, 'auth'>> & RouteComponentProps
 
-export const HomePage = inject<RouteComponentProps, Pick<Store, 'auth'>>(
+export const HomePage = connect<RouteComponentProps, Pick<Store, 'auth'>>(
   ({ auth }) => ({ auth }),
   ({ auth, history, location }: Props) => {
     const [packages, setPackages] = useState<MetaPackage[]>([])
@@ -64,5 +64,5 @@ const search = async (
   if (packagesResult.isSuccess)
     setPackages(packagesResult.data)
   else
-    message.error(`Packages load failed with: ${packagesResult.error}`)
+    message.error(`Packages load failed with: ${packagesResult.plainErrors.join(', ')}`)
 }

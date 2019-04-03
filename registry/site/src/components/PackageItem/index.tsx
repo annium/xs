@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom'
 import { MetaPackage } from '../../models/view/MetaPackage'
 import { Permission } from '../../models/view/Permission'
 import { UserMetaPackageAccess } from '../../models/view/UserMetaPackageAccess'
-import { inject, Store } from '../../store'
+import { connect, Store } from '../../store'
 import * as route from '../../utils/route'
 
 import styles from './index.module.scss'
@@ -22,7 +22,7 @@ const permissionKeys = Object.keys(Permission)
   .filter((key: string | number) => typeof key === 'string')
   .map(key => key as keyof typeof Permission)
 
-export const PackageItem = inject<Props, Pick<Store, 'auth'>>(
+export const PackageItem = connect<Props, Pick<Store, 'auth'>>(
   ({ auth }) => ({ auth }),
   function PackageItem({ pkg, auth }: Props) {
     const access = new UserMetaPackageAccess(auth!.user.data!.id, pkg.ownerId, pkg.permissions)

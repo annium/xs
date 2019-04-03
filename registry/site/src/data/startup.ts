@@ -1,26 +1,30 @@
+import { reducerFactory } from '@annium/store'
 import { Location } from 'history'
-import { action, observable, runInAction } from 'mobx'
 
 import * as registry from '../api/registry'
+import { context } from '../context'
 
-
-export class StartupStore {
-  @observable public location: Location
-  @observable public servers: { [key: string]: URL }
-
-  constructor() {
-    this.location = {
-      pathname: '/',
-      search: '',
-      state: '',
-      hash: '',
-      key: '',
-    }
-    this.servers = {}
-  }
-
-  @action public async load() {
-    const result = await registry.load()
-    runInAction(() => { this.servers = result.data })
-  }
+export type Startup = {
+  location: Location
+  servers: { [key: string]: URL }
 }
+
+const initialState: Startup = {
+  location: {
+    pathname: '/',
+    search: '',
+    state: '',
+    hash: '',
+    key: '',
+  },
+  servers: {},
+}
+
+export const { actions: startupActions, reducer: startupReducer } = reducerFactory(context, initialState)
+  .action('setLocation', (store, location: Startup['location']) => ({ ...store, location }))
+  .action('setServers', (store, servers: Startup['servers']) => ({ ...store, servers }))
+  .function('load', ({ setServers }) => async () => {
+    const result = await registry.load()
+    setServers(result.data)
+  })
+  .build()

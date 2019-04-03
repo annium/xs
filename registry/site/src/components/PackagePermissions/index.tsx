@@ -2,8 +2,7 @@ import Button from 'antd/lib/button'
 import message from 'antd/lib/message'
 import Switch from 'antd/lib/switch'
 import { cloneDeep, isEqual } from 'lodash'
-import { observer, useComputed, useObservable } from 'mobx-react-lite'
-import React from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 
 import * as metaPackagesApi from '../../api/metaPackages'
 import { MetaPackage } from '../../models/view/MetaPackage'
@@ -28,11 +27,11 @@ const Permissions = Object.keys(Permission)
   .filter(key => Permission[key] > 0)
 
 
-export const PackagePermissions = observer(({ metaPackage }: Props) => {
-  const permissions: MetaPackagePermission[] = useObservable(cloneDeep(metaPackage.permissions))
-  const hasChanges = useComputed(() => !isEqual(permissions, metaPackage.permissions))
+export const PackagePermissions = ({ metaPackage }: Props) => {
+  const [permissions, setPermissions] = useState(cloneDeep(metaPackage.permissions))
+  const hasChanges = !isEqual(permissions, metaPackage.permissions)
   const getPermissionChecked = createGetPermissionChecked(permissions)
-  const setPermissionChecked = createSetPermissionChecked(permissions)
+  const setPermissionChecked = createSetPermissionChecked(permissions, setPermissions)
 
   return (
     <div className={styles.block}>
@@ -56,35 +55,46 @@ export const PackagePermissions = observer(({ metaPackage }: Props) => {
         className={styles.submit}
         size="small"
         disabled={!hasChanges}
-        onClick={updatePermissions(metaPackage, permissions)}
+        onClick={updatePermissions(metaPackage, permissions, setPermissions)}
       >
         Update permissions
       </Button>
     </div >
   )
-})
+}
 
-const createGetPermissionChecked = (permissions: MetaPackagePermission[]) =>
-  (category: PermissionCategory, permission: Permission): boolean => {
-    const packagePermission = permissions.find(p => p.category === category)!
+const createGetPermissionChecked = (
+  permissions: MetaPackagePermission[],
+) => (category: PermissionCategory, permission: Permission): boolean => {
+  const packagePermission = permissions.find(p => p.category === category)!
 
-    return Boolean(packagePermission.permission & permission)
-  }
+  return Boolean(packagePermission.permission & permission)
+}
 
-const createSetPermissionChecked = (permissions: MetaPackagePermission[]) =>
-  (category: PermissionCategory, permission: Permission) => (value: boolean): void => {
-    const packagePermission = permissions.find(p => p.category === category)!
+const createSetPermissionChecked = (
+  permissions: MetaPackagePermission[],
+  setPermissions: Dispatch<SetStateAction<MetaPackagePermission[]>>,
+) => (category: PermissionCategory, permission: Permission) => (value: boolean): void => {
+  const index = permissions.findIndex(p => p.category === category)!
 
-    packagePermission.permission = value
-      ? packagePermission.permission | permission
-      : packagePermission.permission & ~permission
-  }
+  const result = cloneDeep(permissions)
+  result[index].permission = value
+    ? permissions[index].permission | permission
+    : permissions[index].permission & ~permission
 
-const updatePermissions = (metaPackage: MetaPackage, permissions: MetaPackagePermission[]) => () => metaPackagesApi
+
+  setPermissions(result)
+}
+
+const updatePermissions = (
+  metaPackage: MetaPackage,
+  permissions: MetaPackagePermission[],
+  setPermissions: Dispatch<SetStateAction<MetaPackagePermission[]>>,
+) => () => metaPackagesApi
   .setPermissions(metaPackage.type, metaPackage.name, permissions)
   .then(() => {
     message.success('Permissions updated')
-    metaPackage.permissions = cloneDeep(permissions)
+    setPermissions(metaPackage.permissions = cloneDeep(permissions))
   })
   .catch(error => message.error(`Permissions update failed with: ${error}`))
 

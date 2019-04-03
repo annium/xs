@@ -59,5 +59,5 @@ const search = async (
   if (packagesResult.isSuccess)
     setPackages(packagesResult.data)
   else
-    message.error(`Packages load failed with: ${packagesResult.error}`)
+    message.error(`Packages load failed with: ${packagesResult.plainErrors.join(', ')}`)
 }

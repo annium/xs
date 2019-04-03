@@ -8,7 +8,7 @@ import { api } from './api'
 export const login = (name: string, password: string): Promise<Response> =>
   api.post('login', undefined, { name, password })
 
-export const load = (): Promise<Response<User | undefined>> =>
+export const load = (): Promise<Response<User>> =>
   api.get<User>('login')
 
 export const logout = (): Promise<Response> =>
