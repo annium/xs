@@ -16,10 +16,8 @@ db-drop db-update migrations-add migrations-list migrations-remove:
 
 publish-main:
 	@cp $$(find $$(dirname $$(realpath $$(which dotnet)))/sdk -type f -name ef.dll | grep netcoreapp2.2) server/src
-	@cp server/tools/ef.sh server/src
 	$(call publish,main,server/src,Xs.Registry.Main/Dockerfile)
 	@rm -f server/src/ef.dll
-	@rm -f server/src/ef.sh
 
 publish-dotnet:
 	$(call publish,dotnet,server/src,Xs.Registry.Dotnet/Dockerfile)
