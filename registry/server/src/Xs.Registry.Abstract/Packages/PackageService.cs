@@ -154,7 +154,7 @@ namespace Xs.Registry.Abstract.Packages
                 await metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
             }
 
-            return null;
+            return Result.New(PackageStatus.OK);
         }
 
         private async Task<StatusResult<PackageStatus>> PublishNewPackageAsync(
