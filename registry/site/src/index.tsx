@@ -9,4 +9,4 @@ import './styles/layout.scss'
 
 ReactDOM.render(<Routes />, document.getElementById('root'))
 
-Object.defineProperty(window, 's', { get: () => context.getState })
+Object.defineProperty(window, 's', { get: context.getState })
