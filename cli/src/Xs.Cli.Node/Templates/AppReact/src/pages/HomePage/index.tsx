@@ -1,14 +1,14 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router'
 
-import { inject, Store } from '../../store'
+import { connect, Store } from '../../store'
 
 import styles from './index.module.scss'
 
 
 type Props = Pick<Store, 'startup'> & RouteComponentProps
 
-export const HomePage = inject<RouteComponentProps, Pick<Store, 'startup'>>(
+export const HomePage = connect<RouteComponentProps, Pick<Store, 'startup'>>(
   ({ startup }) => ({ startup }),
   ({ startup }: Props) => {
     const { location } = startup

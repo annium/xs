@@ -1,15 +1,16 @@
-import { createInject } from '@annium/utils'
-import { observable } from 'mobx'
-import React from 'react'
+import { combinationFactory, createConnect, createStore } from '@annium/store'
 
-import { StartupStore } from './data/startup'
+import { context } from './context'
+import { Startup, startupReducer } from './data/startup'
 
 export type Store = {
-  startup: StartupStore
+  startup: Startup
 }
 
-export const store = observable({
-  startup: new StartupStore(),
-})
+const reducer = combinationFactory()
+  .add('startup', startupReducer)
+  .build()
 
-export const inject = createInject(React.createContext(store))
+createStore<Store>(context, reducer)
+
+export const connect = createConnect(context)
