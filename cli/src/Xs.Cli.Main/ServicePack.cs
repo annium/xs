@@ -44,6 +44,7 @@ namespace Xs.Cli.Main
             services.AddSingleton<Commands.Remote.DeleteCommand>();
             services.AddSingleton<Commands.Remote.RestoreCommand>();
             services.AddSingleton<Commands.Remote.SetCommand>();
+            services.AddSingleton<Commands.Remote.SetLocalCommand>();
             services.AddSingleton<Commands.Remote.ShowCommand>();
 
             // new

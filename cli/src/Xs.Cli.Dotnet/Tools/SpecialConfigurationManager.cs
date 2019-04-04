@@ -74,7 +74,7 @@ namespace Xs.Cli.Dotnet.Tools
         private XElement GetAddRule(string name, Uri uri) => new XElement(
             El.Add,
             new XAttribute(El.Key, name),
-            new XAttribute(El.Value, new Uri(uri, Constants.ServerPathSuffix).ToString())
+            new XAttribute(El.Value, uri.IsFile?uri.AbsolutePath : new Uri(uri, Constants.ServerPathSuffix).ToString())
         );
 
         private string FilePath(string folder) => Path.Combine(folder, file);

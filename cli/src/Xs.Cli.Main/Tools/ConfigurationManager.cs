@@ -62,7 +62,10 @@ namespace Xs.Cli.Main.Tools
             var configuration = new Configuration();
             configuration.Location = new Uri(File.ReadAllText(ConfigurationFile(folder)));
             configuration.Token = File.ReadAllText(CredentialsFile(folder));
-            configuration.Servers = (await mainClientFactory.Create(configuration.Location).GetRegistryInfoAsync())
+            if (configuration.Location.IsFile)
+                configuration.Servers = ProjectType.List().ToDictionary(type => type, type => configuration.Location);
+            else
+                configuration.Servers = (await mainClientFactory.Create(configuration.Location).GetRegistryInfoAsync())
                 .OrderBy(s => s.Key)
                 .ToDictionary(s => ProjectType.Get(s.Key), s => s.Value);
 

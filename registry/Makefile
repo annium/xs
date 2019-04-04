@@ -57,7 +57,7 @@ endef
 
 define copy-packages
 	@rm -rf server/src/packages
-	@cp -rf /projects/annium/packages server/src/packages
+	@cp -rf /annium/packages server/src/packages
 endef
 
 define delete-packages

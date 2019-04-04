@@ -11,6 +11,7 @@ namespace Xs.Cli.Main.Commands.Remote
             Add<DeleteCommand>();
             Add<RestoreCommand>();
             Add<SetCommand>();
+            Add<SetLocalCommand>();
             Add<ShowCommand>();
         }
     }

@@ -31,10 +31,13 @@ namespace Xs.Cli.Dotnet.Projects
         {
             var packageFile = await PackAsync(version, token);
 
-            await RunAsync(
-                "publish",
-                $"dotnet nuget push {packageFile} --source {new Uri(registry, Constants.ServerPathSuffix)} --api-key {accessToken}",
-                token);
+            var source = registry.IsFile ? registry.AbsolutePath : new Uri(registry, Constants.ServerPathSuffix).ToString();
+
+            var cmd = $"dotnet nuget push {packageFile} --source {source}";
+            if (!registry.IsFile)
+                cmd += $" --api-key {accessToken}";
+
+            await RunAsync("publish", cmd, token);
 
             System.IO.File.Delete(packageFile);
         }
