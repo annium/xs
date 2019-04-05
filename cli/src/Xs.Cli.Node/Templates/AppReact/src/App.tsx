@@ -1,16 +1,13 @@
 import React, { ReactNode, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { connect, Store } from './store'
+import { startupActions } from './data/startup'
 
 
-type Props = Pick<Store, 'startup'> & RouteComponentProps & { children?: ReactNode }
+type Props = RouteComponentProps & { children?: ReactNode }
 
-export const App = connect<Props, Store>(
-  ({ startup }) => ({ startup }),
-  ({ startup, location, children }: Props) => {
-    useEffect(() => { startup.location = location }, [])
+export const App = ({ location, children }: Props) => {
+  useEffect(() => startupActions.setLocation(location), [])
 
-    return <>{children}</>
-  },
-)
+  return <>{children}</>
+}

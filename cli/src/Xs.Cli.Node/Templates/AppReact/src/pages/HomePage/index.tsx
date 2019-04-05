@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/macro'
 import React from 'react'
 import { RouteComponentProps } from 'react-router'
 
@@ -15,7 +16,7 @@ export const HomePage = connect<RouteComponentProps, Pick<Store, 'startup'>>(
 
     return (
       <div className={styles.page}>
-        Started at {`${location.pathname}${location.search}`}
+        <Trans>Started at {`${location.pathname}${location.search}`}</Trans>
       </div>
     )
   },
