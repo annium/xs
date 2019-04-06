@@ -14,7 +14,12 @@ namespace Xs.Cli.Node.Tools
     {
         private const string file = ".npmrc";
 
-        private static readonly IEnumerable<string> reservedScopes = new [] { "types" };
+        private static readonly IEnumerable<string> reservedScopes = new []
+        {
+            "lingui",
+            "material-ui",
+            "types"
+        };
 
         public ProjectType Type { get; } = Constants.ProjectType;
 
@@ -44,7 +49,7 @@ namespace Xs.Cli.Node.Tools
             var sb = new StringBuilder();
             sb.AppendLine($"@{scope}:registry={location}");
             // add all used scopes except reserved
-            foreach (var dependencyScope in project.Packages.Select(d => GetScope(d.Value.Name)).Distinct().OfType<string>())
+            foreach (var dependencyScope in project.Packages.Select(d => GetScope(d.Value.Name)).OfType<string>().ToHashSet())
                 if (!reservedScopes.Contains(dependencyScope))
                     sb.AppendLine($"@{dependencyScope}:registry={location}");
             sb.AppendLine($"//{location.Authority}/:_authToken=\"{token}\"");
