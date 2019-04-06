@@ -1,0 +1,9 @@
+using Annium.Extensions.DependencyInjection;
+
+namespace {{name}}
+{
+    public class ServicePack : ServicePackBase
+    {
+
+    }
+}

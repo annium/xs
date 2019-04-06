@@ -8,17 +8,17 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>
+    public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>
     {
-        public override string Id { get; } = "lib.tests";
+        public override string Id { get; } = "web.tests";
 
-        public override string Description { get; } = "Create new library tests project.";
+        public override string Description { get; } = "Create new web tests project.";
 
         private readonly ITemplateWriter templateWriter;
 
         private readonly ILogger logger;
 
-        public LibTestsCommand(
+        public WebTestsCommand(
             ITemplateWriter templateWriter,
             ILogger logger
         )
@@ -28,7 +28,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         }
 
         public override void Handle(
-            LibTestsCommandConfiguration cfg,
+            WebTestsCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
@@ -36,9 +36,9 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            logger.Debug($"Create library tests project {name} at {location}");
+            logger.Debug($"Create web tests project {name} at {location}");
 
-            templateWriter.LoadResources($"{Group.TemplatesDir}.LibTests");
+            templateWriter.LoadResources($"{Group.TemplatesDir}.WebTests");
             templateWriter.SetRoot(Path.Combine(location, name));
 
             // setup data
@@ -51,7 +51,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         }
     }
 
-    public class LibTestsCommandConfiguration
+    public class WebTestsCommandConfiguration
     {
         [Position(1)]
         [Help("Project name.")]
