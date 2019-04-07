@@ -196,7 +196,7 @@ namespace Xs.Cli.Main.Commands
             }
         }
 
-        private void Discover() => projects = discoverTask.Run(discoverCfg).FilterMask(mask).ToArray();
+        private void Discover() => projects = discoverTask.Run(discoverCfg).FilterMask(mask).OrderByDescending(p => p.Name.Length).ToArray();
 
         private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File.FullName == path);
 
