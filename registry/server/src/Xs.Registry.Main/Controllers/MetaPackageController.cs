@@ -40,9 +40,9 @@ namespace Xs.Registry.Main.Controllers
             var projectType = type == null ? null : ProjectType.Get(type);
             query = HttpUtility.UrlDecode(query);
             if (page < 1)
-                return BadRequest(Result.Failure().Error("Page must be positive integer"));
+                return BadRequest("Page must be positive integer");
             if (count < 1)
-                return BadRequest(Result.Failure().Error("Count must be positive integer"));
+                return BadRequest("Count must be positive integer");
 
             var packages = await metaPackageRepository.FindAsync(GetUser().Id, ownerId, projectType, query, page, count);
 
@@ -61,7 +61,7 @@ namespace Xs.Registry.Main.Controllers
 
             var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.Has(Permission.Read))
-                return Forbidden(Result.Failure().Error("You need read permission to get this package."));
+                return Forbidden("You need read permission to get this package.");
 
             return Ok(new MetaPackageView(package));
         }
@@ -78,7 +78,7 @@ namespace Xs.Registry.Main.Controllers
 
             var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.IsOwner)
-                return Forbidden(Result.Failure().Error("You need to be owner to update package permissions."));
+                return Forbidden("You need to be owner to update package permissions.");
 
             await metaPackageRepository.UpdatePermissionsAsync(package.Id, permissions);
 
