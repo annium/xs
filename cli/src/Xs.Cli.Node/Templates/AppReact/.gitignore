@@ -1,16 +1,16 @@
 # dependencies
-node_modules/
+/node_modules/
 
 # production
-build/
+/build/
 
 # i18n
-src/locales/_build/
-src/locales/**/*.js
+/src/locales/_build/
+/src/locales/**/*.js
 
 # local env
-.env*.local
+/.env*.local
  
 # misc
-yarn-debug.log*
-yarn-error.log*
+/yarn-debug.log*
+/yarn-error.log*

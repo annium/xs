@@ -1,12 +1,12 @@
 # dependencies
-node_modules/
+/node_modules/
 
 # production
-dist/
+/dist/
 
 # packages
-*.tgz
+/*.tgz
 
 # misc
-yarn-debug.log*
-yarn-error.log*
+/yarn-debug.log*
+/yarn-error.log*

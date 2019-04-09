@@ -27,6 +27,7 @@ namespace Xs.Cli.Core.Tools
             "gitignore",
             "html",
             "ico",
+            "jest.config.js",
             "js",
             "json",
             "module.css",
