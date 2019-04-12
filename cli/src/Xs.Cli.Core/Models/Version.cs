@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models
@@ -28,7 +27,7 @@ namespace Xs.Cli.Core.Models
             if (version == null)
                 throw new ArgumentNullException(version);
 
-            var parts = version.Split('.');
+            var parts = version.Split('.', 3);
             if (parts.Length < 3)
                 throwException();
 
@@ -36,12 +35,12 @@ namespace Xs.Cli.Core.Models
             {
                 Major = uint.Parse(parts[0]);
                 Minor = uint.Parse(parts[1]);
-                var patchParts = parts[2].Split('-');
+                var patchParts = parts[2].Split('.', '-');
                 Patch = uint.Parse(patchParts[0]);
                 if (patchParts.Length == 1)
                     return;
 
-                Suffix = '-' + string.Join('-', patchParts.Skip(1));
+                Suffix = parts[2].Substring(patchParts[0].Length);
             }
             catch
             {
@@ -63,6 +62,7 @@ namespace Xs.Cli.Core.Models
                 hash = hash * 31 + Major.GetHashCode();
                 hash = hash * 31 + Minor.GetHashCode();
                 hash = hash * 31 + Patch.GetHashCode();
+                hash = hash * 31 + (Suffix?.GetHashCode() ?? 0);
 
                 return hash;
             }
