@@ -6,6 +6,6 @@ namespace Xs.Cli.Core.Projects
 {
     public interface ITestableProject : IProject
     {
-        Task TestAsync(Env env, CancellationToken token);
+        Task TestAsync(Env env, string filter, CancellationToken token);
     }
 }

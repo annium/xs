@@ -41,6 +41,8 @@ namespace Xs.Cli.Main.Commands
 
         private bool runTests;
 
+        private string testFilter;
+
         private DiscoverConfiguration discoverCfg;
 
         private CancellationToken token;
@@ -50,7 +52,6 @@ namespace Xs.Cli.Main.Commands
         public WatchCommand(
             IProjectFactory projectFactory,
             DiscoverProjectsTask discoverTask,
-
             ProjectsRunner runner,
             Watcher watcher,
             IShell shell,
@@ -59,7 +60,6 @@ namespace Xs.Cli.Main.Commands
         {
             this.projectFactory = projectFactory;
             this.discoverTask = discoverTask;
-
             this.runner = runner;
             this.watcher = watcher;
             this.shell = shell;
@@ -75,7 +75,8 @@ namespace Xs.Cli.Main.Commands
             this.mask = cfg.Mask;
             this.command = cfg.Command;
             this.force = cfg.Force;
-            this.runTests = cfg.Test;
+            this.runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
+            this.testFilter = cfg.TestFilter;
             this.discoverCfg = discoverCfg;
             this.token = token;
 
@@ -152,7 +153,7 @@ namespace Xs.Cli.Main.Commands
         ExecuteAsync<IBuildableProject>(project, (p, t) => p.BuildAsync(Env.Development, t), includeSelf);
 
         private Task TestAsync(IProject project, bool includeSelf) =>
-        ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, t), includeSelf);
+        ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, this.testFilter, t), includeSelf);
 
         private async Task ExecuteAsync<TProject>(
             IProject project,
@@ -216,6 +217,10 @@ namespace Xs.Cli.Main.Commands
         [Option("t", isRequired : false)]
         [Help("Run tests.")]
         public bool Test { get; set; } = false;
+
+        [Option("tf", isRequired : false)]
+        [Help("Tests filter.")]
+        public string TestFilter { get; set; } = string.Empty;
 
         [Raw]
         [Help("Command to execute on change.")]

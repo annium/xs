@@ -13,7 +13,7 @@ namespace Xs.Cli.Dotnet.Projects
     {
         public TestProject(SpecialProjectContext context) : base(context) { }
 
-        public Task TestAsync(Env env, CancellationToken token)
+        public Task TestAsync(Env env, string filter, CancellationToken token)
         {
             var configuration = env == Env.Development ? "Debug" : "Release";
 
@@ -33,6 +33,9 @@ namespace Xs.Cli.Dotnet.Projects
                     "--",
                     $"logLevel={Enum.GetName(typeof(LogLevel),loggerConfiguration.LogLevel).ToLowerInvariant()}"
                 });
+
+            if (!string.IsNullOrWhiteSpace(filter))
+                cmd.Add($"filter={filter}");
 
             return RunAsync("test", string.Join(' ', cmd), token);
         }

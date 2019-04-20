@@ -47,7 +47,7 @@ namespace Xs.Cli.Main.Commands
                 .ToArray();
 
             logger.Debug($"Test {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, tkn), token);
+            await runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn), token);
         }
     }
 
@@ -60,6 +60,10 @@ namespace Xs.Cli.Main.Commands
         [Position(2, isRequired : false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; }
+
+        [Option("tf", isRequired : false)]
+        [Help("Tests filter.")]
+        public string TestFilter { get; set; } = string.Empty;
 
         [Option]
         [Help("Environment.")]
