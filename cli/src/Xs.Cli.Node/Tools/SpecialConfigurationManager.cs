@@ -16,6 +16,7 @@ namespace Xs.Cli.Node.Tools
 
         private static readonly IEnumerable<string> reservedScopes = new []
         {
+            "babel",
             "lingui",
             "material-ui",
             "types"
