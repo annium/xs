@@ -30,6 +30,7 @@ namespace Xs.Cli.Core.Tools
             "jest.config.js",
             "js",
             "json",
+            "linguirc",
             "module.css",
             "module.scss",
             "scss",
