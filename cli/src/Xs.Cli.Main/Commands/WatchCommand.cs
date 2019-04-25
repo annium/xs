@@ -35,6 +35,8 @@ namespace Xs.Cli.Main.Commands
 
         private string mask;
 
+        private ProjectType type;
+
         private string command;
 
         private bool force;
@@ -73,6 +75,7 @@ namespace Xs.Cli.Main.Commands
         )
         {
             this.mask = cfg.Mask;
+            this.type = cfg.Type;
             this.command = cfg.Command;
             this.force = cfg.Force;
             this.runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
@@ -197,7 +200,11 @@ namespace Xs.Cli.Main.Commands
             }
         }
 
-        private void Discover() => projects = discoverTask.Run(discoverCfg).FilterMask(mask).OrderByDescending(p => p.Name.Length).ToArray();
+        private void Discover() => projects = discoverTask.Run(discoverCfg)
+        .FilterMask(mask)
+        .FilterType(type)
+        .OrderByDescending(p => p.Name.Length)
+        .ToArray();
 
         private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File.FullName == path);
 
@@ -209,6 +216,10 @@ namespace Xs.Cli.Main.Commands
         [Position(1, isRequired : false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
+
+        [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
 
         [Option("f", isRequired : false)]
         [Help("Force install.")]
