@@ -1,5 +1,5 @@
 {
-  "name": "{{name}}",
+  "name": "libreact",
   "version": "0.1.0",
   "description": "Library {{name}}.",
   "main": "dist",
@@ -11,15 +11,15 @@
   "devDependencies": {
     "@annium/env-tsconfig-react": "0.1.0",
     "@annium/env-tslint-react": "0.1.0",
-    "@types/jest": "24.0.11",
-    "@types/node": "11.13.0",
-    "@types/react": "16.8.10",
-    "@types/react-dom": "16.8.3",
-    "jest": "24.6.0",
-    "ts-jest": "24.0.1",
-    "tslint": "5.15.0",
+    "@types/jest": "24.0.12",
+    "@types/node": "11.13.8",
+    "@types/react": "16.8.15",
+    "@types/react-dom": "16.8.4",
+    "jest": "24.7.1",
+    "ts-jest": "24.0.2",
+    "tslint": "5.16.0",
     "tslint-react": "4.0.0",
-    "typescript": "3.4.1",
+    "typescript": "3.4.5",
     "typescript-tslint-plugin": "0.3.1"
   },
   "peerDependencies": {
