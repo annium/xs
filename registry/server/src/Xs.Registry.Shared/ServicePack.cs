@@ -1,5 +1,6 @@
 using System;
 using Annium.Extensions.DependencyInjection;
+using Annium.Logging.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -23,6 +24,8 @@ namespace Xs.Registry.Shared
                 var actionContext = p.GetRequiredService<IActionContextAccessor>().ActionContext;
                 return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
             });
+
+            services.AddConsole(new LoggerConfiguration(LogLevel.Debug));
         }
     }
 }
