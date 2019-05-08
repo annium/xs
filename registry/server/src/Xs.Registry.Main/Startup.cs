@@ -7,7 +7,6 @@ using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main
 {
