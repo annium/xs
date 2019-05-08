@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
 using LinqToDB.Data;
@@ -24,14 +26,22 @@ namespace Xs.Registry.Db
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<Context>(builder =>
                 {
-                    builder.UseNpgsql(string.Join(';', new string[]
-                    {
-                        $"Host={cfg.Host}",
-                        $"Port={cfg.Port}",
-                        $"Database={cfg.Name}",
-                        $"Username={cfg.User}",
-                        $"Password={cfg.Password}",
-                    }), options => options.UseNodaTime()); // is needed, cause not enabled by default
+                    builder.UseNpgsql(
+                        string.Join(';', new string[]
+                        {
+                            $"Host={cfg.Host}",
+                            $"Port={cfg.Port}",
+                            $"Database={cfg.Name}",
+                            $"Username={cfg.User}",
+                            $"Password={cfg.Password}",
+                            $"SSL Mode=Prefer",
+                            $"Trust Server Certificate=true",
+                        }),
+                        options =>
+                        {
+                            options.UseNodaTime(); // is needed, cause not enabled by default
+                        }
+                    );
                 });
 
             // init linq2db for EF Core
