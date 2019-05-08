@@ -1,5 +1,5 @@
 PROJECT_NAME := registry
-TAG_PREFIX := brutallord.ddns.net:5000/$(PROJECT_NAME)
+TAG_PREFIX := registry.annium.com/$(PROJECT_NAME)
 
 db-up main-up dotnet-up node-up site-up:
 	$(call up,$(subst -up,,$@))
