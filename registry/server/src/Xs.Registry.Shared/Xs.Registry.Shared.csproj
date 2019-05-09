@@ -13,8 +13,8 @@
         <PackageReference Include="Annium.Data.Operations.Serialization" Version="0.1.0" />
         <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.Mapper" Version="0.1.0" />
         <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
-        <PackageReference Include="AutoMapper" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />

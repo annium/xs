@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using AutoMapper;
+using Annium.Extensions.Mapper;
 using LinqToDB;
 using NodaTime;
 

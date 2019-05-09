@@ -1,6 +1,6 @@
 using System;
 using Annium.Extensions.DependencyInjection;
-using AutoMapper.Configuration;
+using Annium.Extensions.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Db.Shared
@@ -14,7 +14,7 @@ namespace Xs.Registry.Db.Shared
 
         public override void Configure(IServiceCollection services)
         {
-            services.AddSingleton<MapperConfigurationExpression>(ConfigureMapping());
+            services.AddMapperConfiguration(ConfigureMapping);
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
@@ -30,22 +30,14 @@ namespace Xs.Registry.Db.Shared
             services.AddScoped<IMetaPackageManager, MetaPackageManager>();
         }
 
-        private MapperConfigurationExpression ConfigureMapping()
+        private void ConfigureMapping(MapperConfiguration cfg)
         {
-            var cfg = new MapperConfigurationExpression();
-
-            cfg.CreateMap<MetaPackage, Entities.MetaPackage>()
-                .ForMember(p => p.LowerName, opt => opt.MapFrom(p => p.Name.ToLower()))
-                .ReverseMap();
-            cfg.CreateMap<MetaPackagePermission, Entities.MetaPackagePermission>()
-                .ForMember(p => p.MetaPackageId, opt => opt.Ignore())
-                .ReverseMap();
-            cfg.CreateMap<ProjectType, string>().ConvertUsing(t => t.ToString());
-            cfg.CreateMap<string, ProjectType>().ConvertUsing(t => ProjectType.Get(t));
-            cfg.CreateMap<User, Entities.User>().ReverseMap();
-            cfg.CreateMap<UserSession, Entities.UserSession>().ReverseMap();
-
-            return cfg;
+            cfg.Map<ProjectType, string>(t => t.ToString());
+            cfg.Map<string, ProjectType>(t => ProjectType.Get(t));
+            cfg.Map<MetaPackage, Entities.MetaPackage>()
+                .Field(e => e.Name.ToLower(), e => e.LowerName);
+            cfg.Map<MetaPackagePermission, Entities.MetaPackagePermission>()
+                .Ignore(e => e.MetaPackageId);
         }
     }
 }

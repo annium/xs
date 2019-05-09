@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Tools;
 using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Main
 {
@@ -28,7 +27,7 @@ namespace Xs.Registry.Main
             services.AddSingleton<ISecurityManager, SecurityManager>();
 
             // mapping
-            services.AddAutoMapper(provider);
+            services.AddMapper(provider);
         }
     }
 }

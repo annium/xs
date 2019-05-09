@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
+using Annium.Extensions.Mapper;
 using LinqToDB;
 using LinqToDB.Data;
 

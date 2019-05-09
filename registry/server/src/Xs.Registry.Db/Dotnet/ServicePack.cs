@@ -1,6 +1,6 @@
 using System;
 using Annium.Extensions.DependencyInjection;
-using AutoMapper.Configuration;
+using Annium.Extensions.Mapper;
 using LinqToDB;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +15,7 @@ namespace Xs.Registry.Db.Dotnet
 
         public override void Configure(IServiceCollection services)
         {
-            services.AddSingleton<MapperConfigurationExpression>(ConfigureMapping());
+            services.AddMapperConfiguration(ConfigureMapping);
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
@@ -28,18 +28,12 @@ namespace Xs.Registry.Db.Dotnet
             services.AddScoped<Shared.IPackageRepository<Package, PackageDependency>, Shared.PackageRepository<Package, PackageDependency, Entities.Package, Entities.PackageDependency, Context>>();
         }
 
-        private MapperConfigurationExpression ConfigureMapping()
+        private void ConfigureMapping(MapperConfiguration cfg)
         {
-            var cfg = new MapperConfigurationExpression();
-
-            cfg.CreateMap<Package, Entities.Package>()
-                .ForMember(p => p.LowerName, opt => opt.MapFrom(p => p.Name.ToLower()))
-                .ReverseMap();
-            cfg.CreateMap<PackageDependency, Entities.PackageDependency>()
-                .ForMember(p => p.PackageId, opt => opt.Ignore())
-                .ReverseMap();
-
-            return cfg;
+            cfg.Map<Package, Entities.Package>()
+                .Field(e => e.Name.ToLower(), e => e.LowerName);
+            cfg.Map<PackageDependency, Entities.PackageDependency>()
+                .Ignore(e => e.PackageId);
         }
     }
 }

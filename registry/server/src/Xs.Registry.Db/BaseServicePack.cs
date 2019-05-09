@@ -1,8 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
 using LinqToDB.Data;

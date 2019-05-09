@@ -8,7 +8,6 @@ using Xs.Registry.Db.Shared;
 using Xs.Registry.Dotnet.Payloads;
 using Xs.Registry.Dotnet.Storage;
 using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Dotnet
 {
@@ -47,7 +46,7 @@ namespace Xs.Registry.Dotnet
             services.AddSingleton<ISymbolStorage, SymbolStorage>();
 
             // mapping
-            services.AddAutoMapper(provider);
+            services.AddMapper(provider);
         }
     }
 }

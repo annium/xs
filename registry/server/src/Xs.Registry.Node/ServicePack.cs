@@ -8,7 +8,6 @@ using Xs.Registry.Db.Shared;
 using Xs.Registry.Node.Payloads;
 using Xs.Registry.Node.Storage;
 using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Node
 {
@@ -45,7 +44,7 @@ namespace Xs.Registry.Node
             services.AddSingleton<Storage.IPackageStorage, PackageStorage>();
 
             // mapping
-            services.AddAutoMapper(provider);
+            services.AddMapper(provider);
         }
     }
 }
