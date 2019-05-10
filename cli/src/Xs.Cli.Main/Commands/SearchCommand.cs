@@ -41,7 +41,7 @@ namespace Xs.Cli.Main.Commands
         {
             var type = cfg.Type;
 
-            var configuration = await configurationManager.Load(discoverCfg.Root);
+            var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
             if (configuration == null)
             {
                 logger.Warn("Track registry first to search within it.");

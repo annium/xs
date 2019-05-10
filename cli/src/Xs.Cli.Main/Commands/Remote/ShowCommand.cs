@@ -30,7 +30,7 @@ namespace Xs.Cli.Main.Commands.Remote
         {
             var dir = discoverCfg.Root;
 
-            var configuration = await configurationManager.Load(dir);
+            var configuration = await configurationManager.LoadAsync(dir);
 
             if (configuration == null)
                 Console.WriteLine("Registry is not tracked.");

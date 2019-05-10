@@ -40,7 +40,7 @@ namespace Xs.Cli.Main.Commands
             CancellationToken token
         )
         {
-            var configuration = await configurationManager.Load(discoverCfg.Root);
+            var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 

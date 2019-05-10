@@ -49,7 +49,7 @@ namespace Xs.Cli.Main.Tools
             return configuration;
         }
 
-        public async Task<Configuration> Load(string folder)
+        public async Task<Configuration> LoadAsync(string folder)
         {
             logger.Trace($"Load configuration from {folder}");
             if (!File.Exists(ConfigurationFile(folder)) || !File.Exists(CredentialsFile(folder)))

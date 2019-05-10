@@ -8,7 +8,7 @@ namespace Xs.Cli.Main.Tools
     {
         Configuration LoadBarebone(string folder);
 
-        Task<Configuration> Load(string folder);
+        Task<Configuration> LoadAsync(string folder);
 
         void Save(string folder, IProject[] projects, Configuration configuration);
 
