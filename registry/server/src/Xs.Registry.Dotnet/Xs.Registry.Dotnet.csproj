@@ -12,6 +12,6 @@
         <ProjectReference Include="../Xs.Registry.Abstract/Xs.Registry.Abstract.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="NuGet.Packaging" Version="4.9.3" />
+        <PackageReference Include="NuGet.Packaging" Version="5.0.0" />
     </ItemGroup>
 </Project>
