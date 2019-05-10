@@ -89,11 +89,23 @@ namespace Xs.Cli.Main.Commands
                 return result;
             }))).OfType<Package>().ToArray();
 
+            if (cfg.DryRun)
+            {
+                foreach (var project in projects)
+                    if (UpdateProject(project, updates))
+                        logger.Info($"{project} is to be updated.");
+
+                return;
+            }
+
             // for each project updated - check if it's dependencies is updated, and if yes - update and add to updated list 
             var updated = new List<IProject>();
             foreach (var project in projects)
                 if (UpdateProject(project, updates))
+                {
+                    project.Save();
                     updated.Add(project);
+                }
 
             if (updated.Count == 0)
             {
@@ -136,9 +148,6 @@ namespace Xs.Cli.Main.Commands
                 isUpdated = true;
             }
 
-            if (isUpdated)
-                project.Save();
-
             return isUpdated;
         }
     }
@@ -156,5 +165,9 @@ namespace Xs.Cli.Main.Commands
         [Option(isRequired: false)]
         [Help("Allow suffixed.")]
         public bool Preview { get; set; }
+
+        [Option("dry", isRequired : false)]
+        [Help("Dry run.")]
+        public bool DryRun { get; set; }
     }
 }
