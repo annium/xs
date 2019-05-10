@@ -27,6 +27,9 @@ namespace Xs.Registry.Dotnet.Controllers
             resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl", Uri = url.AbsoluteUri("v3/registration") });
             resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.0.0-beta", Uri = url.AbsoluteUri("v3/registration") });
             resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.0.0-rc", Uri = url.AbsoluteUri("v3/registration") });
+            resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.4.0", Uri = url.AbsoluteUri("v3/registration") });
+            resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.6.0", Uri = url.AbsoluteUri("v3/registration") });
+            resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/Versioned", Uri = url.AbsoluteUri("v3/registration") });
             resources.Add(new ServiceIndexResourceView { Type = "PackageBaseAddress", Uri = url.AbsoluteUri("v3/package") });
 
             return Ok(new { version = "3.0.0", resources });
