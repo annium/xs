@@ -7,7 +7,6 @@ using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
-using Xs.Cli.Main.Models;
 using Xs.RegistryClient.Main;
 
 namespace Xs.Cli.Main.Tools

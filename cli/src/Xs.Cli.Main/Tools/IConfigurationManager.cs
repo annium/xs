@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
+using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Main.Models;
 
 namespace Xs.Cli.Main.Tools
 {

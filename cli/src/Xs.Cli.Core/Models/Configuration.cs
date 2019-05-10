@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Xs.Cli.Core.Models;
 
-namespace Xs.Cli.Main.Models
+namespace Xs.Cli.Core.Models
 {
     public class Configuration
     {
