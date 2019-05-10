@@ -80,6 +80,12 @@ namespace Xs.Cli.Main.Commands
 
             // resolve configuration and available version of all dependencies
             var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
+            if (configuration == null)
+            {
+                logger.Warn($"No registry tracked at {discoverCfg.Root}. Track registry first.");
+                return;
+            }
+
             var updates = (await Task.WhenAll(dependencies.Select(async d =>
             {
                 var versions = await dependencyManagers[d.Type].GetVersionsAsync(d, configuration);
