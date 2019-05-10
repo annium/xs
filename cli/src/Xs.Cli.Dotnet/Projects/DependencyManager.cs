@@ -13,7 +13,7 @@ namespace Xs.Cli.Dotnet.Projects
     {
         public ProjectType Type { get; } = Constants.ProjectType;
 
-        private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl";
+        private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
 
         public async Task<Package[]> GetVersionsAsync(Package package, Configuration configuration)
         {

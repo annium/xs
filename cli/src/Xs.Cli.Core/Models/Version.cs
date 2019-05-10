@@ -35,9 +35,13 @@ namespace Xs.Cli.Core.Models
             {
                 Major = uint.Parse(parts[0]);
                 Minor = uint.Parse(parts[1]);
-                var patchParts = parts[2].Split('.', '-');
+
+                var hasHash = parts[2].Contains('+');
+                var patchParts = parts[2].Split('.', '-', '+');
                 Patch = uint.Parse(patchParts[0]);
-                if (patchParts.Length == 1)
+
+                // drop scm hash
+                if (patchParts.Length == 1 || hasHash)
                     return;
 
                 Suffix = parts[2].Substring(patchParts[0].Length);
