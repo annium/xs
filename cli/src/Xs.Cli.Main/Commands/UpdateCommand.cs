@@ -90,7 +90,13 @@ namespace Xs.Cli.Main.Commands
             {
                 var versions = await dependencyManagers[d.Type].GetVersionsAsync(d, configuration);
                 var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == null);
-                logger.Debug($"Resolve: {d} -> {result}");
+
+                if (result == d)
+                    logger.Debug($"Resolve: {d} unchanged");
+                else if (result == null)
+                    logger.Warn($"Resolve: {d} unresolved");
+                else
+                    logger.Debug($"Resolve: {d} -> {result}");
 
                 return result;
             }))).OfType<Package>().ToArray();
