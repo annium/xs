@@ -15,6 +15,7 @@ namespace Xs.Cli.Node
         {
             services.AddSingleton<ISpecialProjectFactory, ProjectFactory>();
             services.AddSingleton<ProjectMapper>();
+            services.AddSingleton<IDependencyManager, DependencyManager>();
             services.AddSingleton<ISpecialConfigurationManager, SpecialConfigurationManager>();
 
             // audit rules

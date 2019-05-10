@@ -13,6 +13,7 @@
         <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.Configuration" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.Net.Http" Version="0.1.0" />
         <PackageReference Include="NodaTime" Version="2.4.4" />
         <PackageReference Include="Scriban" Version="1.2.9" />
     </ItemGroup>
