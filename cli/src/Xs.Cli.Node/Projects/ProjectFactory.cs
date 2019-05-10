@@ -22,6 +22,8 @@ namespace Xs.Cli.Node.Projects
 
         public const string ProjectFileName = "package.json";
 
+        public const string LockFileName = "yarn.lock";
+
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
 
         private readonly ProjectMapper mapper;

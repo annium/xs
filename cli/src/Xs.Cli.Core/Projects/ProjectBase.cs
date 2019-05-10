@@ -79,7 +79,7 @@ namespace Xs.Cli.Core.Projects
 
             var result = await shell.RunAsync(
                 new ProcessStartInfo() { WorkingDirectory = File.Directory.FullName },
-                command, token);
+                command, pipeOut : true, token : token);
 
             if (result.IsSuccess)
                 logger.Info($"Finished {Name} {operation}.");

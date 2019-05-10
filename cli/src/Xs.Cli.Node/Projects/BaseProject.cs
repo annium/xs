@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
     internal class BaseProject : ProjectBase, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject
     {
+        private static string cacheDir;
+
+        private static object cacheLocker = new object();
+
         protected readonly IReadOnlyDictionary<string, string> scripts;
 
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
@@ -22,6 +27,15 @@ namespace Xs.Cli.Node.Projects
             scripts = context.Scripts;
             auditRules = context.AuditRules;
             mapper = context.Mapper;
+
+            lock(cacheLocker)
+            {
+                if (string.IsNullOrEmpty(cacheDir))
+                {
+                    var result = context.Shell.RunAsync("yarn cache dir", pipeOut : false).GetAwaiter().GetResult();
+                    cacheDir = result.Output.Trim();
+                }
+            }
         }
 
         public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
@@ -34,8 +48,27 @@ namespace Xs.Cli.Node.Projects
             return results.ToArray();
         }
 
-        public Task ClearCacheAsync(CancellationToken token) =>
-            RunAsync("cache clean", $"yarn cache clean {string.Join(' ', Packages.Select(d => d.Value.Name))}", token);
+        public Task ClearCacheAsync(CancellationToken token)
+        {
+            logger.Info($"Start {Name} cache clean.");
+
+            lock(cacheLocker)
+            {
+                var entries = Directory.GetDirectories(cacheDir);
+                foreach (var(_, pkg) in Packages)
+                {
+                    var name = PackageName.GetPlainName(pkg.Name);
+                    var version = pkg.Version.ToString();
+                    foreach (var entry in entries.Where(e => e.Contains(name) && e.Contains(version)))
+                        if (Directory.Exists(entry))
+                            Directory.Delete(entry, recursive : true);
+                }
+            }
+
+            logger.Info($"Finished {Name} cache clean.");
+
+            return Task.CompletedTask;
+        }
 
         public Task CleanAsync(CancellationToken token)
         {
@@ -52,9 +85,10 @@ namespace Xs.Cli.Node.Projects
 
         public Task InstallAsync(bool force, CancellationToken token)
         {
-            var forceFlag = force ? "--force" : string.Empty;
+            DeleteDirectory(ProjectFactory.ModulesDirectory);
+            DeleteFiles(ProjectFactory.LockFileName);
 
-            return RunAsync("install", $"yarn install {forceFlag} --no-emoji --no-progress", token);
+            return RunAsync("install", $"yarn install --no-emoji --no-progress", token);
         }
 
         public Task BuildAsync(Env env, CancellationToken token) =>

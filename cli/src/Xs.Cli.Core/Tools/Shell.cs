@@ -23,24 +23,24 @@ namespace Xs.Cli.Core.Tools
             this.logger = logger;
         }
 
-        public Task<ShellResult> RunAsync(string command, CancellationToken token = default(CancellationToken)) =>
-            RunAsync(null, command, token);
+        public Task<ShellResult> RunAsync(string command, bool pipeOut = true, CancellationToken token = default(CancellationToken)) =>
+            RunAsync(null, command, pipeOut, token);
 
-        public Task<ShellResult> RunAsync(ProcessStartInfo startInfo, string command, CancellationToken token = default(CancellationToken))
+        public Task<ShellResult> RunAsync(ProcessStartInfo startInfo, string command, bool pipeOut = true, CancellationToken token = default(CancellationToken))
         {
             var process = GetProcess(startInfo, command);
 
-            return StartProcess(process, token).Task;
+            return StartProcess(process, pipeOut, token).Task;
         }
 
-        public ShellAsyncResult Start(string command, CancellationToken token = default(CancellationToken)) =>
-            Start(null, command, token);
+        public ShellAsyncResult Start(string command, bool pipeOut = true, CancellationToken token = default(CancellationToken)) =>
+            Start(null, command, pipeOut, token);
 
-        public ShellAsyncResult Start(ProcessStartInfo startInfo, string command, CancellationToken token = default(CancellationToken))
+        public ShellAsyncResult Start(ProcessStartInfo startInfo, string command, bool pipeOut = true, CancellationToken token = default(CancellationToken))
         {
             var process = GetProcess(startInfo, command);
 
-            var task = StartProcess(process, token).Task;
+            var task = StartProcess(process, pipeOut, token).Task;
 
             return new ShellAsyncResult(
                 process.StandardInput,
@@ -75,13 +75,13 @@ namespace Xs.Cli.Core.Tools
             return process;
         }
 
-        private TaskCompletionSource<ShellResult> StartProcess(Process process, CancellationToken token)
+        private TaskCompletionSource<ShellResult> StartProcess(Process process, bool pipeOut, CancellationToken token)
         {
             var tcs = new TaskCompletionSource<ShellResult>();
 
             process.Start();
 
-            if (loggerConfiguration.LogLevel <= LogLevel.Debug)
+            if (pipeOut && loggerConfiguration.LogLevel <= LogLevel.Debug)
             {
                 Task.Run(() => PipeToLogger(process.StandardOutput));
                 Task.Run(() => PipeToLogger(process.StandardError));
