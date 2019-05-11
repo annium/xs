@@ -90,6 +90,7 @@ namespace Xs.Cli.Main.Commands
             {
                 var versions = await dependencyManagers[d.Type].GetVersionsAsync(d, configuration);
                 var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == null);
+                logger.Trace($"Resolve: {d} - {versions.Length} version(s)");
 
                 if (result == d)
                     logger.Debug($"Resolve: {d} unchanged");

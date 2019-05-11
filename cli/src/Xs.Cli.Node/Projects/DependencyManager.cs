@@ -59,7 +59,7 @@ namespace Xs.Cli.Node.Projects
         {
             public string Name { get; set; }
 
-            public Dictionary<string, IndexVersion> Versions { get; set; }
+            public Dictionary<string, IndexVersion> Versions { get; set; } = new Dictionary<string, IndexVersion>();
         }
 
         private class IndexVersion { }
