@@ -1,6 +1,6 @@
 using System;
-using Annium.Extensions.Conversion;
 using Annium.Extensions.DependencyInjection;
+using Annium.Extensions.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Main.Commands;
 using Xs.Cli.Main.Tasks;
@@ -21,7 +21,7 @@ namespace Xs.Cli.Main
             services.AddSingleton<ProjectsRunner>();
             services.AddSingleton<Watcher>();
 
-            RegisterConversions();
+            Mapper.AddConfiguration(ConfigureMapping());
         }
 
         private void RegisterCommands(IServiceCollection services)
@@ -77,10 +77,14 @@ namespace Xs.Cli.Main
             services.AddSingleton<DiscoverProjectsTask>();
         }
 
-        private void RegisterConversions()
+        private MapperConfiguration ConfigureMapping()
         {
-            Converter.Register<string, Core.Models.Version>(e => new Core.Models.Version(e));
-            Converter.Register<string, Core.Models.ProjectType>(Core.Models.ProjectType.Get);
+            var cfg = new MapperConfiguration();
+
+            cfg.Map<string, Core.Models.Version>(s => new Core.Models.Version(s));
+            cfg.Map<string, Core.Models.ProjectType>(s => Core.Models.ProjectType.Get(s));
+
+            return cfg;
         }
     }
 }
