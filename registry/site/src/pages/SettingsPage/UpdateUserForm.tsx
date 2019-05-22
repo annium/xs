@@ -64,4 +64,4 @@ class UpdateUserFormInternal extends React.PureComponent<FormProps> {
   }
 }
 
-export const UpdateUserForm = Form.create()(UpdateUserFormInternal)
+export const UpdateUserForm = Form.create<FormProps>()(UpdateUserFormInternal)

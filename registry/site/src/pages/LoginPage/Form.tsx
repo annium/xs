@@ -57,4 +57,4 @@ class LoginFormInternal extends React.PureComponent<FormProps> {
   }
 }
 
-export const LoginForm = Form.create()(LoginFormInternal)
+export const LoginForm = Form.create<FormProps>()(LoginFormInternal)

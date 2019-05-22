@@ -14,12 +14,12 @@ type Props = {
 }
 
 export const Dependencies = ({ dependencies }: Props) => {
-  const frameworks = _.chain(dependencies).map(d => d.framework).uniq().sortBy().value()
+  const frameworks = _.chain(dependencies).map(d => d.framework).uniq().sortBy().value() as string[]
 
   return (
     <>
       <div className={styles.header}>Dependencies</div>
-      {frameworks.map(framework => (
+      {frameworks.map((framework: string) => (
         <div key={framework}>
           <div className={styles.framework}>{framework}</div>
           {_.chain(dependencies).filter(d => d.framework === framework).sortBy().map(d => (
