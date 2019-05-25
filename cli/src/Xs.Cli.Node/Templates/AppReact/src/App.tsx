@@ -7,7 +7,7 @@ import { startupActions } from './data/startup'
 type Props = RouteComponentProps & { children?: ReactNode }
 
 export const App = ({ location, children }: Props) => {
-  useEffect(() => startupActions.setLocation(location), [])
+  useEffect(() => startupActions.setLocation(location), [location])
 
   return <>{children}</>
 }

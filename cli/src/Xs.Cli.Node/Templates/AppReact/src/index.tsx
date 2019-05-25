@@ -10,9 +10,11 @@ import './styles/layout.scss'
 
 
 ReactDOM.render(
-  <I18nProvider i18n={i18n} language={i18n.language}>
-    <Routes />
-  </I18nProvider>,
+  (
+    <I18nProvider i18n={i18n} language={i18n.language}>
+      <Routes />
+    </I18nProvider>
+  ),
   document.getElementById('root'),
 )
 

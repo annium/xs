@@ -13,4 +13,4 @@ const missing = (lang: string, id: string) => {
   return message
 }
 
-export const i18n = setupI18n({ catalogs, language, missing, })
+export const i18n = setupI18n({ catalogs, language, missing })
