@@ -1,28 +1,26 @@
 $dir = (Get-Item $PSScriptRoot).Parent.FullName
 
 $root = Join-Path $HOME Projects lib xs
-$entry = Join-Path $HOME Projects bin xs.bat
+New-Item -Path (Join-Path $HOME Projects) -Name bin -ItemType Directory -Force | Out-Null
 
-echo "Compile."
-rm -r $root
+Write-Output "Compile."
+if (Test-Path $root) { Remove-Item -Recurse -Force $root }
 dotnet publish -c release -r win-x64 -o $root $dir/src/Xs.Cli.Main/
 
 # prepare launcher
-echo "Write launcher."
-rm -f $entry
-mkdir -p (Split-Path  $entry)
-echo "run $root/Xs.Cli.Main $@" > $entry
+$entry = Join-Path $HOME Projects bin xs.bat
+Write-Output "Write launcher."
+if (Test-Path $entry) { Remove-Item -Recurse -Force $entry }
+Write-Output "run $root/Xs.Cli.Main $@" > $entry
 
 # prepare relaxed launcher
 $relaxed = Join-Path $HOME Projects bin ass.bat
-echo "Write relaxed launcher."
-rm -f $relaxed
-mkdir -p (Split-Path  $relaxed)
-echo $root'/Xs.Cli.Main $@ --skip-checks' > $relaxed
+Write-Output "Write relaxed launcher."
+if (Test-Path $relaxed) { Remove-Item -Recurse -Force $relaxed }
+Write-Output $root'/Xs.Cli.Main $@ --skip-checks' > $relaxed
 
 # prepare simple launcher
 $simple = Join-Path $HOME Projects bin xss.bat
-echo "Write simple launcher."
-rm -f $simple
-mkdir -p (Split-Path  $simple)
-echo $root'/Xs.Cli.Main $@ --ignore-consistency --skip-checks' > $simple
+Write-Output "Write simple launcher."
+if (Test-Path $simple) { Remove-Item -Recurse -Force $simple }
+Write-Output $root'/Xs.Cli.Main $@ --ignore-consistency --skip-checks' > $simple
