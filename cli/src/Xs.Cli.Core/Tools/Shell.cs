@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Logging;
@@ -65,6 +66,9 @@ namespace Xs.Cli.Core.Tools
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                command = $"cmd /C {command}";
 
             var args = command.Split(' ');
             process.StartInfo.FileName = args[0];
