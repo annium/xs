@@ -16,7 +16,7 @@ export const HomePage = connect<RouteComponentProps, Pick<Store, 'startup'>>(
 
     return (
       <div className={styles.page}>
-        <Trans>Started at {`${location.pathname}${location.search}`}</Trans>
+        <Trans>Started at {`${window.location.pathname}${window.location.search}`}</Trans>
       </div>
     )
   },

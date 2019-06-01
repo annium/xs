@@ -1,6 +1,6 @@
 import { factory } from '@annium/server-http'
 
-const { protocol, hostname: host, port } = new URL(process.env.REACT_APP_API_URL || location.toString())
+const { protocol, hostname: host, port } = new URL(process.env.REACT_APP_API_URL || window.location.toString())
 
 export const api = factory({
   url: {
