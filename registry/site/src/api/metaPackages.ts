@@ -29,4 +29,4 @@ export const setPermissions = async (
   type: string, name: string,
   permissions: MetaPackagePermission[],
 ): Promise<Response> =>
-  api.post(`packages/${type}/${encodeURIComponent(name)}/permissions`, undefined, permissions as any)
+  api.post(`packages/${type}/${encodeURIComponent(name)}/permissions`, undefined, permissions)

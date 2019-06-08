@@ -5,7 +5,6 @@ import React, { Children, ReactNode } from 'react'
 
 import styles from './index.module.scss'
 
-
 export type Props = {
   isLoading: boolean
   className?: string
@@ -16,12 +15,7 @@ export const Loader = ({ isLoading, className, size, children }: Props) => {
   const cls = cx(styles.loader, className)
   const childrenResult = Children.count(children) ? children : <span />
 
-  if (!isLoading)
-    return (
-      <div className={cls}>
-        {childrenResult}
-      </div>
-    )
+  if (!isLoading) return <div className={cls}>{childrenResult}</div>
 
   return (
     <Spin className={cls} wrapperClassName={cls} indicator={getIndicator(size)}>

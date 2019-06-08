@@ -32,8 +32,7 @@ export const Package = ({ access, metaPackage, version }: Props) => {
     packages.filter(p => p.version === version)[0] :
     chain(packages).sortBy((p: PackageModel) => p.version).value()[packages.length - 1]
 
-  useEffect(() => { loadPackages(metaPackage.name, setPackages) }, [])
-  useEffect(() => { loadPackages(metaPackage.name, setPackages) }, [metaPackage])
+  useEffect(() => { loadPackages(metaPackage.name, setPackages) }, [metaPackage.name])
 
   if (!pkg) return null
 

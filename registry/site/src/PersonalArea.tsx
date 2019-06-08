@@ -3,45 +3,56 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { Root } from './components/Root'
 import { startupActions } from './data/startup'
-import { connect, Store } from './store'
+import { connect } from './store'
 
-
-type Props = Pick<Store, 'auth' | 'startup'> & RouteComponentProps & { children?: ReactNode }
+type OwnProps = RouteComponentProps & { children?: ReactNode }
+type SelectorProps = {
+  isUserLoaded: boolean
+  isUserLoadFailed: boolean
+  userHasAccess: boolean
+}
+type Props = OwnProps & SelectorProps
 
 const log = console.log.bind(console, 'PersonalArea')
 
-export const PersonalArea = connect<RouteComponentProps, Pick<Store, 'auth' | 'startup'>>(
-  ({ auth, startup }) => ({ auth, startup }),
-  ({ auth, startup, history, children }: Props) => {
-    useEffect(
-      () => {
-        log('mount', 'ensure access')
-        ensureAccess(auth, history)
-        startupActions.load({})
-      },
-      [],
-    )
-
+export const PersonalArea = connect<OwnProps, SelectorProps>(
+  ({ auth }) => ({
+    isUserLoaded: auth.user.isSuccess,
+    isUserLoadFailed: auth.user.isFailure,
+    userHasAccess: auth.access,
+  }),
+  ({
+    isUserLoaded,
+    isUserLoadFailed,
+    userHasAccess,
+    history,
+    children,
+  }: Props) => {
+    useEffect(() => {
+      log('mount', 'ensure access')
+      startupActions.load({})
+    }, [])
     useEffect(() => {
       log('update', 'ensure access')
-      ensureAccess(auth, history)
-    })
+      ensureAccess(isUserLoaded, isUserLoadFailed, userHasAccess, history)
+      startupActions.load({})
+    }, [isUserLoaded, isUserLoadFailed, userHasAccess, history])
 
-    if (!auth.access) return null
+    if (!userHasAccess) return null
 
     log('render')
 
-    return (
-      <Root>
-        {children}
-      </Root>
-    )
+    return <Root>{children}</Root>
   },
 )
 
-const ensureAccess = (auth: Props['auth'], history: Props['history']) => {
-  log('checkAccess', auth.access)
-  if ((auth.user.isSuccess || auth.user.isFailure) && !auth.access)
+const ensureAccess = (
+  isUserLoaded: boolean,
+  isUserLoadFailed: boolean,
+  userHasAccess: boolean,
+  history: Props['history'],
+) => {
+  log('checkAccess', userHasAccess)
+  if ((isUserLoaded || isUserLoadFailed) && !userHasAccess)
     history.replace('/login')
 }
-

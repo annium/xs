@@ -32,32 +32,32 @@
 
 "@annium/env-tslint@0.1.0":
   version "0.1.0"
-  resolved "https://node.pkg.annium.com/%40annium%2fenv-tslint/0.1.0.tgz#4416f56d4551fa0d64b983893d1041af3b2d46e8"
-  integrity sha512-vFJtyCVons6mQMiQ1Cb45ry4j9p3RT20Iols2spqdgduglCl607+qGuZ6QLtq9oNN4Apt8IOiXfDXMu9YPkECw==
+  resolved "https://node.pkg.annium.com/%40annium%2fenv-tslint/0.1.0.tgz#85cb05cb2d150d81446752b46ed9c61d2aaba99d"
+  integrity sha512-8VCo/i5dRejEMIjuCVL847IEw50kds+X/Zozl80kvI/zKMBdKjr/xVycogF68ralT/fRBVhJeSMD+b8Xne0vxA==
 
 "@annium/forms@0.1.0":
   version "0.1.0"
-  resolved "https://node.pkg.annium.com/%40annium%2fforms/0.1.0.tgz#f857d7e2508613888d403660a5e4a1b20ba948ea"
-  integrity sha512-lULdWB46WmhT3Dea+u2eTOiwcv8s8l9ww25XkfMGQvcX2g7hAGFxh/2Tmes5riTZfV7vA8bRBlsUAOgb+LHJmg==
+  resolved "https://node.pkg.annium.com/%40annium%2fforms/0.1.0.tgz#ff1f3f70eaa51303843d69248ba0ca4afd2fcdad"
+  integrity sha512-jr+oDFFQlLWstpU87L4Ni/k9qav3/LLNTLDtp0T1g2mXkc2CYEN8BMzRLNoUW4hvCkFWu9CzyGAKx1pdMZH06Q==
   dependencies:
     lodash "4.17.11"
 
 "@annium/server-http@0.1.0":
   version "0.1.0"
-  resolved "https://node.pkg.annium.com/%40annium%2fserver-http/0.1.0.tgz#c023999b05925bc254eff827258a623c1eb35af0"
-  integrity sha512-JH+4/8VGPj+TMT6FHH7uOWVmP0T2lFKS+crPFmf5uUy0aXURuXi+DgpbBy9nao8As74JHjGv+t6xvrBZNxCOiQ==
+  resolved "https://node.pkg.annium.com/%40annium%2fserver-http/0.1.0.tgz#f1d10867a23755e0d6f75b4098cfb8be2bf0dff4"
+  integrity sha512-4552uABYDKl3oKis1QoMV44/BxOfRcQKUCJQV5X+UN/6qt30Q7DAjOY5eCAYWa1hM02fsuB7FxypxgGbMh078g==
   dependencies:
     lodash "4.17.11"
 
 "@annium/store@0.1.0":
   version "0.1.0"
-  resolved "https://node.pkg.annium.com/%40annium%2fstore/0.1.0.tgz#edc5a7c19df5ac57aee330b18ff2f48bb2e3dca1"
-  integrity sha512-/UH+89TDtMtJncgD5sqpuMjT1UFnErVg3lYljdEssS8PFPhy6u0UEBnGLghqzp3A0AR1rIwGh93ok4s42LSUcg==
+  resolved "https://node.pkg.annium.com/%40annium%2fstore/0.1.0.tgz#ab2f2809e518bd8037e97890601ca93944b0c194"
+  integrity sha512-TIbhGvkzwHTCves6hoHHqvgXaxOO27cGKm4W+f8N6xqMsyuOFrT/MX7q/Edj7MzH0NpVOK5SkG5nMeUiJwSw8Q==
 
 "@annium/utils@0.1.0":
   version "0.1.0"
-  resolved "https://node.pkg.annium.com/%40annium%2futils/0.1.0.tgz#73c2e590ef455947a22badddbd6a29fb8f8956d1"
-  integrity sha512-vm3LRXeTdXglxsVjLAmUtHVzJ5IlNm3p2FVisDe6iI9Nw/4k8Drwxq8hDNBkVQOxWQsphHumK1riuivdKUpFwA==
+  resolved "https://node.pkg.annium.com/%40annium%2futils/0.1.0.tgz#4486174c13fa03165d555d41c47757453f579c58"
+  integrity sha512-GEc1bb92QOs4GNZcAkTZxSj4TCvT9yk0R1aSIno9+rRRddrjB246lj687GlR67u0bPNdVCC+HyfEb6FHmCBWyw==
   dependencies:
     "@annium/store" "0.1.0"
     history "4.9.0"
@@ -10751,9 +10751,9 @@ typescript@3.5.1:
   integrity sha512-64HkdiRv1yYZsSe4xC1WVgamNigVYjlssIoaH2HcZF0+ijsk5YK2g0G34w9wJkze8+5ow4STd22AynfO6ZYYLw==
 
 ua-parser-js@^0.7.18:
-  version "0.7.19"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.19.tgz#94151be4c0a7fb1d001af7022fdaca4642659e4b"
-  integrity sha512-T3PVJ6uz8i0HzPxOF9SWzWAlfN/DavlpQqepn22xgve/5QecC+XMCAtmUNnY7C9StehaV6exjUCI801lOI7QlQ==
+  version "0.7.20"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.20.tgz#7527178b82f6a62a0f243d1f94fd30e3e3c21098"
+  integrity sha512-8OaIKfzL5cpx8eCMAhhvTlft8GYF8b2eQr6JkCyVdrgjcytyOmPCXrqXFcUnhonRpLlh5yxEZVohm6mzaowUOw==
 
 uglify-js@3.4.x:
   version "3.4.10"
