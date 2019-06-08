@@ -4,14 +4,8 @@ using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects
 {
-    public interface IProject
+    public interface IProject : IReference
     {
-        ProjectType Type { get; }
-
-        string Name { get; set; }
-
-        Version Version { get; set; }
-
         string Description { get; }
 
         FileInfo File { get; }

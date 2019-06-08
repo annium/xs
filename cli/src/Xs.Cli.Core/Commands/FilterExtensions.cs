@@ -2,24 +2,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Xs.Cli.Core.Models;
-using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Commands
 {
     public static class FilterExtensions
     {
-        public static IEnumerable<IProject> FilterMask(this IEnumerable<IProject> projects, string mask)
+        public static IEnumerable<T> FilterMask<T>(this IEnumerable<T> references, string mask)
+        where T : IReference
         {
             if (mask == "all")
-                return projects;
+                return references;
 
             var pattern = Regex.Escape(mask).Replace(@"\*", ".*").Replace(@"\?", ".");
             var regex = new Regex($"^{pattern}$", RegexOptions.IgnoreCase);
 
-            return projects.Where(p => regex.IsMatch(p.Name));
+            return references.Where(p => regex.IsMatch(p.Name));
         }
 
-        public static IEnumerable<IProject> FilterType(this IEnumerable<IProject> projects, ProjectType type)
+        public static IEnumerable<T> FilterType<T>(this IEnumerable<T> projects, ProjectType type)
+        where T : IReference
         {
             if (type == null)
                 return projects;

@@ -6,13 +6,13 @@ namespace Xs.Cli.Core.Models
 {
     public class Version : Comparable<Version>
     {
-        public uint Major { get; }
+        public uint Major { get; private set; }
 
-        public uint Minor { get; }
+        public uint Minor { get; private set; }
 
-        public uint Patch { get; }
+        public uint Patch { get; private set; }
 
-        public string Suffix { get; }
+        public string Suffix { get; private set; }
 
         public Version(uint major, uint minor, uint patch, string suffix)
         {
@@ -53,6 +53,14 @@ namespace Xs.Cli.Core.Models
 
             void throwException() =>
                 throw new InvalidOperationException($"Version {version} doesn't follow SemVer notation.");
+        }
+
+        public void Update(Version version)
+        {
+            Major = version.Major;
+            Minor = version.Minor;
+            Patch = version.Patch;
+            Suffix = version.Suffix;
         }
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}{Suffix}";

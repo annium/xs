@@ -19,7 +19,7 @@ namespace Xs.Cli.Core.Audit
             if (project.Version != version)
             {
                 if (fix)
-                    project.Version = version;
+                    project.Version.Update(version);
 
                 results.Add(new AuditResult(fix,
                     $"Project {project} uses lower version {project.Version} than {version}, used by others: {string.Join(", ", projects.Where(p => p.Version == version))}"

@@ -2,7 +2,7 @@ using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models
 {
-    public class Package : Equatable<Package>
+    public class Package : Equatable<Package>, IReference
     {
         public ProjectType Type { get; }
 
