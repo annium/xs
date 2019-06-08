@@ -15,23 +15,25 @@
   },
   "devDependencies": {
     "@annium/env-tsconfig-app-react": "0.1.0",
-    "@annium/env-tslint-react": "0.1.0",
     "@types/classnames": "2.2.8",
     "@types/lodash": "4.14.134",
     "@types/node": "12.0.7",
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
     "@types/react-router-dom": "4.3.3",
+    "@typescript-eslint/eslint-plugin": "1.9.0",
+    "@typescript-eslint/parser": "1.9.0",
+    "eslint-config-prettier": "4.3.0",
+    "eslint-plugin-prettier": "3.1.0",
+    "eslint-plugin-react": "7.13.0",
     "node-sass": "4.12.0",
+    "prettier": "1.18.2",
     "react-scripts": "3.0.1",
-    "tslint": "5.17.0",
-    "tslint-react": "4.0.0",
-    "typescript": "3.5.1",
-    "typescript-tslint-plugin": "0.4.0"
+    "typescript": "3.4.5"
   },
   "scripts": {
-    "build": "tslint -p . && react-scripts build",
-    "lint": "tslint -p .",
+    "build": "react-scripts build",
+    "lint": "eslint './src/**/*.{ts,tsx}' --format codeframe",
     "start": "react-scripts start"
   },
   "browserslist": [
