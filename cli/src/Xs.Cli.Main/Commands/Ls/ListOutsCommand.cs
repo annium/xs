@@ -33,20 +33,68 @@ namespace Xs.Cli.Main.Commands.Ls
         {
             var allProjects = discoverTask.Run(discoverCfg).ToArray();
             var projects = allProjects
-                .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
+                .FilterMask(cfg.Mask)
                 .ToArray();
-            var last = projects.Last();
 
-            // if plain dependants list requested - them in single list
-            if (cfg.Plain)
+            // log projects' dependants, if matching projects found
+            if (projects.Length > 0)
             {
-                LogPlainDependants(projects, allProjects);
+                var last = projects.Last();
+
+                // if plain dependants list requested - them in single list
+                if (cfg.Plain)
+                {
+                    LogPlainDependants(projects, allProjects);
+                    return;
+                }
+
+                foreach (var project in projects)
+                    LogProjectWithDependants(new Dependency<IProject>(DependencyType.Normal, project), allProjects, string.Empty, project == last);
+
                 return;
             }
 
-            foreach (var project in projects)
-                LogProjectWithDependants(new Dependency<IProject>(DependencyType.Normal, project), allProjects, string.Empty, project == last);
+            // if no projects - search for packages
+            var packages = allProjects
+                .SelectMany(p => p.Packages)
+                .Select(d => d.Value)
+                .Distinct()
+                .FilterType(cfg.Type)
+                .FilterMask(cfg.Mask)
+                .ToArray();
+
+            if (packages.Length > 0)
+            {
+                if (cfg.Plain)
+                {
+                    var dependants = allProjects
+                        .Where(p => p.Packages.Any(d => packages.Contains(d.Value)))
+                        .Distinct()
+                        .OrderBy(p => p.Name)
+                        .ToArray();
+                    foreach (var dependant in dependants)
+                        Console.WriteLine(dependant);
+                    return;
+                }
+
+                foreach (var package in packages)
+                {
+                    Console.WriteLine(package);
+                    var dependants = allProjects
+                        .Where(p => p.Packages.Any(d => d.Value == package))
+                        .ToArray();
+
+                    var last = dependants.Last();
+
+                    foreach (var dependant in dependants)
+                        LogProjectWithDependants(new Dependency<IProject>(DependencyType.Normal, dependant), allProjects, string.Empty, dependant == last);
+
+                }
+                return;
+            }
+
+            Console.WriteLine("No projects/packages, matching given type/mask, found");
         }
 
         private void LogPlainDependants(IEnumerable<IProject> projects, IEnumerable<IProject> allProjects)
@@ -110,11 +158,11 @@ namespace Xs.Cli.Main.Commands.Ls
     internal class ListOutsCommandConfiguration
     {
         [Position(1, isRequired : false)]
-        [Help("Projects mask.")]
+        [Help("Projects/packages mask.")]
         public string Mask { get; set; } = "all";
 
         [Position(2, isRequired : false)]
-        [Help("Project type.")]
+        [Help("Project/package type.")]
         public ProjectType Type { get; set; }
 
         [Option]
