@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Xs.Cli.Core.Tools;
 using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Projects

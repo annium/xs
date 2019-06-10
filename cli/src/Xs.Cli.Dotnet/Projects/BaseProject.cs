@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
