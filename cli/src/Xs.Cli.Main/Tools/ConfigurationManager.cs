@@ -40,26 +40,30 @@ namespace Xs.Cli.Main.Tools
 
         public Configuration LoadBarebone(string folder)
         {
-            if (!File.Exists(ConfigurationFile(folder)))
+            var cfgFile = ConfigurationFile(folder);
+
+            if (!File.Exists(cfgFile))
                 return null;
 
             var configuration = new Configuration();
-            configuration.Location = new Uri(File.ReadAllText(ConfigurationFile(folder)));
+            configuration.Location = new Uri(File.ReadAllText(cfgFile));
 
             return configuration;
         }
 
         public async Task<Configuration> LoadAsync(string folder)
         {
+            var cfgFile = ConfigurationFile(folder);
+
             logger.Trace($"Load configuration from {folder}");
-            if (!File.Exists(ConfigurationFile(folder)) || !File.Exists(CredentialsFile(folder)))
+            if (!File.Exists(cfgFile) || !File.Exists(CredentialsFile(folder)))
             {
                 logger.Trace($"Configuration or credentials missing in {folder}");
                 return null;
             }
 
             var configuration = new Configuration();
-            configuration.Location = new Uri(File.ReadAllText(ConfigurationFile(folder)));
+            configuration.Location = new Uri(File.ReadAllText(cfgFile));
             configuration.Token = File.ReadAllText(CredentialsFile(folder));
             if (configuration.Location.IsFile)
                 configuration.Servers = ProjectType.List().ToDictionary(type => type, type => configuration.Location);
