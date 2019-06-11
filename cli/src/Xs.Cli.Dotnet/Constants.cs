@@ -10,11 +10,12 @@ namespace Xs.Cli.Dotnet
 
         public static readonly ProjectType ProjectType;
 
+        internal const string ProjectTypeString = "dotnet";
+
         static Constants()
         {
-            var type = "dotnet";
-            ProjectType.Register(type);
-            ProjectType = ProjectType.Get(type);
+            ProjectType.Register(ProjectTypeString);
+            ProjectType = ProjectType.Get(ProjectTypeString);
         }
     }
 }

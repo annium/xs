@@ -8,11 +8,12 @@ namespace Xs.Cli.Node
 
         public static readonly ProjectType ProjectType;
 
+        internal const string ProjectTypeString = "node";
+
         static Constants()
         {
-            var type = "node";
-            ProjectType.Register(type);
-            ProjectType = ProjectType.Get(type);
+            ProjectType.Register(ProjectTypeString);
+            ProjectType = ProjectType.Get(ProjectTypeString);
         }
     }
 }
