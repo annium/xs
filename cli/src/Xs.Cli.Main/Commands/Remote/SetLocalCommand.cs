@@ -42,10 +42,10 @@ namespace Xs.Cli.Main.Commands.Remote
             var location = cfg.Registry;
             var dir = discoverCfg.Root;
 
-            var configuration = new Configuration();
-            configuration.Location = location;
-            configuration.Token = string.Empty;
-            configuration.Servers = ProjectType.List().ToDictionary(type => type, type => location);
+            var configuration = configurationManager.LoadBarebone(dir);
+            configuration.SetRegistry(location);
+            configuration.SetToken(string.Empty);
+            configuration.SetServers(ProjectType.List().ToDictionary(type => type, type => location));
 
             var projects = discoverTask.Run(discoverCfg).ToArray();
 

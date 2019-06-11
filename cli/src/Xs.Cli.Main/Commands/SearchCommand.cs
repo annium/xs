@@ -48,7 +48,7 @@ namespace Xs.Cli.Main.Commands
                 return;
             }
 
-            var client = mainClientFactory.Create(configuration.Location);
+            var client = mainClientFactory.Create(configuration.Registry);
             var packages = await client.SearchAsync(configuration.Token, cfg.Type.ToString(), cfg.Query);
 
             foreach (var package in packages)

@@ -49,11 +49,13 @@ namespace Xs.Cli.Main.Commands.Remote
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            var configuration = new Configuration();
-            configuration.Location = location;
-            configuration.Token = await client.LoginAsync(user, password);
-            configuration.Servers = (await client.GetRegistryInfoAsync())
-                .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value);
+            var configuration = configurationManager.LoadBarebone(dir);
+            configuration.SetRegistry(location);
+            configuration.SetToken(await client.LoginAsync(user, password));
+            configuration.SetServers(
+                (await client.GetRegistryInfoAsync())
+                .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
+            );
 
             var projects = discoverTask.Run(discoverCfg).ToArray();
 

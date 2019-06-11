@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using Annium.Extensions.Configuration;
+using Annium.Extensions.Mapper;
+using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -14,17 +18,11 @@ namespace Xs.Cli.Main.Tools
     internal class ConfigurationManager : IConfigurationManager
     {
         private const string configurationFile = ".xs";
-
         private const string credentialsFile = ".xs.credentials";
-
         private const string ignoreHeader = "# xs ignore patterns";
-
         private const string ignoreFile = ".gitignore";
-
         private readonly MainClientFactory mainClientFactory;
-
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
-
         private readonly ILogger logger;
 
         public ConfigurationManager(
@@ -41,36 +39,42 @@ namespace Xs.Cli.Main.Tools
         public Configuration LoadBarebone(string folder)
         {
             var cfgFile = ConfigurationFile(folder);
+            var credFile = CredentialsFile(folder);
 
             if (!File.Exists(cfgFile))
                 return null;
 
+            var config = new ConfigurationBuilder()
+                .AddYamlFile(cfgFile)
+                .Build<Config>();
             var configuration = new Configuration();
-            configuration.Location = new Uri(File.ReadAllText(cfgFile));
+            if (config.Registry != null)
+                configuration.SetRegistry(config.Registry);
+            if (config.Types != null)
+                configuration.SetTypes(config.Types);
+            if (File.Exists(credFile))
+                configuration.SetToken(File.ReadAllText(credFile));
 
             return configuration;
         }
 
         public async Task<Configuration> LoadAsync(string folder)
         {
-            var cfgFile = ConfigurationFile(folder);
-
             logger.Trace($"Load configuration from {folder}");
-            if (!File.Exists(cfgFile) || !File.Exists(CredentialsFile(folder)))
+            if (!File.Exists(ConfigurationFile(folder)) || !File.Exists(CredentialsFile(folder)))
             {
                 logger.Trace($"Configuration or credentials missing in {folder}");
                 return null;
             }
 
-            var configuration = new Configuration();
-            configuration.Location = new Uri(File.ReadAllText(cfgFile));
-            configuration.Token = File.ReadAllText(CredentialsFile(folder));
-            if (configuration.Location.IsFile)
-                configuration.Servers = ProjectType.List().ToDictionary(type => type, type => configuration.Location);
-            else
-                configuration.Servers = (await mainClientFactory.Create(configuration.Location).GetRegistryInfoAsync())
+            var configuration = LoadBarebone(folder);
+            var servers = configuration.Registry.IsFile ?
+                ProjectType.List().ToDictionary(type => type, type => configuration.Registry) :
+                (await mainClientFactory.Create(configuration.Registry).GetRegistryInfoAsync())
                 .OrderBy(s => s.Key)
                 .ToDictionary(s => ProjectType.Get(s.Key), s => s.Value);
+
+            configuration.SetServers(servers);
 
             logger.Trace($"Configuration loaded {folder}");
 
@@ -80,7 +84,7 @@ namespace Xs.Cli.Main.Tools
         public void Save(string folder, IProject[] projects, Configuration configuration)
         {
             logger.Trace($"Save configuration in {folder}");
-            Write(ConfigurationFile, configuration.Location.ToString());
+            Write(ConfigurationFile, Yaml.Serializer.Serialize(Mapper.Map<Config>(configuration)));
             Write(CredentialsFile, configuration.Token);
 
             // save configuration for each project
@@ -154,5 +158,14 @@ namespace Xs.Cli.Main.Tools
         private string ConfigurationFile(string folder) => Path.Combine(folder, configurationFile);
 
         private string CredentialsFile(string folder) => Path.Combine(folder, credentialsFile);
+
+        private class Config
+        {
+            [DataMember(Order = 0)]
+            public Uri Registry { get; set; }
+
+            [DataMember(Order = 1)]
+            public SpecialConfiguration[] Types { get; set; }
+        }
     }
 }

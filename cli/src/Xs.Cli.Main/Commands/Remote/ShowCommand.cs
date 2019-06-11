@@ -35,7 +35,7 @@ namespace Xs.Cli.Main.Commands.Remote
             if (configuration == null)
                 Console.WriteLine("Registry is not tracked.");
             else
-                Console.WriteLine(Json.Write(configuration));
+                Console.Write(Yaml.Serializer.Serialize(configuration));
         }
     }
 }

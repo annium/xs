@@ -50,14 +50,16 @@ namespace Xs.Cli.Main.Commands.Remote
                 return;
             }
 
-            var client = mainClientFactory.Create(configuration.Location);
+            var client = mainClientFactory.Create(configuration.Registry);
 
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            configuration.Token = await client.LoginAsync(user, password);
-            configuration.Servers = (await client.GetRegistryInfoAsync())
-                .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value);
+            configuration.SetToken(await client.LoginAsync(user, password));
+            configuration.SetServers(
+                (await client.GetRegistryInfoAsync())
+                .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
+            );
 
             var projects = discoverTask.Run(discoverCfg).ToArray();
 
