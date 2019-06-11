@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,14 +13,6 @@ namespace Xs.Cli.Node.Tools
     {
         private const string file = ".npmrc";
 
-        private static readonly IEnumerable<string> reservedScopes = new []
-        {
-            "babel",
-            "lingui",
-            "material-ui",
-            "types"
-        };
-
         public ProjectType Type { get; } = Constants.ProjectType;
 
         public string[] IgnorePatterns { get; } = new [] { file };
@@ -35,7 +26,7 @@ namespace Xs.Cli.Node.Tools
             this.logger = logger;
         }
 
-        public void Save(IProject project, Uri location, string token)
+        public void Save(IProject project, Uri location, Configuration configuration)
         {
             logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
@@ -47,13 +38,15 @@ namespace Xs.Cli.Node.Tools
                 return;
             }
 
+            var specialConfiguration = configuration.Types.OfType<SpecialConfiguration>().FirstOrDefault();
+
             var sb = new StringBuilder();
             sb.AppendLine($"@{scope}:registry={location}");
-            // add all used scopes except reserved
-            foreach (var dependencyScope in project.Packages.Select(d => GetScope(d.Value.Name)).OfType<string>().ToHashSet())
-                if (!reservedScopes.Contains(dependencyScope))
-                    sb.AppendLine($"@{dependencyScope}:registry={location}");
-            sb.AppendLine($"//{location.Authority}/:_authToken=\"{token}\"");
+            // add all private scopes
+            if (specialConfiguration != null)
+                foreach (var privateScope in specialConfiguration.PrivateScopes.ToHashSet())
+                    sb.AppendLine($"@{privateScope}:registry={location}");
+            sb.AppendLine($"//{location.Authority}/:_authToken=\"{configuration.Token}\"");
             File.WriteAllText(FilePath(project), sb.ToString());
 
             string GetScope(string name) => name.StartsWith('@') ? name.Substring(1).Split('/') [0] : null;

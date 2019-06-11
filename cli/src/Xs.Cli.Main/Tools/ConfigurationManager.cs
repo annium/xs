@@ -50,8 +50,7 @@ namespace Xs.Cli.Main.Tools
             var configuration = new Configuration();
             if (config.Registry != null)
                 configuration.SetRegistry(config.Registry);
-            if (config.Types != null)
-                configuration.SetTypes(config.Types);
+            configuration.SetTypes(config.Types);
             if (File.Exists(credFile))
                 configuration.SetToken(File.ReadAllText(credFile));
 
@@ -101,7 +100,7 @@ namespace Xs.Cli.Main.Tools
                         logger.Trace($"Save {type} -> {uri} configuration");
                         ignorePatterns.AddRange(specialManagers[type].IgnorePatterns);
                         foreach (var project in targets)
-                            specialManagers[type].Save(project, uri, configuration.Token);
+                            specialManagers[type].Save(project, uri, configuration);
                     }
                     else
                         logger.Trace($"No {type} projects discovered to save configuration for");
@@ -165,7 +164,7 @@ namespace Xs.Cli.Main.Tools
             public Uri Registry { get; set; }
 
             [DataMember(Order = 1)]
-            public SpecialConfiguration[] Types { get; set; }
+            public SpecialConfiguration[] Types { get; set; } = Array.Empty<SpecialConfiguration>();
         }
     }
 }
