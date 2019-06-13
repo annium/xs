@@ -49,7 +49,7 @@ namespace Xs.Cli.Main.Commands.Remote
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
-            var configuration = configurationManager.LoadBarebone(dir);
+            var configuration = configurationManager.LoadBarebone(dir) ?? new Configuration();
             configuration.SetRegistry(location);
             configuration.SetToken(await client.LoginAsync(user, password));
             configuration.SetServers(

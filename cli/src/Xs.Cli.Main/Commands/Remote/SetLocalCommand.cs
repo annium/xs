@@ -42,7 +42,7 @@ namespace Xs.Cli.Main.Commands.Remote
             var location = cfg.Registry;
             var dir = discoverCfg.Root;
 
-            var configuration = configurationManager.LoadBarebone(dir);
+            var configuration = configurationManager.LoadBarebone(dir) ?? new Configuration();
             configuration.SetRegistry(location);
             configuration.SetToken(string.Empty);
             configuration.SetServers(ProjectType.List().ToDictionary(type => type, type => location));
