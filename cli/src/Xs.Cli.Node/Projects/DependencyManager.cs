@@ -13,22 +13,13 @@ namespace Xs.Cli.Node.Projects
     {
         public ProjectType Type { get; } = Constants.ProjectType;
 
-        public async Task<Package[]> GetVersionsAsync(Package package, Configuration configuration)
-        {
-            var registryUri = configuration.Servers.FirstOrDefault(s => s.Key == Type).Value;
+        public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
 
-            // try get result from registry
-            var result = (registryUri?.IsFile ?? true) ? null : await ResolveVersionsAsync(package, registryUri, configuration.Token);
-
-            // fallback to default server result
-            return result.Length == 0 ? await ResolveVersionsAsync(package, new Uri(Constants.DefaultServer), null) : result;
-        }
-
-        private async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string token)
+        public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
         {
             var request = Http.Open(serverUri).Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()));
-            if (token != null)
-                request = request.BearerAuthorization(token);
+            if (accessToken != null)
+                request = request.BearerAuthorization(accessToken);
 
             var index = await request.AsAsync<Index>();
             if (index == null)

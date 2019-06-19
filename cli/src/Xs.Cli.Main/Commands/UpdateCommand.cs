@@ -80,15 +80,19 @@ namespace Xs.Cli.Main.Commands
 
             // resolve configuration and available version of all dependencies
             var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
-            if (configuration == null)
-            {
-                logger.Warn($"No registry tracked at {discoverCfg.Root}. Track registry first.");
-                return;
-            }
 
             var updates = (await Task.WhenAll(dependencies.Select(async d =>
             {
-                var versions = await dependencyManagers[d.Type].GetVersionsAsync(d, configuration);
+                var dependencyManager = dependencyManagers[d.Type];
+                var registryUri = configuration?.Servers.FirstOrDefault(s => s.Key == d.Type).Value;
+                var versions = registryUri != null && !registryUri.IsFile ?
+                    await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration.Token) :
+                    Array.Empty<Package>();
+
+                // fallback to default server result
+                if (versions.Length == 0)
+                    versions = await dependencyManager.ResolveVersionsAsync(d, dependencyManager.DefaultServer, string.Empty);
+
                 var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == null);
                 logger.Trace($"Resolve: {d} - {versions.Length} version(s)");
 

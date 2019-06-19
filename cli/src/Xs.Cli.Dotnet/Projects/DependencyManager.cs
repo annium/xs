@@ -13,20 +13,11 @@ namespace Xs.Cli.Dotnet.Projects
     {
         public ProjectType Type { get; } = Constants.ProjectType;
 
+        public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
+
         private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
 
-        public async Task<Package[]> GetVersionsAsync(Package package, Configuration configuration)
-        {
-            var registryUri = configuration.Servers.FirstOrDefault(s => s.Key == Type).Value;
-
-            // try get result from registry
-            var result = (registryUri?.IsFile ?? true) ? null : await ResolveVersionsAsync(package, registryUri);
-
-            // fallback to default server result
-            return result.Length == 0 ? await ResolveVersionsAsync(package, new Uri(Constants.DefaultServer)) : result;
-        }
-
-        private async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri)
+        public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
         {
             var registrationBaseUrl = (await Http.Open(serverUri).Get(Constants.ServerPathSuffix).AsAsync<ServiceIndex>())
                 .Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
