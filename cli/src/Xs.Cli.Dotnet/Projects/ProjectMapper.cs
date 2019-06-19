@@ -151,6 +151,9 @@ namespace Xs.Cli.Dotnet.Projects
             if (!outputTypes.Contains(outputType))
                 throw new InvalidOperationException($"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}.");
 
+            if (properties.Element(El.LangVersion)?.Value != "latest")
+                throw new InvalidOperationException($"Project {path} has no {El.LangVersion} defined or it is not latest.");
+
             if (properties.Element(El.WarningsAsErrors)?.Value != "true")
                 throw new InvalidOperationException($"Project {path} has no {El.WarningsAsErrors} defined or it is not true.");
         }
@@ -198,31 +201,19 @@ namespace Xs.Cli.Dotnet.Projects
         private static class El
         {
             public const string PackageId = "PackageId";
-
             public const string PackageVersion = "PackageVersion";
-
             public const string Description = "Description";
-
             public const string TargetFramework = "TargetFramework";
-
             public const string DebugType = "DebugType";
-
             public const string OutputType = "OutputType";
-
             public const string WarningsAsErrors = "WarningsAsErrors";
-
+            public const string LangVersion = "LangVersion";
             public const string IsPackable = "IsPackable";
-
             public const string PropertyGroup = "PropertyGroup";
-
             public const string ItemGroup = "ItemGroup";
-
             public const string PackageReference = "PackageReference";
-
             public const string ProjectReference = "ProjectReference";
-
             public const string Include = "Include";
-
             public const string Version = "Version";
         }
     }
