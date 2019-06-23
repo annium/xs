@@ -46,8 +46,7 @@ namespace Xs.Cli.Main.Commands.Remote
 
             var client = mainClientFactory.Create(location);
 
-            Console.Write("Password: ");
-            var password = Console.ReadLine();
+            var password = Annium.Extensions.CommandLine.Cli.ReadSecure("Password: ");
 
             var configuration = configurationManager.LoadBarebone(dir) ?? new Configuration();
             configuration.SetRegistry(location);
