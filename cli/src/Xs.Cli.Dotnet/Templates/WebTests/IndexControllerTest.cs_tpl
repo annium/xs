@@ -6,12 +6,9 @@ using Annium.Testing;
 
 namespace {{name}}
 {
-    public class IndexControllerTest : IntegrationTest<Startup<ServicePack>>
+    public class IndexControllerTest : IntegrationTest
     {
-        public IndexControllerTest()
-        {
-            Configure(request => request);
-        }
+        private IRequest http => GetRequest<Startup<ServicePack>>();
 
         [Fact]
         public async Task True_IsTrue()
