@@ -12,6 +12,8 @@ namespace Xs.Cli.Main
     {
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
+            services.AddArguments();
+
             RegisterCommands(services);
 
             RegisterTasks(services);
