@@ -26,7 +26,7 @@ namespace Xs.Cli.Node.Tools
             this.logger = logger;
         }
 
-        public void Save(IProject project, Uri location, Configuration configuration)
+        public void Save(IProject project, ProjectTypeConfiguration configuration)
         {
             logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
@@ -38,15 +38,15 @@ namespace Xs.Cli.Node.Tools
                 return;
             }
 
-            var specialConfiguration = configuration.Types.OfType<SpecialConfiguration>().FirstOrDefault();
+            var specialConfiguration = (SpecialConfiguration) configuration.Special;
 
             var sb = new StringBuilder();
-            sb.AppendLine($"@{scope}:registry={location}");
+            sb.AppendLine($"@{scope}:registry={configuration.Server}");
             // add all private scopes
             if (specialConfiguration != null)
                 foreach (var privateScope in specialConfiguration.PrivateScopes.ToHashSet())
-                    sb.AppendLine($"@{privateScope}:registry={location}");
-            sb.AppendLine($"//{location.Authority}/:_authToken=\"{configuration.Token}\"");
+                    sb.AppendLine($"@{privateScope}:registry={configuration.Server}");
+            sb.AppendLine($"//{configuration.Server.Authority}/:_authToken=\"{configuration.Token}\"");
             File.WriteAllText(FilePath(project), sb.ToString());
 
             string GetScope(string name) => name.StartsWith('@') ? name.Substring(1).Split('/') [0] : null;

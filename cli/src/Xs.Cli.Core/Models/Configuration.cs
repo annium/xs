@@ -8,8 +8,8 @@ namespace Xs.Cli.Core.Models
     {
         public Uri Registry { get; private set; }
         public string Token { get; private set; }
-        public IReadOnlyDictionary<ProjectType, Uri> Servers { get; private set; }
-        public SpecialConfiguration[] Types { get; private set; }
+        public IReadOnlyDictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
+        public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();
 
         public Configuration()
         {

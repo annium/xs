@@ -10,8 +10,8 @@ namespace Xs.Cli.Core.Tools
 
         string[] IgnorePatterns { get; }
 
-        void Save(IProject project, Uri location, Configuration configuration);
-        
+        void Save(IProject project, ProjectTypeConfiguration configuration);
+
         void Delete(IProject project);
     }
 }

@@ -33,14 +33,14 @@ namespace Xs.Cli.Dotnet.Tools
             this.logger = logger;
         }
 
-        public void Save(IProject project, Uri location, Configuration configuration)
+        public void Save(IProject project, ProjectTypeConfiguration configuration)
         {
             logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
             var sources = new XElement(El.PackageSources);
             sources.Add(new XElement(El.Clear));
 
-            sources.Add(GetAddRule(registryName, location));
+            sources.Add(GetAddRule(registryName, configuration.Server));
 
             sources.Add(GetAddRule(defaultName, defaultUri));
 

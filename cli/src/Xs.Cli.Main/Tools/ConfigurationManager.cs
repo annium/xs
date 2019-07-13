@@ -92,21 +92,28 @@ namespace Xs.Cli.Main.Tools
             ignorePatterns.Add(credentialsFile);
             foreach (var(type, uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
             {
-                if (specialManagers.ContainsKey(type))
+                if (!specialManagers.ContainsKey(type))
                 {
-                    var targets = projects.Where(p => p.Type == type);
-                    if (targets.Count() > 0)
-                    {
-                        logger.Trace($"Save {type} -> {uri} configuration");
-                        ignorePatterns.AddRange(specialManagers[type].IgnorePatterns);
-                        foreach (var project in targets)
-                            specialManagers[type].Save(project, uri, configuration);
-                    }
-                    else
-                        logger.Trace($"No {type} projects discovered to save configuration for");
-                }
-                else
                     logger.Trace($"{type} configuration manager not found");
+                    continue;
+                }
+
+                var targets = projects.Where(p => p.Type == type);
+                if (targets.Count() == 0)
+                {
+                    logger.Trace($"No {type} projects discovered to save configuration for");
+                    continue;
+                }
+
+                logger.Trace($"Save {type} -> {uri} configuration");
+                ignorePatterns.AddRange(specialManagers[type].IgnorePatterns);
+                var typeConfiguration = new ProjectTypeConfiguration(
+                    uri,
+                    configuration.Token,
+                    configuration.Types.FirstOrDefault(c => c.Type == type)
+                );
+                foreach (var project in targets)
+                    specialManagers[type].Save(project, typeConfiguration);
             }
 
             logger.Trace($"Update ignore file in {folder}");
