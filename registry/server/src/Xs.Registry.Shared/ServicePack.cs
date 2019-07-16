@@ -25,7 +25,7 @@ namespace Xs.Registry.Shared
                 return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
             });
 
-            services.AddConsole(new LoggerConfiguration(LogLevel.Debug));
+            services.AddConsoleLogger(new LoggerConfiguration(LogLevel.Debug));
         }
     }
 }
