@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Logging;
-using System.Runtime.InteropServices;
 
 namespace Xs.Cli.Core.Tools
 {
