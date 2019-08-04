@@ -1,19 +1,17 @@
 using System.Collections.Generic;
 using System.IO;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class SpecialProjectContext : ProjectBaseContext
+    internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> where TProject : SpecialProject<TProject>
     {
         public IReadOnlyDictionary<string, string> Scripts { get; }
-
         public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
-
         public ProjectMapper Mapper { get; }
 
         public SpecialProjectContext(
@@ -27,7 +25,7 @@ namespace Xs.Cli.Node.Projects
             IReadOnlyDictionary<string, string> scripts,
             IShell shell,
             LoggerConfiguration loggerConfiguration,
-            ILogger logger,
+            ILogger<TProject> logger,
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper
         ) : base(

@@ -1,5 +1,5 @@
 using System.Linq;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
@@ -7,10 +7,10 @@ namespace Xs.Cli.Main.Tasks.Dependencies
 {
     internal class AddPackageDependencyTask
     {
-        private readonly ILogger logger;
+        private readonly ILogger<AddPackageDependencyTask> logger;
 
         public AddPackageDependencyTask(
-            ILogger logger
+            ILogger<AddPackageDependencyTask> logger
         )
         {
             this.logger = logger;

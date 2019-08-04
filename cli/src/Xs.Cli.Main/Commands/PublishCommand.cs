@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
@@ -19,13 +19,13 @@ namespace Xs.Cli.Main.Commands
         private readonly DiscoverProjectsTask discoverTask;
 
         private readonly ProjectsRunner runner;
-        private readonly ILogger logger;
+        private readonly ILogger<PublishCommand> logger;
 
         public PublishCommand(
             IConfigurationManager configurationManager,
             DiscoverProjectsTask discoverTask,
             ProjectsRunner runner,
-            ILogger logger
+            ILogger<PublishCommand> logger
         )
         {
             this.configurationManager = configurationManager;

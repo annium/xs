@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
@@ -27,14 +27,14 @@ namespace Xs.Cli.Main.Commands
 
         private readonly ProjectsRunner runner;
 
-        private readonly ILogger logger;
+        private readonly ILogger<UpdateCommand> logger;
 
         public UpdateCommand(
             DiscoverProjectsTask discoverTask,
             IEnumerable<IDependencyManager> dependencyManagers,
             IConfigurationManager configurationManager,
             ProjectsRunner runner,
-            ILogger logger
+            ILogger<UpdateCommand> logger
         )
         {
             this.discoverTask = discoverTask;

@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Main.Tools
 {
     internal class ProjectsRunner
     {
-        private readonly ILogger logger;
+        private readonly ILogger<ProjectsRunner> logger;
 
         public ProjectsRunner(
-            ILogger logger
+            ILogger<ProjectsRunner> logger
         )
         {
             this.logger = logger;

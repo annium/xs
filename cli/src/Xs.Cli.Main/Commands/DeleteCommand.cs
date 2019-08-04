@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tasks.Dependencies;
@@ -21,13 +21,13 @@ namespace Xs.Cli.Main.Commands
 
         private readonly DeleteProjectDependencyTask deleteProjectDependencyTask;
 
-        private readonly ILogger logger;
+        private readonly ILogger<DeleteCommand> logger;
 
         public DeleteCommand(
             DiscoverProjectsTask discoverTask,
             DeletePackageDependencyTask deletePackageDependencyTask,
             DeleteProjectDependencyTask deleteProjectDependencyTask,
-            ILogger logger
+            ILogger<DeleteCommand> logger
         )
         {
             this.discoverTask = discoverTask;

@@ -1,8 +1,8 @@
 using System.IO;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Projects;
 
@@ -16,11 +16,11 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         private readonly ITemplateWriter templateWriter;
 
-        private readonly ILogger logger;
+        private readonly ILogger<LibCommand> logger;
 
         public LibCommand(
             ITemplateWriter templateWriter,
-            ILogger logger
+            ILogger<LibCommand> logger
         )
         {
             this.templateWriter = templateWriter;

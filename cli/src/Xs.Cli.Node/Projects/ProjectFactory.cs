@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Annium.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -13,33 +15,25 @@ namespace Xs.Cli.Node.Projects
     internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
     {
         public ProjectType Type { get; } = Constants.ProjectType;
-
         public static readonly string[] TrackedFileExtensions = new [] { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };
-
         public static readonly string[] IgnoredFolders = new [] { "build", "dist", ModulesDirectory };
-
         public const string ModulesDirectory = "node_modules";
-
         public const string ProjectFileName = "package.json";
-
         public const string LockFileName = "yarn.lock";
-
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-
         private readonly ProjectMapper mapper;
-
         private readonly LoggerConfiguration loggerConfiguration;
-
-        private readonly ILogger logger;
-
+        private readonly ILogger<ProjectFactory> logger;
         private readonly IShell shell;
+        private readonly IServiceProvider provider;
 
         public ProjectFactory(
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             LoggerConfiguration loggerConfiguration,
-            ILogger logger,
-            IShell shell
+            ILogger<ProjectFactory> logger,
+            IShell shell,
+            IServiceProvider provider
         )
         {
             this.auditRules = auditRules;
@@ -47,6 +41,7 @@ namespace Xs.Cli.Node.Projects
             this.loggerConfiguration = loggerConfiguration;
             this.logger = logger;
             this.shell = shell;
+            this.provider = provider;
         }
 
         public bool IsProjectDirectory(string directory)
@@ -92,29 +87,32 @@ namespace Xs.Cli.Node.Projects
                 .Select(e => ResolvePackageDependency(name, e, packages, configuration))
                 .ToHashSet();
 
-            var context = new SpecialProjectContext(
-                Constants.ProjectType,
-                name,
-                version,
-                description,
-                file,
-                projectDependencies,
-                packageDependencies,
-                scripts,
-                shell,
-                loggerConfiguration,
-                logger,
-                auditRules,
-                mapper
-            );
+            var isTestProject = scripts.ContainsKey("test");
 
-            if (scripts.ContainsKey("test"))
-                return new TestProject(context);
+            if (isTestProject)
+                return new TestProject(getContext<TestProject>());
 
             if (isPackable)
-                return new LibraryProject(context);
+                return new LibraryProject(getContext<LibraryProject>());
 
-            return new BaseProject(context);
+            return new SealedProject(getContext<SealedProject>());
+
+            SpecialProjectContext<TProject> getContext<TProject>() where TProject : SpecialProject<TProject>
+                => new SpecialProjectContext<TProject>(
+                    Constants.ProjectType,
+                    name,
+                    version,
+                    description,
+                    file,
+                    projectDependencies,
+                    packageDependencies,
+                    scripts,
+                    shell,
+                    loggerConfiguration,
+                    provider.GetRequiredService<ILogger<TProject>>(),
+                    auditRules,
+                    mapper
+                );
         }
     }
 }

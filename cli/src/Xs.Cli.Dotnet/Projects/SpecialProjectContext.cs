@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -9,7 +9,7 @@ using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class SpecialProjectContext : ProjectBaseContext
+    internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> where TProject : SpecialProject<TProject>
     {
         public TargetFramework TargetFramework { get; }
 
@@ -29,7 +29,7 @@ namespace Xs.Cli.Dotnet.Projects
             HashSet<Dependency<Package>> packages,
             IShell shell,
             LoggerConfiguration loggerConfiguration,
-            ILogger logger,
+            ILogger<TProject> logger,
             TargetFramework targetFramework,
             OutputType outputType,
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,

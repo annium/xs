@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Logging.Abstractions;
 using NodaTime;
-using Xs.Cli.Core.Logging;
 
 namespace Xs.Cli.Main.Tools
 {
@@ -12,11 +12,11 @@ namespace Xs.Cli.Main.Tools
     {
         private readonly Func<Instant> getInstant;
 
-        private readonly ILogger logger;
+        private readonly ILogger<Watcher> logger;
 
         public Watcher(
             Func<Instant> getInstant,
-            ILogger logger
+            ILogger<Watcher> logger
         )
         {
             this.getInstant = getInstant;

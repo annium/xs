@@ -2,8 +2,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
@@ -21,12 +21,12 @@ namespace Xs.Cli.Main.Commands
 
         private readonly ProjectsRunner runner;
 
-        private readonly ILogger logger;
+        private readonly ILogger<BuildCommand> logger;
 
         public BuildCommand(
             DiscoverProjectsTask discoverTask,
             ProjectsRunner runner,
-            ILogger logger
+            ILogger<BuildCommand> logger
         )
         {
             this.discoverTask = discoverTask;

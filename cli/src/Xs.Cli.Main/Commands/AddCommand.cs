@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
@@ -23,13 +23,13 @@ namespace Xs.Cli.Main.Commands
 
         private readonly AddProjectDependencyTask addProjectDependencyTask;
 
-        private readonly ILogger logger;
+        private readonly ILogger<AddCommand> logger;
 
         public AddCommand(
             DiscoverProjectsTask discoverTask,
             AddPackageDependencyTask addPackageDependencyTask,
             AddProjectDependencyTask addProjectDependencyTask,
-            ILogger logger
+            ILogger<AddCommand> logger
         )
         {
             this.addPackageDependencyTask = addPackageDependencyTask;

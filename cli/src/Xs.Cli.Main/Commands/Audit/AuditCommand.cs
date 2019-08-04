@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
 
@@ -21,12 +21,12 @@ namespace Xs.Cli.Main.Commands.Audit
 
         private readonly IAuditRule[] rules;
 
-        private readonly ILogger logger;
+        private readonly ILogger<AuditCommand> logger;
 
         public AuditCommand(
             DiscoverProjectsTask discoverTask,
             IEnumerable<IAuditRule> rules,
-            ILogger logger
+            ILogger<AuditCommand> logger
         )
         {
             this.discoverTask = discoverTask;

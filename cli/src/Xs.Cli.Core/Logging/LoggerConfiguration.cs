@@ -1,11 +1,8 @@
+using Annium.Logging.Abstractions;
+
 namespace Xs.Cli.Core.Logging
 {
-    public class LoggerConfiguration
-    {
-        public LogLevel LogLevel { get; internal set; }
-    }
-
-    internal class RawLoggerConfiguration
+    internal class LoggerConfiguration
     {
         public bool Trace { get; set; } = false;
 
@@ -13,13 +10,11 @@ namespace Xs.Cli.Core.Logging
 
         public bool Info { get; set; } = false;
 
-        public static explicit operator LoggerConfiguration(RawLoggerConfiguration raw)
+        public static explicit operator Annium.Logging.Abstractions.LoggerConfiguration(LoggerConfiguration raw)
         {
-            var cfg = new LoggerConfiguration();
+            var logLevel = getLevel();
 
-            cfg.LogLevel = getLevel();
-
-            return cfg;
+            return new Annium.Logging.Abstractions.LoggerConfiguration(logLevel);
 
             LogLevel getLevel()
             {

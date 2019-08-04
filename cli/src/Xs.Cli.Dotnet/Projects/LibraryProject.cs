@@ -6,9 +6,9 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class LibraryProject : BaseProject, IPublishableProject
+    internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProject
     {
-        public LibraryProject(SpecialProjectContext context) : base(context) { }
+        public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context) { }
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {

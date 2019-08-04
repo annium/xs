@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Annium.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -14,37 +15,27 @@ namespace Xs.Cli.Dotnet.Projects
     internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
     {
         public const string ProjectFileExtension = ".csproj";
-
         public const string TestSDK = "Microsoft.NET.Test.Sdk";
-
         public const string TestCoveragePackage = "coverlet.msbuild";
-
         public static readonly string[] TrackedFileExtensions = new [] { ".cs" };
-
         public static readonly string[] IgnoredFolders = new [] { "bin", "obj" };
-
         private const string projectFileMask = "*.csproj";
-
         private static readonly string[] TestDependencies = new [] { TestSDK, TestCoveragePackage };
-
         public ProjectType Type { get; } = Constants.ProjectType;
-
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-
         private readonly ProjectMapper mapper;
-
         private readonly IShell shell;
-
         private readonly LoggerConfiguration loggerConfiguration;
-
-        private readonly ILogger logger;
+        private readonly ILogger<ProjectFactory> logger;
+        private readonly IServiceProvider provider;
 
         public ProjectFactory(
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             IShell shell,
             LoggerConfiguration loggerConfiguration,
-            ILogger logger
+            ILogger<ProjectFactory> logger,
+            IServiceProvider provider
         )
         {
             this.auditRules = auditRules;
@@ -52,6 +43,7 @@ namespace Xs.Cli.Dotnet.Projects
             this.shell = shell;
             this.loggerConfiguration = loggerConfiguration;
             this.logger = logger;
+            this.provider = provider;
         }
 
         public bool IsProjectDirectory(string directory)
@@ -99,34 +91,35 @@ namespace Xs.Cli.Dotnet.Projects
                 .Select(e => ResolvePackageDependency(name, e, packages, configuration))
                 .ToHashSet();
 
-            var context = new SpecialProjectContext(
-                Constants.ProjectType,
-                name,
-                version,
-                description,
-                file,
-                projectDependencies,
-                packageDependencies,
-                shell,
-                loggerConfiguration,
-                logger,
-                targetFramework,
-                outputType,
-                auditRules,
-                mapper
-            );
-
             var isTestProject = configuration.SkipChecks ?
                 packageDependencies.Any(d => d.Value.Name == TestSDK) :
                 TestDependencies.All(d => packageDependencies.Any(e => e.Value.Name == d));
 
             if (isTestProject)
-                return new TestProject(context);
+                return new TestProject(getContext<TestProject>());
 
             if (isPackable)
-                return new LibraryProject(context);
+                return new LibraryProject(getContext<LibraryProject>());
 
-            return new BaseProject(context);
+            return new SealedProject(getContext<SealedProject>());
+
+            SpecialProjectContext<TProject> getContext<TProject>() where TProject : SpecialProject<TProject>
+                => new SpecialProjectContext<TProject>(
+                    Constants.ProjectType,
+                    name,
+                    version,
+                    description,
+                    file,
+                    projectDependencies,
+                    packageDependencies,
+                    shell,
+                    loggerConfiguration,
+                    provider.GetRequiredService<ILogger<TProject>>(),
+                    targetFramework,
+                    outputType,
+                    auditRules,
+                    mapper
+                );
         }
     }
 }

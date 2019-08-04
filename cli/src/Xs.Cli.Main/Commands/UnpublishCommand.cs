@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Main.Tasks;
@@ -28,14 +28,14 @@ namespace Xs.Cli.Main.Commands
 
         private readonly ServerClientFactory serverClientFactory;
 
-        private readonly ILogger logger;
+        private readonly ILogger<UnpublishCommand> logger;
 
         public UnpublishCommand(
             IConfigurationManager configurationManager,
             DiscoverProjectsTask discoverTask,
             ProjectsRunner runner,
             ServerClientFactory serverClientFactory,
-            ILogger logger
+            ILogger<UnpublishCommand> logger
         )
         {
             this.configurationManager = configurationManager;

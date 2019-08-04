@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class TestProject : BaseProject, ITestableProject
+    internal class TestProject : SpecialProject<TestProject>, ITestableProject
     {
-        public TestProject(SpecialProjectContext context) : base(context) { }
+        public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
 
         public Task TestAsync(Env env, string filter, CancellationToken token)
         {

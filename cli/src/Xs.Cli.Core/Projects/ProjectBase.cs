@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Projects
 {
-    public abstract class ProjectBase : IProject
+    public abstract class ProjectBase<TProject> : IProject where TProject : ProjectBase<TProject>
     {
         public ProjectType Type { get; }
 
@@ -30,9 +30,9 @@ namespace Xs.Cli.Core.Projects
 
         protected readonly LoggerConfiguration loggerConfiguration;
 
-        protected readonly ILogger logger;
+        protected readonly ILogger<ProjectBase<TProject>> logger;
 
-        protected ProjectBase(ProjectBaseContext context)
+        protected ProjectBase(ProjectBaseContext<TProject> context)
         {
             Type = context.Type;
             Name = context.Name;

@@ -6,17 +6,11 @@ namespace Xs.Cli.Node.Projects
     internal class RawProject
     {
         public string Name { get; set; }
-
         public Version Version { get; set; }
-
         public string Description { get; set; }
-
         public IEnumerable<Dependency<string>> Projects { get; set; }
-
         public IEnumerable<Dependency<Package>> Packages { get; set; }
-
         public IReadOnlyDictionary<string, string> Scripts { get; set; }
-
         public bool IsPackable { get; set; }
 
         public void Deconstruct(

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -17,10 +17,10 @@ namespace Xs.Cli.Node.Tools
 
         public string[] IgnorePatterns { get; } = new [] { file };
 
-        private readonly ILogger logger;
+        private readonly ILogger<SpecialConfigurationManager> logger;
 
         public SpecialConfigurationManager(
-            ILogger logger
+            ILogger<SpecialConfigurationManager> logger
         )
         {
             this.logger = logger;

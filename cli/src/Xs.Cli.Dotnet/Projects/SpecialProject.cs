@@ -12,7 +12,7 @@ using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal class BaseProject : ProjectBase, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject
+    internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         private static object cacheLocker = new object();
 
@@ -24,7 +24,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         private readonly ProjectMapper mapper;
 
-        public BaseProject(SpecialProjectContext context) : base(context)
+        public SpecialProject(SpecialProjectContext<TProject> context) : base(context)
         {
             TargetFramework = context.TargetFramework;
             OutputType = context.OutputType;
@@ -97,7 +97,7 @@ namespace Xs.Cli.Dotnet.Projects
         public override void Save() => mapper.Save(this);
 
         protected override bool IsRelated(FileInfo file) =>
-            ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-            !FileManager.IsRootedDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
+        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
+        !FileManager.IsRootedDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
     }
 }

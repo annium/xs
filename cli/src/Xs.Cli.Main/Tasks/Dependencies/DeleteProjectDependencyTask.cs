@@ -1,15 +1,15 @@
 using System.Linq;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Main.Tasks.Dependencies
 {
     internal class DeleteProjectDependencyTask
     {
-        private readonly ILogger logger;
+        private readonly ILogger<DeleteProjectDependencyTask> logger;
 
         public DeleteProjectDependencyTask(
-            ILogger logger
+            ILogger<DeleteProjectDependencyTask> logger
         )
         {
             this.logger = logger;

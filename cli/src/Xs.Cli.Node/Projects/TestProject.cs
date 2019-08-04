@@ -5,9 +5,9 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class TestProject : LibraryProject, ITestableProject
+    internal class TestProject : SpecialProject<TestProject>, ITestableProject
     {
-        public TestProject(SpecialProjectContext context) : base(context) { }
+        public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
 
         public Task TestAsync(Env env, string filter, CancellationToken token) =>
             string.IsNullOrWhiteSpace(filter) ?

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -24,10 +24,10 @@ namespace Xs.Cli.Dotnet.Tools
 
         private readonly Uri defaultUri = new Uri(Constants.DefaultServer);
 
-        private readonly ILogger logger;
+        private readonly ILogger<SpecialConfigurationManager> logger;
 
         public SpecialConfigurationManager(
-            ILogger logger
+            ILogger<SpecialConfigurationManager> logger
         )
         {
             this.logger = logger;

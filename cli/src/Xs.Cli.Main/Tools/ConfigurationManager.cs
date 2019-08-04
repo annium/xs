@@ -6,8 +6,8 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.Mapper;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Helpers;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -23,12 +23,12 @@ namespace Xs.Cli.Main.Tools
         private const string ignoreFile = ".gitignore";
         private readonly MainClientFactory mainClientFactory;
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
-        private readonly ILogger logger;
+        private readonly ILogger<ConfigurationManager> logger;
 
         public ConfigurationManager(
             MainClientFactory mainClientFactory,
             IEnumerable<ISpecialConfigurationManager> specialManagers,
-            ILogger logger
+            ILogger<ConfigurationManager> logger
         )
         {
             this.specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);

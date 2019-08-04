@@ -1,32 +1,23 @@
 using System.Collections.Generic;
 using System.IO;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Projects
 {
-    public abstract class ProjectBaseContext
+    public abstract class ProjectBaseContext<TProject> where TProject : ProjectBase<TProject>
     {
         public ProjectType Type { get; }
-
         public string Name { get; }
-
         public Version Version { get; }
-
         public string Description { get; }
-
         public FileInfo File { get; }
-
         public HashSet<Dependency<IProject>> Projects { get; }
-
         public HashSet<Dependency<Package>> Packages { get; }
-
         public IShell Shell { get; }
-
         public LoggerConfiguration LoggerConfiguration { get; }
-
-        public ILogger Logger { get; }
+        public ILogger<TProject> Logger { get; }
 
         public ProjectBaseContext(
             ProjectType type,
@@ -38,7 +29,7 @@ namespace Xs.Cli.Core.Projects
             HashSet<Dependency<Package>> packages,
             IShell shell,
             LoggerConfiguration loggerConfiguration,
-            ILogger logger
+            ILogger<TProject> logger
         )
         {
             Type = type;

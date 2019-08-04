@@ -8,13 +8,13 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class LibraryProject : BaseProject, IPublishableProject
+    internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProject
     {
-        public LibraryProject(SpecialProjectContext context) : base(context) { }
+        public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context) { }
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
-            await InstallAsync(true,token);
+            await InstallAsync(true, token);
             await BuildAsync(Env.Production, token);
 
             var fileName = $"{Name}-{version}.tgz";

@@ -12,7 +12,6 @@ namespace Xs.Cli.Node.Projects
     internal class DependencyManager : IDependencyManager
     {
         public ProjectType Type { get; } = Constants.ProjectType;
-
         public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
 
         public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)

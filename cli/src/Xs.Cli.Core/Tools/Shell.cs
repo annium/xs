@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Xs.Cli.Core.Logging;
+using Annium.Logging.Abstractions;
 
 namespace Xs.Cli.Core.Tools
 {
@@ -13,11 +13,11 @@ namespace Xs.Cli.Core.Tools
     {
         private readonly LoggerConfiguration loggerConfiguration;
 
-        private readonly ILogger logger;
+        private readonly ILogger<Shell> logger;
 
         public Shell(
             LoggerConfiguration loggerConfiguration,
-            ILogger logger
+            ILogger<Shell> logger
         )
         {
             this.loggerConfiguration = loggerConfiguration;
@@ -67,7 +67,7 @@ namespace Xs.Cli.Core.Tools
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 command = $"cmd /C {command}";
 
             var args = command.Split(' ');
@@ -121,7 +121,7 @@ namespace Xs.Cli.Core.Tools
                     if (line == null)
                         return;
 
-                    logger.Pipe(LogLevel.Debug, line);
+                    logger.Debug(line);
                 }
             }
         }

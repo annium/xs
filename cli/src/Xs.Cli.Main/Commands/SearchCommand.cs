@@ -2,8 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Main.Tools;
 using Xs.RegistryClient.Main;
@@ -20,12 +20,12 @@ namespace Xs.Cli.Main.Commands
 
         private readonly MainClientFactory mainClientFactory;
 
-        private readonly ILogger logger;
+        private readonly ILogger<SearchCommand> logger;
 
         public SearchCommand(
             IConfigurationManager configurationManager,
             MainClientFactory mainClientFactory,
-            ILogger logger
+            ILogger<SearchCommand> logger
         )
         {
             this.configurationManager = configurationManager;

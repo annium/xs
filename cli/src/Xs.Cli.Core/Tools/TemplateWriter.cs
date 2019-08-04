@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Annium.Logging.Abstractions;
 using Scriban;
 using Xs.Cli.Core.Helpers;
-using Xs.Cli.Core.Logging;
 
 namespace Xs.Cli.Core.Tools
 {
@@ -13,7 +13,7 @@ namespace Xs.Cli.Core.Tools
     {
         private const string TplExtension = "tpl";
 
-        private readonly ILogger logger;
+        private readonly ILogger<TemplateWriter> logger;
 
         private string root = Directory.GetCurrentDirectory();
 
@@ -41,7 +41,7 @@ namespace Xs.Cli.Core.Tools
         private IList<Resource> resources;
 
         public TemplateWriter(
-            ILogger logger
+            ILogger<TemplateWriter> logger
         )
         {
             this.logger = logger;

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
-using Xs.Cli.Core.Logging;
 
 namespace Xs.Cli.Main.Commands.Audit
 {
@@ -16,11 +16,11 @@ namespace Xs.Cli.Main.Commands.Audit
 
         private readonly IAuditRule[] rules;
 
-        private readonly ILogger logger;
+        private readonly ILogger<AuditRulesCommand> logger;
 
         public AuditRulesCommand(
             IEnumerable<IAuditRule> rules,
-            ILogger logger
+            ILogger<AuditRulesCommand> logger
         )
         {
             this.rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();

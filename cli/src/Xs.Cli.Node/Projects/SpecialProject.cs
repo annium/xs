@@ -11,19 +11,15 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal class BaseProject : ProjectBase, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject
+    internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         private static string cacheDir;
-
         private static object cacheLocker = new object();
-
         protected readonly IReadOnlyDictionary<string, string> scripts;
-
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-
         private readonly ProjectMapper mapper;
 
-        public BaseProject(SpecialProjectContext context) : base(context)
+        public SpecialProject(SpecialProjectContext<TProject> context) : base(context)
         {
             scripts = context.Scripts;
             auditRules = context.AuditRules;
@@ -93,12 +89,12 @@ namespace Xs.Cli.Node.Projects
         }
 
         public Task BuildAsync(Env env, CancellationToken token) =>
-            scripts.ContainsKey("build") ? RunAsync("build", "yarn run build", token) : Task.CompletedTask;
+        scripts.ContainsKey("build") ? RunAsync("build", "yarn run build", token) : Task.CompletedTask;
 
         public override void Save() => mapper.Save(this);
 
         protected override bool IsRelated(FileInfo file) =>
-            ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-            !FileManager.IsRootedDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
+        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
+        !FileManager.IsRootedDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
     }
 }

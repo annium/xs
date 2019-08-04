@@ -1,8 +1,8 @@
 using System.IO;
 using System.Threading;
 using Annium.Extensions.Arguments;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Node.Projects;
 using Xs.Cli.Node.Tools;
@@ -17,11 +17,11 @@ namespace Xs.Cli.Node.Commands.New
 
         private readonly ITemplateWriter templateWriter;
 
-        private readonly ILogger logger;
+        private readonly ILogger<AppReactCommand> logger;
 
         public AppReactCommand(
             ITemplateWriter templateWriter,
-            ILogger logger
+            ILogger<AppReactCommand> logger
         )
         {
             this.templateWriter = templateWriter;

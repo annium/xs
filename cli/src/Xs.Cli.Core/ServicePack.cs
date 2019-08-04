@@ -1,9 +1,9 @@
 using System;
 using Annium.Extensions.Configuration;
 using Annium.Extensions.DependencyInjection;
+using Annium.Logging.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
-using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
@@ -16,7 +16,7 @@ namespace Xs.Cli.Core
             services.AddSingleton(
                 (LoggerConfiguration) new ConfigurationBuilder()
                 .AddCommandLineArgs()
-                .Build<RawLoggerConfiguration>()
+                .Build<Logging.LoggerConfiguration>()
             );
         }
 
@@ -24,11 +24,12 @@ namespace Xs.Cli.Core
         {
             services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
 
+            services.AddConsoleLogger(provider.GetRequiredService<LoggerConfiguration>());
+
             // projects
             services.AddSingleton<IProjectFactory, ProjectFactory>();
 
             // tools
-            services.AddSingleton<ILogger, Logger>();
             services.AddSingleton<IShell, Shell>();
             services.AddTransient<ITemplateWriter, TemplateWriter>();
         }
