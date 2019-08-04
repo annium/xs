@@ -7,11 +7,8 @@ namespace Xs.Cli.Core.Models
     public class Version : Comparable<Version>
     {
         public uint Major { get; private set; }
-
         public uint Minor { get; private set; }
-
         public uint Patch { get; private set; }
-
         public string Suffix { get; private set; }
 
         public Version(uint major, uint minor, uint patch, string suffix)

@@ -11,11 +11,8 @@ namespace Xs.Cli.Dotnet.Commands.New
     public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "lib.tests";
-
         public override string Description { get; } = "Create new library tests project.";
-
         private readonly ITemplateWriter templateWriter;
-
         private readonly ILogger<LibTestsCommand> logger;
 
         public LibTestsCommand(

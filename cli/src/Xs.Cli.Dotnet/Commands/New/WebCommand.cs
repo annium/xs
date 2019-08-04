@@ -11,11 +11,8 @@ namespace Xs.Cli.Dotnet.Commands.New
     public class WebCommand : Command<WebCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "web";
-
         public override string Description { get; } = "Create new web project.";
-
         private readonly ITemplateWriter templateWriter;
-
         private readonly ILogger<WebCommand> logger;
 
         public WebCommand(

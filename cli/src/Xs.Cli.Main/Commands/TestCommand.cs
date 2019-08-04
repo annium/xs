@@ -14,13 +14,9 @@ namespace Xs.Cli.Main.Commands
     internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "test";
-
         public override string Description { get; } = "Test projects.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly ProjectsRunner runner;
-
         private readonly ILogger<TestCommand> logger;
 
         public TestCommand(

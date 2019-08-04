@@ -11,11 +11,8 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class DeleteCommand : Command<DiscoverConfiguration>
     {
         public override string Id { get; } = "delete";
-
         public override string Description { get; } = "Stop tracking registry.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly IConfigurationManager configurationManager;
 
         public DeleteCommand(

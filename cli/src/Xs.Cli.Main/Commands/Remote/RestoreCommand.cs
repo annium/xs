@@ -14,13 +14,9 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class RestoreCommand : AsyncCommand<RestoreCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "restore";
-
         public override string Description { get; } = "Restore tracked registry information.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly IConfigurationManager configurationManager;
-
         private readonly MainClientFactory mainClientFactory;
 
         public RestoreCommand(

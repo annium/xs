@@ -5,7 +5,6 @@ namespace Xs.Cli.Core.Helpers
     public class Resource
     {
         public string Name { get; }
-
         public Stream Content { get; }
 
         public Resource(

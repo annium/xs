@@ -14,13 +14,9 @@ namespace Xs.Cli.Main.Commands
     internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "clean";
-
         public override string Description { get; } = "Clean projects.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly ProjectsRunner runner;
-
         private readonly ILogger<CleanCommand> logger;
 
         public CleanCommand(

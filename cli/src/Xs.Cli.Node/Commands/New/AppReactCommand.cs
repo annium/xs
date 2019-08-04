@@ -12,11 +12,8 @@ namespace Xs.Cli.Node.Commands.New
     public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "app.react";
-
         public override string Description { get; } = "Create new app project, using React.";
-
         private readonly ITemplateWriter templateWriter;
-
         private readonly ILogger<AppReactCommand> logger;
 
         public AppReactCommand(

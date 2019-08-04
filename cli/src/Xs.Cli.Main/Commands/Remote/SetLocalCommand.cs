@@ -13,13 +13,9 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "set-local";
-
         public override string Description { get; } = "Set local registry.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly IConfigurationManager configurationManager;
-
         private readonly MainClientFactory mainClientFactory;
 
         public SetLocalCommand(

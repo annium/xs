@@ -12,11 +12,8 @@ namespace Xs.Cli.Core.Tools
     internal class TemplateWriter : ITemplateWriter
     {
         private const string TplExtension = "tpl";
-
         private readonly ILogger<TemplateWriter> logger;
-
         private string root = Directory.GetCurrentDirectory();
-
         private string[] extensions = new string[]
         {
             "cs",
@@ -37,7 +34,6 @@ namespace Xs.Cli.Core.Tools
             "ts",
             "tsx"
         };
-
         private IList<Resource> resources;
 
         public TemplateWriter(

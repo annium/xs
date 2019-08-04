@@ -13,17 +13,11 @@ namespace Xs.Cli.Dotnet.Tools
     internal class SpecialConfigurationManager : ISpecialConfigurationManager
     {
         private const string file = "nuget.config";
-
         public ProjectType Type { get; } = Constants.ProjectType;
-
         public string[] IgnorePatterns { get; } = new [] { file, "lcov.info" };
-
         private readonly string registryName = "registry";
-
         private readonly string defaultName = "nuget";
-
         private readonly Uri defaultUri = new Uri(Constants.DefaultServer);
-
         private readonly ILogger<SpecialConfigurationManager> logger;
 
         public SpecialConfigurationManager(

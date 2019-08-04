@@ -14,13 +14,9 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "set";
-
         public override string Description { get; } = "Start tracking registry.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly IConfigurationManager configurationManager;
-
         private readonly MainClientFactory mainClientFactory;
 
         public SetCommand(

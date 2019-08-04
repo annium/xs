@@ -12,11 +12,8 @@ namespace Xs.Cli.Node.Commands.New
     public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "lib.react";
-
         public override string Description { get; } = "Create new library project, using React.";
-
         private readonly ITemplateWriter templateWriter;
-
         private readonly ILogger<LibReactCommand> logger;
 
         public LibReactCommand(

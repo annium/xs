@@ -14,15 +14,10 @@ namespace Xs.Cli.Main.Commands
     internal class AddCommand : Command<AddCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "add";
-
         public override string Description { get; } = "Add dependency to projects.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly AddPackageDependencyTask addPackageDependencyTask;
-
         private readonly AddProjectDependencyTask addProjectDependencyTask;
-
         private readonly ILogger<AddCommand> logger;
 
         public AddCommand(

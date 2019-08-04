@@ -13,13 +13,9 @@ namespace Xs.Cli.Main.Commands
     internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "search";
-
         public override string Description { get; } = "Search for packages in tracked registry.";
-
         private readonly IConfigurationManager configurationManager;
-
         private readonly MainClientFactory mainClientFactory;
-
         private readonly ILogger<SearchCommand> logger;
 
         public SearchCommand(

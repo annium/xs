@@ -16,17 +16,11 @@ namespace Xs.Cli.Main.Commands
     internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "update";
-
         public override string Description { get; } = "Update dependencies in projects.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly IEnumerable<IDependencyManager> dependencyManagers;
-
         private readonly IConfigurationManager configurationManager;
-
         private readonly ProjectsRunner runner;
-
         private readonly ILogger<UpdateCommand> logger;
 
         public UpdateCommand(

@@ -11,7 +11,6 @@ namespace Xs.Cli.Main.Tools
     internal class Watcher
     {
         private readonly Func<Instant> getInstant;
-
         private readonly ILogger<Watcher> logger;
 
         public Watcher(

@@ -7,17 +7,11 @@ namespace Xs.Cli.Dotnet.Projects
     internal class RawProject
     {
         public string Name { get; set; }
-
         public Version Version { get; set; }
-
         public string Description { get; set; }
-
         public TargetFramework TargetFramework { get; set; }
-
         public OutputType OutputType { get; set; }
-
         public IEnumerable<Dependency<string>> Projects { get; set; }
-
         public IEnumerable<Dependency<Package>> Packages { get; set; }
 
         public bool IsPackable { get; set; }

@@ -11,9 +11,7 @@ namespace Xs.Cli.Main.Commands.Remote
     internal class ShowCommand : AsyncCommand<DiscoverConfiguration>
     {
         public override string Id { get; } = "show";
-
         public override string Description { get; } = "Show information about tracked registry.";
-
         private readonly IConfigurationManager configurationManager;
 
         public ShowCommand(

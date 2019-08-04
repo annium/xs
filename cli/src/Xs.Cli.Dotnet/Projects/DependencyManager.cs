@@ -12,9 +12,7 @@ namespace Xs.Cli.Dotnet.Projects
     internal class DependencyManager : IDependencyManager
     {
         public ProjectType Type { get; } = Constants.ProjectType;
-
         public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
-
         private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
 
         public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)

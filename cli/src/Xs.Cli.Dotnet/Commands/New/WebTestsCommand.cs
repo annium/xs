@@ -11,11 +11,8 @@ namespace Xs.Cli.Dotnet.Commands.New
     public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "web.tests";
-
         public override string Description { get; } = "Create new web tests project.";
-
         private readonly ITemplateWriter templateWriter;
-
         private readonly ILogger<WebTestsCommand> logger;
 
         public WebTestsCommand(

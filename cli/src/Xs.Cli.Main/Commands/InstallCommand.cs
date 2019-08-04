@@ -14,13 +14,9 @@ namespace Xs.Cli.Main.Commands
     internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "install";
-
         public override string Description { get; } = "Install projects' dependencies.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly ProjectsRunner runner;
-
         private readonly ILogger<InstallCommand> logger;
 
         public InstallCommand(

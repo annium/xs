@@ -17,7 +17,6 @@ namespace Xs.Cli.Main.Commands
         public override string Description { get; } = "Publish packages to registry.";
         private readonly IConfigurationManager configurationManager;
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly ProjectsRunner runner;
         private readonly ILogger<PublishCommand> logger;
 

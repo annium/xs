@@ -7,11 +7,8 @@ namespace Xs.Cli.Core.Projects
     public interface IProject : IReference
     {
         string Description { get; }
-
         FileInfo File { get; }
-
         HashSet<Dependency<IProject>> Projects { get; }
-
         HashSet<Dependency<Package>> Packages { get; }
 
         bool IsRelated(string path);

@@ -12,11 +12,8 @@ namespace Xs.Cli.Node.Tools
     internal class SpecialConfigurationManager : ISpecialConfigurationManager
     {
         private const string file = ".npmrc";
-
         public ProjectType Type { get; } = Constants.ProjectType;
-
         public string[] IgnorePatterns { get; } = new [] { file };
-
         private readonly ILogger<SpecialConfigurationManager> logger;
 
         public SpecialConfigurationManager(

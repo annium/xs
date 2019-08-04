@@ -12,11 +12,8 @@ namespace Xs.Cli.Dotnet.Projects
     internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> where TProject : SpecialProject<TProject>
     {
         public TargetFramework TargetFramework { get; }
-
         public OutputType OutputType { get; }
-
         public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
-
         public ProjectMapper Mapper { get; }
 
         public SpecialProjectContext(

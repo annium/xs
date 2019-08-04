@@ -17,17 +17,11 @@ namespace Xs.Cli.Main.Commands
     internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "unpublish";
-
         public override string Description { get; } = "Unpublish package from registry.";
-
         private readonly IConfigurationManager configurationManager;
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly ProjectsRunner runner;
-
         private readonly ServerClientFactory serverClientFactory;
-
         private readonly ILogger<UnpublishCommand> logger;
 
         public UnpublishCommand(

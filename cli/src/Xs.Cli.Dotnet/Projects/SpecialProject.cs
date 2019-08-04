@@ -15,13 +15,9 @@ namespace Xs.Cli.Dotnet.Projects
     internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         private static object cacheLocker = new object();
-
         public TargetFramework TargetFramework { get; }
-
         public OutputType OutputType { get; }
-
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-
         private readonly ProjectMapper mapper;
 
         public SpecialProject(SpecialProjectContext<TProject> context) : base(context)

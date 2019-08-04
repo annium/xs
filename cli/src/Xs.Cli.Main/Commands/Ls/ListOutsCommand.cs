@@ -13,9 +13,7 @@ namespace Xs.Cli.Main.Commands.Ls
     internal class ListOutsCommand : Command<ListOutsCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "outs";
-
         public override string Description { get; } = "List projects and their project dependents.";
-
         private readonly DiscoverProjectsTask discoverTask;
 
         public ListOutsCommand(

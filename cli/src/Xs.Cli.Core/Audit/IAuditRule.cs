@@ -11,7 +11,6 @@ namespace Xs.Cli.Core.Audit
     public interface IAuditRule
     {
         string Code { get; }
-        
         string Description { get; }
     }
 }

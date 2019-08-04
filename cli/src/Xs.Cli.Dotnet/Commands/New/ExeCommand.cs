@@ -11,11 +11,8 @@ namespace Xs.Cli.Dotnet.Commands.New
     public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "exe";
-
         public override string Description { get; } = "Create new exe project.";
-
         private readonly ITemplateWriter templateWriter;
-
         private readonly ILogger<ExeCommand> logger;
 
         public ExeCommand(

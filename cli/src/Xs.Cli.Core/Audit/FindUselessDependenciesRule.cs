@@ -9,7 +9,6 @@ namespace Xs.Cli.Core.Audit
     public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where TProject : IProject
     {
         public string Code { get; } = "useless-deps";
-
         public string Description { get; } = "Finds useless dependencies in projects. Fix deletes useless deps";
 
         public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)

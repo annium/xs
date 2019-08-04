@@ -14,13 +14,9 @@ namespace Xs.Cli.Main.Commands
     internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "build";
-
         public override string Description { get; } = "Build projects.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly ProjectsRunner runner;
-
         private readonly ILogger<BuildCommand> logger;
 
         public BuildCommand(

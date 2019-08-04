@@ -12,7 +12,6 @@ namespace Xs.Cli.Main.Tasks
     internal class DiscoverProjectsTask
     {
         private readonly IProjectFactory projectFactory;
-
         private readonly ILogger<DiscoverProjectsTask> logger;
 
         public DiscoverProjectsTask(

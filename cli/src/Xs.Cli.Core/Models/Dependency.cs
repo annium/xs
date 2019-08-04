@@ -5,7 +5,6 @@ namespace Xs.Cli.Core.Models
     public class Dependency<T> : Equatable<Dependency<T>>
     {
         public DependencyType Type { get; }
-
         public T Value { get; }
 
         public Dependency(

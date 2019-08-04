@@ -5,9 +5,7 @@ namespace Xs.Cli.Core.Models
     public class Package : Equatable<Package>, IReference
     {
         public ProjectType Type { get; }
-
         public string Name { get; }
-
         public Version Version { get; }
 
         public Package(

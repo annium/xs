@@ -12,15 +12,10 @@ namespace Xs.Cli.Main.Commands
     internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "delete";
-
         public override string Description { get; } = "Delete dependency from projects.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly DeletePackageDependencyTask deletePackageDependencyTask;
-
         private readonly DeleteProjectDependencyTask deleteProjectDependencyTask;
-
         private readonly ILogger<DeleteCommand> logger;
 
         public DeleteCommand(

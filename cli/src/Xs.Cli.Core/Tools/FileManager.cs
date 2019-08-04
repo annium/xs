@@ -7,7 +7,6 @@ namespace Xs.Cli.Core.Tools
     public static class FileManager
     {
         public const string IgnoreFile = ".xs.ignore";
-
         private static readonly string[] globallyIgnoredDirectories = new [] { ".git" };
 
         public static bool FindDirectory(

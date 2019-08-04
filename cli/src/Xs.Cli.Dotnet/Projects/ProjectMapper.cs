@@ -15,7 +15,6 @@ namespace Xs.Cli.Dotnet.Projects
     internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
         private static readonly string[] implicitPackages = new [] { "Microsoft.AspNetCore.App" };
-
         private static readonly IEnumerable<string> outputTypes = new [] { "Exe", "Library" };
 
         public RawProject Load(string path, DiscoverConfiguration configuration)

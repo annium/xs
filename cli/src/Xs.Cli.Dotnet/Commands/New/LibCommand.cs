@@ -11,11 +11,8 @@ namespace Xs.Cli.Dotnet.Commands.New
     public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "lib";
-
         public override string Description { get; } = "Create new library project.";
-
         private readonly ITemplateWriter templateWriter;
-
         private readonly ILogger<LibCommand> logger;
 
         public LibCommand(

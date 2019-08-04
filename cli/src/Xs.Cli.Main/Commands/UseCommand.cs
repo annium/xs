@@ -12,15 +12,10 @@ namespace Xs.Cli.Main.Commands
     internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "use";
-
         public override string Description { get; } = "Set dependency in projects to specific version.";
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly AddPackageDependencyTask addPackageDependencyTask;
-
         private readonly DeletePackageDependencyTask deletePackageDependencyTask;
-
         private readonly ILogger<UseCommand> logger;
 
         public UseCommand(
