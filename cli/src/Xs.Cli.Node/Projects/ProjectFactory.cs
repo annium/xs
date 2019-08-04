@@ -82,7 +82,7 @@ namespace Xs.Cli.Node.Projects
         )
         {
             var file = new FileInfo(Path.Combine(directory, ProjectFileName));
-            var(name, version, description, projectDeps, packageDeps, scripts) = mapper.Load(file.FullName, configuration);
+            var(name, version, description, projectDeps, packageDeps, scripts, isPackable) = mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
                 .Select(e => ResolveProjectDependency(name, file, e, projects))
@@ -111,7 +111,10 @@ namespace Xs.Cli.Node.Projects
             if (scripts.ContainsKey("test"))
                 return new TestProject(context);
 
-            return new LibraryProject(context);
+            if (isPackable)
+                return new LibraryProject(context);
+
+            return new BaseProject(context);
         }
     }
 }

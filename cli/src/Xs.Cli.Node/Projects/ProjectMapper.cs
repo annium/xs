@@ -32,6 +32,8 @@ namespace Xs.Cli.Node.Projects
                 project.Description = info.Property(El.Description)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing description");
 
+            project.IsPackable = info.Property(El.Private)?.Value.ToString().ToLowerInvariant() == "true";
+
             var projects = new List<Dependency<string>>();
             projects.AddRange(GetProjectDependencies(El.Dependencies, DependencyType.Normal));
             projects.AddRange(GetProjectDependencies(El.DevDependencies, DependencyType.Dev));
@@ -148,21 +150,14 @@ namespace Xs.Cli.Node.Projects
         private static class El
         {
             public const string Name = "name";
-
             public const string Version = "version";
-
             public const string Description = "description";
-
+            public const string Private = "private";
             public const string Dependencies = "dependencies";
-
             public const string DevDependencies = "devDependencies";
-
             public const string PeerDependencies = "peerDependencies";
-
             public const string FilePrefix = "file:";
-
             public const string Scripts = "scripts";
-
             public const string BrowsersList = "browserslist";
         }
     }

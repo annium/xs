@@ -17,13 +17,16 @@ namespace Xs.Cli.Node.Projects
 
         public IReadOnlyDictionary<string, string> Scripts { get; set; }
 
+        public bool IsPackable { get; set; }
+
         public void Deconstruct(
             out string name,
             out Version version,
             out string description,
             out IEnumerable<Dependency<string>> projects,
             out IEnumerable<Dependency<Package>> packages,
-            out IReadOnlyDictionary<string, string> scripts
+            out IReadOnlyDictionary<string, string> scripts,
+            out bool isPackable
         )
         {
             name = Name;
@@ -32,6 +35,7 @@ namespace Xs.Cli.Node.Projects
             projects = Projects;
             packages = Packages;
             scripts = Scripts;
+            isPackable = IsPackable;
         }
     }
 }
