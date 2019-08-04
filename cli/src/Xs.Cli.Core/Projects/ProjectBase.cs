@@ -4,32 +4,23 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
-using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Projects
 {
     public abstract class ProjectBase<TProject> : IProject where TProject : ProjectBase<TProject>
     {
         public ProjectType Type { get; }
-
         public string Name { get; set; }
-
         public Models.Version Version { get; set; }
-
         public string Description { get; }
-
         public FileInfo File { get; }
-
         public HashSet<Dependency<IProject>> Projects { get; }
-
         public HashSet<Dependency<Package>> Packages { get; }
-
         protected readonly IShell shell;
-
         protected readonly LoggerConfiguration loggerConfiguration;
-
         protected readonly ILogger<ProjectBase<TProject>> logger;
 
         protected ProjectBase(ProjectBaseContext<TProject> context)
@@ -77,9 +68,11 @@ namespace Xs.Cli.Core.Projects
         {
             logger.Info($"Start {Name} {operation}.");
 
-            var result = await shell.RunAsync(
-                new ProcessStartInfo() { WorkingDirectory = File.Directory.FullName },
-                command, pipeOut : true, token : token);
+            var result = await shell
+                .Cmd(command)
+                .Configure(new ProcessStartInfo() { WorkingDirectory = File.Directory.FullName })
+                .Pipe(loggerConfiguration.LogLevel <= LogLevel.Debug)
+                .RunAsync(token);
 
             if (result.IsSuccess)
                 logger.Info($"Finished {Name} {operation}.");

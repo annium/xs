@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
+using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects
 {

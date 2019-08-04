@@ -25,12 +25,12 @@ namespace Xs.Cli.Core
             services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
 
             services.AddConsoleLogger(provider.GetRequiredService<LoggerConfiguration>());
+            services.AddShell();
 
             // projects
             services.AddSingleton<IProjectFactory, ProjectFactory>();
 
             // tools
-            services.AddSingleton<IShell, Shell>();
             services.AddTransient<ITemplateWriter, TemplateWriter>();
         }
     }

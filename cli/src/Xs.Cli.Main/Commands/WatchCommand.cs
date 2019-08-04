@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
 using Xs.Cli.Main.Tasks;
 using Xs.Cli.Main.Tools;
 
@@ -18,37 +18,22 @@ namespace Xs.Cli.Main.Commands
     internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "watch";
-
         public override string Description { get; } = "Watch projects' changes and install/build/test on fly.";
-
         private readonly IProjectFactory projectFactory;
-
         private readonly DiscoverProjectsTask discoverTask;
-
         private readonly ProjectsRunner runner;
-
         private readonly Watcher watcher;
-
         private readonly IShell shell;
-
         private readonly ILogger<WatchCommand> logger;
-
+        private readonly LoggerConfiguration loggerConfiguration;
         private string mask;
-
         private ProjectType type;
-
         private string command;
-
         private bool force;
-
         private bool runTests;
-
         private string testFilter;
-
         private DiscoverConfiguration discoverCfg;
-
         private CancellationToken token;
-
         private IProject[] projects;
 
         public WatchCommand(
@@ -57,7 +42,8 @@ namespace Xs.Cli.Main.Commands
             ProjectsRunner runner,
             Watcher watcher,
             IShell shell,
-            ILogger<WatchCommand> logger
+            ILogger<WatchCommand> logger,
+            LoggerConfiguration loggerConfiguration
         )
         {
             this.projectFactory = projectFactory;
@@ -66,6 +52,7 @@ namespace Xs.Cli.Main.Commands
             this.watcher = watcher;
             this.shell = shell;
             this.logger = logger;
+            this.loggerConfiguration = loggerConfiguration;
         }
 
         public override async Task HandleAsync(
@@ -186,7 +173,10 @@ namespace Xs.Cli.Main.Commands
 
         private Task CallCommand(string path)
         {
-            var result = shell.Start(command.Replace("%", path));
+            var result = shell
+                .Cmd(command.Replace("%", path))
+                .Pipe(loggerConfiguration.LogLevel <= LogLevel.Debug)
+                .Start();
 
             Task.Run(() => pipe(result.Output));
             Task.Run(() => pipe(result.Error));

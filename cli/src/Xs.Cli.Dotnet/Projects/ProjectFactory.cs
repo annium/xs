@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Core.Audit;

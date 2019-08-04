@@ -29,7 +29,7 @@ namespace Xs.Cli.Node.Projects
             {
                 if (string.IsNullOrEmpty(cacheDir))
                 {
-                    var result = context.Shell.RunAsync("yarn cache dir", pipeOut : false).GetAwaiter().GetResult();
+                    var result = context.Shell.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult();
                     cacheDir = result.Output.Trim();
                 }
             }
