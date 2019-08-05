@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Annium.Extensions.Configuration;
-using Annium.Extensions.DependencyInjection;
+using Annium.Configuration.Abstractions;
+using Annium.Core.DependencyInjection;
 using LinqToDB.Data;
 using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

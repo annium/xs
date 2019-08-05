@@ -1,6 +1,6 @@
 using System.IO;
-using Annium.Extensions.Configuration;
-using Annium.Extensions.DependencyInjection;
+using Annium.Configuration.Abstractions;
+using Annium.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Node;
