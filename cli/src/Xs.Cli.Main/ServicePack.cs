@@ -1,6 +1,6 @@
 using System;
-using Annium.Extensions.DependencyInjection;
-using Annium.Extensions.Mapper;
+using Annium.Core.DependencyInjection;
+using Annium.Core.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Main.Commands;
 using Xs.Cli.Main.Tasks;

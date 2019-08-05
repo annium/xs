@@ -1,5 +1,5 @@
 using System;
-using Annium.Extensions.DependencyInjection;
+using Annium.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Projects;

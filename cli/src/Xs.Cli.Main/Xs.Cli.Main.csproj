@@ -17,6 +17,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Extensions.CommandLine" Version="0.1.0" />
-        <PackageReference Include="Annium.Extensions.Entrypoint" Version="0.1.0" />
+        <PackageReference Include="Annium.Core.Entrypoint" Version="0.1.0" />
     </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Annium.Extensions.Entrypoint;
+using Annium.Core.Entrypoint;
 
 namespace Xs.Cli.Main
 {

@@ -10,7 +10,7 @@
         <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
+        <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
         <PackageReference Include="NodaTime" Version="2.4.6" />
     </ItemGroup>

@@ -10,7 +10,7 @@
         <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.Extensions.DependencyInjection" Version="0.1.0" />
-        <PackageReference Include="Annium.Extensions.Entrypoint" Version="0.1.0" />
+        <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
+        <PackageReference Include="Annium.Core.Entrypoint" Version="0.1.0" />
     </ItemGroup>
 </Project>

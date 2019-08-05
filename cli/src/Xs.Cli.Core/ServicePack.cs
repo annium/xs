@@ -1,6 +1,6 @@
 using System;
-using Annium.Extensions.Configuration;
-using Annium.Extensions.DependencyInjection;
+using Annium.Configuration.Abstractions;
+using Annium.Core.DependencyInjection;
 using Annium.Logging.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
@@ -24,7 +24,7 @@ namespace Xs.Cli.Core
         {
             services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
 
-            services.AddConsoleLogger(provider.GetRequiredService<LoggerConfiguration>());
+            services.AddConsoleLogger();
             services.AddShell();
 
             // projects
