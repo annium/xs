@@ -90,8 +90,7 @@ namespace Xs.Cli.Dotnet.Projects
             newProps.Add(new XElement(El.DebugType, "portable"));
             newProps.Add(new XElement(El.LangVersion, "latest"));
             newProps.Add(new XElement(El.WarningsAsErrors, "true"));
-            if (project is LibraryProject)
-                newProps.Add(new XElement(El.IsPackable, "true"));
+            newProps.Add(new XElement(El.IsPackable, project is LibraryProject? "true": "false"));
             if (project is TestProject)
                 newProps.Add(new XElement(El.IsTestProject, "true"));
 
@@ -182,6 +181,9 @@ namespace Xs.Cli.Dotnet.Projects
                 throw new InvalidOperationException($"Project {path} has no {El.WarningsAsErrors} defined or it is not true.");
 
             ensureValidBoolean(El.IsPackable);
+            if (properties.Element(El.IsPackable) == null)
+                throw new InvalidOperationException($"Project {path} has no {El.IsPackable} defined.");
+
             ensureValidBoolean(El.IsTestProject);
 
             void ensureValidBoolean(string el)
