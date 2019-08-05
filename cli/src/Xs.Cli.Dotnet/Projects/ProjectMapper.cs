@@ -104,16 +104,6 @@ namespace Xs.Cli.Dotnet.Projects
             // remove package references group
             info.Elements(El.ItemGroup).Where(e => e.Elements(El.PackageReference).Count() > 0).Remove();
 
-            // add project references group
-            if (project.Projects.Count > 0)
-                newProps.AddAfterSelf(new XElement(
-                    El.ItemGroup,
-                    project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
-                        El.ProjectReference,
-                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File))
-                    ))
-                ));
-
             // add package references group
             if (project.Packages.Count > 0)
                 newProps.AddAfterSelf(new XElement(
@@ -122,6 +112,16 @@ namespace Xs.Cli.Dotnet.Projects
                         El.PackageReference,
                         new XAttribute(El.Include, e.Value.Name),
                         new XAttribute(El.Version, e.Value.Version)
+                    ))
+                ));
+
+            // add project references group
+            if (project.Projects.Count > 0)
+                newProps.AddAfterSelf(new XElement(
+                    El.ItemGroup,
+                    project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
+                        El.ProjectReference,
+                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File))
                     ))
                 ));
 
