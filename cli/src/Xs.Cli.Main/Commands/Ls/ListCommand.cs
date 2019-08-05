@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
@@ -31,14 +32,32 @@ namespace Xs.Cli.Main.Commands.Ls
             var projects = discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
-                .ToArray();
+                .ToList();
 
             Func<IProject, string> showProject = project => project.Name;
             if (cfg.Path)
                 showProject = project => project.File;
 
-            foreach (var project in projects)
+            foreach (var project in SelectProjects(projects, cfg))
                 Console.WriteLine(showProject(project));
+        }
+
+        private IEnumerable<IProject> SelectProjects(
+            IEnumerable<IProject> projects,
+            ListCommandConfiguration cfg
+        )
+        {
+            // without filters - plain list
+            if (!cfg.Publishable && !cfg.Testable)
+                return projects;
+
+            var filtered = new List<IProject>();
+            if (cfg.Publishable)
+                filtered.AddRange(projects.OfType<IPublishableProject>());
+            if (cfg.Testable)
+                filtered.AddRange(projects.OfType<ITestableProject>());
+
+            return cfg.Not ? projects.Except(filtered) : filtered;
         }
     }
 
@@ -52,8 +71,20 @@ namespace Xs.Cli.Main.Commands.Ls
         [Help("Project type.")]
         public ProjectType Type { get; set; }
 
-        [Option("p")]
+        [Option]
         [Help("Show path instead of name.")]
         public bool Path { get; set; } = false;
+
+        [Option]
+        [Help("Invert selection.")]
+        public bool Not { get; set; } = false;
+
+        [Option("pub")]
+        [Help("Show publishable projects.")]
+        public bool Publishable { get; set; } = false;
+
+        [Option("test")]
+        [Help("Show publishable projects.")]
+        public bool Testable { get; set; } = false;
     }
 }
