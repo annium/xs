@@ -15,7 +15,6 @@ namespace Xs.Cli.Dotnet.Projects
     internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
         private static readonly string[] implicitPackages = new [] { "Microsoft.AspNetCore.App" };
-        private static readonly IEnumerable<string> outputTypes = new [] { "Exe", "Library" };
         private static readonly string[] booleanStrings = new [] { "true", "false" };
 
         public RawProject Load(string path, DiscoverConfiguration configuration)
@@ -40,11 +39,11 @@ namespace Xs.Cli.Dotnet.Projects
                 project.Version = new Core.Models.Version(properties.Element(El.PackageVersion).Value);
                 project.Description = properties.Element(El.Description).Value;
             }
-            project.TargetFramework = TargetFrameworkParser.Parse(properties.Element(El.TargetFramework).Value);
+            project.TargetFramework = properties.Element(El.TargetFramework).Value;
             if (configuration.SkipChecks)
-                project.OutputType = properties.Element(El.OutputType)?.Value == "Exe" ? OutputType.Executable : OutputType.Library;
+                project.OutputType = properties.Element(El.OutputType)?.Value == "Exe" ? OutputType.Exe : OutputType.Library;
             else
-                project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Executable : OutputType.Library;
+                project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Exe : OutputType.Library;
 
             project.Projects = GetReferenceElements(El.ProjectReference)
                 .Select(reference => ReadProjectDependency(project.Name, file, reference, configuration))
@@ -78,8 +77,26 @@ namespace Xs.Cli.Dotnet.Projects
 
             var info = XElement.Parse(File.ReadAllText(path));
 
-            info.Element(El.PropertyGroup).SetElementValue(El.PackageId, project.Name);
-            info.Element(El.PropertyGroup).SetElementValue(El.PackageVersion, project.Version);
+            var oldProps = info.Element(El.PropertyGroup);
+            var newProps = new XElement(El.PropertyGroup);
+            oldProps.AddBeforeSelf(newProps);
+            oldProps.Remove();
+
+            newProps.Add(new XElement(El.PackageId, project.Name));
+            newProps.Add(new XElement(El.PackageVersion, project.Version));
+            newProps.Add(new XElement(El.Description, project.Description));
+            newProps.Add(new XElement(El.TargetFramework, project.TargetFramework));
+            newProps.Add(new XElement(El.OutputType, project.OutputType));
+            newProps.Add(new XElement(El.DebugType, "portable"));
+            newProps.Add(new XElement(El.LangVersion, "latest"));
+            newProps.Add(new XElement(El.WarningsAsErrors, "true"));
+            if (project is LibraryProject)
+                newProps.Add(new XElement(El.IsPackable, "true"));
+            if (project is TestProject)
+                newProps.Add(new XElement(El.IsTestProject, "true"));
+
+            foreach (var el in oldProps.Elements().Where(oldEl => !newProps.Elements().Any(newEl => newEl.Name == oldEl.Name)))
+                newProps.Add(el);
 
             // remove project references group
             info.Elements(El.ItemGroup).Where(e => e.Elements(El.ProjectReference).Count() > 0).Remove();
@@ -89,7 +106,7 @@ namespace Xs.Cli.Dotnet.Projects
 
             // add project references group
             if (project.Projects.Count > 0)
-                info.Add(new XElement(
+                newProps.AddAfterSelf(new XElement(
                     El.ItemGroup,
                     project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
                         El.ProjectReference,
@@ -99,7 +116,7 @@ namespace Xs.Cli.Dotnet.Projects
 
             // add package references group
             if (project.Packages.Count > 0)
-                info.Add(new XElement(
+                newProps.AddAfterSelf(new XElement(
                     El.ItemGroup,
                     project.Packages.OrderBy(e => e.Value.Name).Select(e => new XElement(
                         El.PackageReference,
@@ -153,6 +170,7 @@ namespace Xs.Cli.Dotnet.Projects
                 throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not portable.");
 
             var outputType = properties.Element(El.OutputType)?.Value;
+            var outputTypes = Enum.GetNames(typeof(OutputType));
             if (!outputTypes.Contains(outputType))
                 throw new InvalidOperationException($"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}.");
 
