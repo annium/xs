@@ -16,6 +16,7 @@ namespace Xs.Cli.Dotnet.Projects
     {
         private static readonly string[] implicitPackages = new [] { "Microsoft.AspNetCore.App" };
         private static readonly IEnumerable<string> outputTypes = new [] { "Exe", "Library" };
+        private static readonly string[] booleanStrings = new [] { "true", "false" };
 
         public RawProject Load(string path, DiscoverConfiguration configuration)
         {
@@ -56,8 +57,12 @@ namespace Xs.Cli.Dotnet.Projects
                 .ToArray();
 
             project.IsPackable = properties.Element(El.IsPackable) == null ?
-                true :
+                false :
                 bool.Parse(properties.Element(El.IsPackable).Value);
+
+            project.IsTestProject = properties.Element(El.IsTestProject) == null ?
+                false :
+                bool.Parse(properties.Element(El.IsTestProject).Value);
 
             return project;
 
@@ -154,8 +159,19 @@ namespace Xs.Cli.Dotnet.Projects
             if (properties.Element(El.LangVersion)?.Value != "latest")
                 throw new InvalidOperationException($"Project {path} has no {El.LangVersion} defined or it is not latest.");
 
+            ensureValidBoolean(El.WarningsAsErrors);
             if (properties.Element(El.WarningsAsErrors)?.Value != "true")
                 throw new InvalidOperationException($"Project {path} has no {El.WarningsAsErrors} defined or it is not true.");
+
+            ensureValidBoolean(El.IsPackable);
+            ensureValidBoolean(El.IsTestProject);
+
+            void ensureValidBoolean(string el)
+            {
+                var element = properties.Element(el);
+                if (element != null && !booleanStrings.Contains(element.Value))
+                    throw new InvalidOperationException($"Project {path} {el} must be one of {string.Join(", ", booleanStrings)}.");
+            }
         }
 
         private string ReadProjectDependency(
@@ -209,6 +225,7 @@ namespace Xs.Cli.Dotnet.Projects
             public const string WarningsAsErrors = "WarningsAsErrors";
             public const string LangVersion = "LangVersion";
             public const string IsPackable = "IsPackable";
+            public const string IsTestProject = "IsTestProject";
             public const string PropertyGroup = "PropertyGroup";
             public const string ItemGroup = "ItemGroup";
             public const string PackageReference = "PackageReference";

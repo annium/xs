@@ -16,12 +16,10 @@ namespace Xs.Cli.Dotnet.Projects
     internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
     {
         public const string ProjectFileExtension = ".csproj";
-        public const string TestSDK = "Microsoft.NET.Test.Sdk";
         public const string TestCoveragePackage = "coverlet.msbuild";
         public static readonly string[] TrackedFileExtensions = new [] { ".cs" };
         public static readonly string[] IgnoredFolders = new [] { "bin", "obj" };
         private const string projectFileMask = "*.csproj";
-        private static readonly string[] TestDependencies = new [] { TestSDK, TestCoveragePackage };
         public ProjectType Type { get; } = Constants.ProjectType;
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
         private readonly ProjectMapper mapper;
@@ -78,7 +76,7 @@ namespace Xs.Cli.Dotnet.Projects
         )
         {
             var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());
-            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable) = mapper.Load(file.FullName, configuration);
+            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable, isTestProject) = mapper.Load(file.FullName, configuration);
 
             // check TargetFramework consistency
             if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
@@ -91,10 +89,6 @@ namespace Xs.Cli.Dotnet.Projects
             var packageDependencies = packageDeps
                 .Select(e => ResolvePackageDependency(name, e, packages, configuration))
                 .ToHashSet();
-
-            var isTestProject = configuration.SkipChecks ?
-                packageDependencies.Any(d => d.Value.Name == TestSDK) :
-                TestDependencies.All(d => packageDependencies.Any(e => e.Value.Name == d));
 
             if (isTestProject)
                 return new TestProject(getContext<TestProject>());

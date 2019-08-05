@@ -13,8 +13,8 @@ namespace Xs.Cli.Dotnet.Projects
         public OutputType OutputType { get; set; }
         public IEnumerable<Dependency<string>> Projects { get; set; }
         public IEnumerable<Dependency<Package>> Packages { get; set; }
-
         public bool IsPackable { get; set; }
+        public bool IsTestProject { get; set; }
 
         public void Deconstruct(
             out string name,
@@ -24,7 +24,8 @@ namespace Xs.Cli.Dotnet.Projects
             out OutputType outputType,
             out IEnumerable<Dependency<string>> projects,
             out IEnumerable<Dependency<Package>> packages,
-            out bool isPackable
+            out bool isPackable,
+            out bool isTestProject
         )
         {
             name = Name;
@@ -35,6 +36,7 @@ namespace Xs.Cli.Dotnet.Projects
             projects = Projects;
             packages = Packages;
             isPackable = IsPackable;
+            isTestProject = IsTestProject;
         }
     }
 }
