@@ -57,6 +57,7 @@ namespace Xs.Cli.Main
             services.AddSingleton<BuildCommand>();
             services.AddSingleton<CleanCommand>();
             services.AddSingleton<DeleteCommand>();
+            services.AddSingleton<MoveCommand>();
             services.AddSingleton<InstallCommand>();
             services.AddSingleton<PublishCommand>();
             services.AddSingleton<SearchCommand>();
