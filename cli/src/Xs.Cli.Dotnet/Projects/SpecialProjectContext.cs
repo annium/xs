@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
@@ -21,7 +20,7 @@ namespace Xs.Cli.Dotnet.Projects
             string name,
             Version version,
             string description,
-            FileInfo file,
+            string directory,
             HashSet<Dependency<IProject>> projects,
             HashSet<Dependency<Package>> packages,
             IShell shell,
@@ -36,7 +35,7 @@ namespace Xs.Cli.Dotnet.Projects
             name,
             version,
             description,
-            file,
+            directory,
             projects,
             packages,
             shell,

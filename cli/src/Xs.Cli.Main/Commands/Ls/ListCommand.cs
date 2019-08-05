@@ -35,7 +35,7 @@ namespace Xs.Cli.Main.Commands.Ls
 
             Func<IProject, string> showProject = project => project.Name;
             if (cfg.Path)
-                showProject = project => project.File.FullName;
+                showProject = project => project.File;
 
             foreach (var project in projects)
                 Console.WriteLine(showProject(project));

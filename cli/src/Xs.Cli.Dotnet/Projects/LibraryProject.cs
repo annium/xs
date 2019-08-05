@@ -12,16 +12,16 @@ namespace Xs.Cli.Dotnet.Projects
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
-            var file = Path.Combine(File.DirectoryName, $"{Name}.{version}.nupkg");
+            var file = Path.Combine(Directory, $"{Name}.{version}.nupkg");
             if (System.IO.File.Exists(file))
                 System.IO.File.Delete(file);
 
-            Version = version;
+            SetVersion(version);
             Save();
 
             await RunAsync(
                 "pack",
-                $"dotnet pack {File.FullName} --output . -p:PackageVersion={version} -p:SymbolPackageFormat=snupkg",
+                $"dotnet pack {File} --output . -p:PackageVersion={version} -p:SymbolPackageFormat=snupkg",
                 token);
 
             return file;

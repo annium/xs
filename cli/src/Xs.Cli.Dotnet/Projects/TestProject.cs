@@ -21,7 +21,7 @@ namespace Xs.Cli.Dotnet.Projects
             {
                 "dotnet test",
                 $"--configuration {configuration}",
-                $"--no-build {File.FullName}",
+                $"--no-build {File}",
             };
 
             if (Packages.Any(d => d.Value.Name == ProjectFactory.TestCoveragePackage))

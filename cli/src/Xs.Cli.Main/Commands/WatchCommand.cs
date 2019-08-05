@@ -196,7 +196,7 @@ namespace Xs.Cli.Main.Commands
         .OrderByDescending(p => p.Name.Length)
         .ToArray();
 
-        private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File.FullName == path);
+        private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File == path);
 
         private IProject GetProjectByRelatedPath(string path) => projects.FirstOrDefault(e => e.IsRelated(path));
     }

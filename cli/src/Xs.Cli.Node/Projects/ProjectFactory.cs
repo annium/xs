@@ -104,7 +104,7 @@ namespace Xs.Cli.Node.Projects
                     name,
                     version,
                     description,
-                    file,
+                    directory,
                     projectDependencies,
                     packageDependencies,
                     scripts,

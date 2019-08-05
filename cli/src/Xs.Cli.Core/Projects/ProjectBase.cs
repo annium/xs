@@ -7,29 +7,34 @@ using System.Threading.Tasks;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
+using SysDirectory = System.IO.Directory;
+using SysFile = System.IO.Directory;
 
 namespace Xs.Cli.Core.Projects
 {
     public abstract class ProjectBase<TProject> : IProject where TProject : ProjectBase<TProject>
     {
         public ProjectType Type { get; }
-        public string Name { get; set; }
-        public Models.Version Version { get; set; }
-        public string Description { get; }
-        public FileInfo File { get; }
+        public string Name { get; private set; }
+        public Models.Version Version { get; private set; }
+        public string Description { get; private set; }
+        public string Directory { get; private set; }
+        public abstract string File { get; }
         public HashSet<Dependency<IProject>> Projects { get; }
         public HashSet<Dependency<Package>> Packages { get; }
         protected readonly IShell shell;
         protected readonly LoggerConfiguration loggerConfiguration;
         protected readonly ILogger<ProjectBase<TProject>> logger;
+        private string currentDirectory;
+        private string currentName;
 
         protected ProjectBase(ProjectBaseContext<TProject> context)
         {
             Type = context.Type;
-            Name = context.Name;
+            Name = currentName = context.Name;
             Version = context.Version;
             Description = context.Description;
-            File = context.File;
+            Directory = currentDirectory = context.Directory;
             Projects = context.Projects;
             Packages = context.Packages;
             shell = context.Shell;
@@ -37,31 +42,90 @@ namespace Xs.Cli.Core.Projects
             logger = context.Logger;
         }
 
+        public void SetName(string name)
+        {
+            Name = name;
+            Directory = FixProjectDirectory(Directory);
+        }
+
+        public void SetVersion(Models.Version version)
+        {
+            Version = version;
+        }
+
+        public void SetDirectory(string directory)
+        {
+            if (string.IsNullOrWhiteSpace(directory))
+                throw new ArgumentNullException(nameof(directory));
+
+            Directory = FixProjectDirectory(directory);
+        }
+
         public bool IsRelated(string path)
         {
-            if (!path.StartsWith(File.DirectoryName))
+            if (!path.StartsWith(Directory))
                 return false;
 
             return IsRelated(new FileInfo(path));
         }
 
-        public abstract void Save();
+        public void Save()
+        {
+            // sync directory
+            if (Directory != currentDirectory)
+            {
+                // ensure target doesn't exist
+                if (SysDirectory.Exists(Directory) || SysFile.Exists(Directory))
+                    throw new InvalidOperationException($"{Directory} already exists.");
+
+                // create parent directory, if needed
+                var parentDirectory = Path.GetDirectoryName(Directory);
+                if (!SysDirectory.Exists(parentDirectory))
+                {
+                    logger.Trace($"Create {Name} missing target parent directory {parentDirectory}");
+                    SysDirectory.CreateDirectory(parentDirectory);
+                }
+
+                logger.Debug($"Move {Name} to {Directory}");
+
+                SysDirectory.Move(currentDirectory, Directory);
+
+                currentDirectory = Directory;
+            }
+
+            // sync name
+            if (Name != currentName)
+            {
+                OnNameChangeSave(currentName, Name);
+
+                currentName = Name;
+            }
+
+            // call implementation-specific save logic 
+            HandleSave();
+        }
 
         public override string ToString() => Name;
 
+        protected abstract void HandleSave();
+
         protected abstract bool IsRelated(FileInfo file);
+
+        protected virtual string FixProjectDirectory(string directory) => directory;
+
+        protected virtual void OnNameChangeSave(string oldName, string newName) { }
 
         protected void DeleteDirectory(string path)
         {
-            path = Path.Combine(File.DirectoryName, path);
-            if (Directory.Exists(path))
-                Directory.Delete(path, recursive : true);
+            path = Path.Combine(Directory, path);
+            if (SysDirectory.Exists(path))
+                SysDirectory.Delete(path, recursive : true);
         }
 
         protected void DeleteFiles(string mask)
         {
-            foreach (var file in Directory.GetFiles(File.DirectoryName, mask, SearchOption.TopDirectoryOnly))
-                System.IO.File.Delete(file);
+            foreach (var file in SysDirectory.GetFiles(Directory, mask, SearchOption.TopDirectoryOnly))
+                SysFile.Delete(file);
         }
 
         protected async Task RunAsync(string operation, string command, CancellationToken token)
@@ -70,7 +134,7 @@ namespace Xs.Cli.Core.Projects
 
             var result = await shell
                 .Cmd(command)
-                .Configure(new ProcessStartInfo() { WorkingDirectory = File.Directory.FullName })
+                .Configure(new ProcessStartInfo() { WorkingDirectory = Directory })
                 .Pipe(loggerConfiguration.LogLevel <= LogLevel.Debug)
                 .RunAsync(token);
 

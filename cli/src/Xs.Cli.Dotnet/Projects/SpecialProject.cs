@@ -9,12 +9,15 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Models;
+using SysDirectory = System.IO.Directory;
+using SysFile = System.IO.File;
 
 namespace Xs.Cli.Dotnet.Projects
 {
     internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         private static object cacheLocker = new object();
+        public override string File => Path.Combine(Directory, projectFileName(Name));
         public TargetFramework TargetFramework { get; }
         public OutputType OutputType { get; }
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
@@ -48,8 +51,8 @@ namespace Xs.Cli.Dotnet.Projects
                 foreach (var(_, (_, name, version)) in Packages)
                 {
                     var cachePath = Path.Combine(cache, name.ToLowerInvariant(), version.ToString());
-                    if (Directory.Exists(cachePath))
-                        Directory.Delete(cachePath, recursive : true);
+                    if (SysDirectory.Exists(cachePath))
+                        SysDirectory.Delete(cachePath, recursive : true);
                 }
             }
 
@@ -77,7 +80,7 @@ namespace Xs.Cli.Dotnet.Projects
         {
             var forceFlag = force ? "--no-cache" : string.Empty;
 
-            return RunAsync("install", $"dotnet restore {forceFlag} --no-dependencies {File.FullName}", token);
+            return RunAsync("install", $"dotnet restore {forceFlag} --no-dependencies {File}", token);
         }
 
         public Task BuildAsync(Env env, CancellationToken token)
@@ -86,14 +89,28 @@ namespace Xs.Cli.Dotnet.Projects
 
             return RunAsync(
                 "build",
-                $"dotnet build --configuration {configuration} --no-dependencies {File.FullName}",
+                $"dotnet build --configuration {configuration} --no-dependencies {File}",
                 token);
         }
 
-        public override void Save() => mapper.Save(this);
+        protected override void HandleSave() => mapper.Save(this);
+
+        protected override string FixProjectDirectory(string directory)
+        {
+            return Path.Combine(Path.GetDirectoryName(directory), Name);
+        }
+
+        protected override void OnNameChangeSave(string oldName, string newName)
+        {
+            var oldPath = Path.Combine(Directory, projectFileName(oldName));
+            var newPath = Path.Combine(Directory, projectFileName(newName));
+            SysFile.Move(oldPath, newPath);
+        }
 
         protected override bool IsRelated(FileInfo file) =>
         ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-        !FileManager.IsRootedDirectoryIgnored(File.DirectoryName, file.DirectoryName, ProjectFactory.IgnoredFolders);
+        !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
+
+        private string projectFileName(string name) => $"{name}{ProjectFactory.ProjectFileExtension}";
     }
 }

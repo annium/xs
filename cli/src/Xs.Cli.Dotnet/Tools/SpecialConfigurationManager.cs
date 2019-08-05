@@ -38,12 +38,12 @@ namespace Xs.Cli.Dotnet.Tools
 
             sources.Add(GetAddRule(defaultName, defaultUri));
 
-            Save(project.File.DirectoryName, new XElement(El.Configuration, sources));
+            Save(project.Directory, new XElement(El.Configuration, sources));
         }
 
         public void Delete(IProject project)
         {
-            var path = FilePath(project.File.DirectoryName);
+            var path = FilePath(project.Directory);
             if (File.Exists(path)) File.Delete(path);
         }
 

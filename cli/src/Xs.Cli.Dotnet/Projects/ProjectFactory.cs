@@ -110,7 +110,7 @@ namespace Xs.Cli.Dotnet.Projects
                     name,
                     version,
                     description,
-                    file,
+                    directory,
                     projectDependencies,
                     packageDependencies,
                     shell,

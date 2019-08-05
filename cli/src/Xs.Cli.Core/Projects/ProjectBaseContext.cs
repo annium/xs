@@ -12,7 +12,7 @@ namespace Xs.Cli.Core.Projects
         public string Name { get; }
         public Version Version { get; }
         public string Description { get; }
-        public FileInfo File { get; }
+        public string Directory { get; }
         public HashSet<Dependency<IProject>> Projects { get; }
         public HashSet<Dependency<Package>> Packages { get; }
         public IShell Shell { get; }
@@ -24,7 +24,7 @@ namespace Xs.Cli.Core.Projects
             string name,
             Version version,
             string description,
-            FileInfo file,
+            string directory,
             HashSet<Dependency<IProject>> projects,
             HashSet<Dependency<Package>> packages,
             IShell shell,
@@ -36,7 +36,7 @@ namespace Xs.Cli.Core.Projects
             Name = name;
             Version = version;
             Description = description;
-            File = file;
+            Directory = directory;
             Projects = projects;
             Packages = packages;
             Shell = shell;

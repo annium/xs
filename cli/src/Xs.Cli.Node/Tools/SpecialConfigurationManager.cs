@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -55,6 +54,6 @@ namespace Xs.Cli.Node.Tools
             if (File.Exists(path)) File.Delete(path);
         }
 
-        private string FilePath(IProject project) => Path.Combine(project.File.DirectoryName, file);
+        private string FilePath(IProject project) => Path.Combine(project.Directory, file);
     }
 }

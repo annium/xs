@@ -68,11 +68,12 @@ namespace Xs.Cli.Dotnet.Projects
 
         public void Save(ISpecialProject project)
         {
-            var path = project.File.FullName;
+            var path = project.File;
             var dir = Directory.GetParent(path).FullName;
 
             var info = XElement.Parse(File.ReadAllText(path));
 
+            info.Element(El.PropertyGroup).SetElementValue(El.PackageId, project.Name);
             info.Element(El.PropertyGroup).SetElementValue(El.PackageVersion, project.Version);
 
             // remove project references group
@@ -87,7 +88,7 @@ namespace Xs.Cli.Dotnet.Projects
                     El.ItemGroup,
                     project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
                         El.ProjectReference,
-                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File.FullName))
+                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File))
                     ))
                 ));
 

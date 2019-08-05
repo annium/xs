@@ -24,7 +24,7 @@ namespace Xs.Cli.Node.Projects
                 fileName = $"{parts[0]}-{parts[1]}-{version}.tgz";
             }
 
-            var file = Path.Combine(File.DirectoryName, fileName);
+            var file = Path.Combine(Directory, fileName);
             if (System.IO.File.Exists(file))
                 System.IO.File.Delete(file);
 
@@ -32,14 +32,14 @@ namespace Xs.Cli.Node.Projects
             var projectDependencies = Projects.ToArray();
             try
             {
-                Version = version;
+                SetVersion(version);
                 Projects.Clear();
                 foreach (var(type, dependency) in projectDependencies)
                     Packages.Add(new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version)));
 
                 Save();
 
-                await RunAsync("pack", $"npm pack {File.DirectoryName}", token);
+                await RunAsync("pack", $"npm pack {Directory}", token);
             }
             finally
             {

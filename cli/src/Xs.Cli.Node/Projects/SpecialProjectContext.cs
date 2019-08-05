@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
@@ -19,7 +18,7 @@ namespace Xs.Cli.Node.Projects
             string name,
             Version version,
             string description,
-            FileInfo file,
+            string directory,
             HashSet<Dependency<IProject>> projects,
             HashSet<Dependency<Package>> packages,
             IReadOnlyDictionary<string, string> scripts,
@@ -33,7 +32,7 @@ namespace Xs.Cli.Node.Projects
             name,
             version,
             description,
-            file,
+            directory,
             projects,
             packages,
             shell,

@@ -19,7 +19,7 @@ namespace Xs.Cli.Core.Projects
             var directory = Directory.GetParent(Path.GetFullPath(Path.Combine(location.DirectoryName, reference.Value))).FullName;
 
             var dependency = projects.OfType<TProject>()
-                .FirstOrDefault(e => e.File.DirectoryName == directory);
+                .FirstOrDefault(e => e.Directory == directory);
 
             if (dependency == null)
                 throw new InvalidOperationException($"Project {project} has unresolved project dependency {reference}.");

@@ -66,7 +66,7 @@ namespace Xs.Cli.Node.Projects
 
         public void Save(ISpecialProject project)
         {
-            var path = project.File.FullName;
+            var path = project.File;
             var dir = Directory.GetParent(path).FullName;
 
             var info = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(path));
@@ -109,7 +109,7 @@ namespace Xs.Cli.Node.Projects
             Dictionary<string, string> getDeps(DependencyType type) =>
                 project.Projects
                 .Where(e => e.Type == type)
-                .Select(e => (name: e.Value.Name, value: El.FilePrefix + Path.GetRelativePath(dir, e.Value.File.DirectoryName)))
+                .Select(e => (name: e.Value.Name, value: El.FilePrefix + Path.GetRelativePath(dir, e.Value.Directory)))
                 .Concat(
                     project.Packages
                     .Where(e => e.Type == type)
