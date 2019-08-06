@@ -8,7 +8,7 @@ using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using SysDirectory = System.IO.Directory;
-using SysFile = System.IO.Directory;
+using SysFile = System.IO.File;
 
 namespace Xs.Cli.Core.Projects
 {
