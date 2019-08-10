@@ -34,12 +34,8 @@ namespace Xs.Cli.Main.Commands.Ls
                 .FilterType(cfg.Type)
                 .ToList();
 
-            Func<IProject, string> showProject = project => project.Name;
-            if (cfg.Path)
-                showProject = project => project.File;
-
             foreach (var project in SelectProjects(projects, cfg))
-                Console.WriteLine(showProject(project));
+                LogProject(project, cfg.Path);
         }
 
         private IEnumerable<IProject> SelectProjects(
@@ -59,6 +55,9 @@ namespace Xs.Cli.Main.Commands.Ls
 
             return cfg.Not ? projects.Except(filtered) : filtered;
         }
+
+        private void LogProject(IProject project, bool writePath) =>
+        Console.WriteLine(writePath ? project.File : project.Name);
     }
 
     internal class ListCommandConfiguration

@@ -41,7 +41,7 @@ namespace Xs.Cli.Main.Commands.Ls
             // if plain dependencies list requested - join deps and log them in single list
             if (cfg.Plain)
             {
-                LogPlainDependencies(projects, showProjects, showPackages);
+                LogPlainDependencies(projects, showProjects, showPackages, cfg.Path);
                 return;
             }
 
@@ -54,14 +54,15 @@ namespace Xs.Cli.Main.Commands.Ls
         private void LogPlainDependencies(
             IEnumerable<IProject> projects,
             bool showProjects,
-            bool showPackages
+            bool showPackages,
+            bool writePath
         )
         {
             if (showProjects)
             {
                 var projectDeps = projects.SelectMany(p => p.Projects).Select(d => d.Value).Distinct().OrderBy(e => e.Name).ToArray();
                 foreach (var dependency in projectDeps)
-                    Console.WriteLine(dependency);
+                    LogProject(dependency, writePath);
             }
 
             if (showPackages)
@@ -119,6 +120,9 @@ namespace Xs.Cli.Main.Commands.Ls
             var node = isLast ? "└─" : "├─";
             Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
         }
+
+        private void LogProject(IProject project, bool writePath) =>
+        Console.WriteLine(writePath ? project.File : project.Name);
     }
 
     internal class ListInsCommandConfiguration
@@ -142,5 +146,9 @@ namespace Xs.Cli.Main.Commands.Ls
         [Option]
         [Help("Show plain dependencies list (no recursion).")]
         public bool Plain { get; set; }
+
+        [Option]
+        [Help("Show path instead of name.")]
+        public bool Path { get; set; } = false;
     }
 }

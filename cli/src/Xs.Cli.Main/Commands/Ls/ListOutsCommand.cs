@@ -43,7 +43,7 @@ namespace Xs.Cli.Main.Commands.Ls
                 // if plain dependants list requested - them in single list
                 if (cfg.Plain)
                 {
-                    LogPlainDependants(projects, allProjects);
+                    LogPlainDependants(projects, allProjects, cfg.Path);
                     return;
                 }
 
@@ -72,7 +72,7 @@ namespace Xs.Cli.Main.Commands.Ls
                         .OrderBy(p => p.Name)
                         .ToArray();
                     foreach (var dependant in dependants)
-                        Console.WriteLine(dependant);
+                        LogProject(dependant, cfg.Path);
                     return;
                 }
 
@@ -95,14 +95,18 @@ namespace Xs.Cli.Main.Commands.Ls
             Console.WriteLine("No projects/packages, matching given type/mask, found");
         }
 
-        private void LogPlainDependants(IEnumerable<IProject> projects, IEnumerable<IProject> allProjects)
+        private void LogPlainDependants(
+            IEnumerable<IProject> projects,
+            IEnumerable<IProject> allProjects,
+            bool writePath
+        )
         {
             var dependants = allProjects
                 .Where(e => e.Projects.Select(p => p.Value).Intersect(projects).Count() > 0)
                 .OrderBy(e => e.Name)
                 .ToArray();
             foreach (var dependant in dependants)
-                Console.WriteLine(dependant);
+                LogProject(dependant, writePath);
         }
 
         private void LogProjectWithDependants(
@@ -151,6 +155,9 @@ namespace Xs.Cli.Main.Commands.Ls
             var node = isLast ? "└─" : "├─";
             Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
         }
+
+        private void LogProject(IProject project, bool writePath) =>
+        Console.WriteLine(writePath ? project.File : project.Name);
     }
 
     internal class ListOutsCommandConfiguration
@@ -166,5 +173,9 @@ namespace Xs.Cli.Main.Commands.Ls
         [Option]
         [Help("Show plain dependants list (no recursion).")]
         public bool Plain { get; set; }
+
+        [Option]
+        [Help("Show path instead of name.")]
+        public bool Path { get; set; } = false;
     }
 }
