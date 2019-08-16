@@ -1,33 +1,17 @@
 #!/usr/bin/env bash
 
-dir=$(dirname $(dirname "${BASH_SOURCE[0]}"))
-
-root=/usr/local/share/xs
-entry=/usr/local/bin/xs
+dir=$(dirname $(dirname "${BASH_SOURCE[0]}"))/src/Xs
 
 echo "Compile."
-rm -rf $root
-dotnet publish -c release -r osx-x64 -o $root $dir/src/Xs.Cli.Main/
+dotnet pack --configuration release --output . $dir
 
-# prepare launcher
-echo "Write launcher."
-rm -f $entry
-echo '#!/usr/bin/env sh' > $entry
-echo $root'/Xs.Cli.Main $@' >> $entry
-chmod +x $entry
+if [ $(dotnet tool list -g | tail -n +3 | grep xs | wc -l) -eq 1 ]; then
+    echo "Uninstall."
+    dotnet tool uninstall -g xs
+fi
 
-# prepare relaxed launcher
-relaxed=/usr/local/bin/ass
-echo "Write relaxed launcher."
-rm -f $relaxed
-echo '#!/usr/bin/env sh' > $relaxed
-echo $root'/Xs.Cli.Main $@ --skip-checks' >> $relaxed
-chmod +x $relaxed
+echo "Install."
+dotnet tool install -g xs --add-source $dir
 
-# prepare simple launcher
-simple=/usr/local/bin/xss
-echo "Write simple launcher."
-rm -f $simple
-echo '#!/usr/bin/env sh' > $simple
-echo $root'/Xs.Cli.Main $@ --ignore-consistency --skip-checks' >> $simple
-chmod +x $simple
+echo "Cleanup."
+find $dir -type f -name '*.nupkg' | xargs rm -f
