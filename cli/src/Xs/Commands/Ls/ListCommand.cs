@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
@@ -35,7 +36,7 @@ namespace Xs.Commands.Ls
                 .ToList();
 
             foreach (var project in SelectProjects(projects, cfg))
-                LogProject(project, cfg.Path);
+                LogProject(project, cfg.Path, cfg.Attributes);
         }
 
         private IEnumerable<IProject> SelectProjects(
@@ -56,8 +57,26 @@ namespace Xs.Commands.Ls
             return cfg.Not ? projects.Except(filtered) : filtered;
         }
 
-        private void LogProject(IProject project, bool writePath) =>
-        Console.WriteLine(writePath ? project.File : project.Name);
+        private void LogProject(IProject project, bool writePath, bool writeAttributes)
+        {
+            var sb = new StringBuilder();
+
+            if (writePath)
+                sb.Append(project.File);
+            else if (writeAttributes)
+            {
+                sb.Append(project.Name);
+                if (project is IPublishableProject)
+                    sb.Append(" [Publish]");
+
+                if (project is ITestableProject)
+                    sb.Append(" [Test]");
+            }
+            else
+                sb.Append(project.Name);
+
+            Console.WriteLine(sb.ToString());
+        }
     }
 
     internal class ListCommandConfiguration
@@ -85,5 +104,9 @@ namespace Xs.Commands.Ls
         [Option("test")]
         [Help("Show publishable projects.")]
         public bool Testable { get; set; } = false;
+
+        [Option("a")]
+        [Help("Show project attributes.")]
+        public bool Attributes { get; set; } = false;
     }
 }

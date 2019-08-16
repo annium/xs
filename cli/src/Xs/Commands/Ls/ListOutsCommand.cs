@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
@@ -43,7 +44,7 @@ namespace Xs.Commands.Ls
                 // if plain dependants list requested - them in single list
                 if (cfg.Plain)
                 {
-                    LogPlainDependants(projects, allProjects, cfg.Path);
+                    LogPlainDependants(projects, allProjects, cfg);
                     return;
                 }
 
@@ -72,7 +73,7 @@ namespace Xs.Commands.Ls
                         .OrderBy(p => p.Name)
                         .ToArray();
                     foreach (var dependant in dependants)
-                        LogProject(dependant, cfg.Path);
+                        LogProject(dependant, cfg.Path, cfg.Attributes);
                     return;
                 }
 
@@ -98,7 +99,7 @@ namespace Xs.Commands.Ls
         private void LogPlainDependants(
             IEnumerable<IProject> projects,
             IEnumerable<IProject> allProjects,
-            bool writePath
+            ListOutsCommandConfiguration cfg
         )
         {
             var dependants = allProjects
@@ -106,7 +107,7 @@ namespace Xs.Commands.Ls
                 .OrderBy(e => e.Name)
                 .ToArray();
             foreach (var dependant in dependants)
-                LogProject(dependant, writePath);
+                LogProject(dependant, cfg.Path, cfg.Attributes);
         }
 
         private void LogProjectWithDependants(
@@ -156,8 +157,26 @@ namespace Xs.Commands.Ls
             Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
         }
 
-        private void LogProject(IProject project, bool writePath) =>
-        Console.WriteLine(writePath ? project.File : project.Name);
+        private void LogProject(IProject project, bool writePath, bool writeAttributes)
+        {
+            var sb = new StringBuilder();
+
+            if (writePath)
+                sb.Append(project.File);
+            else if (writeAttributes)
+            {
+                sb.Append(project.Name);
+                if (project is IPublishableProject)
+                    sb.Append(" [Publish]");
+
+                if (project is ITestableProject)
+                    sb.Append(" [Test]");
+            }
+            else
+                sb.Append(project.Name);
+
+            Console.WriteLine(sb.ToString());
+        }
     }
 
     internal class ListOutsCommandConfiguration
@@ -177,5 +196,9 @@ namespace Xs.Commands.Ls
         [Option]
         [Help("Show path instead of name.")]
         public bool Path { get; set; } = false;
+
+        [Option("a")]
+        [Help("Show project attributes.")]
+        public bool Attributes { get; set; } = false;
     }
 }

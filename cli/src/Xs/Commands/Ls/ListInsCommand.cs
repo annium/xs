@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
@@ -41,7 +42,7 @@ namespace Xs.Commands.Ls
             // if plain dependencies list requested - join deps and log them in single list
             if (cfg.Plain)
             {
-                LogPlainDependencies(projects, showProjects, showPackages, cfg.Path);
+                LogPlainDependencies(projects, showProjects, showPackages, cfg);
                 return;
             }
 
@@ -55,14 +56,14 @@ namespace Xs.Commands.Ls
             IEnumerable<IProject> projects,
             bool showProjects,
             bool showPackages,
-            bool writePath
+            ListInsCommandConfiguration cfg
         )
         {
             if (showProjects)
             {
                 var projectDeps = projects.SelectMany(p => p.Projects).Select(d => d.Value).Distinct().OrderBy(e => e.Name).ToArray();
                 foreach (var dependency in projectDeps)
-                    LogProject(dependency, writePath);
+                    LogProject(dependency, cfg.Path, cfg.Attributes);
             }
 
             if (showPackages)
@@ -121,8 +122,26 @@ namespace Xs.Commands.Ls
             Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
         }
 
-        private void LogProject(IProject project, bool writePath) =>
-        Console.WriteLine(writePath ? project.File : project.Name);
+        private void LogProject(IProject project, bool writePath, bool writeAttributes)
+        {
+            var sb = new StringBuilder();
+
+            if (writePath)
+                sb.Append(project.File);
+            else if (writeAttributes)
+            {
+                sb.Append(project.Name);
+                if (project is IPublishableProject)
+                    sb.Append(" [Publish]");
+
+                if (project is ITestableProject)
+                    sb.Append(" [Test]");
+            }
+            else
+                sb.Append(project.Name);
+
+            Console.WriteLine(sb.ToString());
+        }
     }
 
     internal class ListInsCommandConfiguration
@@ -150,5 +169,9 @@ namespace Xs.Commands.Ls
         [Option]
         [Help("Show path instead of name.")]
         public bool Path { get; set; } = false;
+
+        [Option("a")]
+        [Help("Show project attributes.")]
+        public bool Attributes { get; set; } = false;
     }
 }
