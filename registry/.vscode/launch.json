@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Main",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/src/Xs.Registry.Main/bin/Debug/netcoreapp2.2/Xs.Registry.Main.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Dotnet",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/src/Xs.Registry.Dotnet/bin/Debug/netcoreapp2.2/Xs.Registry.Dotnet.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Node",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/src/Xs.Registry.Node/bin/Debug/netcoreapp2.2/Xs.Registry.Node.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    }
+  ]
+}
