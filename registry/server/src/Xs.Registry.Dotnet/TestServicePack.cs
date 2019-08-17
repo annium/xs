@@ -2,12 +2,12 @@ using Annium.Core.DependencyInjection;
 
 namespace Xs.Registry.Dotnet
 {
-    internal class ServicePack : ServicePackBase
+    public class TestServicePack : ServicePackBase
     {
-        public ServicePack()
+        public TestServicePack()
         {
             Add<BaseServicePack>();
-            Add<Db.BaseServicePack>();
+            Add<Db.TestBaseServicePack>();
         }
     }
 }
