@@ -11,7 +11,7 @@ namespace Xs.Registry.Dotnet.Tests.Controllers
         public async Task Get_ReturnsIndex()
         {
             // act
-            var response = await main.Get("/v3/index.json").RunAsync();
+            var response = await server.Get("/v3/index.json").RunAsync();
 
             // assert
             response.StatusCode.IsEqual(HttpStatusCode.OK);
