@@ -12,7 +12,7 @@ db-log main-log dotnet-log node-log site-log:
 
 
 db-drop db-update migrations-add migrations-list migrations-remove:
-	cd server && tools/ef-$@.sh
+	@cd server && pwsh tools/ef/$@.ps1 -startup src/Xs.Registry.Main -project src/Xs.Registry.Db -context Context
 
 publish-main:
 	@cp $$(find $$(dirname $$(realpath $$(which dotnet)))/sdk -type f -name ef.dll | grep netcoreapp2.2) server/src
