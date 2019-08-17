@@ -15,6 +15,7 @@ namespace Xs.Registry.Db.Shared
         public override void Configure(IServiceCollection services)
         {
             services.AddMapperConfiguration(ConfigureMapping);
+            Mapper.AddConfiguration(ConfigureMapping);
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)

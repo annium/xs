@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/server/src/Xs.Registry.Main/bin/Debug/netcoreapp2.2/Xs.Registry.Main.dll",
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/run",
       "console": "internalConsole",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
@@ -18,7 +18,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/server/src/Xs.Registry.Dotnet/bin/Debug/netcoreapp2.2/Xs.Registry.Dotnet.dll",
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/run",
       "console": "internalConsole",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
@@ -29,7 +29,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/server/src/Xs.Registry.Node/bin/Debug/netcoreapp2.2/Xs.Registry.Node.dll",
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/run",
       "console": "internalConsole",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"

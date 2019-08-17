@@ -1,6 +1,6 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Xs.Registry.Shared.Helpers;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Xs.Registry.Main
 {
@@ -14,8 +14,17 @@ namespace Xs.Registry.Main
         private static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return new WebHostBuilder()
-                .UseKestrel(WebHostBuilderHelper.ConfigureKestrel(9901))
-                .ConfigureLogging(WebHostBuilderHelper.ConfigureLogging)
+                .UseKestrel((KestrelServerOptions options) =>
+                {
+                    var port = 9901;
+                    options.AddServerHeader = false;
+
+                    var httpsFile = Path.GetFullPath(Path.Combine("certs", "cert.pfx"));
+                    if (File.Exists(httpsFile))
+                        options.ListenAnyIP(port, listenOptions => listenOptions.UseHttps(httpsFile));
+                    else
+                        options.ListenAnyIP(port);
+                })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup<ServicePack>>();
         }

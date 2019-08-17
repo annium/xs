@@ -15,8 +15,7 @@ namespace Xs.Registry.Db
         public override void Configure(IServiceCollection services)
         {
             var cfg = new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine("configuration", "db.json"))
-                .AddJsonFile(Path.Combine("configuration", "db.override.json"), optional : true)
+                .AddYamlFile(Path.Combine("configuration", "db.yml"))
                 .Build<Configuration>();
 
             // register context itself
@@ -31,7 +30,7 @@ namespace Xs.Registry.Db
                             $"Port={cfg.Port}",
                             $"Database={cfg.Name}",
                             $"Username={cfg.User}",
-                            $"Password={cfg.Password}",
+                            $"Password={cfg.Pass}",
                             $"SSL Mode=Prefer",
                             $"Trust Server Certificate=true",
                         }),

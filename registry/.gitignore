@@ -13,11 +13,9 @@ dist/
 *.css
 
 # artifacts
-/data
-/run
+/run/data
 
 # configuration
-configuration/
 .env*.local
 
 # xs ignore patterns
