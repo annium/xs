@@ -4,7 +4,7 @@ using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Main
 {
-    internal class Configuration
+    public class Configuration
     {
         public IReadOnlyDictionary<ProjectType, Uri> Servers { get; set; }
     }

@@ -1,5 +1,3 @@
-using System.IO;
-using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Abstract.Packages;
@@ -21,12 +19,7 @@ namespace Xs.Registry.Node
 
         public override void Configure(IServiceCollection services)
         {
-            services.AddSingleton(
-                new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine("configuration", "node.json"))
-                .AddJsonFile(Path.Combine("configuration", "node.override.json"), optional : true)
-                .Build<Configuration>()
-            );
+            services.AddSingleton(new Configuration());
         }
 
         public override void Register(IServiceCollection services, System.IServiceProvider provider)

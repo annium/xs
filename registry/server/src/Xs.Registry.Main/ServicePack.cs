@@ -39,7 +39,6 @@ namespace Xs.Registry.Main
             services.AddSingleton<ITokenAccessor>(new BearerTokenAccessor());
 
             // tools
-            services.AddSingleton<IRegistryManager, RegistryManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();
 
             // mapping

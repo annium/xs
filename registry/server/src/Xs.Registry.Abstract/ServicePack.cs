@@ -3,7 +3,6 @@ using Annium.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Abstract.Auth;
 using Xs.Registry.Abstract.Storage;
-using Xs.Registry.Abstract.Tools;
 using Xs.Registry.Shared.Auth;
 
 namespace Xs.Registry.Abstract
@@ -23,9 +22,6 @@ namespace Xs.Registry.Abstract
 
             // storage
             services.AddSingleton<IStorageFactory, FileStorageFactory>();
-
-            // tools
-            services.AddSingleton<IRegistryConnectionManager, RegistryConnectionManager>();
         }
     }
 }

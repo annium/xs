@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Xs.Registry.Abstract.Auth;
-using Xs.Registry.Abstract.Tools;
 using Xs.Registry.Shared.Auth;
 
 namespace Xs.Registry.Dotnet
@@ -29,11 +28,6 @@ namespace Xs.Registry.Dotnet
 
         public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime)
         {
-            // initialize registry connection
-            app.ApplicationServices
-                .GetRequiredService<IRegistryConnectionManager>()
-                .Setup(Constants.ProjectType, app.ApplicationServices.GetRequiredService<Configuration>(), lifetime);
-
             app.UseExceptionMiddleware();
 
             app.UseCors(builder => builder
