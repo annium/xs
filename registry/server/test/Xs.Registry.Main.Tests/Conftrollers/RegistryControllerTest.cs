@@ -1,17 +1,14 @@
 using System.Net;
 using System.Threading.Tasks;
-using Annium.AspNetCore.IntegrationTesting;
 using Annium.Net.Http;
 using Annium.Testing;
 
-namespace Xs.Registry.Main.Tests
+namespace Xs.Registry.Main.Tests.Controllers
 {
-    public class IndexControllerTest : IntegrationTest
+    public class RegistryControllerTest : IntegrationTestBase
     {
-        private IRequest http => GetRequest<Startup<ServicePack>>();
-
         [Fact]
-        public async Task True_IsTrue()
+        public async Task Get_ReturnsConfiguration()
         {
             // act
             var response = await http.Get("/registry").RunAsync();

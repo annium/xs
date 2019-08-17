@@ -8,11 +8,6 @@ namespace Xs.Registry.Db.Node
 {
     public class ServicePack : ServicePackBase
     {
-        public ServicePack()
-        {
-            Add<BaseServicePack>();
-        }
-
         public override void Configure(IServiceCollection services)
         {
             services.AddMapperConfiguration(ConfigureMapping);

@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Db
 {
-    internal class BaseServicePack : ServicePackBase
+    public class BaseServicePack : ServicePackBase
     {
         public override void Configure(IServiceCollection services)
         {
