@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using NodaTime;
 
 namespace Xs.Registry.Db.Migrations
 {
@@ -8,18 +7,8 @@ namespace Xs.Registry.Db.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "dotnet");
-
-            migrationBuilder.EnsureSchema(
-                name: "node");
-
-            migrationBuilder.EnsureSchema(
-                name: "shared");
-
             migrationBuilder.CreateTable(
                 name: "Users",
-                schema: "shared",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -34,7 +23,6 @@ namespace Xs.Registry.Db.Migrations
 
             migrationBuilder.CreateTable(
                 name: "MetaPackages",
-                schema: "shared",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -43,7 +31,7 @@ namespace Xs.Registry.Db.Migrations
                     LowerName = table.Column<string>(nullable: false),
                     Version = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
-                    Published = table.Column<Instant>(nullable: false),
+                    Published = table.Column<DateTime>(nullable: false),
                     Downloads = table.Column<int>(nullable: false),
                     OwnerId = table.Column<Guid>(nullable: false)
                 },
@@ -54,7 +42,6 @@ namespace Xs.Registry.Db.Migrations
                     table.ForeignKey(
                         name: "FK_MetaPackages_Users_OwnerId",
                         column: x => x.OwnerId,
-                        principalSchema: "shared",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -62,12 +49,11 @@ namespace Xs.Registry.Db.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserSessions",
-                schema: "shared",
                 columns: table => new
                 {
                     Token = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
-                    Expires = table.Column<Instant>(nullable: false)
+                    Expires = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,15 +61,13 @@ namespace Xs.Registry.Db.Migrations
                     table.ForeignKey(
                         name: "FK_UserSessions_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "shared",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Packages",
-                schema: "dotnet",
+                name: "DotnetPackages",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -92,47 +76,16 @@ namespace Xs.Registry.Db.Migrations
                     LowerName = table.Column<string>(nullable: false),
                     Version = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
-                    Published = table.Column<Instant>(nullable: false),
+                    Published = table.Column<DateTime>(nullable: false),
                     Downloads = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Packages", x => x.Id);
-                    table.UniqueConstraint("AK_Packages_LowerName_Version", x => new { x.LowerName, x.Version });
+                    table.PrimaryKey("PK_DotnetPackages", x => x.Id);
+                    table.UniqueConstraint("AK_DotnetPackages_LowerName_Version", x => new { x.LowerName, x.Version });
                     table.ForeignKey(
-                        name: "FK_Packages_MetaPackages_MetaPackageId",
+                        name: "FK_DotnetPackages_MetaPackages_MetaPackageId",
                         column: x => x.MetaPackageId,
-                        principalSchema: "shared",
-                        principalTable: "MetaPackages",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Packages",
-                schema: "node",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    MetaPackageId = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    LowerName = table.Column<string>(nullable: false),
-                    Version = table.Column<string>(nullable: false),
-                    Description = table.Column<string>(nullable: false),
-                    Published = table.Column<Instant>(nullable: false),
-                    Downloads = table.Column<int>(nullable: false),
-                    Main = table.Column<string>(nullable: false),
-                    Shasum = table.Column<string>(nullable: false),
-                    Integrity = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Packages", x => x.Id);
-                    table.UniqueConstraint("AK_Packages_LowerName_Version", x => new { x.LowerName, x.Version });
-                    table.ForeignKey(
-                        name: "FK_Packages_MetaPackages_MetaPackageId",
-                        column: x => x.MetaPackageId,
-                        principalSchema: "shared",
                         principalTable: "MetaPackages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -140,7 +93,6 @@ namespace Xs.Registry.Db.Migrations
 
             migrationBuilder.CreateTable(
                 name: "MetaPackagePermissions",
-                schema: "shared",
                 columns: table => new
                 {
                     MetaPackageId = table.Column<Guid>(nullable: false),
@@ -153,15 +105,41 @@ namespace Xs.Registry.Db.Migrations
                     table.ForeignKey(
                         name: "FK_MetaPackagePermissions_MetaPackages_MetaPackageId",
                         column: x => x.MetaPackageId,
-                        principalSchema: "shared",
                         principalTable: "MetaPackages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PackageDependencies",
-                schema: "dotnet",
+                name: "NodePackages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    MetaPackageId = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    LowerName = table.Column<string>(nullable: false),
+                    Version = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    Published = table.Column<DateTime>(nullable: false),
+                    Downloads = table.Column<int>(nullable: false),
+                    Main = table.Column<string>(nullable: false),
+                    Shasum = table.Column<string>(nullable: false),
+                    Integrity = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NodePackages", x => x.Id);
+                    table.UniqueConstraint("AK_NodePackages_LowerName_Version", x => new { x.LowerName, x.Version });
+                    table.ForeignKey(
+                        name: "FK_NodePackages_MetaPackages_MetaPackageId",
+                        column: x => x.MetaPackageId,
+                        principalTable: "MetaPackages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DotnetPackageDependencies",
                 columns: table => new
                 {
                     PackageId = table.Column<Guid>(nullable: false),
@@ -171,19 +149,17 @@ namespace Xs.Registry.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PackageDependencies", x => new { x.PackageId, x.Framework, x.Name });
+                    table.PrimaryKey("PK_DotnetPackageDependencies", x => new { x.PackageId, x.Framework, x.Name });
                     table.ForeignKey(
-                        name: "FK_PackageDependencies_Packages_PackageId",
+                        name: "FK_DotnetPackageDependencies_DotnetPackages_PackageId",
                         column: x => x.PackageId,
-                        principalSchema: "dotnet",
-                        principalTable: "Packages",
+                        principalTable: "DotnetPackages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PackageDependencies",
-                schema: "node",
+                name: "NodePackageDependencies",
                 columns: table => new
                 {
                     PackageId = table.Column<Guid>(nullable: false),
@@ -193,37 +169,32 @@ namespace Xs.Registry.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PackageDependencies", x => new { x.PackageId, x.Name });
+                    table.PrimaryKey("PK_NodePackageDependencies", x => new { x.PackageId, x.Name });
                     table.ForeignKey(
-                        name: "FK_PackageDependencies_Packages_PackageId",
+                        name: "FK_NodePackageDependencies_NodePackages_PackageId",
                         column: x => x.PackageId,
-                        principalSchema: "node",
-                        principalTable: "Packages",
+                        principalTable: "NodePackages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Packages_MetaPackageId",
-                schema: "dotnet",
-                table: "Packages",
-                column: "MetaPackageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Packages_MetaPackageId",
-                schema: "node",
-                table: "Packages",
+                name: "IX_DotnetPackages_MetaPackageId",
+                table: "DotnetPackages",
                 column: "MetaPackageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MetaPackages_OwnerId",
-                schema: "shared",
                 table: "MetaPackages",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NodePackages_MetaPackageId",
+                table: "NodePackages",
+                column: "MetaPackageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_UserId",
-                schema: "shared",
                 table: "UserSessions",
                 column: "UserId");
         }
@@ -231,36 +202,28 @@ namespace Xs.Registry.Db.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PackageDependencies",
-                schema: "dotnet");
+                name: "DotnetPackageDependencies");
 
             migrationBuilder.DropTable(
-                name: "PackageDependencies",
-                schema: "node");
+                name: "MetaPackagePermissions");
 
             migrationBuilder.DropTable(
-                name: "MetaPackagePermissions",
-                schema: "shared");
+                name: "NodePackageDependencies");
 
             migrationBuilder.DropTable(
-                name: "UserSessions",
-                schema: "shared");
+                name: "UserSessions");
 
             migrationBuilder.DropTable(
-                name: "Packages",
-                schema: "dotnet");
+                name: "DotnetPackages");
 
             migrationBuilder.DropTable(
-                name: "Packages",
-                schema: "node");
+                name: "NodePackages");
 
             migrationBuilder.DropTable(
-                name: "MetaPackages",
-                schema: "shared");
+                name: "MetaPackages");
 
             migrationBuilder.DropTable(
-                name: "Users",
-                schema: "shared");
+                name: "Users");
         }
     }
 }

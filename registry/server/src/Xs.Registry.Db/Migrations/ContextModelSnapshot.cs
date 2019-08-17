@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Xs.Registry.Db;
 
@@ -17,7 +16,7 @@ namespace Xs.Registry.Db.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Xs.Registry.Db.Dotnet.Entities.Package", b =>
@@ -37,7 +36,7 @@ namespace Xs.Registry.Db.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<Instant>("Published");
+                    b.Property<DateTime>("Published");
 
                     b.Property<string>("Version")
                         .IsRequired();
@@ -48,7 +47,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasIndex("MetaPackageId");
 
-                    b.ToTable("Packages","dotnet");
+                    b.ToTable("DotnetPackages");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Dotnet.Entities.PackageDependency", b =>
@@ -64,7 +63,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasKey("PackageId", "Framework", "Name");
 
-                    b.ToTable("PackageDependencies","dotnet");
+                    b.ToTable("DotnetPackageDependencies");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Node.Entities.Package", b =>
@@ -90,7 +89,7 @@ namespace Xs.Registry.Db.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<Instant>("Published");
+                    b.Property<DateTime>("Published");
 
                     b.Property<string>("Shasum")
                         .IsRequired();
@@ -104,7 +103,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasIndex("MetaPackageId");
 
-                    b.ToTable("Packages","node");
+                    b.ToTable("NodePackages");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Node.Entities.PackageDependency", b =>
@@ -120,7 +119,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasKey("PackageId", "Name");
 
-                    b.ToTable("PackageDependencies","node");
+                    b.ToTable("NodePackageDependencies");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.MetaPackage", b =>
@@ -140,7 +139,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.Property<Guid>("OwnerId");
 
-                    b.Property<Instant>("Published");
+                    b.Property<DateTime>("Published");
 
                     b.Property<string>("Type")
                         .IsRequired();
@@ -154,7 +153,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("MetaPackages","shared");
+                    b.ToTable("MetaPackages");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.MetaPackagePermission", b =>
@@ -167,7 +166,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasKey("MetaPackageId", "Category");
 
-                    b.ToTable("MetaPackagePermissions","shared");
+                    b.ToTable("MetaPackagePermissions");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.User", b =>
@@ -184,14 +183,14 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users","shared");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Shared.Entities.UserSession", b =>
                 {
                     b.Property<Guid>("Token");
 
-                    b.Property<Instant>("Expires");
+                    b.Property<DateTime>("Expires");
 
                     b.Property<Guid>("UserId");
 
@@ -199,7 +198,7 @@ namespace Xs.Registry.Db.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSessions","shared");
+                    b.ToTable("UserSessions");
                 });
 
             modelBuilder.Entity("Xs.Registry.Db.Dotnet.Entities.Package", b =>
