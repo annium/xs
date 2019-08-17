@@ -70,6 +70,7 @@ namespace Xs.Tools
             var servers = configuration.Registry.IsFile ?
                 ProjectType.List().ToDictionary(type => type, type => configuration.Registry) :
                 (await mainClientFactory.Create(configuration.Registry).GetRegistryInfoAsync())
+                .Servers
                 .OrderBy(s => s.Key)
                 .ToDictionary(s => ProjectType.Get(s.Key), s => s.Value);
 

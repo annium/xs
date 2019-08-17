@@ -53,6 +53,7 @@ namespace Xs.Commands.Remote
             configuration.SetToken(await client.LoginAsync(user, password));
             configuration.SetServers(
                 (await client.GetRegistryInfoAsync())
+                .Servers
                 .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
             );
 

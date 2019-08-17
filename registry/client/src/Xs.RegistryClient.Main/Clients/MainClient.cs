@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Net.Http;
 using Xs.RegistryClient.Main.Models;
@@ -23,12 +21,12 @@ namespace Xs.RegistryClient.Main
                 .AsAsync<string>();
         }
 
-        public Task<Dictionary<string, Uri>> GetRegistryInfoAsync()
+        public Task<Registry> GetRegistryInfoAsync()
         {
             return Http.Open(this.uri)
                 .Get("registry")
                 .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase}).")
-                .AsAsync<Dictionary<string, Uri>>();
+                .AsAsync<Registry>();
         }
 
         public Task<MetaPackage[]> SearchAsync(string token, string type, string query)

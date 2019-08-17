@@ -23,7 +23,7 @@ namespace Xs
             services.AddSingleton<ProjectsRunner>();
             services.AddSingleton<Watcher>();
 
-            Mapper.AddConfiguration(ConfigureMapping());
+            Mapper.AddConfiguration(ConfigureMapping);
         }
 
         private void RegisterCommands(IServiceCollection services)
@@ -81,14 +81,10 @@ namespace Xs
             services.AddSingleton<DiscoverProjectsTask>();
         }
 
-        private MapperConfiguration ConfigureMapping()
+        private void ConfigureMapping(MapperConfiguration cfg)
         {
-            var cfg = new MapperConfiguration();
-
             cfg.Map<string, Cli.Core.Models.Version>(s => new Cli.Core.Models.Version(s));
             cfg.Map<string, Cli.Core.Models.ProjectType>(s => Cli.Core.Models.ProjectType.Get(s));
-
-            return cfg;
         }
     }
 }
