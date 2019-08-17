@@ -1,10 +1,7 @@
-using Annium.AspNetCore.IntegrationTesting;
-using Annium.Net.Http;
-
 namespace Xs.Registry.Main.Tests
 {
-    public class IntegrationTestBase : IntegrationTest
+    public class IntegrationTestBase : Registry.Tests.IntegrationTestBase<Startup<Registry.Main.TestServicePack>>
     {
-        protected IRequest http => GetRequest<Startup<TestServicePack>>();
+
     }
 }
