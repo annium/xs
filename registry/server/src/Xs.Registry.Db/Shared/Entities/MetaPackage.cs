@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NodaTime;
 
 namespace Xs.Registry.Db.Shared.Entities
 {
-    [Table(nameof(Context.MetaPackages), Schema = Schema.Shared)]
+    [Table(nameof(Context.MetaPackages))]
     internal class MetaPackage
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -28,7 +27,7 @@ namespace Xs.Registry.Db.Shared.Entities
         public string Description { get; set; }
 
         [Required]
-        public Instant Published { get; set; }
+        public DateTime Published { get; set; }
 
         [Required]
         public int Downloads { get; set; }

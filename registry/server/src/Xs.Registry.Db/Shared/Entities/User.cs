@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Xs.Registry.Db.Shared.Entities
 {
-    [Table(nameof(Context.Users), Schema = Schema.Shared)]
+    [Table(nameof(Context.Users))]
     internal class User
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]

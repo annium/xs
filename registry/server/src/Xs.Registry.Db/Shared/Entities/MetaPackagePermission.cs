@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Xs.Registry.Db.Shared.Entities
 {
-    [Table(nameof(Context.MetaPackagePermissions), Schema = Schema.Shared)]
+    [Table(nameof(Context.MetaPackagePermissions))]
     internal class MetaPackagePermission
     {
         [Required]

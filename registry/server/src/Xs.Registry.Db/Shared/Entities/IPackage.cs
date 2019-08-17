@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using NodaTime;
 
 namespace Xs.Registry.Db.Shared.Entities
 {
@@ -18,7 +17,7 @@ namespace Xs.Registry.Db.Shared.Entities
 
         string Description { get; }
 
-        Instant Published { get; }
+        DateTime Published { get; }
 
         int Downloads { get; set; }
 

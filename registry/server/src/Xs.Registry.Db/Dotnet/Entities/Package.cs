@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NodaTime;
 using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db.Dotnet.Entities
 {
-    [Table("Packages", Schema = Schema.Dotnet)]
+    [Table("DotnetPackages")]
     internal class Package : IPackage<PackageDependency>
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -29,7 +28,7 @@ namespace Xs.Registry.Db.Dotnet.Entities
         public string Description { get; set; }
 
         [Required]
-        public Instant Published { get; set; }
+        public DateTime Published { get; set; }
 
         [Required]
         public int Downloads { get; set; }

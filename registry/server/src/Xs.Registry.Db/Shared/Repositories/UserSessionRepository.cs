@@ -45,10 +45,12 @@ namespace Xs.Registry.Db.Shared
 
         public Task ProlongateAsync(Guid token, Instant expires)
         {
+            var expiresDate = mapper.Map<DateTime>(expires);
+
             return context.UserSessions
                 .UpdateAsync(
                     s => s.Token == token,
-                    s => new Entities.UserSession { Expires = expires }
+                    s => new Entities.UserSession { Expires = expiresDate }
                 );
         }
 
@@ -59,7 +61,9 @@ namespace Xs.Registry.Db.Shared
 
         public Task DeleteExpiredAsync(Instant now)
         {
-            return context.UserSessions.DeleteAsync(s => s.Expires < now);
+            var nowDate = mapper.Map<DateTime>(now);
+
+            return context.UserSessions.DeleteAsync(s => s.Expires < nowDate);
         }
     }
 }

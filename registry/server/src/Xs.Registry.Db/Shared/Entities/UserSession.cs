@@ -1,11 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NodaTime;
 
 namespace Xs.Registry.Db.Shared.Entities
 {
-    [Table(nameof(Context.UserSessions), Schema = Schema.Shared)]
+    [Table(nameof(Context.UserSessions))]
     internal class UserSession
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -16,6 +15,6 @@ namespace Xs.Registry.Db.Shared.Entities
         public Guid UserId { get; set; }
 
         [Required]
-        public Instant Expires { get; set; }
+        public DateTime Expires { get; set; }
     }
 }

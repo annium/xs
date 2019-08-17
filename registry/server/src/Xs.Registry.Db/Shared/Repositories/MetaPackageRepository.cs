@@ -154,6 +154,8 @@ namespace Xs.Registry.Db.Shared
 
         public Task UpdateInfoAsync(Guid id, IPackageInfo packageInfo)
         {
+            var published = mapper.Map<DateTime>(packageInfo.Published);
+
             return context.MetaPackages
                 .Where(p => p.Id == id)
                 .UpdateAsync(u => new Entities.MetaPackage()
@@ -161,7 +163,7 @@ namespace Xs.Registry.Db.Shared
                     Name = packageInfo.Name,
                         Version = packageInfo.Version,
                         Description = packageInfo.Description,
-                        Published = packageInfo.Published,
+                        Published = published,
                 });
         }
 
