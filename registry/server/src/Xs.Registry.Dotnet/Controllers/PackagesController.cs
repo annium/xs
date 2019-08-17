@@ -3,21 +3,21 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Abstract.Packages;
-using Xs.Registry.Db.Node;
+using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Shared;
-using Xs.Registry.Node.Payloads;
-using Xs.Registry.Node.Views;
+using Xs.Registry.Dotnet.Payloads;
+using Xs.Registry.Dotnet.Views;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Node.Controllers
+namespace Xs.Registry.Dotnet.Controllers
 {
     [Route("packages")]
-    public class PackageController : ServerController<User>
+    public class PackagesController : ServerController<User>
     {
         private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
 
-        public PackageController(
+        public PackagesController(
             IPackageService<Package, PackageDependency, PackagePayload> packageService
         )
         {
@@ -32,6 +32,8 @@ namespace Xs.Registry.Node.Controllers
             var result = await packageService.GetPackagesAsync(GetUser(), name);
             switch (result.Status)
             {
+                case PackageStatus.NotFound:
+                    return NotFound();
                 case PackageStatus.Forbidden:
                     return Forbidden(result);
                 case PackageStatus.OK:

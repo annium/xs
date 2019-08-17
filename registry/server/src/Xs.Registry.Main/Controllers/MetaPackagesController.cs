@@ -11,13 +11,13 @@ using Xs.Registry.Shared.Helpers;
 namespace Xs.Registry.Main.Controllers
 {
     [Route("packages")]
-    public class MetaPackageController : ServerController<User>
+    public class MetaPackagesController : ServerController<User>
     {
         private readonly IMetaPackageManager metaPackageManager;
 
         private readonly IMetaPackageRepository metaPackageRepository;
 
-        public MetaPackageController(
+        public MetaPackagesController(
             IMetaPackageManager metaPackageManager,
             IMetaPackageRepository metaPackageRepository
         )
