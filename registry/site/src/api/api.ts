@@ -1,5 +1,5 @@
-import { factory } from '@annium/server-http'
+import { httpClientFactory } from '@annium/client-http'
 
-export const api = factory({
+export const api = httpClientFactory({
   url: new URL(process.env.REACT_APP_API || window.location.toString()),
 })

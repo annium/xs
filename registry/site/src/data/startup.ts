@@ -25,6 +25,6 @@ export const { actions: startupActions, reducer: startupReducer } = reducerFacto
   .action('setServers', (store, servers: Startup['servers']) => ({ ...store, servers }))
   .function('load', ({ setServers }) => async () => {
     const result = await registry.load()
-    setServers(result.data)
+    setServers(result.data.servers)
   })
   .build()

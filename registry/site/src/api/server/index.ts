@@ -1,4 +1,4 @@
-import { Client, factory, Response } from '@annium/server-http'
+import { HttpClient, httpClientFactory, HttpResponse } from '@annium/client-http'
 import { when } from '@annium/utils'
 
 import { context } from '../../context'
@@ -13,14 +13,15 @@ export function createApi<TPackageData extends PackageData, TPackage extends Pac
   toPackage: (data: TPackageData) => TPackage,
 ) {
   return {
-    async get(name: string): Promise<Response<TPackage[]>> {
+    async get(name: string): Promise<HttpResponse<TPackage[]>> {
       const api = await getApi(type, getTokenHeader)
 
       const packageName = encodeURIComponent(name)
+      const raw = await api.get<TPackageData[]>(`packages/${packageName}`)
 
-      return (await api.get<TPackageData[]>(`packages/${packageName}`)).map(data => data.map(toPackage))
+      return raw.map(data => data.map(toPackage))
     },
-    async delete(name: string, version: string): Promise<Response> {
+    async delete(name: string, version: string): Promise<HttpResponse> {
       const api = await getApi(type, getTokenHeader)
 
       const packageName = encodeURIComponent(name)
@@ -33,7 +34,7 @@ export function createApi<TPackageData extends PackageData, TPackage extends Pac
 async function getApi(
   type: ProjectType,
   getTokenHeader: (token: string) => Record<string, string>,
-): Promise<Client> {
+): Promise<HttpClient> {
   await when(() => Boolean(context.getState().auth.user.data))
 
   const { servers } = context.getState().startup
@@ -43,7 +44,7 @@ async function getApi(
 
   if (!server) throw new Error('Server is not registered')
 
-  return factory({
+  return httpClientFactory({
     url: server,
     init: {
       headers: getTokenHeader(apiToken),

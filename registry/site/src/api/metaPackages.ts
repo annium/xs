@@ -1,4 +1,4 @@
-import { Response } from '@annium/server-http'
+import { HttpResponse } from '@annium/client-http'
 import { identity, pickBy } from 'lodash'
 
 import { MetaPackageData, toMetaPackage } from '../models/data/MetaPackageData'
@@ -13,13 +13,13 @@ export const search = async (
   type: string,
   query: string,
   page: number,
-): Promise<Response<MetaPackage[]>> => {
+): Promise<HttpResponse<MetaPackage[]>> => {
   const q = pickBy({ ownerId, type, query: encodeURIComponent(query), page }, identity)
 
   return (await api.get<MetaPackageData[]>('packages/search', q)).map(data => data.map(toMetaPackage))
 }
 
-export const get = async (type: string, name: string): Promise<Response<MetaPackage | undefined>> => {
+export const get = async (type: string, name: string): Promise<HttpResponse<MetaPackage | undefined>> => {
   const packageName = encodeURIComponent(name)
 
   return (await api.get<MetaPackageData>(`packages/${type}/${packageName}`)).map(toMetaPackage)
@@ -28,5 +28,5 @@ export const get = async (type: string, name: string): Promise<Response<MetaPack
 export const setPermissions = async (
   type: string, name: string,
   permissions: MetaPackagePermission[],
-): Promise<Response> =>
+): Promise<HttpResponse> =>
   api.post(`packages/${type}/${encodeURIComponent(name)}/permissions`, undefined, permissions)
