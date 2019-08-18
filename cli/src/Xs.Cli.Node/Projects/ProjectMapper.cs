@@ -32,9 +32,7 @@ namespace Xs.Cli.Node.Projects
                 project.Description = info.Property(El.Description)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing description");
 
-            project.IsPackable = info.Property(El.Private) is null ?
-                false :
-                info.Property(El.Private).Value.ToString().ToLowerInvariant() == "false";
+            project.IsPackable = info.Property(El.Private) is null;
 
             var projects = new List<Dependency<string>>();
             projects.AddRange(GetProjectDependencies(El.Dependencies, DependencyType.Normal));
@@ -77,7 +75,8 @@ namespace Xs.Cli.Node.Projects
             result[El.Name] = project.Name;
             result[El.Version] = project.Version.ToString();
             result[El.Description] = project.Description;
-            result[El.Private] = project is IPublishableProject;
+            if (!(project is IPublishableProject))
+                result[El.Private] = true;
 
             copyProperty(El.Main);
 
