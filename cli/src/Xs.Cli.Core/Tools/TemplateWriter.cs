@@ -101,11 +101,29 @@ namespace Xs.Cli.Core.Tools
                 return Path.Combine(stripExtension(name, extension).Split('.')) + $".{extension}";
             }
 
-            string stripExtension(string name, string extension) =>
-                endsWithExtension(name, extension) ? name.Substring(0, name.Length - extension.Length - 1) : name;
+            string stripExtension(string name, string extension)
+            {
+                if (!endsWithExtension(name, extension))
+                    return name;
 
-            bool endsWithExtension(string name, string extension) => name.EndsWith(extension) &&
-                (name[name.Length - extension.Length - 1] == '_' || name[name.Length - extension.Length - 1] == '.');
+                if (name.Length == extension.Length)
+                    return string.Empty;
+
+                return name.Substring(0, name.Length - extension.Length - 1);
+            }
+
+            bool endsWithExtension(string name, string extension)
+            {
+                if (!name.EndsWith(extension))
+                    return false;
+
+                if (name.Length == extension.Length)
+                    return true;
+
+                var prevChar = name[name.Length - extension.Length - 1];
+
+                return prevChar == '_' || prevChar == '.';
+            }
         }
 
         public void EnsureAllWritten()
