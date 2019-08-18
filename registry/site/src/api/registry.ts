@@ -1,8 +1,9 @@
 import { HttpResponse } from '@annium/client-http'
 
-import { api } from './api'
-import { Registry } from '../models/view/Registry'
 import { RegistryData, toRegistryData as toRegistry } from '../models/data/RegistryData'
+import { Registry } from '../models/view/Registry'
+
+import { api } from './api'
 
 
 export const load = async (): Promise<HttpResponse<Registry>> => {

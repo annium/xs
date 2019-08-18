@@ -7,7 +7,7 @@ export class UserMetaPackageAccess {
   public readonly isWorld: boolean
   public readonly permission: Permission
 
-  constructor(
+  public constructor(
     userId: string,
     ownerId: string,
     permissions: MetaPackagePermission[],
