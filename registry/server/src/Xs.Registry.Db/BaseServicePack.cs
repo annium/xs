@@ -33,11 +33,7 @@ namespace Xs.Registry.Db
                             $"Password={cfg.Pass}",
                             $"SSL Mode=Prefer",
                             $"Trust Server Certificate=true",
-                        }),
-                        options =>
-                        {
-                            options.UseNodaTime(); // is needed, cause not enabled by default
-                        }
+                        })
                     );
                 });
 

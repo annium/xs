@@ -10,7 +10,7 @@ using Xs.Registry.Db;
 namespace Xs.Registry.Db.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20190817193117_init")]
+    [Migration("20190818102620_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
