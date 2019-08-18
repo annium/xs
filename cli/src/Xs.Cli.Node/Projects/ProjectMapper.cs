@@ -32,7 +32,9 @@ namespace Xs.Cli.Node.Projects
                 project.Description = info.Property(El.Description)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing description");
 
-            project.IsPackable = info.Property(El.Private)?.Value.ToString().ToLowerInvariant() == "true";
+            project.IsPackable = info.Property(El.Private) is null ?
+                false :
+                info.Property(El.Private).Value.ToString().ToLowerInvariant() == "false";
 
             var projects = new List<Dependency<string>>();
             projects.AddRange(GetProjectDependencies(El.Dependencies, DependencyType.Normal));
@@ -70,41 +72,46 @@ namespace Xs.Cli.Node.Projects
             var dir = Directory.GetParent(path).FullName;
 
             var info = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(path));
-            var scripts = info[El.Scripts];
-            var browsersList = info[El.BrowsersList];
 
-            info.Remove(El.Dependencies);
-            info.Remove(El.DevDependencies);
-            info.Remove(El.PeerDependencies);
-            info.Remove(El.Scripts);
-            info.Remove(El.BrowsersList);
+            var result = new JObject();
+            result[El.Name] = project.Name;
+            result[El.Version] = project.Version.ToString();
+            result[El.Description] = project.Description;
+            result[El.Private] = project is IPublishableProject;
+
+            copyProperty(El.Main);
 
             var normalDeps = getDeps(DependencyType.Normal);
             var devDeps = getDeps(DependencyType.Dev);
             var peerDeps = getDeps(DependencyType.Peer);
 
-            info[El.Version] = project.Version.ToString();
-
             if (normalDeps.Count > 0)
-                info.Add(El.Dependencies, JObject.FromObject(normalDeps));
+                result[El.Dependencies] = JObject.FromObject(normalDeps);
 
             if (devDeps.Count > 0)
-                info.Add(El.DevDependencies, JObject.FromObject(devDeps));
+                result[El.DevDependencies] = JObject.FromObject(devDeps);
 
             if (peerDeps.Count > 0)
-                info.Add(El.PeerDependencies, JObject.FromObject(peerDeps));
+                result[El.PeerDependencies] = JObject.FromObject(peerDeps);
 
-            if (scripts != null)
-                info.Add(El.Scripts, scripts);
-            if (browsersList != null)
-                info.Add(El.BrowsersList, browsersList);
+            copyProperty(El.Scripts);
+            copyProperty(El.BrowsersList);
 
-            File.WriteAllText(path, JsonConvert.SerializeObject(info, new JsonSerializerSettings()
+            foreach (var(key, token) in info)
+                copyProperty(key);
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(result, new JsonSerializerSettings()
             {
                 Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore,
             }));
             File.AppendAllText(path, Environment.NewLine);
+
+            void copyProperty(string property)
+            {
+                if (info.ContainsKey(property) && !result.ContainsKey(property))
+                    result[property] = info[property];
+            }
 
             Dictionary<string, string> getDeps(DependencyType type) =>
                 project.Projects
@@ -153,6 +160,7 @@ namespace Xs.Cli.Node.Projects
             public const string Version = "version";
             public const string Description = "description";
             public const string Private = "private";
+            public const string Main = "main";
             public const string Dependencies = "dependencies";
             public const string DevDependencies = "devDependencies";
             public const string PeerDependencies = "peerDependencies";
