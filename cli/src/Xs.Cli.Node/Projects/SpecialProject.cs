@@ -14,6 +14,7 @@ namespace Xs.Cli.Node.Projects
 {
     internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
+        // TODO: rewrite through project options - projects can have different shapes in a moment
         private static string cacheDir;
         private static object cacheLocker = new object();
         public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);

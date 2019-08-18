@@ -90,11 +90,14 @@ namespace Xs.Cli.Node.Projects
 
             var isTestProject = scripts.ContainsKey("test");
 
-            if (isTestProject)
-                return new TestProject(getContext<TestProject>());
+            if (isPackable && isTestProject)
+                return new LibraryTestProject(getContext<LibraryTestProject>());
 
             if (isPackable)
                 return new LibraryProject(getContext<LibraryProject>());
+
+            if (isTestProject)
+                return new TestProject(getContext<TestProject>());
 
             return new SealedProject(getContext<SealedProject>());
 

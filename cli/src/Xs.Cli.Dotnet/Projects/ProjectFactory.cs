@@ -90,11 +90,11 @@ namespace Xs.Cli.Dotnet.Projects
                 .Select(e => ResolvePackageDependency(name, e, packages, configuration))
                 .ToHashSet();
 
-            if (isTestProject)
-                return new TestProject(getContext<TestProject>());
-
             if (isPackable)
                 return new LibraryProject(getContext<LibraryProject>());
+
+            if (isTestProject)
+                return new TestProject(getContext<TestProject>());
 
             return new SealedProject(getContext<SealedProject>());
 
