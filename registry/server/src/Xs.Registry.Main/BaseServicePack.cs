@@ -26,7 +26,7 @@ namespace Xs.Registry.Main
             services.AddSingleton<ISecurityManager, SecurityManager>();
 
             // mapping
-            services.AddMapper(provider);
+            services.AddMapper();
         }
     }
 }

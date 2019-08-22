@@ -37,7 +37,7 @@ namespace Xs.Registry.Node
             services.AddSingleton<Storage.IPackageStorage, PackageStorage>();
 
             // mapping
-            services.AddMapper(provider);
+            services.AddMapper();
         }
     }
 }

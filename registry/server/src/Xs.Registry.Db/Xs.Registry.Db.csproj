@@ -11,7 +11,7 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.Configuration.Abstractions" Version="0.1.0" />
+        <PackageReference Include="Annium.Configuration.Yaml" Version="0.1.0" />
         <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="Annium.Core.Mapper" Version="0.1.0" />
         <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />

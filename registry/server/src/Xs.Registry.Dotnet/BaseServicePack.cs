@@ -39,7 +39,7 @@ namespace Xs.Registry.Dotnet
             services.AddSingleton<ISymbolStorage, SymbolStorage>();
 
             // mapping
-            services.AddMapper(provider);
+            services.AddMapper();
         }
     }
 }
