@@ -54,7 +54,7 @@ namespace Xs.Tasks
 
                 foreach (var(directory, factory) in results.ToArray())
                 {
-                    var(project, exception) = TryCreateProject(directory, factory, projects, packages, configuration);
+                    var(project, exception) = TryCreateProject(directory, factory, configuration);
                     if (project != null)
                     {
                         results.Remove(directory);
@@ -80,14 +80,12 @@ namespace Xs.Tasks
         private ValueTuple<IProject, Exception> TryCreateProject(
             string directory,
             ISpecialProjectFactory factory,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
             try
             {
-                return (projectFactory.CreateProject(directory, factory, projects, packages, configuration), null);
+                return (projectFactory.CreateProject(directory, factory, configuration), null);
             }
             catch (Exception exception)
             {

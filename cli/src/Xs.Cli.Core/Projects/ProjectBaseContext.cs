@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.IO;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects
 {
-    public abstract class ProjectBaseContext<TProject> where TProject : ProjectBase<TProject>
+    public abstract class ProjectBaseContext<TProject> where TProject : class, IProject
     {
         public ProjectType Type { get; }
         public string Name { get; }

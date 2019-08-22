@@ -70,25 +70,22 @@ namespace Xs.Cli.Dotnet.Projects
 
         public IProject CreateProject(
             string directory,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
             var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());
             var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable, isTestProject) = mapper.Load(file.FullName, configuration);
 
-            // check TargetFramework consistency
-            if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
-                throw new InvalidOperationException($"Project {name} uses different target framework.");
+            // TODO: use in linker
+            // // check TargetFramework consistency
+            // if (projects.OfType<ISpecialProject>().Any(e => e.TargetFramework != targetFramework))
+            //     throw new InvalidOperationException($"Project {name} uses different target framework.");
 
             var projectDependencies = projectDeps
-                .Select(e => ResolveProjectDependency(name, file, e, projects))
+                .Select(e => GetProjectDependencyMock(name, file, e))
                 .ToHashSet();
 
-            var packageDependencies = packageDeps
-                .Select(e => ResolvePackageDependency(name, e, packages, configuration))
-                .ToHashSet();
+            var packageDependencies = packageDeps.ToHashSet();
 
             if (isPackable)
                 return new LibraryProject(getContext<LibraryProject>());

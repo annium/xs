@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 
@@ -14,8 +13,6 @@ namespace Xs.Cli.Core.Projects
 
         IProject CreateProject(
             string directory,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         );
     }

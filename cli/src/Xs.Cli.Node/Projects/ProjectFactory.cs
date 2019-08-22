@@ -72,8 +72,6 @@ namespace Xs.Cli.Node.Projects
 
         public IProject CreateProject(
             string directory,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
         )
         {
@@ -81,12 +79,10 @@ namespace Xs.Cli.Node.Projects
             var(name, version, description, projectDeps, packageDeps, scripts, isPackable) = mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
-                .Select(e => ResolveProjectDependency(name, file, e, projects))
+                .Select(e => GetProjectDependencyMock(name, file, e))
                 .ToHashSet();
 
-            var packageDependencies = packageDeps
-                .Select(e => ResolvePackageDependency(name, e, packages, configuration))
-                .ToHashSet();
+            var packageDependencies = packageDeps.ToHashSet();
 
             var isTestProject = scripts.ContainsKey("test");
 

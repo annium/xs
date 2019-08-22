@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects
 {
@@ -30,25 +28,18 @@ namespace Xs.Cli.Core.Projects
         public IProject CreateProject(
             string directory,
             ISpecialProjectFactory factory,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
             DiscoverConfiguration configuration
-        )
-        {
-            var project = factory.CreateProject(
-                directory,
-                projects.Where(e => e.Type == factory.Type),
-                packages.Where(e => e.Type == factory.Type),
-                configuration
-            );
+        ) => factory.CreateProject(
+            directory,
+            configuration
+        );
 
-            if (projects.Any(p => p.Name == project.Name))
-                throw new InvalidOperationException($"Project {project} name is not unique.");
+        // TODO: use in linker
 
-            if (!configuration.IgnoreConsistency && projects.Any(p => p.Version != project.Version))
-                throw new InvalidOperationException($"Project {project} uses different version {project.Version} than others.");
+        // if (projects.Any(p => p.Name == project.Name))
+        //     throw new InvalidOperationException($"Project {project} name is not unique.");
 
-            return project;
-        }
+        // if (!configuration.IgnoreConsistency && projects.Any(p => p.Version != project.Version))
+        //     throw new InvalidOperationException($"Project {project} uses different version {project.Version} than others.");
     }
 }
