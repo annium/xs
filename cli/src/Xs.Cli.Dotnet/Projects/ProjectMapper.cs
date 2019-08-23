@@ -25,6 +25,8 @@ namespace Xs.Cli.Dotnet.Projects
             var info = XElement.Load(file.OpenRead());
 
             var properties = info.Element(El.PropertyGroup);
+            if (properties is null)
+                throw new InvalidOperationException($"Project {path} has no properties defined.");
             if (!configuration.SkipChecks)
                 ValidateProperties(path, properties);
 
@@ -55,11 +57,11 @@ namespace Xs.Cli.Dotnet.Projects
                 .Select(package => new Dependency<Package>(DependencyType.Normal, package))
                 .ToArray();
 
-            project.IsPackable = properties.Element(El.IsPackable) == null ?
+            project.IsPackable = properties.Element(El.IsPackable) is null ?
                 false :
                 bool.Parse(properties.Element(El.IsPackable).Value);
 
-            project.IsTestProject = properties.Element(El.IsTestProject) == null ?
+            project.IsTestProject = properties.Element(El.IsTestProject) is null ?
                 false :
                 bool.Parse(properties.Element(El.IsTestProject).Value);
 
@@ -140,10 +142,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         private void ValidateProperties(string path, XElement properties)
         {
-            if (properties == null)
-                throw new InvalidOperationException($"Project {path} has no properties defined.");
-
-            if (properties.Element(El.PackageId) == null)
+            if (properties.Element(El.PackageId) is null)
                 throw new InvalidOperationException($"Project {path} has no {El.PackageId} defined.");
 
             var name = properties.Element(El.PackageId).Value;
@@ -156,13 +155,13 @@ namespace Xs.Cli.Dotnet.Projects
             if (dirName != name)
                 throw new InvalidOperationException($"Project {path} project directory name {dirName} doesn't match declared name {name}.");
 
-            if (properties.Element(El.PackageVersion) == null)
+            if (properties.Element(El.PackageVersion) is null)
                 throw new InvalidOperationException($"Project {path} has no {El.PackageVersion} defined.");
 
-            if (properties.Element(El.Description) == null)
+            if (properties.Element(El.Description) is null)
                 throw new InvalidOperationException($"Project {path} has no {El.Description} defined.");
 
-            if (properties.Element(El.TargetFramework) == null)
+            if (properties.Element(El.TargetFramework) is null)
                 throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined.");
 
             if (properties.Element(El.DebugType)?.Value != "portable")
@@ -181,7 +180,7 @@ namespace Xs.Cli.Dotnet.Projects
                 throw new InvalidOperationException($"Project {path} has no {El.WarningsAsErrors} defined or it is not true.");
 
             ensureValidBoolean(El.IsPackable);
-            if (properties.Element(El.IsPackable) == null)
+            if (properties.Element(El.IsPackable) is null)
                 throw new InvalidOperationException($"Project {path} has no {El.IsPackable} defined.");
 
             ensureValidBoolean(El.IsTestProject);
