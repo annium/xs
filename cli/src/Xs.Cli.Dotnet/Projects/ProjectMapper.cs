@@ -33,12 +33,20 @@ namespace Xs.Cli.Dotnet.Projects
             project.Name = Path.GetFileNameWithoutExtension(file.Name);
             if (configuration.SkipChecks)
             {
-                project.Version = new Core.Models.Version(properties.Element(El.PackageVersion)?.Value ?? "0.1.0");
+                var rawVersion = properties.Element(El.PackageVersion)?.Value ?? "0.1.0";
+                if (!Core.Models.Version.TryParse(rawVersion, out var version))
+                    throw new ArgumentException($"Project {project.Name} version {rawVersion} is invalid");
+
+                project.Version = version;
                 project.Description = properties.Element(El.Description)?.Value ?? string.Empty;
             }
             else
             {
-                project.Version = new Core.Models.Version(properties.Element(El.PackageVersion).Value);
+                var rawVersion = properties.Element(El.PackageVersion)?.Value;
+                if (!Core.Models.Version.TryParse(rawVersion, out var version))
+                    throw new ArgumentException($"Project {project.Name} version {rawVersion} is invalid");
+
+                project.Version = version;
                 project.Description = properties.Element(El.Description).Value;
             }
             project.TargetFramework = properties.Element(El.TargetFramework).Value;
@@ -222,13 +230,14 @@ namespace Xs.Cli.Dotnet.Projects
             var name = reference.Attribute(El.Include)?.Value ??
                 throw new InvalidOperationException($"Project {project} has empty package dependency name.");
 
-            Core.Models.Version version = null;
-
             if (configuration.SkipChecks && implicitPackages.Any(p => p == name))
-                version = new Core.Models.Version("1.0.0");
+                return new Package(Constants.ProjectType, name, new Core.Models.Version(1, 0, 0, string.Empty));
 
-            version = version ?? new Core.Models.Version(reference.Attribute(El.Version)?.Value ??
-                throw new InvalidOperationException($"Project {project} has empty package dependency {name} version."));
+            var rawVersion = reference.Attribute(El.Version)?.Value ??
+                throw new InvalidOperationException($"Project {project} has empty package dependency {name} version.");
+
+            if (!Core.Models.Version.TryParse(rawVersion, out var version))
+                throw new InvalidOperationException($"Project {project} package dependency {name} version {rawVersion} is invalid.");
 
             return new Package(Constants.ProjectType, name, version);
         }

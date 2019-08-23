@@ -35,7 +35,8 @@ namespace Xs.Cli.Dotnet.Projects
                 {
                     try
                     {
-                        var version = new Core.Models.Version(e.Version);
+                        if (!Core.Models.Version.TryParse(e.Version, out var version))
+                            throw new ArgumentException($"Package {e.Id} version {e.Version} is invalid");
 
                         return (Id: e.Id, Version: version);
                     }

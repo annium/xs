@@ -83,7 +83,7 @@ namespace Xs
 
         private void ConfigureMapping(MapperConfiguration cfg)
         {
-            cfg.Map<string, Cli.Core.Models.Version>(s => new Cli.Core.Models.Version(s));
+            cfg.Map<string, Cli.Core.Models.Version>(s => Cli.Core.Models.Version.Parse(s));
             cfg.Map<string, Cli.Core.Models.ProjectType>(s => Cli.Core.Models.ProjectType.Get(s));
         }
     }

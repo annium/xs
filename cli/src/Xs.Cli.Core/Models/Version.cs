@@ -6,6 +6,49 @@ namespace Xs.Cli.Core.Models
 {
     public class Version : Comparable<Version>
     {
+        public static Version Parse(string raw)
+        {
+            if (TryParse(raw, out var version))
+                return version;
+
+            throw new ArgumentException($"'{raw}' is not a valid version value");
+        }
+
+        public static bool TryParse(string raw, out Version version)
+        {
+            version = null;
+
+            if (raw is null)
+                return false;
+
+            var parts = raw.Split('.', 3);
+            if (parts.Length < 3)
+                return false;
+
+            try
+            {
+                var major = uint.Parse(parts[0]);
+                var minor = uint.Parse(parts[1]);
+
+                var patchParts = parts[2].Split('.', '-', '+');
+                var patch = uint.Parse(patchParts[0]);
+
+                // drop scm hash
+                var hasHash = parts[2].Contains('+');
+                var suffix = patchParts.Length == 1 || hasHash ?
+                    string.Empty :
+                    parts[2].Substring(patchParts[0].Length);
+
+                version = new Version(major, minor, patch, suffix);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public uint Major { get; private set; }
         public uint Minor { get; private set; }
         public uint Patch { get; private set; }
@@ -17,39 +60,6 @@ namespace Xs.Cli.Core.Models
             Minor = minor;
             Patch = patch;
             Suffix = suffix;
-        }
-
-        public Version(string version)
-        {
-            if (version == null)
-                throw new ArgumentNullException(version);
-
-            var parts = version.Split('.', 3);
-            if (parts.Length < 3)
-                throwException();
-
-            try
-            {
-                Major = uint.Parse(parts[0]);
-                Minor = uint.Parse(parts[1]);
-
-                var hasHash = parts[2].Contains('+');
-                var patchParts = parts[2].Split('.', '-', '+');
-                Patch = uint.Parse(patchParts[0]);
-
-                // drop scm hash
-                if (patchParts.Length == 1 || hasHash)
-                    return;
-
-                Suffix = parts[2].Substring(patchParts[0].Length);
-            }
-            catch
-            {
-                throwException();
-            }
-
-            void throwException() =>
-                throw new InvalidOperationException($"Version {version} doesn't follow SemVer notation.");
         }
 
         public void Update(Version version)

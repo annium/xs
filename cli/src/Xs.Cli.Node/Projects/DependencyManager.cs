@@ -29,7 +29,8 @@ namespace Xs.Cli.Node.Projects
                 {
                     try
                     {
-                        var version = new Core.Models.Version(v);
+                        if (!Core.Models.Version.TryParse(v, out var version))
+                            throw new ArgumentException($"Package {package.Name} registered version {v} is invalid");
 
                         return (Id: index.Name, Version: version);
                     }

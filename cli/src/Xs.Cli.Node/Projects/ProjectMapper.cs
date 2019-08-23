@@ -21,10 +21,13 @@ namespace Xs.Cli.Node.Projects
 
             project.Name = info.Property(El.Name)?.Value.ToString() ??
                 throw new InvalidOperationException($"Project {path} is missing name");
-            project.Version = new Core.Models.Version(
-                info.Property(El.Version)?.Value.ToString() ??
-                throw new InvalidOperationException($"Project {path} is missing version")
-            );
+
+            var rawVersion = info.Property(El.Version)?.Value.ToString() ??
+                throw new InvalidOperationException($"Project {path} is missing version");
+            if (Core.Models.Version.TryParse(rawVersion, out var version))
+                project.Version = version;
+            else
+                throw new InvalidOperationException($"Project {path} version {rawVersion} is invalid");
 
             if (configuration.SkipChecks)
                 project.Description = info.Property(El.Description)?.Value.ToString() ?? string.Empty;
@@ -141,16 +144,19 @@ namespace Xs.Cli.Node.Projects
         private static Package ReadPackageDependency(
             string project,
             string name,
-            string version
+            string rawVersion
         )
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new InvalidOperationException($"Project {project} has empty package dependency name.");
 
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(rawVersion))
                 throw new InvalidOperationException($"Project {project} has empty package dependency {name} version.");
 
-            return new Package(Constants.ProjectType, name, new Core.Models.Version(version));
+            if (!Core.Models.Version.TryParse(rawVersion, out var version))
+                throw new InvalidOperationException($"Project {project} package dependency {name} version {rawVersion} is invalid.");
+
+            return new Package(Constants.ProjectType, name, version);
         }
 
         private static class El
