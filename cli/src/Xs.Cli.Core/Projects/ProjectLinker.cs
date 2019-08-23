@@ -53,11 +53,14 @@ namespace Xs.Cli.Core.Projects
                 return;
             }
 
-            var duplicatePackage = packages.FirstOrDefault(p => p.Name == project.Name);
-            if (duplicatePackage != null)
+            if (!configuration.SkipChecks)
             {
-                addError(new InvalidOperationException($"Project {project} name is used by package {duplicatePackage}."));
-                return;
+                var duplicatePackage = packages.FirstOrDefault(p => p.Name == project.Name);
+                if (duplicatePackage != null)
+                {
+                    addError(new InvalidOperationException($"Project {project} name is used by package {duplicatePackage}."));
+                    return;
+                }
             }
 
             var linker = linkers.FirstOrDefault(l => l.Type == project.Type);
