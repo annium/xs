@@ -13,9 +13,13 @@ namespace Xs.Cli.Node
     {
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
+            // projects
             services.AddSingleton<ISpecialProjectFactory, ProjectFactory>();
+            services.AddSingleton<ISpecialProjectLinker, ProjectLinker>();
             services.AddSingleton<ProjectMapper>();
             services.AddSingleton<IDependencyManager, DependencyManager>();
+
+            // tools
             services.AddSingleton<ISpecialConfigurationManager, SpecialConfigurationManager>();
 
             // audit rules

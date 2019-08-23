@@ -29,6 +29,7 @@ namespace Xs.Cli.Core
 
             // projects
             services.AddSingleton<IProjectFactory, ProjectFactory>();
+            services.AddSingleton<IProjectLinker, ProjectLinker>();
 
             // tools
             services.AddTransient<ITemplateWriter, TemplateWriter>();

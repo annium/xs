@@ -33,13 +33,5 @@ namespace Xs.Cli.Core.Projects
             directory,
             configuration
         );
-
-        // TODO: use in linker
-
-        // if (projects.Any(p => p.Name == project.Name))
-        //     throw new InvalidOperationException($"Project {project} name is not unique.");
-
-        // if (!configuration.IgnoreConsistency && projects.Any(p => p.Version != project.Version))
-        //     throw new InvalidOperationException($"Project {project} uses different version {project.Version} than others.");
     }
 }

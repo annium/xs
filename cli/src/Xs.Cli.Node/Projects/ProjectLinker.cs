@@ -1,0 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xs.Cli.Core.Commands;
+using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Projects;
+
+namespace Xs.Cli.Node.Projects
+{
+    internal class ProjectLinker : SpecialProjectLinkerBase, ISpecialProjectLinker
+    {
+        public ProjectType Type { get; } = Constants.ProjectType;
+
+        public void PreLink(IEnumerable<IProject> projects, DiscoverConfiguration configuration, Action<Exception> addError)
+        {
+
+        }
+
+        public void Link(
+            IProject project,
+            IEnumerable<IProject> projects,
+            IEnumerable<Package> packages,
+            DiscoverConfiguration configuration,
+            Action<Package> registerPackage,
+            Action<Exception> addError
+        )
+        {
+            // resolve project dependencies
+            var projectDependencies = project.Projects.ToArray();
+            project.Projects.Clear();
+
+            foreach (var dependency in projectDependencies)
+                project.Projects.Add(ResolveProjectDependency(project, dependency, projects, addError));
+
+            // resolve package dependencies
+            var packageDependencies = project.Packages.ToArray();
+            project.Packages.Clear();
+
+            foreach (var dependency in packageDependencies)
+                project.Packages.Add(ResolvePackageDependency(project, dependency, packages, configuration, registerPackage, addError));
+        }
+    }
+}

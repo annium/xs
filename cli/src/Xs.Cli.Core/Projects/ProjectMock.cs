@@ -44,5 +44,7 @@ namespace Xs.Cli.Core.Projects
 
         public void SetVersion(Models.Version version) =>
             throw new NotImplementedException();
+
+        public override string ToString() => Name;
     }
 }
