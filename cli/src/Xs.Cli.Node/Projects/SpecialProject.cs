@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Extensions.Shell;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -15,8 +17,16 @@ namespace Xs.Cli.Node.Projects
     internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         // TODO: rewrite through project options - projects can have different shapes in a moment
-        private static string cacheDir;
         private static object cacheLocker = new object();
+        private static Lazy<string> cacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
+        private static IShell staticShell;
+
+        private static string ResolveCacheDir()
+        {
+            lock(cacheLocker)
+            return staticShell.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
+        }
+
         public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);
         protected readonly IReadOnlyDictionary<string, string> scripts;
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
@@ -28,14 +38,8 @@ namespace Xs.Cli.Node.Projects
             auditRules = context.AuditRules;
             mapper = context.Mapper;
 
-            lock(cacheLocker)
-            {
-                if (string.IsNullOrEmpty(cacheDir))
-                {
-                    var result = context.Shell.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult();
-                    cacheDir = result.Output.Trim();
-                }
-            }
+            // set static shell if not set yet
+            lock(cacheLocker) if (staticShell is null) staticShell = context.Shell;
         }
 
         public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
@@ -54,7 +58,7 @@ namespace Xs.Cli.Node.Projects
 
             lock(cacheLocker)
             {
-                var entries = SysDirectory.GetDirectories(cacheDir);
+                var entries = SysDirectory.GetDirectories(cacheDir.Value);
                 foreach (var(_, pkg) in Packages)
                 {
                     var name = PackageName.GetPlainName(pkg.Name);
