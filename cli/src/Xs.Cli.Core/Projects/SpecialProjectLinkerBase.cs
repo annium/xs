@@ -32,27 +32,19 @@ namespace Xs.Cli.Core.Projects
             Dependency<Package> dep,
             IEnumerable<Package> packages,
             DiscoverConfiguration configuration,
-            Action<Package> registerPackage,
             Action<Exception> addError
         )
         {
+            var type = dep.Type;
             var(_, name, version) = dep.Value;
             var nameLow = name.ToLowerInvariant();
 
-            var dependency = packages.FirstOrDefault(e => e.Name.ToLowerInvariant() == nameLow);
-            if (dependency is null)
-            {
-                registerPackage(dep.Value);
-                return dep;
-            }
+            var package = packages
+                .Where(e => e.Name.ToLowerInvariant() == nameLow)
+                .OrderByDescending(e => e.Version)
+                .FirstOrDefault();
 
-            if (!configuration.IgnoreConsistency && name != dependency.Name)
-                addError(new InvalidOperationException($"Project {project} uses different package naming: {name} != {dependency.Name}."));
-
-            if (!configuration.IgnoreConsistency && version != dependency.Version)
-                addError(new InvalidOperationException($"Project {project} uses different package {name} version: {version} != {dependency.Version}."));
-
-            return new Dependency<Package>(dep.Type, dependency);
+            return new Dependency<Package>(type, package);
         }
     }
 }

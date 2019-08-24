@@ -17,6 +17,7 @@ namespace Xs.Cli.Core.Projects
 
         public void PreLink(
             IEnumerable<IProject> projects,
+            IReadOnlyDictionary<ProjectType, HashSet<Package>> packages,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         )
@@ -31,9 +32,22 @@ namespace Xs.Cli.Core.Projects
             {
                 var linker = linkers.FirstOrDefault(l => l.Type == type);
                 if (linker is null)
+                {
                     addError(new InvalidOperationException($"No linker found for project type {type}"));
-                else
-                    linker.PreLink(projects.Where(p => p.Type == type).ToArray(), configuration, addError);
+                    continue;
+                }
+
+                foreach (var package in typeProjects.SelectMany(p => p.Packages).Select(d => d.Value))
+                    packages[type].Add(package);
+
+                if (!configuration.IgnoreConsistency)
+                    ValidatePackages(typeProjects, packages[type], addError);
+
+                linker.PreLink(
+                    typeProjects,
+                    configuration,
+                    addError
+                );
             }
         }
 
@@ -42,7 +56,6 @@ namespace Xs.Cli.Core.Projects
             IEnumerable<IProject> projects,
             IEnumerable<Package> packages,
             DiscoverConfiguration configuration,
-            Action<Package> registerPackage,
             Action<Exception> addError
         )
         {
@@ -69,9 +82,36 @@ namespace Xs.Cli.Core.Projects
                 projects,
                 packages,
                 configuration,
-                registerPackage,
                 addError
             );
+        }
+
+        private void ValidatePackages(
+            IEnumerable<IProject> projects,
+            IEnumerable<Package> packages,
+            Action<Exception> addError
+        )
+        {
+            foreach (var group in packages.GroupBy(p => p.Name.ToLowerInvariant()))
+            {
+                var name = group.Key;
+                var variations = group.ToArray();
+                if (variations.Length == 1)
+                    continue;
+
+                var usages = projects
+                    .Select(p => (
+                        project: p,
+                        package: p.Packages.FirstOrDefault(d => d.Value.Name.ToLowerInvariant() == name)?.Value
+                    ))
+                    .Where(p => p.package != null)
+                    .ToArray();
+                var variationsString = string.Join(
+                    Environment.NewLine,
+                    usages.Select(p => $"- {p.project}: {p.package}")
+                );
+                addError(new InvalidOperationException($"Package {name} is used in different variations:{Environment.NewLine}{variationsString}"));
+            }
         }
     }
 }

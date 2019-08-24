@@ -20,7 +20,6 @@ namespace Xs.Cli.Core.Projects
             IEnumerable<IProject> projects,
             IEnumerable<Package> packages,
             DiscoverConfiguration configuration,
-            Action<Package> registerPackage,
             Action<Exception> addError
         );
     }

@@ -122,21 +122,14 @@ namespace Xs.Tasks
         {
             logger.Debug("Start projects linking.");
 
-            projectLinker.PreLink(projects, configuration, addError);
+            projectLinker.PreLink(projects, packages, configuration, addError);
 
             throwIfAnyErrors();
 
             foreach (var project in projects)
             {
                 var typePackages = packages[project.Type];
-                projectLinker.Link(
-                    project,
-                    projects,
-                    typePackages,
-                    configuration,
-                    package => typePackages.Add(package),
-                    addError
-                );
+                projectLinker.Link(project, projects, typePackages, configuration, addError);
             }
 
             logger.Debug("Projects linked.");
