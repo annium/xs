@@ -23,6 +23,10 @@ namespace Xs.Cli.Core.Commands
         [Help("Allows to disable normally forced checks.")]
         public bool SkipChecks { get; set; }
 
+        [Option("-fc")]
+        [Help("Force string checks.")]
+        public bool ForceChecks { get; set; }
+
         [Option("-ic")]
         [Help("Allows to ignore inconsistency to fix fursther.")]
         public bool IgnoreConsistency { get; set; }

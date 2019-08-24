@@ -66,7 +66,7 @@ namespace Xs.Cli.Core.Projects
                 return;
             }
 
-            if (!configuration.SkipChecks)
+            if (configuration.ForceChecks)
             {
                 var duplicatePackage = packages.FirstOrDefault(p => p.Name == project.Name);
                 if (duplicatePackage != null)
