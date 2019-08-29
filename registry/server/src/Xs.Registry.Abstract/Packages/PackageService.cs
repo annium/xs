@@ -38,7 +38,7 @@ namespace Xs.Registry.Abstract.Packages
             this.projectType = projectType;
         }
 
-        public async Task<StatusResult<PackageStatus>> PublishPackageAsync(User user, TPayload payload)
+        public async Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPayload payload)
         {
             var executor = Executor.Staged();
 
@@ -69,7 +69,7 @@ namespace Xs.Registry.Abstract.Packages
                 await RepublishPackageVersionAsync(executor, metaPackage, access, payload);
         }
 
-        public async Task<StatusResult<PackageStatus>> UnpublishPackageAsync(User user, string name, string version)
+        public async Task<IStatusResult<PackageStatus>> UnpublishPackageAsync(User user, string name, string version)
         {
             // get available versions
             var versions = await packageRepository.FindAllByNameAsync(name);
@@ -118,7 +118,7 @@ namespace Xs.Registry.Abstract.Packages
             return Result.New(PackageStatus.OK);
         }
 
-        public async Task<StatusResult<PackageStatus, TPackage[]>> GetPackagesAsync(User user, string name)
+        public async Task<IStatusResult<PackageStatus, TPackage[]>> GetPackagesAsync(User user, string name)
         {
             var packages = await packageRepository.FindAllByNameAsync(name);
             if (packages.Length == 0)
@@ -132,7 +132,7 @@ namespace Xs.Registry.Abstract.Packages
             return Result.New(PackageStatus.OK, packages);
         }
 
-        public async Task<StatusResult<PackageStatus>> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
+        public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
         {
             var package = await packageRepository.FindByNameVersionAsync(name, version);
             if (package == null)
@@ -157,7 +157,7 @@ namespace Xs.Registry.Abstract.Packages
             return Result.New(PackageStatus.OK);
         }
 
-        private async Task<StatusResult<PackageStatus>> PublishNewPackageAsync(
+        private async Task<IStatusResult<PackageStatus>> PublishNewPackageAsync(
             StageExecutor executor,
             MetaPackage metaPackage,
             UserMetaPackageAccess access,
@@ -173,7 +173,7 @@ namespace Xs.Registry.Abstract.Packages
             return await PublishPackageVersionAsync(executor, metaPackage, access, payload);
         }
 
-        private async Task<StatusResult<PackageStatus>> RepublishPackageVersionAsync(
+        private async Task<IStatusResult<PackageStatus>> RepublishPackageVersionAsync(
             StageExecutor executor,
             MetaPackage metaPackage,
             UserMetaPackageAccess access,
@@ -196,7 +196,7 @@ namespace Xs.Registry.Abstract.Packages
             return await PublishPackageVersionAsync(executor, metaPackage, access, payload);
         }
 
-        private async Task<StatusResult<PackageStatus>> PublishPackageVersionAsync(
+        private async Task<IStatusResult<PackageStatus>> PublishPackageVersionAsync(
             StageExecutor executor,
             MetaPackage metaPackage,
             UserMetaPackageAccess access,
