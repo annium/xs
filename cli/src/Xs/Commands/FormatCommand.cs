@@ -1,16 +1,15 @@
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
-using Xs.Cli.Core.Projects;
+using Xs.Cli.Core.Models;
 using Xs.Tasks;
 using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class FormatCommand : Command<DiscoverConfiguration>
+    internal class FormatCommand : Command<FormatCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "format";
         public override string Description { get; } = "Format projects.";
@@ -30,14 +29,33 @@ namespace Xs.Commands
         }
 
         public override void Handle(
+            FormatCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg).ToArray();
+            var projects = discoverTask.Run(discoverCfg)
+                .FilterMask(cfg.Mask)
+                .FilterType(cfg.Type)
+                .ToArray();
 
+            logger.Debug($"Format {projects} project(s)");
             foreach (var project in projects)
+            {
+                logger.Debug($"Format {project}");
                 project.Save();
+            }
         }
+    }
+
+    internal class FormatCommandConfiguration
+    {
+        [Position(1, isRequired : false)]
+        [Help("Projects mask.")]
+        public string Mask { get; set; } = "all";
+
+        [Position(2, isRequired : false)]
+        [Help("Project type.")]
+        public ProjectType Type { get; set; }
     }
 }

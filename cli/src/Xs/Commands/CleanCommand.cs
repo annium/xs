@@ -43,7 +43,7 @@ namespace Xs.Commands
                 .ToArray();
 
             logger.Debug($"Clean {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(tkn), token);
+            await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(tkn), cfg.Deep, token);
         }
     }
 
@@ -56,5 +56,9 @@ namespace Xs.Commands
         [Position(2, isRequired : false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; }
+
+        [Option("d")]
+        [Help("Clean dependencies.")]
+        public bool Deep { get; set; }
     }
 }

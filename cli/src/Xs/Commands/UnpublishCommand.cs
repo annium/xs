@@ -8,9 +8,9 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Xs.RegistryClient.Server;
 using Xs.Tasks;
 using Xs.Tools;
-using Xs.RegistryClient.Server;
 
 namespace Xs.Commands
 {
@@ -73,6 +73,7 @@ namespace Xs.Commands
             await runner.RunAsync(
                 projects,
                 (project, tkn) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
+                cfg.Deep,
                 token
             );
         }
@@ -87,5 +88,9 @@ namespace Xs.Commands
         [Position(2)]
         [Help("Version to unpublish.")]
         public Cli.Core.Models.Version Version { get; set; }
+
+        [Option("d")]
+        [Help("Unpublish dependencies.")]
+        public bool Deep { get; set; }
     }
 }

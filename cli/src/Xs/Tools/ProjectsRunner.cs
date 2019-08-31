@@ -22,6 +22,7 @@ namespace Xs.Tools
         public Task RunAsync<TProject>(
             IEnumerable<TProject> projects,
             Func<TProject, CancellationToken, Task> handle,
+            bool runOnDependencies,
             CancellationToken token
         )
         where TProject : IProject
@@ -29,7 +30,13 @@ namespace Xs.Tools
             var locker = new object();
             var gate = new ManualResetEventSlim(false);
 
-            var pending = projects.ToList();
+            var pending = new HashSet<TProject>();
+            if (runOnDependencies)
+                foreach (var project in projects)
+                    CollectTargets(project, pending);
+            else
+                pending = projects.ToHashSet();
+
             var running = new List<TProject>();
             var errors = new List<Exception>();
 
@@ -113,6 +120,18 @@ namespace Xs.Tools
                 throw new AggregateException(errors);
 
             return Task.CompletedTask;
+        }
+
+        private void CollectTargets<TProject>(TProject project, HashSet<TProject> targets)
+        where TProject : IProject
+        {
+            // if target not added - it was already handled
+            // is used to prevent circular calls
+            if (!targets.Add(project))
+                return;
+
+            foreach (var dependency in project.Projects.Select(d => d.Value).OfType<TProject>())
+                CollectTargets(dependency, targets);
         }
     }
 }

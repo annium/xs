@@ -42,7 +42,7 @@ namespace Xs.Commands
                 .OfType<IBuildableProject>()
                 .ToArray();
             logger.Debug($"Build {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, tkn), token);
+            await runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, tkn), cfg.Deep, token);
         }
     }
 
@@ -59,5 +59,9 @@ namespace Xs.Commands
         [Option]
         [Help("Environment.")]
         public Env Env { get; set; } = Env.Development;
+
+        [Option("d")]
+        [Help("Build dependencies.")]
+        public bool Deep { get; set; }
     }
 }

@@ -32,6 +32,7 @@ namespace Xs.Commands
         private bool force;
         private bool runTests;
         private string testFilter;
+        private bool deep;
         private DiscoverConfiguration discoverCfg;
         private CancellationToken token;
         private IProject[] projects;
@@ -67,6 +68,7 @@ namespace Xs.Commands
             this.force = cfg.Force;
             this.runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
             this.testFilter = cfg.TestFilter;
+            this.deep = cfg.Deep;
             this.discoverCfg = discoverCfg;
             this.token = token;
 
@@ -155,7 +157,7 @@ namespace Xs.Commands
             var selected = CollectDependants(project, includeSelf).OfType<TProject>().ToArray();
 
             if (selected.Length > 0)
-                await runner.RunAsync(selected, handle, token);
+                await runner.RunAsync(selected, handle, false, token);
         }
 
         private IEnumerable<IProject> CollectDependants(IProject project, bool includeSelf)
@@ -190,11 +192,35 @@ namespace Xs.Commands
             }
         }
 
-        private void Discover() => projects = discoverTask.Run(discoverCfg)
-        .FilterMask(mask)
-        .FilterType(type)
-        .OrderByDescending(p => p.Name.Length)
-        .ToArray();
+        private void Discover()
+        {
+            var allProjects = discoverTask.Run(discoverCfg).OrderByDescending(p => p.Name.Length).ToArray();
+            var targets = allProjects
+                .FilterMask(mask)
+                .FilterType(type)
+                .ToArray();
+
+            var result = new HashSet<IProject>();
+            foreach (var project in targets)
+                CollectTargets(project, result);
+
+            projects = result.ToArray();
+
+            logger.Debug($"Discovered {projects.Length} project(s) to watch:");
+            foreach (var project in projects)
+                logger.Debug(project.Name);
+        }
+
+        private void CollectTargets(IProject project, HashSet<IProject> targets)
+        {
+            // if target not added - it was already handled
+            // is used to prevent circular calls
+            if (!targets.Add(project))
+                return;
+
+            foreach (var dependency in project.Projects.Select(d => d.Value))
+                CollectTargets(dependency, targets);
+        }
 
         private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File == path);
 
@@ -226,5 +252,9 @@ namespace Xs.Commands
         [Raw]
         [Help("Command to execute on change.")]
         public string Command { get; set; } = string.Empty;
+
+        [Option("d")]
+        [Help("Watch dependencies.")]
+        public bool Deep { get; set; }
     }
 }

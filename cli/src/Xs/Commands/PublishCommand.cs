@@ -62,6 +62,7 @@ namespace Xs.Commands
             await runner.RunAsync(
                 projects,
                 (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
+                cfg.Deep,
                 token
             );
         }
@@ -76,5 +77,9 @@ namespace Xs.Commands
         [Position(2)]
         [Help("Version to publish.")]
         public Cli.Core.Models.Version Version { get; set; }
+
+        [Option("d")]
+        [Help("Publish dependencies.")]
+        public bool Deep { get; set; }
     }
 }

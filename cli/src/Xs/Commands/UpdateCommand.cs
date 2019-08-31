@@ -129,13 +129,17 @@ namespace Xs.Commands
             await runner.RunAsync(
                 updated.OfType<ICachingProject>(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
-                token);
+                false,
+                token
+            );
 
             logger.Debug($"Install {updated.Count} projects.");
             await runner.RunAsync(
                 updated.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(true, tkn),
-                token);
+                false,
+                token
+            );
 
             logger.Info($"{updated.Count} projects updated.");
         }

@@ -49,14 +49,18 @@ namespace Xs.Commands
                 await runner.RunAsync(
                     projects.OfType<ICachingProject>(),
                     (project, tkn) => project.ClearCacheAsync(tkn),
-                    token);
+                    cfg.Deep,
+                    token
+                );
             }
 
             logger.Debug($"Install {projects.Length} projects.");
             await runner.RunAsync(
                 projects.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(force, tkn),
-                token);
+                cfg.Deep,
+                token
+            );
         }
     }
 
@@ -73,5 +77,9 @@ namespace Xs.Commands
         [Option("f", isRequired : false)]
         [Help("Force install.")]
         public bool Force { get; set; } = false;
+
+        [Option("d")]
+        [Help("Install dependencies.")]
+        public bool Deep { get; set; }
     }
 }

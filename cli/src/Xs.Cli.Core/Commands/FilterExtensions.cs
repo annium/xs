@@ -16,9 +16,9 @@ namespace Xs.Cli.Core.Commands
             var list = references.ToList();
             var comparison = StringComparison.CurrentCultureIgnoreCase;
 
-            var exactMatch = list.First(i => i.Name.Equals(mask, comparison));
-            if (!exactMatch.Equals(default(T)))
-                return new [] { exactMatch };
+            var exactMatch = list.FirstOrDefault(i => i.Name.Equals(mask, comparison));
+            if (exactMatch != null && !exactMatch.Equals(default(T)))
+                return new T[] { exactMatch };
 
             return list.Where(p => p.Name.Contains(mask, comparison));
         }

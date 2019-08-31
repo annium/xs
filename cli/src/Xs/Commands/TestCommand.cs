@@ -43,7 +43,7 @@ namespace Xs.Commands
                 .ToArray();
 
             logger.Debug($"Test {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn), token);
+            await runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn), cfg.Deep, token);
         }
     }
 
@@ -64,5 +64,9 @@ namespace Xs.Commands
         [Option]
         [Help("Environment.")]
         public Env Env { get; set; } = Env.Development;
+
+        [Option("d")]
+        [Help("Test dependencies.")]
+        public bool Deep { get; set; }
     }
 }
