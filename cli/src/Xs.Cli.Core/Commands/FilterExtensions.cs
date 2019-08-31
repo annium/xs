@@ -13,7 +13,14 @@ namespace Xs.Cli.Core.Commands
             if (mask == "all")
                 return references;
 
-            return references.Where(p => p.Name.Contains(mask, StringComparison.CurrentCultureIgnoreCase));
+            var list = references.ToList();
+            var comparison = StringComparison.CurrentCultureIgnoreCase;
+
+            var exactMatch = list.First(i => i.Name.Equals(mask, comparison));
+            if (!exactMatch.Equals(default(T)))
+                return new [] { exactMatch };
+
+            return list.Where(p => p.Name.Contains(mask, comparison));
         }
 
         public static IEnumerable<T> FilterType<T>(this IEnumerable<T> projects, ProjectType type)

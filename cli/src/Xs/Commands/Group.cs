@@ -24,6 +24,7 @@ namespace Xs.Commands
             Add<PublishCommand>();
             Add<SearchCommand>();
             Add<TestCommand>();
+            Add<ToggleCommand>();
             Add<UnpublishCommand>();
             Add<UpdateCommand>();
             Add<UseCommand>();

@@ -63,6 +63,7 @@ namespace Xs
             services.AddSingleton<PublishCommand>();
             services.AddSingleton<SearchCommand>();
             services.AddSingleton<TestCommand>();
+            services.AddSingleton<ToggleCommand>();
             services.AddSingleton<UnpublishCommand>();
             services.AddSingleton<UpdateCommand>();
             services.AddSingleton<UseCommand>();
