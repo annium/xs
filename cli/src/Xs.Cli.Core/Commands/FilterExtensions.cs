@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Commands
@@ -13,10 +13,7 @@ namespace Xs.Cli.Core.Commands
             if (mask == "all")
                 return references;
 
-            var pattern = Regex.Escape(mask).Replace(@"\*", ".*").Replace(@"\?", ".");
-            var regex = new Regex($"^{pattern}$", RegexOptions.IgnoreCase);
-
-            return references.Where(p => regex.IsMatch(p.Name));
+            return references.Where(p => p.Name.Contains(mask, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static IEnumerable<T> FilterType<T>(this IEnumerable<T> projects, ProjectType type)
