@@ -40,12 +40,13 @@ namespace Xs.Commands
         )
         {
             var name = cfg.Name;
-            var nameLow = name.ToLowerInvariant();
             var version = cfg.Version;
             var type = cfg.Type;
 
             var allProjects = discoverTask.Run(discoverCfg);
-            var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
+            var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct()
+                .GroupBy(p => p.Type)
+                .ToDictionary(g => g.Key, g => g.ToArray());
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
@@ -56,7 +57,7 @@ namespace Xs.Commands
 
             logger.Debug($"Try add dependency {name} to {targets.Length} projects.");
 
-            var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == nameLow).ToArray();
+            var projects = allProjects.FilterMask(name).ToArray();
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
@@ -68,7 +69,7 @@ namespace Xs.Commands
             logger.Debug($"Assume dependency {name} as package.");
             var packages = ProjectType.List().Where(t => targets.Count(p => p.Type == t) > 0).ToDictionary(
                 t => t,
-                t => allPackages.FirstOrDefault(d => d.Type == t && d.Name.ToLowerInvariant() == nameLow)
+                t => allPackages[t].FilterMask(name).FirstOrDefault()
             );
 
             // if at least one package not found

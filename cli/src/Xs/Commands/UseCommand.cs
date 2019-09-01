@@ -37,13 +37,14 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var nameLow = cfg.Name.ToLowerInvariant();
+            var name = cfg.Name;
             var version = cfg.Version;
 
             var allProjects = discoverTask.Run(discoverCfg);
             var updatedPackages = allProjects
                 .SelectMany(e => e.Packages)
-                .Where(e => e.Value.Name.ToLowerInvariant() == nameLow && e.Value.Version != version)
+                .FilterMask(name)
+                .Where(e => e.Value.Version != version)
                 .Distinct()
                 .ToArray();
 

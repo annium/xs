@@ -38,7 +38,6 @@ namespace Xs.Commands
         )
         {
             var name = cfg.Dependency;
-            var nameLow = name.ToLowerInvariant();
 
             var allProjects = discoverTask.Run(discoverCfg);
             var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
@@ -52,7 +51,7 @@ namespace Xs.Commands
 
             logger.Debug($"Try delete dependency {name} from {targets.Length} projects.");
 
-            var projects = allProjects.Where(e => e.Name.ToLowerInvariant() == nameLow).ToArray();
+            var projects = allProjects.FilterMask(name).ToArray();
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
@@ -61,7 +60,7 @@ namespace Xs.Commands
                 return;
             }
 
-            var packages = allPackages.Where(e => e.Name.ToLowerInvariant() == nameLow).Distinct().ToArray();
+            var packages = allPackages.FilterMask(name).Distinct().ToArray();
 
             // if no packages found
             if (packages.Length == 0)
