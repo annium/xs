@@ -9,8 +9,8 @@
     "classnames": "2.2.6",
     "lodash": "4.17.15",
     "moment": "2.24.0",
-    "react": "16.8.6",
-    "react-dom": "16.8.6",
+    "react": "16.9.0",
+    "react-dom": "16.9.0",
     "react-router-dom": "5.0.1"
   },
   "devDependencies": {
@@ -19,8 +19,8 @@
     "@types/classnames": "2.2.9",
     "@types/lodash": "4.14.136",
     "@types/node": "12.6.9",
-    "@types/react": "16.8.23",
-    "@types/react-dom": "16.8.4",
+    "@types/react": "16.9.1",
+    "@types/react-dom": "16.8.5",
     "@types/react-router-dom": "4.3.4",
     "node-sass": "4.12.0",
     "react-scripts": "3.0.1",
