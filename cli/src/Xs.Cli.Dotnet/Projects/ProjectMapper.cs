@@ -130,7 +130,7 @@ namespace Xs.Cli.Dotnet.Projects
                     El.ItemGroup,
                     project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
                         El.ProjectReference,
-                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File))
+                        new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File).Replace('\\', '/'))
                     ))
                 ));
 
@@ -211,8 +211,7 @@ namespace Xs.Cli.Dotnet.Projects
             var relativePath = reference.Attribute(El.Include)?.Value ??
                 throw new InvalidOperationException($"Project {project} has empty project dependency.");
 
-            if (configuration.SkipChecks)
-                relativePath = relativePath.Replace('\\', '/');
+            relativePath = relativePath.Replace('\\', '/');
 
             var path = Path.GetFullPath(Path.Combine(file.DirectoryName, relativePath));
             if (!File.Exists(path))
