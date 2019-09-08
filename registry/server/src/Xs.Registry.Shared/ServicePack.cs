@@ -1,6 +1,5 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Annium.Logging.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -12,11 +11,6 @@ namespace Xs.Registry.Shared
 {
     public class ServicePack : ServicePackBase
     {
-        public override void Configure(IServiceCollection services)
-        {
-            services.AddSingleton(new LoggerConfiguration(LogLevel.Debug));
-        }
-
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
@@ -30,7 +24,7 @@ namespace Xs.Registry.Shared
                 return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
             });
 
-            services.AddConsoleLogger();
+            services.AddLogging(route => route.UseConsole());
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Views;
@@ -14,13 +15,13 @@ namespace Xs.Registry.Main.Controllers
     public class MetaPackagesController : ServerController<User>
     {
         private readonly IMetaPackageManager metaPackageManager;
-
         private readonly IMetaPackageRepository metaPackageRepository;
 
         public MetaPackagesController(
             IMetaPackageManager metaPackageManager,
-            IMetaPackageRepository metaPackageRepository
-        )
+            IMetaPackageRepository metaPackageRepository,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.metaPackageManager = metaPackageManager;
             this.metaPackageRepository = metaPackageRepository;

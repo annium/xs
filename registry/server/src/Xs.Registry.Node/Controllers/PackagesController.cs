@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Node;
@@ -18,8 +19,9 @@ namespace Xs.Registry.Node.Controllers
         private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
 
         public PackagesController(
-            IPackageService<Package, PackageDependency, PackagePayload> packageService
-        )
+            IPackageService<Package, PackageDependency, PackagePayload> packageService,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.packageService = packageService;
         }

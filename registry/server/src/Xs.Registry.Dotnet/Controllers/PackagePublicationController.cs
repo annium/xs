@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 using Xs.Registry.Abstract.Packages;
@@ -23,8 +24,9 @@ namespace Xs.Registry.Dotnet.Controllers
 
         public PackagePublicationController(
             Func<Instant> getInstant,
-            IPackageService<Package, PackageDependency, PackagePayload> packageService
-        )
+            IPackageService<Package, PackageDependency, PackagePayload> packageService,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.getInstant = getInstant;
             this.packageService = packageService;

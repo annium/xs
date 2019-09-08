@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Shared;
@@ -31,8 +32,9 @@ namespace Xs.Registry.Dotnet.Controllers
 
         public SymbolPublicationController(
             IPackageRepository<Package, PackageDependency> packageRepository,
-            ISymbolStorage symbolStorage
-        )
+            ISymbolStorage symbolStorage,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.packageRepository = packageRepository;
             this.symbolStorage = symbolStorage;

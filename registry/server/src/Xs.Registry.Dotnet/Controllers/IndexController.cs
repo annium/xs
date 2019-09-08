@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Dotnet.Views;
@@ -11,8 +12,9 @@ namespace Xs.Registry.Dotnet.Controllers
         private readonly IUrlHelper url;
 
         public IndexController(
-            IUrlHelper url
-        )
+            IUrlHelper url,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.url = url;
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -24,8 +25,9 @@ namespace Xs.Registry.Node.Controllers
         public PackagePublicationController(
             Func<Instant> getInstant,
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
-            ILogger<PackagePublicationController> logger
-        )
+            ILogger<PackagePublicationController> logger,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.getInstant = getInstant;
             this.packageService = packageService;

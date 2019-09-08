@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
+using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
@@ -135,7 +136,7 @@ namespace Xs.Cli.Core.Projects
             var result = await shell
                 .Cmd(command)
                 .Configure(new ProcessStartInfo() { WorkingDirectory = Directory })
-                .Pipe(loggerConfiguration.LogLevel <= LogLevel.Debug)
+                .Pipe((LogLevel) loggerConfiguration <= LogLevel.Debug)
                 .RunAsync(token);
 
             if (result.IsSuccess)

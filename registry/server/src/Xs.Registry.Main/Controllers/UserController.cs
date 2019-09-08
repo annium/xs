@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Payloads;
 using Xs.Registry.Main.Tools;
@@ -14,20 +14,16 @@ namespace Xs.Registry.Main.Controllers
     public class UserController : ServerController<User>
     {
         private readonly IUserRepository userRepository;
-
         private readonly ISecurityManager securityManager;
-
-        private readonly ILogger<UserController> logger;
 
         public UserController(
             IUserRepository userRepository,
             ISecurityManager securityManager,
-            ILogger<UserController> logger
-        )
+            IMediator mediator
+        ) : base(mediator)
         {
             this.userRepository = userRepository;
             this.securityManager = securityManager;
-            this.logger = logger;
         }
 
         [HttpPut]

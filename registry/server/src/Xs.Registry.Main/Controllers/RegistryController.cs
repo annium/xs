@@ -1,3 +1,4 @@
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Shared.Helpers;
@@ -10,8 +11,9 @@ namespace Xs.Registry.Main.Controllers
         private readonly Configuration configuration;
 
         public RegistryController(
-            Configuration configuration
-        )
+            Configuration configuration,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.configuration = configuration;
         }

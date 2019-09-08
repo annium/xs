@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
+using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects

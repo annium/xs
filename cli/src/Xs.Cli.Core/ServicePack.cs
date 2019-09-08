@@ -4,6 +4,7 @@ using Annium.Core.DependencyInjection;
 using Annium.Logging.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
@@ -13,18 +14,16 @@ namespace Xs.Cli.Core
     {
         public override void Configure(IServiceCollection services)
         {
-            services.AddSingleton(
-                (LoggerConfiguration) new ConfigurationBuilder()
-                .AddCommandLineArgs()
-                .Build<Logging.LoggerConfiguration>()
-            );
+            services.AddSingleton(new ConfigurationBuilder().AddCommandLineArgs().Build<LoggerConfiguration>());
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
 
-            services.AddConsoleLogger();
+            services.AddLogging(route => route
+                .For(buildLogFilter(provider.GetRequiredService<LoggerConfiguration>()))
+                .UseConsole());
             services.AddShell();
 
             // projects
@@ -33,6 +32,17 @@ namespace Xs.Cli.Core
 
             // tools
             services.AddTransient<ITemplateWriter, TemplateWriter>();
+        }
+
+        private Func<LogMessage, bool> buildLogFilter(LoggerConfiguration cfg)
+        {
+            if (cfg.Trace)
+                return m => true;
+
+            if (cfg.Debug)
+                return m => m.Level >= LogLevel.Debug;
+
+            return m => m.Level >= LogLevel.Info;
         }
     }
 }

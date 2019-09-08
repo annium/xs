@@ -7,6 +7,7 @@ using Annium.Logging.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
+using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;

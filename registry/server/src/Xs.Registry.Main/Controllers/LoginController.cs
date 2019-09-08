@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Payloads;
@@ -15,24 +15,19 @@ namespace Xs.Registry.Main.Controllers
     public class LoginController : ServerController<User>
     {
         private readonly IUserRepository userRepository;
-
         private readonly ISecurityManager securityManager;
-
         private readonly ISessionManager sessionManager;
-
-        private readonly ILogger<LoginController> logger;
 
         public LoginController(
             IUserRepository userRepository,
             ISecurityManager securityManager,
             ISessionManager sessionManager,
-            ILogger<LoginController> logger
-        )
+            IMediator mediator
+        ) : base(mediator)
         {
             this.userRepository = userRepository;
             this.securityManager = securityManager;
             this.sessionManager = sessionManager;
-            this.logger = logger;
         }
 
         [HttpPost]

@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Shared;
@@ -17,8 +18,9 @@ namespace Xs.Registry.Dotnet.Controllers
 
         public PackageRegistrationController(
             IPackageRepository<Package, PackageDependency> packageRepository,
-            IUrlHelper url
-        )
+            IUrlHelper url,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.packageRepository = packageRepository;
             this.url = url;

@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
+using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Node;
@@ -24,8 +25,9 @@ namespace Xs.Registry.Node.Controllers
         public PackageConsumptionController(
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
             Storage.IPackageStorage packageStorage,
-            IUrlHelper url
-        )
+            IUrlHelper url,
+            IMediator mediator
+        ) : base(mediator)
         {
             this.packageService = packageService;
             this.packageStorage = packageStorage;

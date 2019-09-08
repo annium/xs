@@ -8,6 +8,7 @@ using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
+using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Tasks;
@@ -177,7 +178,7 @@ namespace Xs.Commands
         {
             var result = shell
                 .Cmd(command.Replace("%", path))
-                .Pipe(loggerConfiguration.LogLevel <= LogLevel.Debug)
+                .Pipe((LogLevel) loggerConfiguration <= LogLevel.Debug)
                 .Start();
 
             Task.Run(() => pipe(result.Output));
