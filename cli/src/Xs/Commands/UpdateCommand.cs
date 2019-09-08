@@ -87,7 +87,7 @@ namespace Xs.Commands
                 if (versions.Length == 0)
                     versions = await dependencyManager.ResolveVersionsAsync(d, dependencyManager.DefaultServer, string.Empty);
 
-                var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == null);
+                var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
                 logger.Trace($"Resolve: {d} - {versions.Length} version(s)");
 
                 if (result == d)
