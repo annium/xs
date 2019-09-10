@@ -17,14 +17,17 @@ namespace Xs.Cli.Dotnet.Projects
             Action<Exception> addError
         )
         {
-            // check TargetFramework consistency
-            var typeProjects = projects.OfType<ISpecialProject>().ToArray();
-            if (typeProjects.Select(p => p.TargetFramework).Distinct().Count() > 1)
-                addError(
-                    new InvalidOperationException(
-                        $"{Type} projects use different target framework:{Environment.NewLine}{string.Join(Environment.NewLine, typeProjects.Select(p => p.TargetFramework))}"
-                    )
-                );
+            if (!configuration.SkipChecks)
+            {
+                // check TargetFramework consistency
+                var typeProjects = projects.OfType<ISpecialProject>().ToArray();
+                if (typeProjects.Select(p => p.TargetFramework).Distinct().Count() > 1)
+                    addError(
+                        new InvalidOperationException(
+                            $"{Type} projects use different target framework:{Environment.NewLine}{string.Join(Environment.NewLine, typeProjects.Select(p => p.TargetFramework))}"
+                        )
+                    );
+            }
         }
 
         public void Link(
