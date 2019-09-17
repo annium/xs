@@ -1,0 +1,7 @@
+﻿namespace {{ns}}
+{
+    public class {{name}}
+    {
+
+    }
+}

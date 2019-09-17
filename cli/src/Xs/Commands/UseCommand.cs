@@ -4,8 +4,8 @@ using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
-using Xs.Tasks;
-using Xs.Tasks.Dependencies;
+using Xs.Cli.Core.Tasks;
+using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands
 {

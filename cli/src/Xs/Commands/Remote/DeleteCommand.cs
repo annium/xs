@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
-using Xs.Tasks;
+using Xs.Cli.Core.Tasks;
 using Xs.Tools;
 
 namespace Xs.Commands.Remote

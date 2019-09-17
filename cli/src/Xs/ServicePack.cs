@@ -3,7 +3,7 @@ using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Commands;
-using Xs.Tasks;
+using Xs.Cli.Core.Tasks;
 using Xs.Tools;
 
 namespace Xs
@@ -15,8 +15,6 @@ namespace Xs
             services.AddArguments();
 
             RegisterCommands(services);
-
-            RegisterTasks(services);
 
             // tools
             services.AddSingleton<IConfigurationManager, ConfigurationManager>();
@@ -68,18 +66,6 @@ namespace Xs
             services.AddSingleton<UpdateCommand>();
             services.AddSingleton<UseCommand>();
             services.AddSingleton<WatchCommand>();
-        }
-
-        private void RegisterTasks(IServiceCollection services)
-        {
-            // dependencies
-            services.AddSingleton<Tasks.Dependencies.AddPackageDependencyTask>();
-            services.AddSingleton<Tasks.Dependencies.AddProjectDependencyTask>();
-            services.AddSingleton<Tasks.Dependencies.DeletePackageDependencyTask>();
-            services.AddSingleton<Tasks.Dependencies.DeleteProjectDependencyTask>();
-
-            // root
-            services.AddSingleton<DiscoverProjectsTask>();
         }
 
         private void ConfigureMapping(MapperConfiguration cfg)

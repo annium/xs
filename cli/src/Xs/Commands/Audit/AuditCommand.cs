@@ -7,7 +7,7 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
-using Xs.Tasks;
+using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Audit
 {

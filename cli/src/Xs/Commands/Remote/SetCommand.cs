@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
-using Xs.Tasks;
+using Xs.Cli.Core.Tasks;
 using Xs.Tools;
 using Xs.RegistryClient.Main;
 

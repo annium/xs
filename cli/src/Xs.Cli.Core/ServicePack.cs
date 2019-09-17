@@ -30,8 +30,23 @@ namespace Xs.Cli.Core
             services.AddSingleton<IProjectFactory, ProjectFactory>();
             services.AddSingleton<IProjectLinker, ProjectLinker>();
 
+            // tasks
+            RegisterTasks(services);
+
             // tools
             services.AddTransient<ITemplateWriter, TemplateWriter>();
+        }
+
+        private void RegisterTasks(IServiceCollection services)
+        {
+            // dependencies
+            services.AddSingleton<Tasks.Dependencies.AddPackageDependencyTask>();
+            services.AddSingleton<Tasks.Dependencies.AddProjectDependencyTask>();
+            services.AddSingleton<Tasks.Dependencies.DeletePackageDependencyTask>();
+            services.AddSingleton<Tasks.Dependencies.DeleteProjectDependencyTask>();
+
+            // root
+            services.AddSingleton<Tasks.DiscoverProjectsTask>();
         }
 
         private Func<LogMessage, bool> buildLogFilter(LoggerConfiguration cfg)

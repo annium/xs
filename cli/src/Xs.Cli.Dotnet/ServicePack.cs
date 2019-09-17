@@ -33,6 +33,8 @@ namespace Xs.Cli.Dotnet
         {
             // new
             services.AddSingleton<Commands.New.Group>();
+            services.AddSingleton<Commands.New.ClassCommand>();
+            services.AddSingleton<Commands.New.InterfaceCommand>();
             services.AddSingleton<Commands.New.ExeCommand>();
             services.AddSingleton<Commands.New.LibCommand>();
             services.AddSingleton<Commands.New.LibTestsCommand>();

@@ -1,5 +1,5 @@
 using System.Runtime.Serialization;
-using Annium.Core.Application.Types;
+using Annium.Core.Reflection;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Tools

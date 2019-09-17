@@ -7,9 +7,9 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
-namespace Xs.Tasks
+namespace Xs.Cli.Core.Tasks
 {
-    internal class DiscoverProjectsTask
+    public class DiscoverProjectsTask
     {
         private readonly IProjectFactory projectFactory;
         private readonly IProjectLinker projectLinker;

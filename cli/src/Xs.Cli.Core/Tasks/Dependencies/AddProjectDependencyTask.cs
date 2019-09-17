@@ -3,9 +3,9 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
-namespace Xs.Tasks.Dependencies
+namespace Xs.Cli.Core.Tasks.Dependencies
 {
-    internal class AddProjectDependencyTask
+    public class AddProjectDependencyTask
     {
         private readonly ILogger<AddProjectDependencyTask> logger;
 
