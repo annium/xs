@@ -1,0 +1,57 @@
+﻿using Annium.Architecture.CQRS.Commands;
+{{~ if request_fields.size > 0 ~}}
+using Annium.Extensions.Validation;
+{{~ end ~}}
+{{~ if compose_fields.size > 0 ~}}
+using Annium.Extensions.Composition;
+{{~ end ~}}
+
+namespace {{ command_namespace }}
+{
+    public class {{ name }}Command : ICommand
+    {
+        {{~ for $field in request_fields ~}}
+        public {{ $field.item1 }} {{ $field.item2 }} { get; }
+        {{~ end ~}}
+        {{~ for $field in compose_fields ~}}
+        public {{ $field.item1 }} {{ $field.item2 }} { get; private set; }
+        {{~ end ~}}
+
+        public {{ name }}Command(
+            {{~ for $field in request_fields ~}}
+            {{ $field.item1 }} {{ $field.item2 | lower_first }}{{ if !for.last }},{{ end }}
+            {{~ end ~}}
+        )
+        {
+            {{~ for $field in request_fields ~}}
+            {{ $field.item2 }} = {{ $field.item2 | lower_first }};
+            {{~ end ~}}
+        }
+    }
+
+    {{~ if request_fields.size > 0 ~}}
+    internal class {{ name }}CommandValidator : Validator<{{ name }}Command>
+    {
+        public {{ name }}CommandValidator(
+        )
+        {
+            {{~ for $field in request_fields ~}}
+            Field(c => c.{{ $field.item2 }});
+            {{~ end ~}}
+        }
+    }
+    {{~ end ~}}
+
+    {{~ if compose_fields.size > 0 ~}}
+    internal class {{ name }}CommandComposer : Composer<{{ name }}Command>
+    {
+        public {{ name }}CommandComposer(
+        )
+        {
+            {{~ for $field in compose_fields ~}}
+            Field(c => c.{{ $field.item2 }}).LoadWith(ctx => null);
+            {{~ end ~}}
+        }
+    }
+    {{~ end ~}}
+}

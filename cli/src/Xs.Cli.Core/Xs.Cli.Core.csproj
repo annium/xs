@@ -16,6 +16,7 @@
         <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="Annium.Data.Models" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.CommandLine" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.Shell" Version="0.1.0" />
         <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />

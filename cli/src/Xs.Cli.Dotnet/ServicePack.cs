@@ -31,6 +31,11 @@ namespace Xs.Cli.Dotnet
 
         private void RegisterCommands(IServiceCollection services)
         {
+            // new CQRS
+            services.AddSingleton<Commands.New.CQRS.Group>();
+            services.AddSingleton<Commands.New.CQRS.CommandCommand>();
+            services.AddSingleton<Commands.New.CQRS.QueryCommand>();
+
             // new
             services.AddSingleton<Commands.New.Group>();
             services.AddSingleton<Commands.New.ClassCommand>();

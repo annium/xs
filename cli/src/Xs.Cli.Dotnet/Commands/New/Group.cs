@@ -9,6 +9,7 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         public Group()
         {
+            Add<CQRS.Group>();
             Add<ClassCommand>();
             Add<InterfaceCommand>();
             Add<ExeCommand>();

@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Annium.Extensions.Primitives;
 using Annium.Logging.Abstractions;
 using Scriban;
+using Scriban.Runtime;
 using Xs.Cli.Core.Helpers;
 
 namespace Xs.Cli.Core.Tools
 {
     internal class TemplateWriter : ITemplateWriter
     {
-        private const string TplExtension = "tpl";
+        private const string TemplateExtension = "tpl";
         private readonly ILogger<TemplateWriter> logger;
         private string root = Directory.GetCurrentDirectory();
         private string[] extensions = new string[]
@@ -69,10 +71,19 @@ namespace Xs.Cli.Core.Tools
             Directory.CreateDirectory(Directory.GetParent(path).FullName);
 
             var resource = resources.First(r => r.Name == resourceName);
-            if (resourceName.EndsWith(TplExtension))
+            if (resourceName.EndsWith(TemplateExtension))
             {
                 logger.Trace($"Write template {resourceName} -> {path}");
-                File.WriteAllText(path, Template.Parse(new StreamReader(resource.Content).ReadToEnd()).Render(data));
+                var scriptObject = new ScriptObject();
+                scriptObject.Import(data);
+                scriptObject.Import(typeof(StringExtensions));
+                var ctx = new TemplateContext();
+                ctx.PushGlobal(scriptObject);
+
+                using(var reader = new StreamReader(resource.Content))
+                {
+                    File.WriteAllText(path, Template.Parse(reader.ReadToEnd()).Render(ctx));
+                }
             }
             else
             {
@@ -86,7 +97,7 @@ namespace Xs.Cli.Core.Tools
         public void WriteAll(object data)
         {
             foreach (var name in resources.ToArray().Select(r => r.Name))
-                Write(name, toPath(stripExtension(name, TplExtension)), data);
+                Write(name, toPath(stripExtension(name, TemplateExtension)), data);
 
             string toPath(string name)
             {

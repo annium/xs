@@ -1,0 +1,11 @@
+﻿using Annium.Architecture.ViewModel;
+
+namespace {{ response_namespace }}
+{
+    public class {{ response }}Response : IResponse<{{ response }}>
+    {
+        {{~ for $field in response_fields ~}}
+        public {{ $field.item1 }} {{ $field.item2 }} { get; set; }
+        {{~ end ~}}
+    }
+}
