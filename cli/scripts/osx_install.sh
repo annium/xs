@@ -11,7 +11,7 @@ if [ $(dotnet tool list -g | tail -n +3 | grep xs | wc -l) -eq 1 ]; then
 fi
 
 echo "Install."
-dotnet tool install -g xs --add-source $dir
+dotnet tool install -g xs --add-source .
 
 echo "Cleanup."
-find $dir -type f -name '*.nupkg' | xargs rm -f
+find . -type f -name '*.nupkg' | xargs rm -f

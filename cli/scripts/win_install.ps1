@@ -9,7 +9,7 @@ if ( (dotnet tool list -g | Select-Object -skip 2 | Measure-Object).Count -eq 1 
 }
 
 Write-Output "Install."
-dotnet tool install -g xs --add-source $dir
+dotnet tool install -g xs --add-source .
 
 Write-Output "Cleanup."
-Get-ChildItem $dir -File -Filter '*.nupkg' | Remove-Item
+Get-ChildItem . -File -Filter '*.nupkg' | Remove-Item
