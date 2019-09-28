@@ -4,6 +4,7 @@ using System.Linq;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects
 {
@@ -21,10 +22,11 @@ namespace Xs.Cli.Dotnet.Projects
             {
                 // check TargetFramework consistency
                 var typeProjects = projects.OfType<ISpecialProject>().ToArray();
-                if (typeProjects.Select(p => p.TargetFramework).Distinct().Count() > 1)
+                var frameworks = typeProjects.Select(p => p.TargetFramework).Distinct();
+                if (TargetFramework.SupportedGroups.Count(g => g.Intersect(frameworks).Any()) > 1)
                     addError(
                         new InvalidOperationException(
-                            $"{Type} projects use different target framework:{Environment.NewLine}{string.Join(Environment.NewLine, typeProjects.Select(p => p.TargetFramework))}"
+                            $"{Type} projects use incompatible target framework:{Environment.NewLine}{string.Join(Environment.NewLine, typeProjects.Select(p => p.TargetFramework))}"
                         )
                     );
             }
