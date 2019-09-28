@@ -5,8 +5,6 @@ import ReactDOM from 'react-dom'
 import { context } from './context'
 import { i18n } from './i18n'
 import { Routes } from './routes'
-// tslint:disable-next-line:no-import-side-effect
-import './styles/layout.scss'
 
 
 ReactDOM.render(

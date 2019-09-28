@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router'
 
 import { connect, Store } from '../../store'
 
-import styles from './index.module.scss'
+import { useStyles } from './styles'
 
 
 type Props = Pick<Store, 'startup'> & RouteComponentProps
@@ -12,11 +12,12 @@ type Props = Pick<Store, 'startup'> & RouteComponentProps
 export const HomePage = connect<RouteComponentProps, Pick<Store, 'startup'>>(
   ({ startup }) => ({ startup }),
   ({ startup }: Props) => {
+    const styles = useStyles()
     const { location } = startup
 
     return (
       <div className={styles.page}>
-        <Trans>Started at {`${window.location.pathname}${window.location.search}`}</Trans>
+        <Trans>Started at {`${location.pathname}${location.search}`}</Trans>
       </div>
     )
   },
