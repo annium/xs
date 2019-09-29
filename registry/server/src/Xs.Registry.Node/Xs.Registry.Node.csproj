@@ -3,7 +3,7 @@
         <PackageId>Xs.Registry.Node</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry Node.JS project. Handles interaction with npm/yarn.</Description>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
         <OutputType>Exe</OutputType>
         <DebugType>portable</DebugType>
         <LangVersion>latest</LangVersion>
