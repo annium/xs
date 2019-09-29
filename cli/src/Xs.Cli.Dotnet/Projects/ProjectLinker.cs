@@ -23,12 +23,13 @@ namespace Xs.Cli.Dotnet.Projects
                 // check TargetFramework consistency
                 var typeProjects = projects.OfType<ISpecialProject>().ToArray();
                 var frameworks = typeProjects.Select(p => p.TargetFramework).Distinct();
-                if (TargetFramework.SupportedGroups.Count(g => g.Intersect(frameworks).Any()) > 1)
-                    addError(
-                        new InvalidOperationException(
-                            $"{Type} projects use incompatible target framework:{Environment.NewLine}{string.Join(Environment.NewLine, typeProjects.Select(p => p.TargetFramework))}"
-                        )
-                    );
+                if (!TargetFramework.SupportedGroups.Any(g => frameworks.All(f => g.Contains(f))))
+                {
+                    var usages = string.Join(Environment.NewLine, typeProjects.Select(p => $"{p.Name}: {p.TargetFramework}"));
+                    addError(new InvalidOperationException(
+                        $"{Type} projects use incompatible target framework:{Environment.NewLine}{usages}"
+                    ));
+                }
             }
         }
 
