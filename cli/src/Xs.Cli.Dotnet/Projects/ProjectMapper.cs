@@ -104,6 +104,10 @@ namespace Xs.Cli.Dotnet.Projects
             if (project is TestProject)
                 newProps.Add(new XElement(El.IsTestProject, "true"));
 
+            newProps.Add(new XElement(El.Nullable, "enable"));
+            newProps.Add(new XElement(El.PublishReadyToRun, "true"));
+            newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
+
             foreach (var el in oldProps.Elements().Where(oldEl => !newProps.Elements().Any(newEl => newEl.Name == oldEl.Name)))
                 newProps.Add(el);
 
@@ -253,6 +257,9 @@ namespace Xs.Cli.Dotnet.Projects
             public const string LangVersion = "LangVersion";
             public const string IsPackable = "IsPackable";
             public const string IsTestProject = "IsTestProject";
+            public const string Nullable = "Nullable";
+            public const string PublishReadyToRun = "PublishReadyToRun";
+            public const string PublishReadyToRunShowWarnings = "PublishReadyToRunShowWarnings";
             public const string PropertyGroup = "PropertyGroup";
             public const string ItemGroup = "ItemGroup";
             public const string PackageReference = "PackageReference";
