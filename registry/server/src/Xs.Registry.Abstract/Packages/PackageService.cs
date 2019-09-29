@@ -74,13 +74,13 @@ namespace Xs.Registry.Abstract.Packages
             // get available versions
             var versions = await packageRepository.FindAllByNameAsync(name);
             if (!versions.Any(p => p.Version == version))
-                return Result.New(PackageStatus.NotFound);
+                return Result.Status(PackageStatus.NotFound);
 
             // load metaPackage and check permissions
             var metaPackage = await metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
             var access = metaPackageManager.GetAccess(metaPackage).ForUser(user);
             if (!access.Has(Permission.Unpublish))
-                return Result.New(PackageStatus.Forbidden)
+                return Result.Status(PackageStatus.Forbidden)
                     .Error("You need unpublish permission to unpublish this package.");
 
             var executor = Executor.Batch();
@@ -115,36 +115,36 @@ namespace Xs.Registry.Abstract.Packages
 
             await executor.RunAsync();
 
-            return Result.New(PackageStatus.OK);
+            return Result.Status(PackageStatus.OK);
         }
 
         public async Task<IStatusResult<PackageStatus, TPackage[]>> GetPackagesAsync(User user, string name)
         {
             var packages = await packageRepository.FindAllByNameAsync(name);
             if (packages.Length == 0)
-                return Result.New(PackageStatus.NotFound, Array.Empty<TPackage>());
+                return Result.Status(PackageStatus.NotFound, Array.Empty<TPackage>());
 
             var access = (await metaPackageRepository.GetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(user);
             if (!access.Has(Permission.Read))
-                return Result.New(PackageStatus.Forbidden, Array.Empty<TPackage>())
+                return Result.Status(PackageStatus.Forbidden, Array.Empty<TPackage>())
                     .Error("You need read permission to get this package.");
 
-            return Result.New(PackageStatus.OK, packages);
+            return Result.Status(PackageStatus.OK, packages);
         }
 
         public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
         {
             var package = await packageRepository.FindByNameVersionAsync(name, version);
             if (package == null)
-                return Result.New(PackageStatus.NotFound);
+                return Result.Status(PackageStatus.NotFound);
 
             var access = (await metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(user);
             if (!access.Has(Permission.Read))
-                return Result.New(PackageStatus.Forbidden)
+                return Result.Status(PackageStatus.Forbidden)
                     .Error("You need read permission to get this package.");
 
             if (!(await packageStorage.ExistsAsync(name, version)))
-                return Result.New(PackageStatus.InternalError)
+                return Result.Status(PackageStatus.InternalError)
                     .Error("Package file missing");
 
             if (countDownload)
@@ -154,7 +154,7 @@ namespace Xs.Registry.Abstract.Packages
                 await metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
             }
 
-            return Result.New(PackageStatus.OK);
+            return Result.Status(PackageStatus.OK);
         }
 
         private async Task<IStatusResult<PackageStatus>> PublishNewPackageAsync(
@@ -181,7 +181,7 @@ namespace Xs.Registry.Abstract.Packages
         )
         {
             if (!access.Has(Permission.Unpublish))
-                return Result.New(PackageStatus.Conflict)
+                return Result.Status(PackageStatus.Conflict)
                     .Error($"Package {payload.Name} {payload.Version} already exists. You need unpublish permission to overwrite it.");
 
             executor.Stage(
@@ -204,7 +204,7 @@ namespace Xs.Registry.Abstract.Packages
         )
         {
             if (!access.Has(Permission.Publish))
-                return Result.New(PackageStatus.Forbidden)
+                return Result.Status(PackageStatus.Forbidden)
                     .Error($"You need publish permission to publish package {payload.Name} {payload.Version}.");
 
             var pkg = payloadParser.Parse(metaPackage.Id, payload);
@@ -238,7 +238,7 @@ namespace Xs.Registry.Abstract.Packages
 
             await executor.RunAsync();
 
-            return Result.New(PackageStatus.OK);
+            return Result.Status(PackageStatus.OK);
         }
     }
 }

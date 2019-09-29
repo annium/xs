@@ -2,8 +2,10 @@ using Annium.Net.Http;
 
 namespace Xs.Registry.Dotnet.Tests
 {
-    public class IntegrationTestBase : Registry.Tests.IntegrationTestBase<Registry.Main.Startup<Registry.Main.TestServicePack>>
+    public class IntegrationTestBase : Registry.Tests.IntegrationTestBase<Main.Startup>
     {
-        protected IRequest server => GetRequest<Startup<TestServicePack>>();
+        protected IRequest Server => GetRequest<Startup>();
+
+        public IntegrationTestBase() : base(container => container.UseServicePack<Main.TestServicePack>()) { }
     }
 }

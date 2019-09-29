@@ -11,7 +11,7 @@ namespace Xs.Registry.Node.Tests.Controllers
         public async Task Get_MissingPackage_ReturnsNotFound()
         {
             // act
-            var response = await server.Get("/packages/fake").RunAsync();
+            var response = await Server.Get("/packages/fake").RunAsync();
 
             // assert
             // TODO: apply authorization

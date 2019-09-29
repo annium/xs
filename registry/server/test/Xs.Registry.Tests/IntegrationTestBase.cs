@@ -1,11 +1,17 @@
+using System;
 using Annium.AspNetCore.IntegrationTesting;
+using Annium.Core.DependencyInjection;
 using Annium.Net.Http;
 
 namespace Xs.Registry.Tests
 {
     public class IntegrationTestBase<TStartup> : IntegrationTest where TStartup : class
     {
-        protected IRequest main => GetRequest<TStartup>();
+        protected IRequest Main => GetRequest<TStartup>();
+
+        public IntegrationTestBase(
+            Action<IServiceProviderBuilder> configureContainer
+        ) : base(configureContainer) { }
 
         // protected async Task<UserPrivateView> RegisterUserAsync(
         //     string login = "demo",

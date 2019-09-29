@@ -1,65 +1,47 @@
-using System;
 using Annium.Core.DependencyInjection;
-using Annium.Data.Operations.Serialization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
-using Swashbuckle.AspNetCore.Swagger;
 using Xs.Registry.Abstract.Auth;
 using Xs.Registry.Shared.Auth;
 
 namespace Xs.Registry.Node
 {
-    public class Startup<TServicePack> where TServicePack : ServicePackBase, new()
+    public class Startup
     {
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
             services.AddCors();
-
             services.AddRegistryAuthorization<AuthorizationFilter>();
-
             services.AddMvc()
-                .AddJsonOptions(opts => opts.SerializerSettings
+                .AddNewtonsoftJson(opts => opts.SerializerSettings
                     .ConfigureForNodaTime(DateTimeZoneProviders.Serialization)
-                    .ConfigureForOperations()
-                );
-
-            services.AddSwaggerGen(o =>
-            {
-                var info = new Info();
-                info.Title = "Registry Node";
-                info.Version = "v1";
-                o.SwaggerDoc("v1", info);
-            });
-
-            return new ServiceProviderBuilder(services)
-                .UseServicePack<TServicePack>()
-                .Build();
+                    .ConfigureForOperations());
+            services.AddOpenApiDocument();
         }
 
-        public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             app.UseExceptionMiddleware();
-
+            if (env.IsDevelopment())
+            {
+                app.UseStaticFiles();
+                app.UseOpenApi();
+                app.UseSwaggerUi3();
+            }
+            app.UseRouting();
             app.UseCors(builder => builder
                 .SetIsOriginAllowed(o => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
-
-            app.UseSwagger(o =>
+            app.UseEndpoints(endpoints =>
             {
-                o.RouteTemplate = "docs/{documentName}/swagger.json";
+                endpoints.MapControllers();
             });
-            app.UseSwaggerUI(o =>
-            {
-                o.RoutePrefix = "docs";
-                o.SwaggerEndpoint("v1/swagger.json", "Registry Node Api v1");
-            });
-
-            app.UseMvc();
         }
     }
 }

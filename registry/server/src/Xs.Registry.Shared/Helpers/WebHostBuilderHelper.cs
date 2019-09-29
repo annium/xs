@@ -8,17 +8,16 @@ namespace Xs.Registry.Shared.Helpers
 {
     public static class WebHostBuilderHelper
     {
-        public static Action<KestrelServerOptions> ConfigureKestrel(int port) =>
-            (KestrelServerOptions options) =>
+        public static Action<KestrelServerOptions> ConfigureKestrel(int port) => server =>
+        {
+            server.AddServerHeader = false;
+            server.ListenAnyIP(port, listen =>
             {
-                options.AddServerHeader = false;
-
-                var httpsFile = Path.GetFullPath(Path.Combine("certs", "cert.pfx"));
-                if (File.Exists(httpsFile))
-                    options.ListenAnyIP(port, listenOptions => listenOptions.UseHttps(httpsFile));
-                else
-                    options.ListenAnyIP(port);
-            };
+                var certFile = Path.GetFullPath(Path.Combine("certs", "cert.pfx"));
+                if (File.Exists(certFile))
+                    listen.UseHttps(certFile);
+            });
+        };
 
         public static void ConfigureLogging(ILoggingBuilder loggingBuilder)
         {

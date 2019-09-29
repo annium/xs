@@ -15,7 +15,7 @@ namespace Xs.Registry.Main.Tests.Conftrollers
             var p = new UserRegistrationPayload { Name = "user" };
 
             // act
-            var response = await main.Put("/user").JsonContent(p).RunAsync();
+            var response = await Main.Put("/user").JsonContent(p).RunAsync();
 
             // assert
             response.StatusCode.IsEqual(HttpStatusCode.BadRequest);

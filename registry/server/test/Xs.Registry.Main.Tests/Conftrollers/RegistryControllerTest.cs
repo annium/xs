@@ -11,7 +11,7 @@ namespace Xs.Registry.Main.Tests.Controllers
         public async Task Get_ReturnsConfiguration()
         {
             // act
-            var response = await main.Get("/registry").RunAsync();
+            var response = await Main.Get("/registry").RunAsync();
 
             // assert
             response.StatusCode.IsEqual(HttpStatusCode.OK);

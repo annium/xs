@@ -1,5 +1,7 @@
 using System.IO;
+using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Dotnet
@@ -8,16 +10,20 @@ namespace Xs.Registry.Dotnet
     {
         internal static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        private static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        private static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return new WebHostBuilder()
-                .UseKestrel(WebHostBuilderHelper.ConfigureKestrel(9902))
-                .ConfigureLogging(WebHostBuilderHelper.ConfigureLogging)
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup<ServicePack>>();
+            return Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new ServiceProviderFactory(b => b.UseServicePack<ServicePack>()))
+                .ConfigureWebHostDefaults(builder =>
+                {
+                    builder
+                        .UseContentRoot(Directory.GetCurrentDirectory())
+                        .UseKestrel(WebHostBuilderHelper.ConfigureKestrel(9902))
+                        .UseStartup<Startup>();
+                });
         }
     }
 }
