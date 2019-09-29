@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-
 dir=$(dirname $(dirname "${BASH_SOURCE[0]}"))/src/Xs
 
 echo "Compile."
-dotnet pack --configuration release --output . $dir
+dotnet pack $dir --configuration release --output .
 
 if [ $(dotnet tool list -g | tail -n +3 | grep xs | wc -l) -eq 1 ]; then
     echo "Uninstall."
