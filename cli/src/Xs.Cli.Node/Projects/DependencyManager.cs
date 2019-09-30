@@ -21,7 +21,7 @@ namespace Xs.Cli.Node.Projects
                 request = request.BearerAuthorization(accessToken);
 
             var index = await request.AsAsync<Index>();
-            if (index == null)
+            if (index is null)
                 return Array.Empty<Package>();
 
             var registrations = index.Versions.Keys
@@ -36,10 +36,10 @@ namespace Xs.Cli.Node.Projects
                     }
                     catch
                     {
-                        return (Id: index.Name, Version: null);
+                        return (Id: index.Name, Version: Core.Models.Version.Empty);
                     }
                 })
-                .Where(e => e.Version != null)
+                .Where(e => e.Version != Core.Models.Version.Empty)
                 .OrderByDescending(e => e.Version)
                 .ToArray();
 
@@ -48,7 +48,7 @@ namespace Xs.Cli.Node.Projects
 
         private class Index
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = string.Empty;
 
             public Dictionary<string, IndexVersion> Versions { get; set; } = new Dictionary<string, IndexVersion>();
         }

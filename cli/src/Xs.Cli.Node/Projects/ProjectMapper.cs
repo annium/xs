@@ -53,9 +53,6 @@ namespace Xs.Cli.Node.Projects
 
             return project;
 
-            IReadOnlyDictionary<string, string> getPropertyDictionary(JObject raw, string propertyName) =>
-                raw.Property(propertyName)?.Value.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
-
             IEnumerable<Dependency<string>> GetProjectDependencies(string el, DependencyType type) =>
                 getPropertyDictionary(info, el)
                 .Where(e => e.Value.StartsWith(El.FilePrefix))
@@ -65,6 +62,9 @@ namespace Xs.Cli.Node.Projects
                 getPropertyDictionary(info, el)
                 .Where(e => !e.Value.StartsWith(El.FilePrefix))
                 .Select(e => new Dependency<Package>(type, ReadPackageDependency(project.Name, e.Key, e.Value)));
+
+            static IReadOnlyDictionary<string, string> getPropertyDictionary(JObject raw, string propertyName) =>
+                raw.Property(propertyName)?.Value.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
         }
 
         public void Save(ISpecialProject project)

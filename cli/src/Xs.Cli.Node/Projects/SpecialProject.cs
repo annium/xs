@@ -17,14 +17,14 @@ namespace Xs.Cli.Node.Projects
     internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         // TODO: rewrite through project options - projects can have different shapes in a moment
-        private static object cacheLocker = new object();
-        private static Lazy<string> cacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
-        private static IShell staticShell;
+        private static readonly object cacheLocker = new object();
+        private static readonly Lazy<string> cacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
+        private static IShell? staticShell;
 
         private static string ResolveCacheDir()
         {
             lock(cacheLocker)
-            return staticShell.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
+            return staticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
         }
 
         public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);

@@ -8,7 +8,6 @@ using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
-using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands
 {
@@ -17,20 +16,14 @@ namespace Xs.Commands
         public override string Id { get; } = "toggle";
         public override string Description { get; } = "Toggle project <-> package dependencies.";
         private readonly DiscoverProjectsTask discoverTask;
-        private readonly AddPackageDependencyTask addPackageDependencyTask;
-        private readonly DeletePackageDependencyTask deletePackageDependencyTask;
         private readonly ILogger<UseCommand> logger;
 
         public ToggleCommand(
             DiscoverProjectsTask discoverTask,
-            AddPackageDependencyTask addPackageDependencyTask,
-            DeletePackageDependencyTask deletePackageDependencyTask,
             ILogger<UseCommand> logger
         )
         {
             this.discoverTask = discoverTask;
-            this.addPackageDependencyTask = addPackageDependencyTask;
-            this.deletePackageDependencyTask = deletePackageDependencyTask;
             this.logger = logger;
         }
 
@@ -60,7 +53,7 @@ namespace Xs.Commands
             switch (cfg.Action)
             {
                 case ToggleCommandAction.Package:
-                    ToggleProjectsToPackages(targets, allProjects, cfg.Version);
+                    ToggleProjectsToPackages(targets, cfg.Version);
                     break;
                 case ToggleCommandAction.Project:
                     TogglePackagesToProjects(targets, allProjects);
@@ -70,7 +63,6 @@ namespace Xs.Commands
 
         private void ToggleProjectsToPackages(
             IEnumerable<IProject> targets,
-            IEnumerable<IProject> projects,
             Version version
         )
         {
@@ -145,13 +137,13 @@ namespace Xs.Commands
 
     internal class ToggleCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Position(3)]
         [Help("Toggle command action.")]
@@ -159,11 +151,11 @@ namespace Xs.Commands
 
         [Position(4)]
         [Help("Directory to toggle projects within.")]
-        public string Directory { get; set; }
+        public string Directory { get; set; } = string.Empty;
 
         [Position(5, isRequired : false)]
         [Help("Dependency version, when switching to packages.")]
-        public Version Version { get; set; }
+        public Version Version { get; set; } = Version.Empty;
     }
 
     internal enum ToggleCommandAction

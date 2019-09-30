@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects
@@ -28,11 +27,8 @@ namespace Xs.Cli.Core.Projects
         }
 
         protected static Dependency<Package> ResolvePackageDependency(
-            IProject project,
             Dependency<Package> dep,
-            IEnumerable<Package> packages,
-            DiscoverConfiguration configuration,
-            Action<Exception> addError
+            IEnumerable<Package> packages
         )
         {
             var type = dep.Type;

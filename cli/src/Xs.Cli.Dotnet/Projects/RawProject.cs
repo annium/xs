@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Dotnet.Models;
@@ -6,19 +7,19 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class RawProject
     {
-        public string Name { get; set; }
-        public Version Version { get; set; }
-        public string Description { get; set; }
-        public TargetFramework TargetFramework { get; set; }
-        public OutputType OutputType { get; set; }
-        public IEnumerable<Dependency<string>> Projects { get; set; }
-        public IEnumerable<Dependency<Package>> Packages { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public Core.Models.Version Version { get; set; } = Core.Models.Version.Empty;
+        public string Description { get; set; } = string.Empty;
+        public TargetFramework TargetFramework { get; set; } = TargetFramework.NetCoreApp3_0;
+        public OutputType OutputType { get; set; } = OutputType.Library;
+        public IEnumerable<Dependency<string>> Projects { get; set; } = Array.Empty<Dependency<string>>();
+        public IEnumerable<Dependency<Package>> Packages { get; set; } = Array.Empty<Dependency<Package>>();
         public bool IsPackable { get; set; }
         public bool IsTestProject { get; set; }
 
         public void Deconstruct(
             out string name,
-            out Version version,
+            out Core.Models.Version version,
             out string description,
             out TargetFramework targetFramework,
             out OutputType outputType,

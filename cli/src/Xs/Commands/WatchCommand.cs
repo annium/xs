@@ -27,16 +27,15 @@ namespace Xs.Commands
         private readonly IShell shell;
         private readonly ILogger<WatchCommand> logger;
         private readonly LoggerConfiguration loggerConfiguration;
-        private string mask;
-        private ProjectType type;
-        private string command;
+        private string mask = string.Empty;
+        private ProjectType type = ProjectType.None;
+        private string command = string.Empty;
         private bool force;
         private bool runTests;
-        private string testFilter;
-        private bool deep;
-        private DiscoverConfiguration discoverCfg;
+        private string testFilter = string.Empty;
+        private DiscoverConfiguration discoverCfg = new DiscoverConfiguration();
         private CancellationToken token;
-        private IProject[] projects;
+        private IProject[] projects = Array.Empty<IProject>();
 
         public WatchCommand(
             IProjectFactory projectFactory,
@@ -63,13 +62,12 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            this.mask = cfg.Mask;
-            this.type = cfg.Type;
-            this.command = cfg.Command;
-            this.force = cfg.Force;
-            this.runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
-            this.testFilter = cfg.TestFilter;
-            this.deep = cfg.Deep;
+            mask = cfg.Mask;
+            type = cfg.Type;
+            command = cfg.Command;
+            force = cfg.Force;
+            runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
+            testFilter = cfg.TestFilter;
             this.discoverCfg = discoverCfg;
             this.token = token;
 
@@ -122,7 +120,7 @@ namespace Xs.Commands
                 logger.Info($"Deleted project file: {path}");
                 Discover();
 
-                await InstallAsync(project, includeSelf : false);
+                await InstallAsync(project!, includeSelf : false);
             }
             else
                 project = GetProjectByRelatedPath(path);
@@ -146,7 +144,7 @@ namespace Xs.Commands
         ExecuteAsync<IBuildableProject>(project, (p, t) => p.BuildAsync(Env.Development, t), includeSelf);
 
         private Task TestAsync(IProject project, bool includeSelf) =>
-        ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, this.testFilter, t), includeSelf);
+        ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, testFilter, t), includeSelf);
 
         private async Task ExecuteAsync<TProject>(
             IProject project,
@@ -186,7 +184,7 @@ namespace Xs.Commands
 
             return result.Result;
 
-            void pipe(StreamReader src)
+            static void pipe(StreamReader src)
             {
                 while (!src.EndOfStream)
                     Console.WriteLine(src.ReadLine());
@@ -236,7 +234,7 @@ namespace Xs.Commands
 
         [Position(2, isRequired : false)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Option("f", isRequired : false)]
         [Help("Force install.")]

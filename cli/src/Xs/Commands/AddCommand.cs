@@ -73,12 +73,12 @@ namespace Xs.Commands
             );
 
             // if at least one package not found
-            if (packages.Values.Any(e => e == null))
+            if (packages.Values.Any(e => e is null))
             {
                 // if no version - can't define dependency
-                if (version == null)
+                if (version == Cli.Core.Models.Version.Empty)
                     throw new InvalidOperationException(
-                        $"Package {name} is not used in {packages.First(p => p.Value == null).Key} target projects. Specify version to use."
+                        $"Package {name} is not used in {packages.First(p => p.Value is null).Key} target projects. Specify version to use."
                     );
                 // else - new dependencies is added
                 else
@@ -86,7 +86,7 @@ namespace Xs.Commands
             }
 
             // if package already exists: if version exists - check it's same, otherwise - nothing to do.
-            else if (version != null && packages.Values.Any(e => e.Version != version))
+            else if (version != Cli.Core.Models.Version.Empty && packages.Values.Any(e => e.Version != version))
                 throw new ArgumentException($"Package {name} is already used with different version. Specify already used version, or narrow projects mask.");
 
             foreach (var package in packages.Values)
@@ -98,15 +98,15 @@ namespace Xs.Commands
     {
         [Position(1)]
         [Help("Projects mask.")]
-        public string Mask { get; set; }
+        public string Mask { get; set; } = string.Empty;
 
         [Position(2)]
         [Help("Dependency name.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Position(3, isRequired : false)]
         [Help("Dependency version (for package dependencies).")]
-        public Cli.Core.Models.Version Version { get; set; }
+        public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
 
         [Position(4, isRequired : false)]
         [Help("Dependency type.")]

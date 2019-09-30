@@ -42,7 +42,7 @@ namespace Xs.Cli.Dotnet.Projects
             }
             else
             {
-                var rawVersion = properties.Element(El.PackageVersion)?.Value;
+                var rawVersion = properties.Element(El.PackageVersion)?.Value ?? string.Empty;
                 if (!Core.Models.Version.TryParse(rawVersion, out var version))
                     throw new ArgumentException($"Project {project.Name} version {rawVersion} is invalid");
 
@@ -56,7 +56,7 @@ namespace Xs.Cli.Dotnet.Projects
                 project.OutputType = properties.Element(El.OutputType).Value == "Exe" ? OutputType.Exe : OutputType.Library;
 
             project.Projects = GetReferenceElements(El.ProjectReference)
-                .Select(reference => ReadProjectDependency(project.Name, file, reference, configuration))
+                .Select(reference => ReadProjectDependency(project.Name, file, reference))
                 .Select(reference => new Dependency<string>(DependencyType.Normal, reference))
                 .ToArray();
 
@@ -145,11 +145,10 @@ namespace Xs.Cli.Dotnet.Projects
                 OmitXmlDeclaration = true,
                 Encoding = new UTF8Encoding(false),
             };
-            using(var fs = new FileStream(path, FileMode.Truncate))
-            using(var xw = XmlWriter.Create(fs, xws))
-            {
-                info.Save(xw);
-            }
+
+            using var fs = new FileStream(path, FileMode.Truncate);
+            using var xw = XmlWriter.Create(fs, xws);
+            info.Save(xw);
         }
 
         private void ValidateProperties(string path, XElement properties)
@@ -208,8 +207,7 @@ namespace Xs.Cli.Dotnet.Projects
         private string ReadProjectDependency(
             string project,
             FileInfo file,
-            XElement reference,
-            DiscoverConfiguration configuration
+            XElement reference
         )
         {
             var relativePath = reference.Attribute(El.Include)?.Value ??

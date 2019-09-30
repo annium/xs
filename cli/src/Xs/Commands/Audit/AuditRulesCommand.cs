@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
 
 namespace Xs.Commands.Audit
@@ -11,20 +10,14 @@ namespace Xs.Commands.Audit
     internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>
     {
         public override string Id { get; } = "rules";
-
         public override string Description { get; } = "List audit rules.";
-
         private readonly IAuditRule[] rules;
 
-        private readonly ILogger<AuditRulesCommand> logger;
-
         public AuditRulesCommand(
-            IEnumerable<IAuditRule> rules,
-            ILogger<AuditRulesCommand> logger
+            IEnumerable<IAuditRule> rules
         )
         {
             this.rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
-            this.logger = logger;
         }
 
         public override void Handle(

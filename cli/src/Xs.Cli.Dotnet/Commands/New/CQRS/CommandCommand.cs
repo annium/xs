@@ -79,8 +79,10 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
             CancellationToken token
         )
         {
-            var data = new CommandDescription();
-            data.Entity = CommandLine.Prompt("Entities: ");
+            var data = new CommandDescription
+            {
+                Entity = CommandLine.Prompt("Entities: ")
+            };
             token.ThrowIfCancellationRequested();
             data.Name = CommandLine.Prompt("Command name: ");
             token.ThrowIfCancellationRequested();
@@ -96,12 +98,12 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
 
         private class CommandDescription
         {
-            public string Entity { get; set; }
-            public string Name { get; set; }
+            public string Entity { get; set; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
             public IList<ValueTuple<string, string>> RequestFields { get; set; } = new List<ValueTuple<string, string>>();
             public IList<ValueTuple<string, string>> ComposeFields { get; set; } = new List<ValueTuple<string, string>>();
-            public string CommandNamespace { get; set; }
-            public string RequestNamespace { get; set; }
+            public string CommandNamespace { get; set; } = string.Empty;
+            public string RequestNamespace { get; set; } = string.Empty;
         }
     }
 

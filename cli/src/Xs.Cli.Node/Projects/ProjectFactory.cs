@@ -25,7 +25,6 @@ namespace Xs.Cli.Node.Projects
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
         private readonly ProjectMapper mapper;
         private readonly LoggerConfiguration loggerConfiguration;
-        private readonly ILogger<ProjectFactory> logger;
         private readonly IShell shell;
         private readonly IServiceProvider provider;
 
@@ -33,7 +32,6 @@ namespace Xs.Cli.Node.Projects
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
             ProjectMapper mapper,
             LoggerConfiguration loggerConfiguration,
-            ILogger<ProjectFactory> logger,
             IShell shell,
             IServiceProvider provider
         )
@@ -41,7 +39,6 @@ namespace Xs.Cli.Node.Projects
             this.auditRules = auditRules;
             this.mapper = mapper;
             this.loggerConfiguration = loggerConfiguration;
-            this.logger = logger;
             this.shell = shell;
             this.provider = provider;
         }
@@ -56,7 +53,7 @@ namespace Xs.Cli.Node.Projects
                 Directory.GetFiles(directory, ProjectFileName).Length == 1 &&
                 !FileManager.FindDirectory(directory, isMatch, IgnoredFolders);
 
-            bool isMatch(string dir) => Directory.GetFiles(dir, ProjectFileName).Length > 0;
+            static bool isMatch(string dir) => Directory.GetFiles(dir, ProjectFileName).Length > 0;
         }
 
         public bool IsProjectFile(string file)
@@ -80,7 +77,7 @@ namespace Xs.Cli.Node.Projects
             var(name, version, description, projectDeps, packageDeps, scripts, isPackable) = mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
-                .Select(e => GetProjectDependencyMock(name, file, e))
+                .Select(e => GetProjectDependencyMock(file, e))
                 .ToHashSet();
 
             var packageDependencies = packageDeps.ToHashSet();

@@ -85,12 +85,14 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
             CancellationToken token
         )
         {
-            var data = new QueryDescription();
-            data.Entity = CommandLine.Prompt("Entities: ");
+            var data = new QueryDescription
+            {
+                Entity = CommandLine.Prompt("Entities: ")
+            };
             token.ThrowIfCancellationRequested();
             data.Name = CommandLine.Prompt("Query name: ");
             token.ThrowIfCancellationRequested();
-            data.Response = CommandLine.Confirm("Add response") ? CommandLine.Prompt("Response name: ") : null;
+            data.Response = CommandLine.Confirm("Add response") ? CommandLine.Prompt("Response name: ") : string.Empty;
             token.ThrowIfCancellationRequested();
             data.RequestFields = Helper.PromptFields("Request field");
             token.ThrowIfCancellationRequested();
@@ -108,15 +110,15 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
 
         private class QueryDescription
         {
-            public string Entity { get; set; }
-            public string Name { get; set; }
-            public string Response { get; set; }
+            public string Entity { get; set; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
+            public string Response { get; set; } = string.Empty;
             public IList<ValueTuple<string, string>> RequestFields { get; set; } = new List<ValueTuple<string, string>>();
             public IList<ValueTuple<string, string>> ComposeFields { get; set; } = new List<ValueTuple<string, string>>();
             public IList<ValueTuple<string, string>> ResponseFields { get; set; } = new List<ValueTuple<string, string>>();
-            public string QueryNamespace { get; set; }
-            public string RequestNamespace { get; set; }
-            public string ResponseNamespace { get; set; }
+            public string QueryNamespace { get; set; } = string.Empty;
+            public string RequestNamespace { get; set; } = string.Empty;
+            public string ResponseNamespace { get; set; } = string.Empty;
         }
     }
 

@@ -22,7 +22,7 @@ namespace Xs.Cli.Core
             services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
 
             services.AddLogging(route => route
-                .For(buildLogFilter(provider.GetRequiredService<LoggerConfiguration>()))
+                .For(BuildLogFilter(provider.GetRequiredService<LoggerConfiguration>()))
                 .UseConsole());
             services.AddShell();
 
@@ -49,7 +49,7 @@ namespace Xs.Cli.Core
             services.AddSingleton<Tasks.DiscoverProjectsTask>();
         }
 
-        private Func<LogMessage, bool> buildLogFilter(LoggerConfiguration cfg)
+        private Func<LogMessage, bool> BuildLogFilter(LoggerConfiguration cfg)
         {
             if (cfg.Trace)
                 return m => true;

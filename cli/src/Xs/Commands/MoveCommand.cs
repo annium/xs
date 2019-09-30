@@ -6,7 +6,6 @@ using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
-using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands
 {
@@ -15,19 +14,13 @@ namespace Xs.Commands
         public override string Id { get; } = "move";
         public override string Description { get; } = "Move project to different location.";
         private readonly DiscoverProjectsTask discoverTask;
-        private readonly AddPackageDependencyTask addPackageDependencyTask;
-        private readonly AddProjectDependencyTask addProjectDependencyTask;
         private readonly ILogger<MoveCommand> logger;
 
         public MoveCommand(
             DiscoverProjectsTask discoverTask,
-            AddPackageDependencyTask addPackageDependencyTask,
-            AddProjectDependencyTask addProjectDependencyTask,
             ILogger<MoveCommand> logger
         )
         {
-            this.addPackageDependencyTask = addPackageDependencyTask;
-            this.addProjectDependencyTask = addProjectDependencyTask;
             this.discoverTask = discoverTask;
             this.logger = logger;
         }
@@ -81,14 +74,14 @@ namespace Xs.Commands
     {
         [Position(1)]
         [Help("Project name.")]
-        public string CurrentName { get; set; }
+        public string CurrentName { get; set; } = string.Empty;
 
         [Option("name")]
         [Help("New project name.")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Option("directory")]
         [Help("New project parent directory.")]
-        public string Directory { get; set; }
+        public string? Directory { get; set; }
     }
 }

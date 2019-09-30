@@ -6,8 +6,8 @@ using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
-using Xs.Tools;
 using Xs.RegistryClient.Main;
+using Xs.Tools;
 
 namespace Xs.Commands.Remote
 {
@@ -44,7 +44,7 @@ namespace Xs.Commands.Remote
 
             var password = Annium.Extensions.CommandLine.Cli.ReadSecure("Password: ");
 
-            var configuration = configurationManager.LoadBarebone(dir) ?? new Configuration();
+            var configuration = configurationManager.Load(dir);
             configuration.SetRegistry(location);
             configuration.SetToken(await client.LoginAsync(user, password));
             configuration.SetServers(
@@ -65,10 +65,10 @@ namespace Xs.Commands.Remote
     {
         [Position(1)]
         [Help("Registry location.")]
-        public Uri Registry { get; set; }
+        public Uri Registry { get; set; } = new Uri("localhost");
 
         [Option(isRequired: true)]
         [Help("User name.")]
-        public string User { get; set; }
+        public string User { get; set; } = string.Empty;
     }
 }

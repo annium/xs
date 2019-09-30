@@ -6,7 +6,6 @@ using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
 using Xs.Tools;
-using Xs.RegistryClient.Main;
 
 namespace Xs.Commands.Remote
 {
@@ -16,17 +15,14 @@ namespace Xs.Commands.Remote
         public override string Description { get; } = "Set local registry.";
         private readonly DiscoverProjectsTask discoverTask;
         private readonly IConfigurationManager configurationManager;
-        private readonly MainClientFactory mainClientFactory;
 
         public SetLocalCommand(
             DiscoverProjectsTask discoverTask,
-            IConfigurationManager configurationManager,
-            MainClientFactory mainClientFactory
+            IConfigurationManager configurationManager
         )
         {
             this.discoverTask = discoverTask;
             this.configurationManager = configurationManager;
-            this.mainClientFactory = mainClientFactory;
         }
 
         public override void Handle(
@@ -38,7 +34,7 @@ namespace Xs.Commands.Remote
             var location = cfg.Registry;
             var dir = discoverCfg.Root;
 
-            var configuration = configurationManager.LoadBarebone(dir) ?? new Configuration();
+            var configuration = configurationManager.Load(dir);
             configuration.SetRegistry(location);
             configuration.SetToken(string.Empty);
             configuration.SetServers(ProjectType.List().ToDictionary(type => type, type => location));
@@ -55,6 +51,6 @@ namespace Xs.Commands.Remote
     {
         [Position(1)]
         [Help("Registry location.")]
-        public Uri Registry { get; set; }
+        public Uri Registry { get; set; } = new Uri("localhost");
     }
 }

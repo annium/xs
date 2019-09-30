@@ -6,11 +6,10 @@ namespace Xs.Cli.Core.Helpers
 {
     public static class ResourceLoader
     {
-        public static Resource[] Load(string prefix, Assembly assembly = null)
-        {
-            if (assembly == null)
-                assembly = Assembly.GetCallingAssembly();
+        public static Resource[] Load(string prefix) => Load(prefix, Assembly.GetCallingAssembly());
 
+        public static Resource[] Load(string prefix, Assembly assembly)
+        {
             prefix = $"{assembly.GetName().Name}.{prefix}.";
 
             return assembly.GetManifestResourceNames()
@@ -18,7 +17,7 @@ namespace Xs.Cli.Core.Helpers
                 .Select(r =>
                 {
                     var name = r.Substring(prefix.Length);
-                    var rs = assembly.GetManifestResourceStream(r);
+                    var rs = assembly.GetManifestResourceStream(r) !;
                     rs.Seek(0, SeekOrigin.Begin);
 
                     return new Resource(name, rs);

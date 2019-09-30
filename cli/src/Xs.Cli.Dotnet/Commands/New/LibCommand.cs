@@ -52,6 +52,6 @@ namespace Xs.Cli.Dotnet.Commands.New
     {
         [Position(1)]
         [Help("Project name.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

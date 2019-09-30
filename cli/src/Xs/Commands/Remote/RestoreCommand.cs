@@ -6,8 +6,8 @@ using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
-using Xs.Tools;
 using Xs.RegistryClient.Main;
+using Xs.Tools;
 
 namespace Xs.Commands.Remote
 {
@@ -39,12 +39,7 @@ namespace Xs.Commands.Remote
             var user = cfg.User;
             var dir = discoverCfg.Root;
 
-            var configuration = configurationManager.LoadBarebone(dir);
-            if (configuration == null)
-            {
-                Console.WriteLine("Registry can't be restored, because it's not tracked. Track it first");
-                return;
-            }
+            var configuration = configurationManager.Load(dir);
 
             var client = mainClientFactory.Create(configuration.Registry);
 
@@ -69,6 +64,6 @@ namespace Xs.Commands.Remote
     {
         [Option(isRequired: true)]
         [Help("User name.")]
-        public string User { get; set; }
+        public string User { get; set; } = string.Empty;
     }
 }

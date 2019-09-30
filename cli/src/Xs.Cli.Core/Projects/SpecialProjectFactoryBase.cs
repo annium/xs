@@ -6,7 +6,6 @@ namespace Xs.Cli.Core.Projects
     public class SpecialProjectFactoryBase<TProject> where TProject : class, IProject
     {
         protected Dependency<IProject> GetProjectDependencyMock(
-            string project,
             FileInfo location,
             Dependency<string> reference
         )
@@ -16,7 +15,7 @@ namespace Xs.Cli.Core.Projects
 
             var dependency = new ProjectMock<TProject>(
                 location.Name,
-                new Models.Version(0, 0, 0, string.Empty),
+                new Version(0, 0, 0, string.Empty),
                 string.Empty,
                 directory,
                 file

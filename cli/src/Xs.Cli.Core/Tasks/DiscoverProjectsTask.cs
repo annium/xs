@@ -89,7 +89,6 @@ namespace Xs.Cli.Core.Tasks
         )
         {
             var projects = new HashSet<IProject>();
-            var exceptions = new List<Exception>();
 
             logger.Debug("Start projects creation.");
 

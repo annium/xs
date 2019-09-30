@@ -6,14 +6,32 @@ namespace Xs.Cli.Core.Models
 {
     public class Configuration
     {
+        public static Configuration Empty()
+        {
+            return new Configuration(
+                new Uri("localhost"),
+                string.Empty,
+                new Dictionary<ProjectType, Uri>(),
+                Array.Empty<SpecialConfiguration>()
+            );
+        }
+
         public Uri Registry { get; private set; }
         public string Token { get; private set; }
-        public IReadOnlyDictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
-        public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();
+        public IReadOnlyDictionary<ProjectType, Uri> Servers { get; private set; }
+        public SpecialConfiguration[] Types { get; private set; }
 
-        public Configuration()
+        public Configuration(
+            Uri registry,
+            string token,
+            IReadOnlyDictionary<ProjectType, Uri> servers,
+            SpecialConfiguration[] types
+        )
         {
-
+            Registry = registry;
+            Token = token;
+            Servers = servers;
+            Types = types;
         }
 
         public void SetRegistry(Uri registry)
@@ -30,8 +48,7 @@ namespace Xs.Cli.Core.Models
 
         public void SetServers(IReadOnlyDictionary<ProjectType, Uri> servers)
         {
-            Servers = servers ??
-                throw new ArgumentNullException(nameof(servers));
+            Servers = servers;
         }
 
         public void SetTypes(SpecialConfiguration[] types)

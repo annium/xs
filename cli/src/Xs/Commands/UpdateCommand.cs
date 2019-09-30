@@ -73,14 +73,14 @@ namespace Xs.Commands
                 );
 
             // resolve configuration and available version of all dependencies
-            var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
+            var configuration = configurationManager.Load(discoverCfg.Root);
 
             var updates = (await Task.WhenAll(dependencies.Select(async d =>
             {
                 var dependencyManager = dependencyManagers[d.Type];
                 var registryUri = configuration?.Servers.FirstOrDefault(s => s.Key == d.Type).Value;
                 var versions = registryUri != null && !registryUri.IsFile ?
-                    await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration.Token) :
+                    await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration!.Token) :
                     Array.Empty<Package>();
 
                 // fallback to default server result
@@ -92,7 +92,7 @@ namespace Xs.Commands
 
                 if (result == d)
                     logger.Debug($"Resolve: {d} unchanged");
-                else if (result == null)
+                else if (result is null)
                     logger.Warn($"Resolve: {d} unresolved");
                 else
                     logger.Debug($"Resolve: {d} -> {result}");
@@ -155,7 +155,7 @@ namespace Xs.Commands
                 var update = updates.FirstOrDefault(u => u.Type == d.Type && u.Name.ToLowerInvariant() == name);
 
                 // update is not applied if not found, or if naming is same and no newer version is found
-                if (update == null || (update.Name == d.Name && update.Version <= d.Version))
+                if (update is null || (update.Name == d.Name && update.Version <= d.Version))
                     continue;
 
                 project.Packages.Remove(package);
@@ -175,7 +175,7 @@ namespace Xs.Commands
 
         [Position(2, isRequired : false)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Option(isRequired: false)]
         [Help("Allow suffixed.")]

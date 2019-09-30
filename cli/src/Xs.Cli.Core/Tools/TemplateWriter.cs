@@ -36,7 +36,7 @@ namespace Xs.Cli.Core.Tools
             "ts",
             "tsx"
         };
-        private IList<Resource> resources;
+        private IList<Resource> resources = new List<Resource>();
 
         public TemplateWriter(
             ILogger<TemplateWriter> logger
@@ -80,15 +80,14 @@ namespace Xs.Cli.Core.Tools
                 var ctx = new TemplateContext();
                 ctx.PushGlobal(scriptObject);
 
-                using(var reader = new StreamReader(resource.Content))
-                {
-                    File.WriteAllText(path, Template.Parse(reader.ReadToEnd()).Render(ctx));
-                }
+                using var reader = new StreamReader(resource.Content);
+                File.WriteAllText(path, Template.Parse(reader.ReadToEnd()).Render(ctx));
             }
             else
             {
                 logger.Trace($"Write as is {resourceName} -> {path}");
-                using(var fs = File.Create(path)) resource.Content.CopyTo(fs);
+                using var fs = File.Create(path);
+                resource.Content.CopyTo(fs);
             }
 
             resources.Remove(resource);
@@ -112,7 +111,7 @@ namespace Xs.Cli.Core.Tools
                 return Path.Combine(stripExtension(name, extension).Split('.')) + $".{extension}";
             }
 
-            string stripExtension(string name, string extension)
+            static string stripExtension(string name, string extension)
             {
                 if (!endsWithExtension(name, extension))
                     return name;
@@ -123,7 +122,7 @@ namespace Xs.Cli.Core.Tools
                 return name.Substring(0, name.Length - extension.Length - 1);
             }
 
-            bool endsWithExtension(string name, string extension)
+            static bool endsWithExtension(string name, string extension)
             {
                 if (!name.EndsWith(extension))
                     return false;

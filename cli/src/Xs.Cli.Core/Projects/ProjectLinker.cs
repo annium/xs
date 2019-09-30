@@ -69,7 +69,7 @@ namespace Xs.Cli.Core.Projects
             if (configuration.ForceChecks)
             {
                 var duplicatePackage = packages.FirstOrDefault(p => p.Name == project.Name);
-                if (duplicatePackage != null)
+                if (duplicatePackage != null!)
                 {
                     addError(new InvalidOperationException($"Project {project} name is used by package {duplicatePackage}."));
                     return;
@@ -104,7 +104,7 @@ namespace Xs.Cli.Core.Projects
                         project: p,
                         package: p.Packages.FirstOrDefault(d => d.Value.Name.ToLowerInvariant() == name)?.Value
                     ))
-                    .Where(p => p.package != null)
+                    .Where(p => p.package! != null!)
                     .ToArray();
                 var variationsString = string.Join(
                     Environment.NewLine,

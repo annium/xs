@@ -72,10 +72,9 @@ namespace Xs.Commands
     {
         [Position(1)]
         [Help("Dependency name.")]
-        public string Name { get; set; }
-
+        public string Name { get; set; } = string.Empty;
         [Position(2)]
         [Help("Dependency version.")]
-        public Version Version { get; set; }
+        public Version Version { get; set; } = Version.Empty;
     }
 }

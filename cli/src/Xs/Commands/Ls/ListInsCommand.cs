@@ -101,7 +101,7 @@ namespace Xs.Commands.Ls
             {
                 var last = projectDeps.Length > 0 ? null : packageDeps.Last();
                 foreach (var dependency in packageDeps)
-                    LogPackage(dependency, prefix, dependency == last);
+                    LogPackage(dependency, prefix, last is null ? false : dependency == last);
             }
 
             if (showProjects && projectDeps.Length > 0)
@@ -152,7 +152,7 @@ namespace Xs.Commands.Ls
 
         [Position(2, isRequired : false)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Option]
         [Help("Show only project dependencies (without packages).")]

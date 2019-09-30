@@ -123,7 +123,7 @@ namespace Xs.Commands.Ls
                 {
                     var dep = e.Projects.FirstOrDefault(p => p.Value == project);
 
-                    return dep == null ? null : new Dependency<IProject>(dep.Type, e);
+                    return dep is null ? null : new Dependency<IProject>(dep.Type, e);
                 })
                 .OfType<Dependency<IProject>>()
                 .OrderBy(e => e.Value.Name)
@@ -145,16 +145,6 @@ namespace Xs.Commands.Ls
                     prefix,
                     dependant == last
                 );
-        }
-
-        private void LogPackage(
-            Dependency<Package> package,
-            string prefix,
-            bool isLast
-        )
-        {
-            var node = isLast ? "└─" : "├─";
-            Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
         }
 
         private void LogProject(IProject project, bool writePath, bool writeAttributes)
@@ -187,7 +177,7 @@ namespace Xs.Commands.Ls
 
         [Position(2, isRequired : false)]
         [Help("Project/package type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Option]
         [Help("Show plain dependants list (no recursion).")]

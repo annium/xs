@@ -16,8 +16,8 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
-        private static object cacheLocker = new object();
-        public override string File => Path.Combine(Directory, projectFileName(Name));
+        private static readonly object cacheLocker = new object();
+        public override string File => Path.Combine(Directory, ProjectFileName(Name));
         public TargetFramework TargetFramework { get; }
         public OutputType OutputType { get; }
         private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
@@ -97,13 +97,13 @@ namespace Xs.Cli.Dotnet.Projects
 
         protected override string FixProjectDirectory(string directory)
         {
-            return Path.Combine(Path.GetDirectoryName(directory), Name);
+            return Path.Combine(Path.GetDirectoryName(directory)!, Name);
         }
 
         protected override void OnNameChangeSave(string oldName, string newName)
         {
-            var oldPath = Path.Combine(Directory, projectFileName(oldName));
-            var newPath = Path.Combine(Directory, projectFileName(newName));
+            var oldPath = Path.Combine(Directory, ProjectFileName(oldName));
+            var newPath = Path.Combine(Directory, ProjectFileName(newName));
             SysFile.Move(oldPath, newPath);
         }
 
@@ -111,6 +111,6 @@ namespace Xs.Cli.Dotnet.Projects
         ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
         !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
 
-        private string projectFileName(string name) => $"{name}{ProjectFactory.ProjectFileExtension}";
+        private string ProjectFileName(string name) => $"{name}{ProjectFactory.ProjectFileExtension}";
     }
 }

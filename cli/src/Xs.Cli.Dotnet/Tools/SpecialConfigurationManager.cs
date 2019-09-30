@@ -58,11 +58,9 @@ namespace Xs.Cli.Dotnet.Tools
                 Encoding = new UTF8Encoding(false),
             };
 
-            using(var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
-            using(var xw = XmlWriter.Create(fs, xws))
-            {
-                info.Save(xw);
-            }
+            using var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+            using var xw = XmlWriter.Create(fs, xws);
+            info.Save(xw);
         }
 
         private XElement GetAddRule(string name, Uri uri) => new XElement(
@@ -76,15 +74,10 @@ namespace Xs.Cli.Dotnet.Tools
         private static class El
         {
             public const string Configuration = "configuration";
-
             public const string PackageSources = "packageSources";
-
             public const string Clear = "clear";
-
             public const string Add = "add";
-
             public const string Key = "key";
-
             public const string Value = "value";
         }
     }

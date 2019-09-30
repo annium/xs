@@ -6,9 +6,7 @@ namespace Xs.Tools
 {
     public interface IConfigurationManager
     {
-        Configuration LoadBarebone(string folder);
-
-        Task<Configuration> LoadAsync(string folder);
+        Configuration Load(string folder);
 
         void Save(string folder, IProject[] projects, Configuration configuration);
 

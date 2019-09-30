@@ -26,7 +26,6 @@ namespace Xs.Cli.Dotnet.Projects
         private readonly ProjectMapper mapper;
         private readonly IShell shell;
         private readonly LoggerConfiguration loggerConfiguration;
-        private readonly ILogger<ProjectFactory> logger;
         private readonly IServiceProvider provider;
 
         public ProjectFactory(
@@ -34,7 +33,6 @@ namespace Xs.Cli.Dotnet.Projects
             ProjectMapper mapper,
             IShell shell,
             LoggerConfiguration loggerConfiguration,
-            ILogger<ProjectFactory> logger,
             IServiceProvider provider
         )
         {
@@ -42,7 +40,6 @@ namespace Xs.Cli.Dotnet.Projects
             this.mapper = mapper;
             this.shell = shell;
             this.loggerConfiguration = loggerConfiguration;
-            this.logger = logger;
             this.provider = provider;
         }
 
@@ -54,7 +51,7 @@ namespace Xs.Cli.Dotnet.Projects
                 Directory.GetFiles(directory, projectFileMask).Length == 1 &&
                 !FileManager.FindDirectory(directory, isMatch, IgnoredFolders);
 
-            bool isMatch(string dir) => Directory.GetFiles(dir, projectFileMask).Length > 0;
+            static bool isMatch(string dir) => Directory.GetFiles(dir, projectFileMask).Length > 0;
         }
 
         public bool IsProjectFile(string file)
@@ -78,7 +75,7 @@ namespace Xs.Cli.Dotnet.Projects
             var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable, isTestProject) = mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
-                .Select(e => GetProjectDependencyMock(name, file, e))
+                .Select(e => GetProjectDependencyMock(file, e))
                 .ToHashSet();
 
             var packageDependencies = packageDeps.ToHashSet();

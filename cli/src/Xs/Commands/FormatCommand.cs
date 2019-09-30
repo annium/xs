@@ -5,7 +5,6 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
-using Xs.Tools;
 
 namespace Xs.Commands
 {
@@ -14,17 +13,14 @@ namespace Xs.Commands
         public override string Id { get; } = "format";
         public override string Description { get; } = "Format projects.";
         private readonly DiscoverProjectsTask discoverTask;
-        private readonly ProjectsRunner runner;
         private readonly ILogger<FormatCommand> logger;
 
         public FormatCommand(
             DiscoverProjectsTask discoverTask,
-            ProjectsRunner runner,
             ILogger<FormatCommand> logger
         )
         {
             this.discoverTask = discoverTask;
-            this.runner = runner;
             this.logger = logger;
         }
 
@@ -56,6 +52,6 @@ namespace Xs.Commands
 
         [Position(2, isRequired : false)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
     }
 }

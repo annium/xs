@@ -38,24 +38,24 @@ namespace Xs.Cli.Dotnet.Projects
                         if (!Core.Models.Version.TryParse(e.Version, out var version))
                             throw new ArgumentException($"Package {e.Id} version {e.Version} is invalid");
 
-                        return (Id: e.Id, Version: version);
+                        return (e.Id, Version : version);
                     }
                     catch
                     {
-                        return (Id: e.Id, Version: null);
+                        return (e.Id, Version : Core.Models.Version.Empty);
                     }
                 })
-                .Where(e => e.Version != null)
+                .Where(e => e.Version != Core.Models.Version.Empty)
                 .OrderByDescending(e => e.Version)
                 .ToArray();
 
             return registrations.Select(r => new Package(Type, r.Id, r.Version)).ToArray();
         }
 
-        private async Task<RegistrationIndex> LoadIndexAsync(string registrationUrl)
+        private async Task<RegistrationIndex?> LoadIndexAsync(string registrationUrl)
         {
             var index = await Http.Open().Get(registrationUrl).AsAsync<RegistrationIndex>();
-            if (index == null)
+            if (index is null)
                 return null;
 
             index.Items = (await Task.WhenAll(index.Items.Select(page =>
@@ -71,16 +71,16 @@ namespace Xs.Cli.Dotnet.Projects
 
         private class ServiceIndex
         {
-            public ServiceIndexResource[] Resources { get; set; }
+            public ServiceIndexResource[] Resources { get; set; } = Array.Empty<ServiceIndexResource>();
         }
 
         private class ServiceIndexResource
         {
             [JsonProperty("@id")]
-            public string Id { get; set; }
+            public string Id { get; set; } = string.Empty;
 
             [JsonProperty("@type")]
-            public string Type { get; set; }
+            public string Type { get; set; } = string.Empty;
         }
 
         private class RegistrationIndex
@@ -91,7 +91,7 @@ namespace Xs.Cli.Dotnet.Projects
         private class RegistrationPage
         {
             [JsonProperty("@id")]
-            public string Id { get; set; }
+            public string Id { get; set; } = string.Empty;
 
             public RegistrationLeaf[] Items { get; set; } = Array.Empty<RegistrationLeaf>();
         }
@@ -103,9 +103,9 @@ namespace Xs.Cli.Dotnet.Projects
 
         private class RegistrationCatalogEntry
         {
-            public string Id { get; set; }
+            public string Id { get; set; } = string.Empty;
 
-            public string Version { get; set; }
+            public string Version { get; set; } = string.Empty;
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Xs.Cli.Core.Tools
     {
         [ResolveField]
         [DataMember(Order = 0)]
-        public ProjectType Type { get; protected set; }
+        public ProjectType Type { get; protected set; } = null!;
     }
 }

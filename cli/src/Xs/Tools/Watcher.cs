@@ -33,56 +33,55 @@ namespace Xs.Tools
             var semaphore = new PathSemaphore(getInstant, Duration.FromMilliseconds(100));
             var tasks = new Queue<ValueTuple<Func<string, Task>, string>>();
 
-            using(var watcher = new FileSystemWatcher(root))
-            using(var gate = new ManualResetEventSlim(false))
+            using var watcher = new FileSystemWatcher(root);
+            using var gate = new ManualResetEventSlim(false);
+
+            watcher.EnableRaisingEvents = true;
+            watcher.IncludeSubdirectories = true;
+            watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite;
+
+            watcher.Created += (sender, args) => AddTask(args.FullPath);
+            watcher.Renamed += (sender, args) => { AddTask(args.OldFullPath); AddTask(args.FullPath); };
+            watcher.Changed += (sender, args) => AddTask(args.FullPath);
+            watcher.Deleted += (sender, args) => AddTask(args.FullPath);
+            watcher.Error += (sender, args) => logger.Error(args.GetException());
+
+            // no tasks -> reset -> wait
+            // add task -> set
+            // problems: task was added after check and set was called before reset
+
+            while (!token.IsCancellationRequested)
             {
-                watcher.EnableRaisingEvents = true;
-                watcher.IncludeSubdirectories = true;
-                watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite;
-
-                watcher.Created += (sender, args) => AddTask(args.FullPath);
-                watcher.Renamed += (sender, args) => { AddTask(args.OldFullPath); AddTask(args.FullPath); };
-                watcher.Changed += (sender, args) => AddTask(args.FullPath);
-                watcher.Deleted += (sender, args) => AddTask(args.FullPath);
-                watcher.Error += (sender, args) => logger.Error(args.GetException());
-
-                // no tasks -> reset -> wait
-                // add task -> set
-                // problems: task was added after check and set was called before reset
-
-                while (!token.IsCancellationRequested)
+                gate.Reset();
+                if (tasks.Count == 0)
                 {
-                    gate.Reset();
-                    if (tasks.Count == 0)
-                    {
-                        logger.Trace("Wait for tasks.");
-                        gate.Wait(token);
-                    }
-
-                    logger.Trace($"Pending {tasks.Count} task(s).");
-                    // get and execute task
-                    var(task, path) = tasks.Dequeue();
-                    try
-                    {
-                        await task(path);
-                    }
-                    catch (OperationCanceledException) { }
-                    catch (Exception exception)
-                    {
-                        logger.Error(exception);
-                    }
+                    logger.Trace("Wait for tasks.");
+                    gate.Wait(token);
                 }
 
-                void AddTask(string path)
+                logger.Trace($"Pending {tasks.Count} task(s).");
+                // get and execute task
+                var(task, path) = tasks.Dequeue();
+                try
                 {
-                    if (!semaphore.IsAvailable(path) || !filter(path))
-                        return;
-
-                    var task = File.Exists(path) ? handleChange : handleDelete;
-                    logger.Trace($"Enqueue task for {path}");
-                    tasks.Enqueue((task, path));
-                    gate.Set();
+                    await task(path);
                 }
+                catch (OperationCanceledException) { }
+                catch (Exception exception)
+                {
+                    logger.Error(exception);
+                }
+            }
+
+            void AddTask(string path)
+            {
+                if (!semaphore.IsAvailable(path) || !filter(path))
+                    return;
+
+                var task = File.Exists(path) ? handleChange : handleDelete;
+                logger.Trace($"Enqueue task for {path}");
+                tasks.Enqueue((task, path));
+                gate.Set();
             }
         }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using Annium.Configuration.Abstractions;
 using Annium.Core.Mapper;
 using Annium.Logging.Abstractions;
@@ -11,7 +10,6 @@ using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
-using Xs.RegistryClient.Main;
 
 namespace Xs.Tools
 {
@@ -21,64 +19,42 @@ namespace Xs.Tools
         private const string credentialsFile = ".xs.credentials";
         private const string ignoreHeader = "# xs ignore patterns";
         private const string ignoreFile = ".gitignore";
-        private readonly MainClientFactory mainClientFactory;
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
         private readonly ILogger<ConfigurationManager> logger;
 
         public ConfigurationManager(
-            MainClientFactory mainClientFactory,
             IEnumerable<ISpecialConfigurationManager> specialManagers,
             ILogger<ConfigurationManager> logger
         )
         {
             this.specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
-            this.mainClientFactory = mainClientFactory;
             this.logger = logger;
         }
 
-        public Configuration LoadBarebone(string folder)
+        public Configuration Load(string folder)
         {
+            logger.Trace($"Load configuration from {folder}");
+
             var cfgFile = ConfigurationFile(folder);
             var credFile = CredentialsFile(folder);
 
             if (!File.Exists(cfgFile))
-                return null;
-
+            {
+                logger.Trace($"Configuration missing in {folder}. Returning default");
+                return Configuration.Empty();
+            }
             var config = new ConfigurationBuilder()
                 .AddYamlFile(cfgFile)
                 .Build<Config>();
-            var configuration = new Configuration();
-            if (config.Registry != null)
-                configuration.SetRegistry(config.Registry);
-            configuration.SetTypes(config.Types);
-            if (File.Exists(credFile))
-                configuration.SetToken(File.ReadAllText(credFile));
 
-            return configuration;
-        }
+            logger.Trace($"Configuration loaded from {folder}");
 
-        public async Task<Configuration> LoadAsync(string folder)
-        {
-            logger.Trace($"Load configuration from {folder}");
-            if (!File.Exists(ConfigurationFile(folder)) || !File.Exists(CredentialsFile(folder)))
-            {
-                logger.Trace($"Configuration or credentials missing in {folder}");
-                return null;
-            }
-
-            var configuration = LoadBarebone(folder);
-            var servers = configuration.Registry.IsFile ?
-                ProjectType.List().ToDictionary(type => type, type => configuration.Registry) :
-                (await mainClientFactory.Create(configuration.Registry).GetRegistryInfoAsync())
-                .Servers
-                .OrderBy(s => s.Key)
-                .ToDictionary(s => ProjectType.Get(s.Key), s => s.Value);
-
-            configuration.SetServers(servers);
-
-            logger.Trace($"Configuration loaded {folder}");
-
-            return configuration;
+            return new Configuration(
+                config.Registry,
+                File.Exists(credFile) ? File.ReadAllText(credFile) : string.Empty,
+                new Dictionary<ProjectType, Uri>(),
+                config.Types
+            );
         }
 
         public void Save(string folder, IProject[] projects, Configuration configuration)
@@ -88,10 +64,12 @@ namespace Xs.Tools
             Write(CredentialsFile, configuration.Token);
 
             // save configuration for each project
-            var ignorePatterns = new List<string>();
-            ignorePatterns.Add(FileManager.IgnoreFile);
-            ignorePatterns.Add(credentialsFile);
-            foreach (var(type, uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
+            var ignorePatterns = new List<string>
+            {
+                FileManager.IgnoreFile,
+                credentialsFile
+            };
+            foreach ((ProjectType type, Uri uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
             {
                 if (!specialManagers.ContainsKey(type))
                 {
@@ -169,10 +147,11 @@ namespace Xs.Tools
         private class Config
         {
             [DataMember(Order = 0)]
-            public Uri Registry { get; set; }
-
+            public Uri Registry { get; private set; } = new Uri("localhost");
             [DataMember(Order = 1)]
-            public SpecialConfiguration[] Types { get; set; } = Array.Empty<SpecialConfiguration>();
+            public Dictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
+            [DataMember(Order = 2)]
+            public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();
         }
     }
 }

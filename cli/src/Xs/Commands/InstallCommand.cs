@@ -72,11 +72,11 @@ namespace Xs.Commands
 
         [Position(2, isRequired : false)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Option("f", isRequired : false)]
         [Help("Force install.")]
-        public bool Force { get; set; } = false;
+        public bool Force { get; set; }
 
         [Option("d")]
         [Help("Install dependencies.")]

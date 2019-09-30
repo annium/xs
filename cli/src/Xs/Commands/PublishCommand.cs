@@ -39,7 +39,7 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
+            var configuration = configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
@@ -72,11 +72,11 @@ namespace Xs.Commands
     {
         [Position(1)]
         [Help("Projects mask.")]
-        public string Mask { get; set; }
+        public string Mask { get; set; } = string.Empty;
 
         [Position(2)]
         [Help("Version to publish.")]
-        public Cli.Core.Models.Version Version { get; set; }
+        public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
 
         [Option("d")]
         [Help("Publish dependencies.")]

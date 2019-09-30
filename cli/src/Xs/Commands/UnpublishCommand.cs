@@ -8,8 +8,8 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.RegistryClient.Server;
 using Xs.Cli.Core.Tasks;
+using Xs.RegistryClient.Server;
 using Xs.Tools;
 
 namespace Xs.Commands
@@ -45,7 +45,7 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
+            var configuration = configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to unpublish.");
 
@@ -83,11 +83,11 @@ namespace Xs.Commands
     {
         [Position(1)]
         [Help("Project mask.")]
-        public string Mask { get; set; }
+        public string Mask { get; set; } = string.Empty;
 
         [Position(2)]
         [Help("Version to unpublish.")]
-        public Cli.Core.Models.Version Version { get; set; }
+        public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
 
         [Option("d")]
         [Help("Unpublish dependencies.")]

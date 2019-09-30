@@ -54,7 +54,7 @@ namespace Xs.Cli.Core.Tools
         public static bool IsRootedDirectoryIgnored(string root, string directory, string[] ignoredDirectories)
         {
             root = Path.GetFullPath(root);
-            var dir = Path.GetFullPath(directory);
+            string? dir = Path.GetFullPath(directory);
 
             do
             {
@@ -69,7 +69,7 @@ namespace Xs.Cli.Core.Tools
 
         public static bool IsUnrootedDirectoryIgnored(string directory, string[] ignoredDirectories)
         {
-            var dir = Path.GetFullPath(directory);
+            string? dir = Path.GetFullPath(directory);
 
             do
             {

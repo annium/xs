@@ -22,7 +22,7 @@ namespace Xs.Cli.Core.Commands
             var comparison = StringComparison.CurrentCultureIgnoreCase;
 
             var exactMatch = list.FirstOrDefault(i => getName(i).Equals(mask, comparison));
-            if (exactMatch != null && !exactMatch.Equals(default(T)))
+            if (exactMatch != null && !exactMatch.Equals(default(T) !))
                 return new T[] { exactMatch };
 
             return list.Where(p => getName(p).Contains(mask, comparison));
@@ -31,7 +31,7 @@ namespace Xs.Cli.Core.Commands
         public static IEnumerable<T> FilterType<T>(this IEnumerable<T> projects, ProjectType type)
         where T : IReference
         {
-            if (type == null)
+            if (type == ProjectType.None)
                 return projects;
 
             return projects.Where(e => e.Type == type);

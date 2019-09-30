@@ -27,8 +27,8 @@ namespace Xs.Cli.Node.Tools
             logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
             // with NPM currently it's not possible to publish unscoped packages privately
-            var scope = GetScope(project.Name);
-            if (scope == null)
+            var scope = getScope(project.Name);
+            if (string.IsNullOrWhiteSpace(scope))
             {
                 logger.Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
                 return;
@@ -45,7 +45,7 @@ namespace Xs.Cli.Node.Tools
             sb.AppendLine($"//{configuration.Server.Authority}/:_authToken=\"{configuration.Token}\"");
             File.WriteAllText(FilePath(project), sb.ToString());
 
-            string GetScope(string name) => name.StartsWith('@') ? name.Substring(1).Split('/') [0] : null;
+            static string getScope(string name) => name.StartsWith('@') ? name[1..].Split('/') [0] : string.Empty;
         }
 
         public void Delete(IProject project)

@@ -28,7 +28,7 @@ namespace Xs.Tools
         where TProject : IProject
         {
             var locker = new object();
-            var gate = new ManualResetEventSlim(false);
+            using var gate = new ManualResetEventSlim(false);
 
             var pending = new HashSet<TProject>();
             if (runOnDependencies)

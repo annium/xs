@@ -40,7 +40,7 @@ namespace Xs.Cli.Node.Projects
             project.Packages.Clear();
 
             foreach (var dependency in packageDependencies)
-                project.Packages.Add(ResolvePackageDependency(project, dependency, packages, configuration, addError));
+                project.Packages.Add(ResolvePackageDependency(dependency, packages));
         }
     }
 }

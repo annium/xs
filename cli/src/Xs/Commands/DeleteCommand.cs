@@ -78,11 +78,11 @@ namespace Xs.Commands
     {
         [Position(1)]
         [Help("Projects mask.")]
-        public string Mask { get; set; }
+        public string Mask { get; set; } = string.Empty;
 
         [Position(2)]
         [Help("Dependency.")]
-        public string Dependency { get; set; }
+        public string Dependency { get; set; } = string.Empty;
 
         [Position(3, isRequired : false)]
         [Help("Dependency type.")]

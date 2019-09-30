@@ -5,8 +5,8 @@ using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
-using Xs.Tools;
 using Xs.RegistryClient.Main;
+using Xs.Tools;
 
 namespace Xs.Commands
 {
@@ -35,9 +35,7 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var type = cfg.Type;
-
-            var configuration = await configurationManager.LoadAsync(discoverCfg.Root);
+            var configuration = configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
             {
                 logger.Warn("Track registry first to search within it.");
@@ -56,10 +54,10 @@ namespace Xs.Commands
     {
         [Position(1)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Position(2)]
         [Help("Search query.")]
-        public string Query { get; set; }
+        public string Query { get; set; } = string.Empty;
     }
 }

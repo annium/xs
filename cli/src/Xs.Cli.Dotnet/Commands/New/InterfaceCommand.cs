@@ -8,7 +8,6 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
-using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
@@ -89,6 +88,6 @@ namespace Xs.Cli.Dotnet.Commands.New
     {
         [Option("o", isRequired : true)]
         [Help("Output directory.")]
-        public string Output { get; set; }
+        public string Output { get; set; } = string.Empty;
     }
 }

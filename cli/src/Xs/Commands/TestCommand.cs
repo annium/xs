@@ -55,7 +55,7 @@ namespace Xs.Commands
 
         [Position(2, isRequired : false)]
         [Help("Project type.")]
-        public ProjectType Type { get; set; }
+        public ProjectType Type { get; set; } = ProjectType.None;
 
         [Option("tf", isRequired : false)]
         [Help("Tests filter.")]

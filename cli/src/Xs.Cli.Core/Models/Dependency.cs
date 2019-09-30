@@ -25,7 +25,7 @@ namespace Xs.Cli.Core.Models
             value = Value;
         }
 
-        public override string ToString() => Value.ToString();
+        public override string ToString() => Value!.ToString()!;
 
         public override int GetHashCode()
         {
@@ -34,7 +34,7 @@ namespace Xs.Cli.Core.Models
                 var hash = 7;
 
                 hash = hash * 31 + Type.GetHashCode();
-                hash = hash * 31 + Value.GetHashCode();
+                hash = hash * 31 + Value!.GetHashCode();
 
                 return hash;
             }
