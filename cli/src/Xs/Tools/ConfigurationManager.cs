@@ -147,7 +147,7 @@ namespace Xs.Tools
         private class Config
         {
             [DataMember(Order = 0)]
-            public Uri Registry { get; private set; } = new Uri("localhost");
+            public Uri Registry { get; private set; } = new Uri("http://localhost");
             [DataMember(Order = 1)]
             public Dictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
             [DataMember(Order = 2)]

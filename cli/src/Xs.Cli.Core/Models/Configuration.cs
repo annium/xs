@@ -9,7 +9,7 @@ namespace Xs.Cli.Core.Models
         public static Configuration Empty()
         {
             return new Configuration(
-                new Uri("localhost"),
+                new Uri("http://localhost"),
                 string.Empty,
                 new Dictionary<ProjectType, Uri>(),
                 Array.Empty<SpecialConfiguration>()

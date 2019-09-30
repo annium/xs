@@ -65,7 +65,7 @@ namespace Xs.Commands.Remote
     {
         [Position(1)]
         [Help("Registry location.")]
-        public Uri Registry { get; set; } = new Uri("localhost");
+        public Uri Registry { get; set; } = new Uri("http://localhost");
 
         [Option(isRequired: true)]
         [Help("User name.")]
