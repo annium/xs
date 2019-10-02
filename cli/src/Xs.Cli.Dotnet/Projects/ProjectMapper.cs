@@ -16,6 +16,7 @@ namespace Xs.Cli.Dotnet.Projects
     {
         private static readonly string[] implicitPackages = new [] { "Microsoft.AspNetCore.App" };
         private static readonly string[] booleanStrings = new [] { "true", "false" };
+        private static readonly string[] disabledProperties = new [] { El.PublishReadyToRun, El.PublishReadyToRunShowWarnings };
 
         public RawProject Load(string path, DiscoverConfiguration configuration)
         {
@@ -105,11 +106,14 @@ namespace Xs.Cli.Dotnet.Projects
                 newProps.Add(new XElement(El.IsTestProject, "true"));
 
             newProps.Add(new XElement(El.Nullable, "enable"));
-            newProps.Add(new XElement(El.PublishReadyToRun, "true"));
-            newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
+            // newProps.Add(new XElement(El.PublishReadyToRun, "true"));
+            // newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
 
-            foreach (var el in oldProps.Elements().Where(oldEl => !newProps.Elements().Any(newEl => newEl.Name == oldEl.Name)))
-                newProps.Add(el);
+            var remainingProps = oldProps.Elements()
+                .Where(el => !disabledProperties.Contains(el.Name.ToString()))
+                .Where(el => !newProps.Elements().Any(newEl => newEl.Name == el.Name))
+                .ToList();
+            newProps.Add(remainingProps);
 
             // remove project references group
             info.Elements(El.ItemGroup).Where(e => e.Elements(El.ProjectReference).Count() > 0).Remove();
