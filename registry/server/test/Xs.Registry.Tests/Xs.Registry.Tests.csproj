@@ -10,8 +10,6 @@
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
-        <PublishReadyToRun>true</PublishReadyToRun>
-        <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Annium.AspNetCore.IntegrationTesting" Version="0.1.0" />
