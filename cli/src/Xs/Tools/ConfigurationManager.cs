@@ -52,7 +52,7 @@ namespace Xs.Tools
             return new Configuration(
                 config.Registry,
                 File.Exists(credFile) ? File.ReadAllText(credFile) : string.Empty,
-                new Dictionary<ProjectType, Uri>(),
+                config.Servers,
                 config.Types
             );
         }
