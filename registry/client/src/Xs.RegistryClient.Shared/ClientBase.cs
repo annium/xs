@@ -15,7 +15,7 @@ namespace Xs.RegistryClient.Shared
 
         public void SetUri(Uri uri)
         {
-            if (this.uri != null)
+            if (!this.uri.IsLoopback)
                 throw new InvalidOperationException($"Uri already assigned.");
 
             foreach (var client in clients)
