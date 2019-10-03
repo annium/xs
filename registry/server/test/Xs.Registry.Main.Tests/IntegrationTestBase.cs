@@ -1,7 +1,7 @@
 namespace Xs.Registry.Main.Tests
 {
-    public class IntegrationTestBase : Registry.Tests.IntegrationTestBase<Startup>
+    public class IntegrationTestBase : Registry.Tests.IntegrationTestBase<Startup, TestServicePack>
     {
-        public IntegrationTestBase() : base(container => container.UseServicePack<TestServicePack>()) { }
+
     }
 }
