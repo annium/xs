@@ -8,7 +8,7 @@ namespace {{name}}
 {
     public class IndexControllerTest : IntegrationTest
     {
-        private IRequest http => GetRequest<Startup<ServicePack>>();
+        private IRequest http => GetRequest<Startup, ServicePack>();
 
         [Fact]
         public async Task True_IsTrue()

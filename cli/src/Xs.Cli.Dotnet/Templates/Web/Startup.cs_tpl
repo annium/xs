@@ -12,25 +12,45 @@ namespace {{name}}
     {
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
             services.AddCors();
+            services.AddMvc();
+            services.AddOpenApiDocument(doc =>
+            {
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = "Type into the textbox: Bearer {your JWT token}."
+                };
+                doc.AddSecurity("JWT", Enumerable.Empty<string>(), securityScheme);
 
-            services.AddMvc()
-                .AddJsonOptions(opts => opts.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Serialization));
-
-            return new ServiceProviderBuilder(services)
-                .UseServicePack<TServicePack>()
-                .Build();
+                doc.OperationProcessors
+                    .Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime)
         {
+            app.UseExceptionMiddleware();
+            if (env.IsDevelopment())
+            {
+                app.UseStaticFiles();
+                app.UseOpenApi();
+                app.UseSwaggerUi3();
+            }
+            app.UseRouting();
             app.UseCors(builder => builder
                 .SetIsOriginAllowed(o => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
-
-            app.UseMvc();
+            app.UseRequestLocalization("en", "ru");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

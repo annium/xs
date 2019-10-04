@@ -10,15 +10,15 @@
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
-        <PublishReadyToRun>true</PublishReadyToRun>
-        <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Annium.AspNetCore.Extensions" Version="0.1.0" />
-        <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />
         <PackageReference Include="Annium.Configuration.Abstractions" Version="0.1.0" />
         <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
+        <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
+        <PackageReference Include="Annium.Logging.Microsoft" Version="0.1.0" />
+        <PackageReference Include="Annium.NodaTime.Serialization.Json" Version="0.1.0" />
         <PackageReference Include="NodaTime" Version="2.4.7" />
-        <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.2.0" />
+        <PackageReference Include="NSwag.AspNetCore" Version="13.1.2" />
     </ItemGroup>
 </Project>
