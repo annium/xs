@@ -45,6 +45,10 @@ namespace Xs.Cli.Dotnet
             services.AddSingleton<Commands.New.LibTestsCommand>();
             services.AddSingleton<Commands.New.WebCommand>();
             services.AddSingleton<Commands.New.WebTestsCommand>();
+
+            // root
+            services.AddSingleton<Commands.Group>();
+            services.AddSingleton<Commands.SlnCommand>();
         }
     }
 }

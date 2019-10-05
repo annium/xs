@@ -11,7 +11,8 @@ namespace Xs.Commands
             Add<Audit.Group>();
             Add<Ls.Group>();
             Add<Remote.Group>();
-            Add<New.Group>();
+            Add<Cli.Dotnet.Commands.Group>();
+            Add<Cli.Node.Commands.Group>();
 
             // commands
             Add<AddCommand>();

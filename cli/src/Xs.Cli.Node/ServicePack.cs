@@ -36,6 +36,9 @@ namespace Xs.Cli.Node
             services.AddSingleton<Commands.New.AppReactCommand>();
             services.AddSingleton<Commands.New.LibCommand>();
             services.AddSingleton<Commands.New.LibReactCommand>();
+
+            // root
+            services.AddSingleton<Commands.Group>();
         }
     }
 }

@@ -47,9 +47,6 @@ namespace Xs
             services.AddSingleton<Commands.Remote.SetLocalCommand>();
             services.AddSingleton<Commands.Remote.ShowCommand>();
 
-            // new
-            services.AddSingleton<Commands.New.Group>();
-
             // root
             services.AddSingleton<AddCommand>();
             services.AddSingleton<BuildCommand>();
