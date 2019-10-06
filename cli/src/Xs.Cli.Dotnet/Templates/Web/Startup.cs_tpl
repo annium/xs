@@ -14,7 +14,8 @@ namespace {{name}}
         {
             services.AddControllers();
             services.AddCors();
-            services.AddMvc();
+            services.AddMvc()
+                .AddDefaultJsonOptions();
             services.AddOpenApiDocument(doc =>
             {
                 var securityScheme = new OpenApiSecurityScheme
