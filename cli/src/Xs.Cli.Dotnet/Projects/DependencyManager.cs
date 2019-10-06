@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
-using Newtonsoft.Json;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
@@ -76,10 +76,10 @@ namespace Xs.Cli.Dotnet.Projects
 
         private class ServiceIndexResource
         {
-            [JsonProperty("@id")]
+            [JsonPropertyName("@id")]
             public string Id { get; set; } = string.Empty;
 
-            [JsonProperty("@type")]
+            [JsonPropertyName("@type")]
             public string Type { get; set; } = string.Empty;
         }
 
@@ -90,7 +90,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         private class RegistrationPage
         {
-            [JsonProperty("@id")]
+            [JsonPropertyName("@id")]
             public string Id { get; set; } = string.Empty;
 
             public RegistrationLeaf[] Items { get; set; } = Array.Empty<RegistrationLeaf>();

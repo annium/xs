@@ -1,20 +1,21 @@
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 
 namespace Xs.Cli.Core.Helpers
 {
     public static class Json
     {
-        private static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+        private static readonly JsonSerializerOptions options = new JsonSerializerOptions()
         {
-            Formatting = Formatting.Indented,
-            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() }
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
         };
 
         public static T Read<T>(string value)
         {
-            return JsonConvert.DeserializeObject<T>(value);
+            return JsonSerializer.Deserialize<T>(value, options);
         }
 
         public static T ReadFile<T>(string file)
@@ -24,7 +25,7 @@ namespace Xs.Cli.Core.Helpers
 
         public static string Write<T>(T data)
         {
-            return JsonConvert.SerializeObject(data, serializerSettings);
+            return JsonSerializer.Serialize(data, options);
         }
 
         public static void WriteFile<T>(string file, T data)
