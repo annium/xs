@@ -15,7 +15,7 @@ namespace {{name}}
         {
             return Host.CreateDefaultBuilder(args)
                 .UseServiceProviderFactory(new ServiceProviderFactory(b => b.UseServicePack<ServicePack>()))
-                .ConfigureForAnniumLogging()
+                .ConfigureLoggingBridge()
                 .ConfigureWebHostDefaults(builder =>
                 {
                     builder
