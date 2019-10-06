@@ -16,8 +16,8 @@ namespace Xs.Cli.Core.Helpers
         public static readonly ISerializer Serializer = new SerializerBuilder()
             .WithNamingConvention(new UnderscoredNamingConvention())
             .WithTypeInspector(inner => new DataContractTypeInspector(inner))
-            .WithTypeConverter(new Core.Helpers.ProjectTypeTypeConverter())
-            .WithTypeConverter(new Core.Helpers.UriTypeConverter())
+            .WithTypeConverter(new ProjectTypeTypeConverter())
+            .WithTypeConverter(new UriTypeConverter())
             .Build();
     }
 
