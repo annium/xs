@@ -48,7 +48,8 @@ namespace Xs.Cli.Node.Projects
                 project.Description = info.Description ??
                 throw new InvalidOperationException($"Project {path} is missing description");
 
-            project.IsPackable = info.Private.HasValue ? !info.Private.Value : false;
+            // is not packable, if is private - when private: true is specified
+            project.IsPackable = !info.Private.HasValue || !info.Private.Value;
 
             var projects = new List<Dependency<string>>();
             var packages = new List<Dependency<Package>>();
@@ -95,7 +96,9 @@ namespace Xs.Cli.Node.Projects
             info.Name = project.Name;
             info.Version = project.Version.ToString();
             info.Description = project.Description;
-            if (!(project is IPublishableProject))
+            if (project is IPublishableProject)
+                info.Private = null;
+            else
                 info.Private = true;
 
             info.Dependencies = getDeps(project, DependencyType.Normal);
