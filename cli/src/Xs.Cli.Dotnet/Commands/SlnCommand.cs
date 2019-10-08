@@ -38,19 +38,20 @@ namespace Xs.Cli.Dotnet.Commands
             CancellationToken token
         )
         {
+            var root = discoverCfg.Root;
             var projects = discoverTask.Run(discoverCfg)
                 .OfType<ISpecialProject>()
                 .ToArray();
 
-            var slnFile = Path.Combine(discoverCfg.Root, $"{cfg.Name}{SlnExtension}");
-            logger.Debug("Create solution file");
-            await shell.Cmd($"dotnet new sln --name {cfg.Name}").RunAsync();
+            var slnFile = Path.Combine(root, $"{cfg.Name}{SlnExtension}");
+            logger.Debug($"Write solution file {slnFile}");
+            await shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root}").RunAsync();
 
             foreach (var project in projects)
             {
-                var folder = Path.GetRelativePath(discoverCfg.Root, Directory.GetParent(project.Directory).FullName);
+                var folder = Path.GetRelativePath(root, Directory.GetParent(project.Directory).FullName);
                 logger.Debug($"Add {project} to solution file at {folder}");
-                await shell.Cmd($"dotnet sln add {slnFile} --solution-folder {folder} {project.File}").RunAsync();
+                await shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
 
             }
         }
