@@ -3,7 +3,6 @@ using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Commands;
-using Xs.Cli.Core.Tasks;
 using Xs.Tools;
 
 namespace Xs
@@ -21,7 +20,7 @@ namespace Xs
             services.AddSingleton<ProjectsRunner>();
             services.AddSingleton<Watcher>();
 
-            Mapper.AddConfiguration(ConfigureMapping);
+            Mapper.AddConfiguration(ConfigureProfile);
         }
 
         private void RegisterCommands(IServiceCollection services)
@@ -65,10 +64,10 @@ namespace Xs
             services.AddSingleton<WatchCommand>();
         }
 
-        private void ConfigureMapping(MapperConfiguration cfg)
+        private void ConfigureProfile(Profile p)
         {
-            cfg.Map<string, Cli.Core.Models.Version>(s => Cli.Core.Models.Version.Parse(s));
-            cfg.Map<string, Cli.Core.Models.ProjectType>(s => Cli.Core.Models.ProjectType.Get(s));
+            p.Map<string, Cli.Core.Models.Version>(s => Cli.Core.Models.Version.Parse(s));
+            p.Map<string, Cli.Core.Models.ProjectType>(s => Cli.Core.Models.ProjectType.Get(s));
         }
     }
 }
