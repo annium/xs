@@ -18,6 +18,7 @@ namespace Xs.Cli.Core.Tools
         private string root = Directory.GetCurrentDirectory();
         private string[] extensions = new string[]
         {
+            "conf",
             "cs",
             "css",
             "d.ts",
