@@ -1,16 +1,17 @@
-﻿using System;
+﻿using System.Linq;
 using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using NodaTime;
-using NodaTime.Serialization.JsonNet;
+using Microsoft.Extensions.Hosting;
+using NSwag;
+using NSwag.Generation.Processors.Security;
 
 namespace {{name}}
 {
-    public class Startup<TServicePack> where TServicePack : ServicePackBase, new()
+    public class Startup
     {
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddCors();
@@ -32,7 +33,7 @@ namespace {{name}}
             });
         }
 
-        public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             app.UseExceptionMiddleware();
             if (env.IsDevelopment())
