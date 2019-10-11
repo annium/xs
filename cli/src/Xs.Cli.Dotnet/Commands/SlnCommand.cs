@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -39,22 +41,59 @@ namespace Xs.Cli.Dotnet.Commands
         )
         {
             var root = discoverCfg.Root;
-            var projects = discoverTask.Run(discoverCfg)
+            var preservedProjects = discoverTask.Run(discoverCfg)
                 .OfType<ISpecialProject>()
                 .ToArray();
 
-            var slnFile = Path.Combine(root, $"{cfg.Name}{SlnExtension}");
+            var slnFile = SlnFile(root, cfg.Name);
             logger.Debug($"Write solution file {slnFile}");
             await shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root}").RunAsync();
 
-            foreach (var project in projects)
+            var currentProjects = await GetSolutsionProjectPathsAsync(root, cfg.Name);
+            var removedProjects = currentProjects
+                .Where(path => !preservedProjects.Any(pp => pp.File == path))
+                .ToList();
+
+            // add current projects
+            foreach (var project in preservedProjects)
             {
                 var folder = Path.GetRelativePath(root, Directory.GetParent(project.Directory).FullName);
                 logger.Debug($"Add {project} to solution file at {folder}");
                 await shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
+            }
 
+            // delete missing projects
+            foreach (var path in removedProjects)
+            {
+                logger.Debug($"Remove {path} from solution file");
+                await shell.Cmd($"dotnet sln {slnFile} remove {path}").RunAsync();
             }
         }
+
+        private async Task<IEnumerable<string>> GetSolutsionProjectPathsAsync(string root, string name)
+        {
+            var slnFile = SlnFile(root, name);
+
+            var result = await shell.Cmd($"dotnet sln {slnFile} list").RunAsync();
+            if (!result.IsSuccess)
+                return Enumerable.Empty<string>();
+
+            var output = result.Output.Trim().Split(Environment.NewLine);
+
+            // As of now, dotnet sln list doesn't provide machine-friendly output
+            // If there are no projects in sln, output is:
+            // 
+            // If there are any projects in sln, output is:
+            //      Project(s)
+            //      ----------
+            //      path/to/project.csproj
+            // So, code belong is targeting that specific behavior
+            return output.Length > 2 ?
+                output.Skip(2).Select(p => Path.Combine(root, p)).ToList() :
+                Enumerable.Empty<string>();
+        }
+
+        private string SlnFile(string root, string name) => Path.Combine(root, $"{name}{SlnExtension}");
     }
 
     public class SlnCommandConfiguration
