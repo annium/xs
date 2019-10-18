@@ -69,7 +69,7 @@ namespace Xs.Commands
             logger.Debug($"Assume dependency {name} as package.");
             var packages = ProjectType.List().Where(t => targets.Count(p => p.Type == t) > 0).ToDictionary(
                 t => t,
-                t => allPackages[t].FilterMask(name).FirstOrDefault()
+                t => allPackages.ContainsKey(t) ? allPackages[t].FilterMask(name).FirstOrDefault() : null!
             );
 
             // if at least one package not found
@@ -104,11 +104,11 @@ namespace Xs.Commands
         [Help("Dependency name.")]
         public string Name { get; set; } = string.Empty;
 
-        [Position(3, isRequired : false)]
+        [Position(3, isRequired: false)]
         [Help("Dependency version (for package dependencies).")]
         public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
 
-        [Position(4, isRequired : false)]
+        [Position(4, isRequired: false)]
         [Help("Dependency type.")]
         public DependencyType Type { get; set; } = DependencyType.Normal;
     }
