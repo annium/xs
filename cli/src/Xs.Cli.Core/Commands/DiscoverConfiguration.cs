@@ -1,3 +1,4 @@
+using System.Linq;
 using System.IO;
 using Annium.Extensions.Arguments;
 
@@ -7,17 +8,19 @@ namespace Xs.Cli.Core.Commands
     {
         [Option("cwd")]
         [Help("Allows to run command in specific folder.")]
-        public string Root
+        public string[] Roots
         {
             get
             {
-                return root;
+                return roots;
             }
             set
             {
-                root = Path.GetFullPath(value);
+                roots = value.Select(Path.GetFullPath).ToArray();
             }
         }
+
+        public string Root => Roots.First();
 
         [Option("-sc")]
         [Help("Allows to disable normally forced checks.")]
@@ -31,6 +34,6 @@ namespace Xs.Cli.Core.Commands
         [Help("Allows to ignore inconsistency to fix fursther.")]
         public bool IgnoreConsistency { get; set; }
 
-        private string root = Directory.GetCurrentDirectory();
+        private string[] roots = new string[] { Directory.GetCurrentDirectory() };
     }
 }

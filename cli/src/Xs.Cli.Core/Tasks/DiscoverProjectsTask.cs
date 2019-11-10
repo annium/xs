@@ -28,11 +28,11 @@ namespace Xs.Cli.Core.Tasks
 
         public IEnumerable<IProject> Run(DiscoverConfiguration configuration)
         {
-            var root = configuration.Root;
+            var roots = configuration.Roots;
 
-            logger.Debug($"Start discovery of {root}.");
+            logger.Debug($"Start discovery of {string.Join(", ", roots)}.");
 
-            var candidates = FindProjectCandidates(root);
+            var candidates = FindProjectCandidates(roots);
 
             var errors = new List<Exception>();
 
@@ -56,28 +56,32 @@ namespace Xs.Cli.Core.Tasks
             }
         }
 
-        private IReadOnlyDictionary<string, ISpecialProjectFactory> FindProjectCandidates(string root)
+        private IReadOnlyDictionary<string, ISpecialProjectFactory> FindProjectCandidates(IReadOnlyCollection<string> roots)
         {
-            logger.Debug($"Start project candidates lookup at {root}.");
-
             var results = new Dictionary<string, ISpecialProjectFactory>();
-            FileManager.WalkDirectories(
-                root,
-                directory =>
-                {
-                    var factory = projectFactory.FindFactory(directory);
-                    if (factory is null)
-                        return false;
 
-                    results[directory] = factory;
-                    logger.Debug($"{factory.Type} project candidate discovered at {directory}.");
+            foreach (var root in roots)
+            {
+                logger.Debug($"Start project candidates lookup at {roots}.");
 
-                    return true;
-                },
-                SearchOptions.IgnoreChildrenOnMatch
-            );
+                FileManager.WalkDirectories(
+                    root,
+                    directory =>
+                    {
+                        var factory = projectFactory.FindFactory(directory);
+                        if (factory is null)
+                            return false;
 
-            logger.Debug($"{results.Count} project candidate(s) found.");
+                        results[directory] = factory;
+                        logger.Debug($"{factory.Type} project candidate discovered at {directory}.");
+
+                        return true;
+                    },
+                    SearchOptions.IgnoreChildrenOnMatch
+                );
+
+                logger.Debug($"{results.Count} project candidate(s) found.");
+            }
 
             return results;
         }
@@ -92,7 +96,7 @@ namespace Xs.Cli.Core.Tasks
 
             logger.Debug("Start projects creation.");
 
-            foreach (var(directory, factory) in candidates)
+            foreach (var (directory, factory) in candidates)
             {
                 try
                 {
