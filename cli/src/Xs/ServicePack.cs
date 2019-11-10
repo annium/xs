@@ -53,11 +53,12 @@ namespace Xs
             services.AddSingleton<DeleteCommand>();
             services.AddSingleton<FormatCommand>();
             services.AddSingleton<InstallCommand>();
+            services.AddSingleton<LinkCommand>();
             services.AddSingleton<MoveCommand>();
             services.AddSingleton<PublishCommand>();
             services.AddSingleton<SearchCommand>();
             services.AddSingleton<TestCommand>();
-            services.AddSingleton<ToggleCommand>();
+            services.AddSingleton<UnlinkCommand>();
             services.AddSingleton<UnpublishCommand>();
             services.AddSingleton<UpdateCommand>();
             services.AddSingleton<UseCommand>();

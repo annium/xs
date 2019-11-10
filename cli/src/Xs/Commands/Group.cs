@@ -21,11 +21,12 @@ namespace Xs.Commands
             Add<DeleteCommand>();
             Add<FormatCommand>();
             Add<InstallCommand>();
+            Add<LinkCommand>();
             Add<MoveCommand>();
             Add<PublishCommand>();
             Add<SearchCommand>();
             Add<TestCommand>();
-            Add<ToggleCommand>();
+            Add<UnlinkCommand>();
             Add<UnpublishCommand>();
             Add<UpdateCommand>();
             Add<UseCommand>();
