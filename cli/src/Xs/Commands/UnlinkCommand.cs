@@ -11,7 +11,7 @@ namespace Xs.Commands
     internal class UnlinkCommand : Command<UnlinkCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "unlink";
-        public override string Description { get; } = "Link project <-> package dependencies.";
+        public override string Description { get; } = "Unlink project <-> package dependencies.";
         private readonly DiscoverProjectsTask discoverTask;
         private readonly ILogger<UseCommand> logger;
 
@@ -30,40 +30,36 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            discoverCfg.Roots = new[] { cfg.Source, cfg.Target };
-            var sources = discoverTask.Run(discoverCfg).ToArray();
             discoverCfg.Roots = new[] { cfg.Target };
             var targets = discoverTask.Run(discoverCfg).ToArray();
+            discoverCfg.Roots = new[] { cfg.Source, cfg.Target };
+            var sources = discoverTask.Run(discoverCfg)
+                .Where(x => !targets.Any(t => t.File == x.File))
+                .ToArray();
             var version = cfg.Version;
 
-            logger.Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
+            logger.Debug($"Unlink {sources.Length} projects from {targets.Length} external projects.");
 
             foreach (var source in sources)
             {
-                var changed = false;
+                var externalDependencies = source.Projects
+                    .Where(x => targets.Any(t => t.File == x.Value.File))
+                    .ToList();
+                if (externalDependencies.Count == 0)
+                    continue;
 
-                // check all project dependencies
-                foreach (var dependency in source.Projects.ToArray())
+                foreach (var project in externalDependencies)
                 {
-                    // if dependency is in sources - no action 
-                    if (sources.Contains(dependency.Value))
-                        continue;
+                    var package = new Package(project.Value.Type, project.Value.Name, version);
+                    logger.Trace($"Update {source}: replace {project} with {package}.");
 
-                    // otherwise - it's external and it's reference is converted to package
-                    var package = new Package(dependency.Value.Type, dependency.Value.Name, version);
-                    logger.Trace($"Update {source}: replace {dependency} with {package}.");
-
-                    source.Projects.Remove(dependency);
-                    source.Packages.Add(new Dependency<Package>(dependency.Type, package));
-                    changed = true;
+                    source.Projects.Remove(project);
+                    source.Packages.Add(new Dependency<Package>(project.Type, package));
                 }
 
-                if (changed)
-                {
-                    logger.Debug($"Updated {source}.");
+                logger.Debug($"Updated {source}.");
 
-                    source.Save();
-                }
+                source.Save();
             }
         }
     }
@@ -78,7 +74,7 @@ namespace Xs.Commands
         [Help("Target projects root, containing projects' source projects' will be linked to.")]
         public string Target { get; set; } = string.Empty;
 
-        [Position(3, isRequired: false)]
+        [Position(3)]
         [Help("Dependency version, when switching to packages.")]
         public Version Version { get; set; } = Version.Empty;
     }

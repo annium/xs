@@ -40,31 +40,30 @@ namespace Xs.Commands
 
             foreach (var src in sources)
             {
-                var changed = false;
+                var externalDependencies = src.Packages
+                    .Select(x =>
+                    {
+                        var nameLower = x.Value.Name.ToLowerInvariant();
 
-                // check all package dependencies
-                foreach (var dependency in src.Packages.ToArray())
+                        return (package: x, project: targets.FirstOrDefault(t => t.Name.ToLowerInvariant() == nameLower));
+                    })
+                    .Where(x => x.project != null)
+                    .ToList();
+                if (externalDependencies.Count == 0)
+                    continue;
+
+                foreach (var (package, project) in externalDependencies)
                 {
-                    // if dependency is not in projects - no action 
-                    var nameLower = dependency.Value.Name.ToLowerInvariant();
-                    var target = targets.FirstOrDefault(p => p.Name.ToLowerInvariant() == nameLower);
-                    if (target is null)
-                        continue;
-
                     // otherwise - it's external and it's reference is converted to project
-                    logger.Trace($"Update {src}: replace {dependency} with {target}.");
+                    logger.Trace($"Update {src}: replace {package} with {project}.");
 
-                    src.Packages.Remove(dependency);
-                    src.Projects.Add(new Dependency<IProject>(dependency.Type, target));
-                    changed = true;
+                    src.Packages.Remove(package);
+                    src.Projects.Add(new Dependency<IProject>(package.Type, project));
                 }
 
-                if (changed)
-                {
-                    logger.Debug($"Updated {src}.");
+                logger.Debug($"Updated {src}.");
 
-                    src.Save();
-                }
+                src.Save();
             }
         }
     }
