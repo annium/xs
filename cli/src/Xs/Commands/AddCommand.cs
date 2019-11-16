@@ -57,7 +57,7 @@ namespace Xs.Commands
 
             logger.Debug($"Try add dependency {name} to {targets.Length} projects.");
 
-            var projects = allProjects.FilterMask(name).ToArray();
+            var projects = allProjects.FilterMask(name).Except(targets).ToArray();
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
