@@ -2,7 +2,6 @@ using System;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
 using Microsoft.Extensions.DependencyInjection;
-using Xs.Commands;
 using Xs.Tools;
 
 namespace Xs
@@ -13,7 +12,10 @@ namespace Xs
         {
             services.AddArguments();
 
-            RegisterCommands(services);
+            // commands
+            services.SelectAssemblyTypes()
+                .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
+                .RegisterSingleton();
 
             // tools
             services.AddSingleton<IConfigurationManager, ConfigurationManager>();
@@ -21,48 +23,6 @@ namespace Xs
             services.AddSingleton<Watcher>();
 
             Mapper.AddConfiguration(ConfigureProfile);
-        }
-
-        private void RegisterCommands(IServiceCollection services)
-        {
-            services.AddSingleton<Group>();
-
-            // audit
-            services.AddSingleton<Commands.Audit.Group>();
-            services.AddSingleton<Commands.Audit.AuditCommand>();
-            services.AddSingleton<Commands.Audit.AuditRulesCommand>();
-
-            // ls
-            services.AddSingleton<Commands.Ls.Group>();
-            services.AddSingleton<Commands.Ls.ListCommand>();
-            services.AddSingleton<Commands.Ls.ListInsCommand>();
-            services.AddSingleton<Commands.Ls.ListOutsCommand>();
-
-            // remote
-            services.AddSingleton<Commands.Remote.Group>();
-            services.AddSingleton<Commands.Remote.DeleteCommand>();
-            services.AddSingleton<Commands.Remote.RestoreCommand>();
-            services.AddSingleton<Commands.Remote.SetCommand>();
-            services.AddSingleton<Commands.Remote.SetLocalCommand>();
-            services.AddSingleton<Commands.Remote.ShowCommand>();
-
-            // root
-            services.AddSingleton<AddCommand>();
-            services.AddSingleton<BuildCommand>();
-            services.AddSingleton<CleanCommand>();
-            services.AddSingleton<DeleteCommand>();
-            services.AddSingleton<FormatCommand>();
-            services.AddSingleton<InstallCommand>();
-            services.AddSingleton<LinkCommand>();
-            services.AddSingleton<MoveCommand>();
-            services.AddSingleton<PublishCommand>();
-            services.AddSingleton<SearchCommand>();
-            services.AddSingleton<TestCommand>();
-            services.AddSingleton<UnlinkCommand>();
-            services.AddSingleton<UnpublishCommand>();
-            services.AddSingleton<UpdateCommand>();
-            services.AddSingleton<UseCommand>();
-            services.AddSingleton<WatchCommand>();
         }
 
         private void ConfigureProfile(Profile p)

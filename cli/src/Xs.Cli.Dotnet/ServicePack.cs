@@ -26,29 +26,10 @@ namespace Xs.Cli.Dotnet
             services.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
             services.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
 
-            RegisterCommands(services);
-        }
-
-        private void RegisterCommands(IServiceCollection services)
-        {
-            // new CQRS
-            services.AddSingleton<Commands.New.CQRS.Group>();
-            services.AddSingleton<Commands.New.CQRS.CommandCommand>();
-            services.AddSingleton<Commands.New.CQRS.QueryCommand>();
-
-            // new
-            services.AddSingleton<Commands.New.Group>();
-            services.AddSingleton<Commands.New.ClassCommand>();
-            services.AddSingleton<Commands.New.InterfaceCommand>();
-            services.AddSingleton<Commands.New.ExeCommand>();
-            services.AddSingleton<Commands.New.LibCommand>();
-            services.AddSingleton<Commands.New.LibTestsCommand>();
-            services.AddSingleton<Commands.New.WebCommand>();
-            services.AddSingleton<Commands.New.WebTestsCommand>();
-
-            // root
-            services.AddSingleton<Commands.Group>();
-            services.AddSingleton<Commands.SlnCommand>();
+            // commands
+            services.SelectAssemblyTypes()
+                .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
+                .RegisterSingleton();
         }
     }
 }
