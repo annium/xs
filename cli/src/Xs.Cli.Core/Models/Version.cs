@@ -74,19 +74,12 @@ namespace Xs.Cli.Core.Models
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}{Suffix}";
 
-        public override int GetHashCode()
+        public override IEnumerable<int> GetComponentHashCodes()
         {
-            unchecked
-            {
-                int hash = 7;
-
-                hash = hash * 31 + Major.GetHashCode();
-                hash = hash * 31 + Minor.GetHashCode();
-                hash = hash * 31 + Patch.GetHashCode();
-                hash = hash * 31 + (Suffix?.GetHashCode() ?? 0);
-
-                return hash;
-            }
+            yield return Major.GetHashCode();
+            yield return Minor.GetHashCode();
+            yield return Patch.GetHashCode();
+            yield return Suffix?.GetHashCode() ?? 0;
         }
 
         protected override IEnumerable<Func<Version, IComparable>> GetComparables()

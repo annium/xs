@@ -31,6 +31,9 @@ namespace Xs.Cli.Core.Models
 
         public override string ToString() => name;
 
-        public override int GetHashCode() => name.GetHashCode();
+        public override IEnumerable<int> GetComponentHashCodes()
+        {
+            yield return name.GetHashCode();
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models
@@ -27,17 +28,10 @@ namespace Xs.Cli.Core.Models
 
         public override string ToString() => Value!.ToString()!;
 
-        public override int GetHashCode()
+        public override IEnumerable<int> GetComponentHashCodes()
         {
-            unchecked
-            {
-                var hash = 7;
-
-                hash = hash * 31 + Type.GetHashCode();
-                hash = hash * 31 + Value!.GetHashCode();
-
-                return hash;
-            }
+            yield return Type.GetHashCode();
+            yield return Value!.GetHashCode();
         }
     }
 }
