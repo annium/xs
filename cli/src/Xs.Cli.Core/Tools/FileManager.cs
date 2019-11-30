@@ -84,10 +84,12 @@ namespace Xs.Cli.Core.Tools
 
         private static bool IsDirectoryIgnored(string directory, string[] ignoredDirectories)
         {
-            return globallyIgnoredDirectories.Any(directory.Contains) ||
-                ignoredDirectories.Any(x => x == directory) ||
+            var ignored = globallyIgnoredDirectories.Any(directory.Contains) ||
+                ignoredDirectories.Any(directory.Contains) ||
                 !Directory.Exists(directory) ||
                 Directory.GetFiles(directory, IgnoreFile, SearchOption.TopDirectoryOnly).Length > 0;
+
+            return ignored;
         }
     }
 

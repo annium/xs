@@ -17,8 +17,8 @@ namespace Xs.Cli.Node.Projects
     internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
     {
         public ProjectType Type { get; } = Constants.ProjectType;
-        public static readonly string[] TrackedFileExtensions = new [] { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };
-        public static readonly string[] IgnoredFolders = new [] { "build", "dist", ModulesDirectory };
+        public static readonly string[] TrackedFileExtensions = new[] { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };
+        public static readonly string[] IgnoredFolders = new[] { "build", "dist", ModulesDirectory };
         public const string ModulesDirectory = "node_modules";
         public const string ProjectFileName = "package.json";
         public const string LockFileName = "yarn.lock";
@@ -47,11 +47,17 @@ namespace Xs.Cli.Node.Projects
         {
             // considered project directory, if path doesn't contain modulesDirectory
             // and it's only one in all subdirectories, except those in modulesDirectory
+            if (!Directory.Exists(directory))
+                return false;
 
-            return Directory.Exists(directory) &&
-                !directory.Contains(ModulesDirectory) &&
-                Directory.GetFiles(directory, ProjectFileName).Length == 1 &&
-                !FileManager.FindDirectory(directory, isMatch, IgnoredFolders);
+            if (directory.Contains(ModulesDirectory))
+                return false;
+
+            var projectFiles = Directory.GetFiles(directory, ProjectFileName);
+            if (projectFiles.Length != 1)
+                return false;
+
+            return !FileManager.FindDirectory(directory, isMatch, IgnoredFolders);
 
             static bool isMatch(string dir) => Directory.GetFiles(dir, ProjectFileName).Length > 0;
         }
@@ -74,7 +80,7 @@ namespace Xs.Cli.Node.Projects
         )
         {
             var file = new FileInfo(Path.Combine(directory, ProjectFileName));
-            var(name, version, description, projectDeps, packageDeps, scripts, isPackable) = mapper.Load(file.FullName, configuration);
+            var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
                 .Select(e => GetProjectDependencyMock(file, e))

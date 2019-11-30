@@ -62,7 +62,7 @@ namespace Xs.Cli.Core.Tasks
 
             foreach (var root in roots)
             {
-                logger.Debug($"Start project candidates lookup at {roots}.");
+                logger.Debug($"Start project candidates lookup at {root}.");
 
                 FileManager.WalkDirectories(
                     root,
