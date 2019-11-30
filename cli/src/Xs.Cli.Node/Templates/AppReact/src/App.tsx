@@ -1,13 +1,15 @@
 import React, { ReactNode, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { startupActions } from './data/startup'
+import { useStore } from './stores'
 
 
 type Props = RouteComponentProps & { children?: ReactNode }
 
 export const App = ({ location, children }: Props) => {
-  useEffect(() => startupActions.setLocation(location), [location])
+  const startup = useStore().startup
+
+  useEffect(() => startup.setLocation(location), [startup, location])
 
   return <>{children}</>
 }

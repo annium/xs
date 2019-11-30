@@ -34,6 +34,7 @@ namespace Xs.Cli.Core.Tools
             "module.css",
             "module.scss",
             "scss",
+            "sh",
             "ts",
             "tsx"
         };
