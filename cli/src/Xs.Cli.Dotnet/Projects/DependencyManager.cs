@@ -38,11 +38,11 @@ namespace Xs.Cli.Dotnet.Projects
                         if (!Core.Models.Version.TryParse(e.Version, out var version))
                             throw new ArgumentException($"Package {e.Id} version {e.Version} is invalid");
 
-                        return (e.Id, Version : version);
+                        return (e.Id, Version: version);
                     }
                     catch
                     {
-                        return (e.Id, Version : Core.Models.Version.Empty);
+                        return (e.Id, Version: Core.Models.Version.Empty);
                     }
                 })
                 .Where(e => e.Version != Core.Models.Version.Empty)

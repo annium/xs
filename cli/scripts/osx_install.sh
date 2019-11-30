@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 dir=$(dirname $(dirname "${BASH_SOURCE[0]}"))/src/Xs
 
 echo "Compile."

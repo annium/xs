@@ -14,7 +14,7 @@ namespace Xs.RegistryClient.Main
 
         public Task<string> LoginAsync(string name, string password)
         {
-            return Http.Open(this.uri)
+            return Http.Open(uri)
                 .Post("login/app")
                 .JsonContent(new { name, password })
                 .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase}).")
@@ -23,7 +23,7 @@ namespace Xs.RegistryClient.Main
 
         public Task<Registry> GetRegistryInfoAsync()
         {
-            return Http.Open(this.uri)
+            return Http.Open(uri)
                 .Get("registry")
                 .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase}).")
                 .AsAsync<Registry>();
@@ -31,7 +31,7 @@ namespace Xs.RegistryClient.Main
 
         public Task<MetaPackage[]> SearchAsync(string token, string type, string query)
         {
-            return Http.Open(this.uri)
+            return Http.Open(uri)
                 .Get("packages/search")
                 .BearerAuthorization(token)
                 .Param("type", type)
