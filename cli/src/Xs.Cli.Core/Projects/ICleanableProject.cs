@@ -5,6 +5,6 @@ namespace Xs.Cli.Core.Projects
 {
     public interface ICleanableProject : IProject
     {
-        Task CleanAsync(CancellationToken token);
+        Task CleanAsync(bool force, CancellationToken token);
     }
 }

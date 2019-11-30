@@ -46,13 +46,13 @@ namespace Xs.Cli.Dotnet.Projects
             logger.Info($"Start {Name} cache clean.");
 
             var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
-            lock(cacheLocker)
+            lock (cacheLocker)
             {
-                foreach (var(_, (_, name, version)) in Packages)
+                foreach (var (_, (_, name, version)) in Packages)
                 {
                     var cachePath = Path.Combine(cache, name.ToLowerInvariant(), version.ToString());
                     if (SysDirectory.Exists(cachePath))
-                        SysDirectory.Delete(cachePath, recursive : true);
+                        SysDirectory.Delete(cachePath, recursive: true);
                 }
             }
 
@@ -61,7 +61,7 @@ namespace Xs.Cli.Dotnet.Projects
             return Task.CompletedTask;
         }
 
-        public Task CleanAsync(CancellationToken token)
+        public Task CleanAsync(bool force, CancellationToken token)
         {
             logger.Info($"Start {Name} clean.");
 

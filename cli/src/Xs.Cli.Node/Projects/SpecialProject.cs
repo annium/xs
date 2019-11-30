@@ -23,8 +23,8 @@ namespace Xs.Cli.Node.Projects
 
         private static string ResolveCacheDir()
         {
-            lock(cacheLocker)
-            return staticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
+            lock (cacheLocker)
+                return staticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
         }
 
         public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);
@@ -39,7 +39,7 @@ namespace Xs.Cli.Node.Projects
             mapper = context.Mapper;
 
             // set static shell if not set yet
-            lock(cacheLocker) if (staticShell is null) staticShell = context.Shell;
+            lock (cacheLocker) if (staticShell is null) staticShell = context.Shell;
         }
 
         public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
@@ -56,16 +56,16 @@ namespace Xs.Cli.Node.Projects
         {
             logger.Info($"Start {Name} cache clean.");
 
-            lock(cacheLocker)
+            lock (cacheLocker)
             {
                 var entries = SysDirectory.GetDirectories(cacheDir.Value);
-                foreach (var(_, pkg) in Packages)
+                foreach (var (_, pkg) in Packages)
                 {
                     var name = PackageName.GetPlainName(pkg.Name);
                     var version = pkg.Version.ToString();
                     foreach (var entry in entries.Where(e => e.Contains(name) && e.Contains(version)))
                         if (SysDirectory.Exists(entry))
-                            SysDirectory.Delete(entry, recursive : true);
+                            SysDirectory.Delete(entry, recursive: true);
                 }
             }
 
@@ -74,13 +74,16 @@ namespace Xs.Cli.Node.Projects
             return Task.CompletedTask;
         }
 
-        public Task CleanAsync(CancellationToken token)
+        public Task CleanAsync(bool force, CancellationToken token)
         {
             logger.Info($"Start {Name} clean.");
 
             DeleteDirectory(ProjectFactory.ModulesDirectory);
-
             DeleteFiles("*.tgz");
+            if (force)
+            {
+                DeleteFiles(ProjectFactory.LockFileName);
+            }
 
             logger.Info($"Finished {Name} clean.");
 
@@ -89,8 +92,11 @@ namespace Xs.Cli.Node.Projects
 
         public Task InstallAsync(bool force, CancellationToken token)
         {
-            DeleteDirectory(ProjectFactory.ModulesDirectory);
-            DeleteFiles(ProjectFactory.LockFileName);
+            if (force)
+            {
+                DeleteDirectory(ProjectFactory.ModulesDirectory);
+                DeleteFiles(ProjectFactory.LockFileName);
+            }
 
             return RunAsync("install", $"yarn install --no-emoji --no-progress", token);
         }

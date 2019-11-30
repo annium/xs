@@ -43,22 +43,26 @@ namespace Xs.Commands
                 .ToArray();
 
             logger.Debug($"Clean {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(tkn), cfg.Deep, token);
+            await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(cfg.Force, tkn), cfg.Deep, token);
         }
     }
 
     internal class CleanCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 
         [Option("d")]
         [Help("Clean dependencies.")]
         public bool Deep { get; set; }
+
+        [Option("f", isRequired: false)]
+        [Help("Force clean.")]
+        public bool Force { get; set; }
     }
 }
