@@ -20,10 +20,10 @@ namespace Xs.Cli.Node.Projects
             if (accessToken != null)
                 request = request.BearerAuthorization(accessToken);
 
-            var index = await request.AsAsync<Index>();
-            if (index is null)
+            var indexResponse = await request.AsResponseAsync<Index>();
+            if (indexResponse.IsFailure)
                 return Array.Empty<Package>();
-
+            var index = indexResponse.Data;
             var registrations = index.Versions.Keys
                 .Select(v =>
                 {

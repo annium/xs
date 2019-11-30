@@ -2,8 +2,6 @@ using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NodaTime;
-using NodaTime.Serialization.JsonNet;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Shared.Auth;
 
@@ -17,9 +15,7 @@ namespace Xs.Registry.Main
             services.AddCors();
             services.AddRegistryAuthorization<AuthorizationFilter>();
             services.AddMvc()
-                .AddNewtonsoftJson(opts => opts.SerializerSettings
-                    .ConfigureForNodaTime(DateTimeZoneProviders.Serialization)
-                    .ConfigureForOperations());
+                .AddDefaultJsonOptions();
             services.AddOpenApiDocument();
         }
 

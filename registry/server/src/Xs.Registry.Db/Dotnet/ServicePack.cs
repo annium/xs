@@ -10,7 +10,7 @@ namespace Xs.Registry.Db.Dotnet
     {
         public override void Configure(IServiceCollection services)
         {
-            services.AddMapperConfiguration(ConfigureMapping);
+            services.AddProfile(ConfigureProfile);
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
@@ -23,11 +23,11 @@ namespace Xs.Registry.Db.Dotnet
             services.AddScoped<Shared.IPackageRepository<Package, PackageDependency>, Shared.PackageRepository<Package, PackageDependency, Entities.Package, Entities.PackageDependency, Context>>();
         }
 
-        private void ConfigureMapping(MapperConfiguration cfg)
+        private void ConfigureProfile(Profile p)
         {
-            cfg.Map<Package, Entities.Package>()
+            p.Map<Package, Entities.Package>()
                 .Field(e => e.Name.ToLower(), e => e.LowerName);
-            cfg.Map<PackageDependency, Entities.PackageDependency>()
+            p.Map<PackageDependency, Entities.PackageDependency>()
                 .Ignore(e => e.PackageId);
         }
     }

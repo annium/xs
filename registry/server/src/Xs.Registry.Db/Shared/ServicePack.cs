@@ -9,8 +9,7 @@ namespace Xs.Registry.Db.Shared
     {
         public override void Configure(IServiceCollection services)
         {
-            services.AddMapperConfiguration(ConfigureMapping);
-            Mapper.AddConfiguration(ConfigureMapping);
+            services.AddProfile(ConfigureProfile);
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
@@ -26,13 +25,13 @@ namespace Xs.Registry.Db.Shared
             services.AddScoped<IMetaPackageManager, MetaPackageManager>();
         }
 
-        private void ConfigureMapping(MapperConfiguration cfg)
+        private void ConfigureProfile(Profile p)
         {
-            cfg.Map<ProjectType, string>(t => t.ToString());
-            cfg.Map<string, ProjectType>(t => ProjectType.Get(t));
-            cfg.Map<MetaPackage, Entities.MetaPackage>()
+            p.Map<ProjectType, string>(t => t.ToString());
+            p.Map<string, ProjectType>(t => ProjectType.Get(t));
+            p.Map<MetaPackage, Entities.MetaPackage>()
                 .Field(e => e.Name.ToLower(), e => e.LowerName);
-            cfg.Map<MetaPackagePermission, Entities.MetaPackagePermission>()
+            p.Map<MetaPackagePermission, Entities.MetaPackagePermission>()
                 .Ignore(e => e.MetaPackageId);
         }
     }

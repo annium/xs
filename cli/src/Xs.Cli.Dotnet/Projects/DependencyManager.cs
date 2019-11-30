@@ -54,10 +54,11 @@ namespace Xs.Cli.Dotnet.Projects
 
         private async Task<RegistrationIndex?> LoadIndexAsync(string registrationUrl)
         {
-            var index = await Http.Open().Get(registrationUrl).AsAsync<RegistrationIndex>();
-            if (index is null)
+            var indexResponse = await Http.Open().Get(registrationUrl).AsResponseAsync<RegistrationIndex>();
+            if (indexResponse.IsFailure)
                 return null;
 
+            var index = indexResponse.Data;
             index.Items = (await Task.WhenAll(index.Items.Select(page =>
             {
                 if (page.Items.Length > 0)

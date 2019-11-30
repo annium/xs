@@ -8,7 +8,9 @@ namespace Xs.Registry.Tests
     where TStartup : class
     where TServicePack : ServicePackBase, new()
     {
-        protected IRequest Main => GetRequest<TStartup, TServicePack>();
+        protected IRequest Main => GetRequest<TStartup>(
+            builder => builder.UseServicePack<TServicePack>()
+        );
 
         // protected async Task<UserPrivateView> RegisterUserAsync(
         //     string login = "demo",

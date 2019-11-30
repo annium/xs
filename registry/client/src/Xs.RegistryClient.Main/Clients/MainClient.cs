@@ -17,7 +17,7 @@ namespace Xs.RegistryClient.Main
             return Http.Open(uri)
                 .Post("login/app")
                 .JsonContent(new { name, password })
-                .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.ReasonPhrase}).")
+                .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.StatusText}).")
                 .AsAsync<string>();
         }
 
@@ -25,7 +25,7 @@ namespace Xs.RegistryClient.Main
         {
             return Http.Open(uri)
                 .Get("registry")
-                .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.ReasonPhrase}).")
+                .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.StatusText}).")
                 .AsAsync<Registry>();
         }
 
@@ -36,7 +36,7 @@ namespace Xs.RegistryClient.Main
                 .BearerAuthorization(token)
                 .Param("type", type)
                 .Param("query", query)
-                .EnsureSuccessStatusCode(response => $"Search failed with {response.StatusCode} ({response.ReasonPhrase}).")
+                .EnsureSuccessStatusCode(response => $"Search failed with {response.StatusCode} ({response.StatusText}).")
                 .AsAsync<MetaPackage[]>();
         }
     }
