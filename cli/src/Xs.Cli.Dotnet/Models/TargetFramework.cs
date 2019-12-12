@@ -14,6 +14,7 @@ namespace Xs.Cli.Dotnet.Models
         public static TargetFramework NetCoreApp2_1 { get; } = new TargetFramework("netcoreapp2.1");
         public static TargetFramework NetCoreApp2_2 { get; } = new TargetFramework("netcoreapp2.2");
         public static TargetFramework NetCoreApp3_0 { get; } = new TargetFramework("netcoreapp3.0");
+        public static TargetFramework NetCoreApp3_1 { get; } = new TargetFramework("netcoreapp3.1");
 
         public static IReadOnlyList<IReadOnlyList<TargetFramework>> SupportedGroups { get; } =
         new List<IReadOnlyList<TargetFramework>>()
