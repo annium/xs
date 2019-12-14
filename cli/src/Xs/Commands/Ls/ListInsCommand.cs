@@ -82,7 +82,7 @@ namespace Xs.Commands.Ls
             bool isLast
         )
         {
-            var(dependencyType, project) = projectDependency;
+            var (dependencyType, project) = projectDependency;
             var packageDeps = project.Packages.OrderBy(e => e.Type).ThenBy(e => e.Value.Name).ToArray();
             var projectDeps = project.Projects.OrderBy(e => e.Type).ThenBy(e => e.Value.Name).ToArray();
             var node = isLast ? "└─" : "├─";
@@ -146,11 +146,11 @@ namespace Xs.Commands.Ls
 
     internal class ListInsCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 

@@ -87,7 +87,7 @@ namespace Xs.Cli.Dotnet.Commands.New
 
     public class ClassCommandConfiguration
     {
-        [Option("o", isRequired : true)]
+        [Option("o", isRequired: true)]
         [Help("Output directory.")]
         public string Output { get; set; } = string.Empty;
     }

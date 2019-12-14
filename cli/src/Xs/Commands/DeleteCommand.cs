@@ -84,7 +84,7 @@ namespace Xs.Commands
         [Help("Dependency.")]
         public string Dependency { get; set; } = string.Empty;
 
-        [Position(3, isRequired : false)]
+        [Position(3, isRequired: false)]
         [Help("Dependency type.")]
         public DependencyType Type { get; set; } = DependencyType.Normal;
     }

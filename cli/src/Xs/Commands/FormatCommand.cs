@@ -46,11 +46,11 @@ namespace Xs.Commands
 
     internal class FormatCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
     }

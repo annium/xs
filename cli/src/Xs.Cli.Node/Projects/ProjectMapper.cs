@@ -108,7 +108,7 @@ namespace Xs.Cli.Node.Projects
             File.WriteAllText(path, JsonSerializer.Serialize(info, jsonSerializerOptions));
             File.AppendAllText(path, Environment.NewLine);
 
-            static Dictionary<string, string> ? getDeps(ISpecialProject project, DependencyType type)
+            static Dictionary<string, string>? getDeps(ISpecialProject project, DependencyType type)
             {
                 var deps = project.Projects
                     .Where(e => e.Type == type)
@@ -163,13 +163,13 @@ namespace Xs.Cli.Node.Projects
             public string Description { get; set; } = string.Empty;
             public bool? Private { get; set; }
             public string? Main { get; set; }
-            public Dictionary<string, string> ? Dependencies { get; set; }
-            public Dictionary<string, string> ? DevDependencies { get; set; }
-            public Dictionary<string, string> ? PeerDependencies { get; set; }
-            public Dictionary<string, string> ? Scripts { get; set; }
+            public Dictionary<string, string>? Dependencies { get; set; }
+            public Dictionary<string, string>? DevDependencies { get; set; }
+            public Dictionary<string, string>? PeerDependencies { get; set; }
+            public Dictionary<string, string>? Scripts { get; set; }
 
             [JsonPropertyName("browserslist")]
-            public string[] ? BrowsersList { get; set; }
+            public string[]? BrowsersList { get; set; }
         }
     }
 }

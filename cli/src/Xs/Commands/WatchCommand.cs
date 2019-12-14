@@ -93,7 +93,7 @@ namespace Xs.Commands
                 Discover();
 
                 project = GetProjectByPath(path);
-                await InstallAsync(project, includeSelf : true);
+                await InstallAsync(project, includeSelf: true);
             }
             else
                 project = GetProjectByRelatedPath(path);
@@ -103,9 +103,9 @@ namespace Xs.Commands
 
             logger.Info($"Changed {project} related file: {path}");
 
-            await BuildAsync(project, includeSelf : true);
+            await BuildAsync(project, includeSelf: true);
             if (runTests)
-                await TestAsync(project, includeSelf : true);
+                await TestAsync(project, includeSelf: true);
 
             logger.Info($"Done.");
         }
@@ -120,7 +120,7 @@ namespace Xs.Commands
                 logger.Info($"Deleted project file: {path}");
                 Discover();
 
-                await InstallAsync(project!, includeSelf : false);
+                await InstallAsync(project!, includeSelf: false);
             }
             else
                 project = GetProjectByRelatedPath(path);
@@ -176,7 +176,7 @@ namespace Xs.Commands
         {
             var result = shell
                 .Cmd(command.Replace("%", path))
-                .Pipe((LogLevel) loggerConfiguration <= LogLevel.Debug)
+                .Pipe((LogLevel)loggerConfiguration <= LogLevel.Debug)
                 .Start();
 
             Task.Run(() => pipe(result.Output));
@@ -228,23 +228,23 @@ namespace Xs.Commands
 
     internal class WatchCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 
-        [Option("f", isRequired : false)]
+        [Option("f", isRequired: false)]
         [Help("Force install.")]
         public bool Force { get; set; } = false;
 
-        [Option("t", isRequired : false)]
+        [Option("t", isRequired: false)]
         [Help("Run tests.")]
         public bool Test { get; set; } = false;
 
-        [Option("tf", isRequired : false)]
+        [Option("tf", isRequired: false)]
         [Help("Tests filter.")]
         public string TestFilter { get; set; } = string.Empty;
 

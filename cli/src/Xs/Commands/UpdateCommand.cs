@@ -169,11 +169,11 @@ namespace Xs.Commands
 
     internal class UpdateCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 
@@ -181,7 +181,7 @@ namespace Xs.Commands
         [Help("Allow suffixed.")]
         public bool Preview { get; set; }
 
-        [Option("dry", isRequired : false)]
+        [Option("dry", isRequired: false)]
         [Help("Dry run.")]
         public bool DryRun { get; set; }
     }

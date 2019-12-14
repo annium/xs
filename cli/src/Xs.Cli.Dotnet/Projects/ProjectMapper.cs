@@ -14,9 +14,9 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
-        private static readonly string[] implicitPackages = new [] { "Microsoft.AspNetCore.App" };
-        private static readonly string[] booleanStrings = new [] { "true", "false" };
-        private static readonly string[] disabledProperties = new [] { El.PublishReadyToRun, El.PublishReadyToRunShowWarnings };
+        private static readonly string[] implicitPackages = new[] { "Microsoft.AspNetCore.App" };
+        private static readonly string[] booleanStrings = new[] { "true", "false" };
+        private static readonly string[] disabledProperties = new[] { El.PublishReadyToRun, El.PublishReadyToRunShowWarnings };
 
         public RawProject Load(string path, DiscoverConfiguration configuration)
         {
@@ -101,7 +101,7 @@ namespace Xs.Cli.Dotnet.Projects
             newProps.Add(new XElement(El.DebugType, "portable"));
             newProps.Add(new XElement(El.LangVersion, "latest"));
             newProps.Add(new XElement(El.WarningsAsErrors, "true"));
-            newProps.Add(new XElement(El.IsPackable, project is IPublishableProject? "true": "false"));
+            newProps.Add(new XElement(El.IsPackable, project is IPublishableProject ? "true" : "false"));
             if (project is TestProject)
                 newProps.Add(new XElement(El.IsTestProject, "true"));
 

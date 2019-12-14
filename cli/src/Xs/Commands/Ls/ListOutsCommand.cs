@@ -117,7 +117,7 @@ namespace Xs.Commands.Ls
             bool isLast
         )
         {
-            var(dependencyType, project) = projectDependency;
+            var (dependencyType, project) = projectDependency;
             var dependants = projects
                 .Select(e =>
                 {
@@ -171,11 +171,11 @@ namespace Xs.Commands.Ls
 
     internal class ListOutsCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects/packages mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project/package type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 

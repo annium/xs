@@ -49,15 +49,15 @@ namespace Xs.Commands
 
     internal class TestCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 
-        [Option("tf", isRequired : false)]
+        [Option("tf", isRequired: false)]
         [Help("Tests filter.")]
         public string TestFilter { get; set; } = string.Empty;
 

@@ -66,15 +66,15 @@ namespace Xs.Commands
 
     internal class InstallCommandConfiguration
     {
-        [Position(1, isRequired : false)]
+        [Position(1, isRequired: false)]
         [Help("Projects mask.")]
         public string Mask { get; set; } = "all";
 
-        [Position(2, isRequired : false)]
+        [Position(2, isRequired: false)]
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 
-        [Option("f", isRequired : false)]
+        [Option("f", isRequired: false)]
         [Help("Force install.")]
         public bool Force { get; set; }
 
