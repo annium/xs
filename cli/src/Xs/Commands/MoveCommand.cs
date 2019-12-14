@@ -43,9 +43,12 @@ namespace Xs.Commands
 
             var projects = discoverTask.Run(discoverCfg).ToArray();
             var currentNameLower = currentName.ToLowerInvariant();
-            var project = projects.FirstOrDefault(p => p.Name.ToLowerInvariant() == currentNameLower);
-            if (project is null)
+            var targets = projects.Where(p => p.Name.ToLowerInvariant().Contains(currentNameLower)).ToList();
+            if (targets.Count == 0)
                 throw new InvalidOperationException($"Project {currentName} not found.");
+            if (targets.Count > 1)
+                throw new InvalidOperationException($"Project {currentName} matches {targets.Count} projects: {Environment.NewLine}{string.Join(Environment.NewLine, targets)}.");
+            var project = targets.Single();
             var dependants = projects.Where(p => p.Projects.Any(d => d.Value == project)).ToArray();
 
             // rename
