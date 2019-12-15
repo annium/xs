@@ -8,6 +8,10 @@ namespace {{name}}
 {
     public class IndexControllerTest : IntegrationTest
     {
+        protected IRequest id => GetRequest<Startup>(
+            builder => builder.UseServicePack<ServicePack>()
+        );
+
         private IRequest http => GetRequest<Startup, ServicePack>();
 
         [Fact]

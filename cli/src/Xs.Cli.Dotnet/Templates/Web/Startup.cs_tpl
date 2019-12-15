@@ -13,9 +13,8 @@ namespace {{name}}
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddCors();
-            services.AddMvc()
+            services.AddControllers()
                 .AddDefaultJsonOptions();
             services.AddOpenApiDocument(doc =>
             {
