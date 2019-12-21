@@ -42,8 +42,7 @@ namespace Xs.Commands
             }
 
             var projects = discoverTask.Run(discoverCfg).ToArray();
-            var currentNameLower = currentName.ToLowerInvariant();
-            var targets = projects.Where(p => p.Name.ToLowerInvariant().Contains(currentNameLower)).ToList();
+            var targets = projects.FilterMask(currentName).ToList();
             if (targets.Count == 0)
                 throw new InvalidOperationException($"Project {currentName} not found.");
             if (targets.Count > 1)

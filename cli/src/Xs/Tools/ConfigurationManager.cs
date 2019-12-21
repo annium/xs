@@ -118,7 +118,7 @@ namespace Xs.Tools
             }
             else
             {
-                File.WriteAllLines(ignoreFile, new [] { ignoreHeader }.Concat(ignorePatterns));
+                File.WriteAllLines(ignoreFile, new[] { ignoreHeader }.Concat(ignorePatterns));
             }
 
             void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(folder), data);
