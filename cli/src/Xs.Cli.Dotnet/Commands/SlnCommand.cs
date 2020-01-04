@@ -57,9 +57,18 @@ namespace Xs.Cli.Dotnet.Commands
             // add current projects
             foreach (var project in preservedProjects)
             {
-                var folder = Path.GetRelativePath(root, Directory.GetParent(project.Directory).FullName);
-                logger.Debug($"Add {project} to solution file at {folder}");
-                await shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
+                var parent = Directory.GetParent(project.Directory).FullName;
+                if (parent == root)
+                {
+                    logger.Debug($"Add {project} to solution file at root");
+                    await shell.Cmd($"dotnet sln {slnFile} add {project.File}").RunAsync();
+                }
+                else
+                {
+                    var folder = Path.GetRelativePath(root, parent);
+                    logger.Debug($"Add {project} to solution file at {folder}");
+                    await shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
+                }
             }
 
             // delete missing projects
