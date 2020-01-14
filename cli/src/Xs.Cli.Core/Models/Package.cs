@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models
@@ -37,11 +36,6 @@ namespace Xs.Cli.Core.Models
 
         public override string ToString() => $"{Name} {Version}";
 
-        public override IEnumerable<int> GetComponentHashCodes()
-        {
-            yield return Type.GetHashCode();
-            yield return Name.GetHashCode();
-            yield return Version.GetHashCode();
-        }
+        public override int GetHashCode() => HashCode.Combine(Type, Name, Version);
     }
 }

@@ -34,10 +34,7 @@ namespace Xs.Cli.Dotnet.Models
 
         public override string ToString() => moniker;
 
-        public override IEnumerable<int> GetComponentHashCodes()
-        {
-            yield return moniker.GetHashCode();
-        }
+        public override int GetHashCode() => moniker.GetHashCode();
 
         public static implicit operator TargetFramework(string value)
         {
