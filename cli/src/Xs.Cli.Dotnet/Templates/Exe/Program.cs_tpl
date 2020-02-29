@@ -4,7 +4,7 @@ using Annium.Core.Entrypoint;
 
 namespace {{name}}
 {
-    public class Program
+    internal static class Program
     {
         private static void Run(
             IServiceProvider provider,
@@ -15,7 +15,7 @@ namespace {{name}}
             Console.WriteLine("Hello from {{name}}");
         }
 
-        public static int Main(string[] args) => new Entrypoint()
+        internal static int Main(string[] args) => new Entrypoint()
             .UseServicePack<ServicePack>()
             .Run(Run, args);
     }
