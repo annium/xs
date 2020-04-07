@@ -20,10 +20,7 @@ namespace Xs.Cli.Node.Projects
             if (accessToken != null)
                 request = request.BearerAuthorization(accessToken);
 
-            var indexResponse = await request.AsResponseAsync<Index>();
-            if (indexResponse.IsFailure)
-                return Array.Empty<Package>();
-            var index = indexResponse.Data;
+            var index = await request.AsAsync(new Index());
             var registrations = index.Versions.Keys
                 .Select(v =>
                 {
@@ -53,6 +50,8 @@ namespace Xs.Cli.Node.Projects
             public Dictionary<string, IndexVersion> Versions { get; set; } = new Dictionary<string, IndexVersion>();
         }
 
-        private class IndexVersion { }
+        private class IndexVersion
+        {
+        }
     }
 }

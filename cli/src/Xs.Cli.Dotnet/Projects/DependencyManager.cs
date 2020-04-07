@@ -54,18 +54,14 @@ namespace Xs.Cli.Dotnet.Projects
 
         private async Task<RegistrationIndex?> LoadIndexAsync(string registrationUrl)
         {
-            var indexResponse = await Http.Open().Get(registrationUrl).AsResponseAsync<RegistrationIndex>();
-            if (indexResponse.IsFailure)
-                return null;
-
-            var index = indexResponse.Data;
+            var index = await Http.Open().Get(registrationUrl).AsAsync(new RegistrationIndex());
             index.Items = (await Task.WhenAll(index.Items.Select(page =>
             {
                 if (page.Items.Length > 0)
                     return Task.FromResult(page);
 
                 return Http.Open().Get(page.Id).AsAsync<RegistrationPage>();
-            }))).OfType<RegistrationPage>().ToArray();
+            }))).Where(x => x != null).ToArray();
 
             return index;
         }
