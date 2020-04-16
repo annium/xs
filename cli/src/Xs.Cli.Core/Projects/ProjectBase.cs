@@ -102,7 +102,7 @@ namespace Xs.Cli.Core.Projects
                 currentName = Name;
             }
 
-            // call implementation-specific save logic 
+            // call implementation-specific save logic
             HandleSave();
         }
 

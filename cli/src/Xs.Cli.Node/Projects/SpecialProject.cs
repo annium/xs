@@ -74,7 +74,7 @@ namespace Xs.Cli.Node.Projects
             return Task.CompletedTask;
         }
 
-        public Task CleanAsync(bool force, CancellationToken token)
+        public async Task CleanAsync(bool force, CancellationToken token)
         {
             logger.Info($"Start {Name} clean.");
 
@@ -85,9 +85,10 @@ namespace Xs.Cli.Node.Projects
                 DeleteFiles(ProjectFactory.LockFileName);
             }
 
-            logger.Info($"Finished {Name} clean.");
+            if (scripts.ContainsKey("clean"))
+                await RunAsync("yarn clean", "yarn run clean", token);
 
-            return Task.CompletedTask;
+            logger.Info($"Finished {Name} clean.");
         }
 
         public Task InstallAsync(bool force, CancellationToken token)
