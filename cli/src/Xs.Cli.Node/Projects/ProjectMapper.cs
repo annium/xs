@@ -163,11 +163,13 @@ namespace Xs.Cli.Node.Projects
             public string Description { get; set; } = string.Empty;
             public bool? Private { get; set; }
             public string? Main { get; set; }
+            public string? Typings { get; set; }
+            public string? Types { get; set; }
             public Dictionary<string, string>? Dependencies { get; set; }
             public Dictionary<string, string>? DevDependencies { get; set; }
             public Dictionary<string, string>? PeerDependencies { get; set; }
             public Dictionary<string, string>? Scripts { get; set; }
-            public string[] Files { get; set; }
+            public string[]? Files { get; set; }
 
             [JsonPropertyName("browserslist")]
             public string[]? BrowsersList { get; set; }
