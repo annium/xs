@@ -167,6 +167,7 @@ namespace Xs.Cli.Node.Projects
             public Dictionary<string, string>? DevDependencies { get; set; }
             public Dictionary<string, string>? PeerDependencies { get; set; }
             public Dictionary<string, string>? Scripts { get; set; }
+            public string[] Files { get; set; }
 
             [JsonPropertyName("browserslist")]
             public string[]? BrowsersList { get; set; }
