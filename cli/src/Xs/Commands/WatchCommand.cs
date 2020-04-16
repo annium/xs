@@ -80,7 +80,7 @@ namespace Xs.Commands
         }
 
         private bool FilterChange(string path) =>
-        projectFactory.IsProjectFile(path) || projects.Any(e => e.IsRelated(path));
+            projectFactory.IsProjectFile(path) || projects.Any(e => e.IsRelated(path));
 
         private async Task HandleChange(string path)
         {
@@ -138,20 +138,20 @@ namespace Xs.Commands
         }
 
         private Task InstallAsync(IProject project, bool includeSelf) =>
-        ExecuteAsync<IInstallableProject>(project, (p, t) => p.InstallAsync(force, t), includeSelf);
+            ExecuteAsync<IInstallableProject>(project, (p, t) => p.InstallAsync(force, t), includeSelf);
 
         private Task BuildAsync(IProject project, bool includeSelf) =>
-        ExecuteAsync<IBuildableProject>(project, (p, t) => p.BuildAsync(Env.Development, t), includeSelf);
+            ExecuteAsync<IBuildableProject>(project, (p, t) => p.BuildAsync(Env.Development, force, t), includeSelf);
 
         private Task TestAsync(IProject project, bool includeSelf) =>
-        ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, testFilter, t), includeSelf);
+            ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, testFilter, t), includeSelf);
 
         private async Task ExecuteAsync<TProject>(
             IProject project,
             Func<TProject, CancellationToken, Task> handle,
             bool includeSelf
         )
-        where TProject : IProject
+            where TProject : IProject
         {
             var selected = CollectDependants(project, includeSelf).OfType<TProject>().ToArray();
 
@@ -176,7 +176,7 @@ namespace Xs.Commands
         {
             var result = shell
                 .Cmd(command.Replace("%", path))
-                .Pipe((LogLevel)loggerConfiguration <= LogLevel.Debug)
+                .Pipe((LogLevel) loggerConfiguration <= LogLevel.Debug)
                 .Start();
 
             Task.Run(() => pipe(result.Output));

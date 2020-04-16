@@ -14,7 +14,8 @@ using SysFile = System.IO.File;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
+    internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject,
+        IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         private static readonly object cacheLocker = new object();
         public override string File => Path.Combine(Directory, ProjectFileName(Name));
@@ -83,9 +84,12 @@ namespace Xs.Cli.Dotnet.Projects
             return RunAsync("install", $"dotnet restore {forceFlag} --no-dependencies {File}", token);
         }
 
-        public Task BuildAsync(Env env, CancellationToken token)
+        public Task BuildAsync(Env env, bool force, CancellationToken token)
         {
             var configuration = env == Env.Development ? "Debug" : "Release";
+
+            if (force)
+                DeleteDirectory("bin");
 
             return RunAsync(
                 "build",
@@ -108,8 +112,8 @@ namespace Xs.Cli.Dotnet.Projects
         }
 
         protected override bool IsRelated(FileInfo file) =>
-        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-        !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
+            ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
+            !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
 
         private string ProjectFileName(string name) => $"{name}{ProjectFactory.ProjectFileExtension}";
     }

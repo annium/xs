@@ -6,6 +6,6 @@ namespace Xs.Cli.Core.Projects
 {
     public interface IBuildableProject : IProject
     {
-        Task BuildAsync(Env env, CancellationToken token);
+        Task BuildAsync(Env env, bool force, CancellationToken token);
     }
 }

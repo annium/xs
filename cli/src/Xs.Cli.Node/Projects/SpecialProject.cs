@@ -14,7 +14,8 @@ using SysDirectory = System.IO.Directory;
 
 namespace Xs.Cli.Node.Projects
 {
-    internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject, IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
+    internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject,
+        IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         // TODO: rewrite through project options - projects can have different shapes in a moment
         private static readonly object cacheLocker = new object();
@@ -39,7 +40,9 @@ namespace Xs.Cli.Node.Projects
             mapper = context.Mapper;
 
             // set static shell if not set yet
-            lock (cacheLocker) if (staticShell is null) staticShell = context.Shell;
+            lock (cacheLocker)
+                if (staticShell is null)
+                    staticShell = context.Shell;
         }
 
         public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
@@ -102,13 +105,19 @@ namespace Xs.Cli.Node.Projects
             return RunAsync("install", $"yarn install --no-emoji --no-progress", token);
         }
 
-        public Task BuildAsync(Env env, CancellationToken token) =>
-        scripts.ContainsKey("build") ? RunAsync("build", "yarn run build", token) : Task.CompletedTask;
+        public async Task BuildAsync(Env env, bool force, CancellationToken token)
+        {
+            if (force && scripts.ContainsKey("clean"))
+                await RunAsync("yarn clean", "yarn run clean", token);
+
+            if (scripts.ContainsKey("build"))
+                await RunAsync("build", "yarn run build", token);
+        }
 
         protected override void HandleSave() => mapper.Save(this);
 
         protected override bool IsRelated(FileInfo file) =>
-        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-        !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
+            ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
+            !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
     }
 }

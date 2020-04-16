@@ -10,12 +10,14 @@ namespace Xs.Cli.Node.Projects
 {
     internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProject
     {
-        public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context) { }
+        public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context)
+        {
+        }
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
             await InstallAsync(false, token);
-            await BuildAsync(Env.Production, token);
+            await BuildAsync(Env.Production, true, token);
 
             var fileName = $"{Name}-{version}.tgz";
             if (Name.StartsWith('@'))
@@ -34,7 +36,7 @@ namespace Xs.Cli.Node.Projects
             {
                 SetVersion(version);
                 Projects.Clear();
-                foreach (var(type, dependency) in projectDependencies)
+                foreach (var (type, dependency) in projectDependencies)
                     Packages.Add(new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version)));
 
                 Save();
