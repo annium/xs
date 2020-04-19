@@ -107,8 +107,13 @@ namespace Xs.Cli.Node.Projects
 
         public async Task BuildAsync(Env env, bool force, CancellationToken token)
         {
-            if (force && scripts.ContainsKey("clean"))
-                await RunAsync("yarn clean", "yarn run clean", token);
+            if (force)
+            {
+                if (scripts.ContainsKey("clean"))
+                    await RunAsync("yarn clean", "yarn run clean", token);
+
+                await InstallAsync(true, token);
+            }
 
             if (scripts.ContainsKey("build"))
                 await RunAsync("build", "yarn run build", token);
