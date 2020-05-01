@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -8,32 +10,39 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tasks.Dependencies;
+using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class AddCommand : Command<AddCommandConfiguration, DiscoverConfiguration>
+    internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>
     {
         public override string Id { get; } = "add";
         public override string Description { get; } = "Add dependency to projects.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly AddPackageDependencyTask addPackageDependencyTask;
-        private readonly AddProjectDependencyTask addProjectDependencyTask;
-        private readonly ILogger<AddCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly IEnumerable<IDependencyManager> _dependencyManagers;
+        private readonly IConfigurationManager _configurationManager;
+        private readonly AddPackageDependencyTask _addPackageDependencyTask;
+        private readonly AddProjectDependencyTask _addProjectDependencyTask;
+        private readonly ILogger<AddCommand> _logger;
 
         public AddCommand(
             DiscoverProjectsTask discoverTask,
+            IEnumerable<IDependencyManager> dependencyManagers,
+            IConfigurationManager configurationManager,
             AddPackageDependencyTask addPackageDependencyTask,
             AddProjectDependencyTask addProjectDependencyTask,
             ILogger<AddCommand> logger
         )
         {
-            this.addPackageDependencyTask = addPackageDependencyTask;
-            this.addProjectDependencyTask = addProjectDependencyTask;
-            this.discoverTask = discoverTask;
-            this.logger = logger;
+            _addPackageDependencyTask = addPackageDependencyTask;
+            _addProjectDependencyTask = addProjectDependencyTask;
+            _discoverTask = discoverTask;
+            _dependencyManagers = dependencyManagers;
+            _configurationManager = configurationManager;
+            _logger = logger;
         }
 
-        public override void Handle(
+        public override async Task HandleAsync(
             AddCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
             CancellationToken token
@@ -41,56 +50,122 @@ namespace Xs.Commands
         {
             var name = cfg.Name;
             var version = cfg.Version;
-            var type = cfg.Type;
+            var dependencyType = cfg.DependencyType;
 
-            var allProjects = discoverTask.Run(discoverCfg);
-            var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct()
-                .GroupBy(p => p.Type)
-                .ToDictionary(g => g.Key, g => g.ToArray());
+            var allProjects = _discoverTask.Run(discoverCfg).ToArray();
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                logger.Info($"No projects found to add dependency to.");
+                _logger.Info("No projects found to add dependency to.");
                 return;
             }
 
-            logger.Debug($"Try add dependency {name} to {targets.Length} projects.");
+            var projectType = ResolveProjectType(targets, cfg.Mask);
+            var allPackages = allProjects
+                .Where(x => x.Type == projectType)
+                .SelectMany(e => e.Packages)
+                .Select(d => d.Value)
+                .Distinct()
+                .ToArray();
 
             var projects = allProjects.FilterMask(name).Except(targets).ToArray();
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
-                    addProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), new Dependency<IProject>(type, project));
+                {
+                    _logger.Debug($"Add '{projectType}' project dependency '{name}' to {targets.Length} projects.");
+                    _addProjectDependencyTask.Run(targets, new Dependency<IProject>(dependencyType, project));
+                }
 
                 return;
             }
 
-            logger.Debug($"Assume dependency {name} as package.");
-            var packages = ProjectType.List().Where(t => targets.Count(p => p.Type == t) > 0).ToDictionary(
-                t => t,
-                t => allPackages.ContainsKey(t) ? allPackages[t].FilterMask(name).FirstOrDefault() : null!
-            );
+            _logger.Debug($"Assume dependency {name} is package.");
+            var packages = allPackages.FilterMask(name).ToArray();
 
-            // if at least one package not found
-            if (packages.Values.Any(e => e is null))
-            {
-                // if no version - can't define dependency
-                if (version == Cli.Core.Models.Version.Empty)
-                    throw new InvalidOperationException(
-                        $"Package {name} is not used in {packages.First(p => p.Value is null).Key} target projects. Specify version to use."
-                    );
-                // else - new dependencies is added
-                else
-                    packages = packages.ToDictionary(e => e.Key, e => new Package(e.Key, name, version));
-            }
+            // if no packages match name and no version given - resolve
+            if (packages.Length == 0)
+                packages = new[] { await ResolvePackage(discoverCfg, cfg, projectType, name, version) };
 
             // if package already exists: if version exists - check it's same, otherwise - nothing to do.
-            else if (version != Cli.Core.Models.Version.Empty && packages.Values.Any(e => e.Version != version))
-                throw new ArgumentException($"Package {name} is already used with different version. Specify already used version, or narrow projects mask.");
+            else if (version != Cli.Core.Models.Version.Empty)
+                EnsureNoVersionConflict(packages, version);
 
-            foreach (var package in packages.Values)
-                addPackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), new Dependency<Package>(type, package));
+            foreach (var package in packages)
+                _addPackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), new Dependency<Package>(dependencyType, package));
+        }
+
+        private ProjectType ResolveProjectType(IProject[] targets, string mask)
+        {
+            var targetGroups = targets.GroupBy(x => x.Type).ToDictionary(x => x.Key, x => x.ToArray());
+            if (targetGroups.Count > 1)
+            {
+                var targetsErrorView = string.Join(
+                    Environment.NewLine,
+                    targetGroups.Select(x => string.Join(
+                        Environment.NewLine,
+                        $"{x.Key}:",
+                        string.Join(Environment.NewLine, x.Value.Select(p => $" - {p}"))
+                    ))
+                );
+                throw new InvalidOperationException(
+                    $"Projects mask '{mask}' matches projects of different types:{Environment.NewLine}{targetsErrorView}"
+                );
+            }
+
+            return targetGroups.Single().Key;
+        }
+
+        private void EnsureNoVersionConflict(Package[] packages, Cli.Core.Models.Version version)
+        {
+            if (packages.All(x => x.Version == version))
+                return;
+
+            var conflictsErrorView = string.Join(
+                Environment.NewLine,
+                packages.Where(x => x.Version != version).Select(x => $" - {x}: {x.Version}")
+            );
+            throw new ArgumentException($"Package {packages.First().Name} is already used with different version:{Environment.NewLine}{conflictsErrorView}");
+        }
+
+        private async Task<Package> ResolvePackage(
+            DiscoverConfiguration discoverCfg,
+            AddCommandConfiguration cfg,
+            ProjectType projectType,
+            string name,
+            Cli.Core.Models.Version version
+        )
+        {
+            if (version != Cli.Core.Models.Version.Empty)
+                return new Package(projectType, name, version);
+
+            var packageStub = new Package(projectType, name, Cli.Core.Models.Version.Empty);
+
+            // resolve configuration and available version of all dependencies
+            var configuration = _configurationManager.Load(discoverCfg.Root);
+
+            var dependencyManager = _dependencyManagers.Single(x => x.Type == packageStub.Type);
+
+
+            var registryUri = configuration?.Servers.FirstOrDefault(s => s.Key == packageStub.Type).Value;
+            var versions = registryUri != null && !registryUri.IsFile
+                ? await dependencyManager.ResolveVersionsAsync(packageStub, registryUri, configuration!.Token)
+                : Array.Empty<Package>();
+
+            // fallback to default server result
+            if (versions.Length == 0)
+                versions = await dependencyManager.ResolveVersionsAsync(packageStub, dependencyManager.DefaultServer, string.Empty);
+
+            var package = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
+            _logger.Trace($"Resolve: {packageStub} - {versions.Length} version(s)");
+
+            if (package is null)
+                throw new InvalidOperationException($"Resolve: {packageStub} unresolved");
+
+            _logger.Debug($"Resolve: {packageStub} -> {package}");
+
+            return package;
         }
     }
 
@@ -105,11 +180,15 @@ namespace Xs.Commands
         public string Name { get; set; } = string.Empty;
 
         [Position(3, isRequired: false)]
-        [Help("Dependency version (for package dependencies).")]
+        [Help("Dependency version (for package dependencies, optional).")]
         public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
 
-        [Position(4, isRequired: false)]
+        [Option("t")]
         [Help("Dependency type.")]
-        public DependencyType Type { get; set; } = DependencyType.Normal;
+        public DependencyType DependencyType { get; set; } = DependencyType.Normal;
+
+        [Option("p")]
+        [Help("Allow suffixed.")]
+        public bool Preview { get; set; } = false;
     }
 }

@@ -17,11 +17,11 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "update";
         public override string Description { get; } = "Update dependencies in projects.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly IEnumerable<IDependencyManager> dependencyManagers;
-        private readonly IConfigurationManager configurationManager;
-        private readonly ProjectsRunner runner;
-        private readonly ILogger<UpdateCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly IEnumerable<IDependencyManager> _dependencyManagers;
+        private readonly IConfigurationManager _configurationManager;
+        private readonly ProjectsRunner _runner;
+        private readonly ILogger<UpdateCommand> _logger;
 
         public UpdateCommand(
             DiscoverProjectsTask discoverTask,
@@ -31,11 +31,11 @@ namespace Xs.Commands
             ILogger<UpdateCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.dependencyManagers = dependencyManagers;
-            this.configurationManager = configurationManager;
-            this.runner = runner;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _dependencyManagers = dependencyManagers;
+            _configurationManager = configurationManager;
+            _runner = runner;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -44,23 +44,23 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToArray();
             if (projects.Length == 0)
             {
-                logger.Info($"No projects found to update.");
+                _logger.Info("No projects found to update.");
                 return;
             }
 
             var dependencies = projects.SelectMany(e => e.Packages).Select(e => e.Value).Distinct().ToArray();
             if (dependencies.Length == 0)
             {
-                logger.Info($"No projects found to update.");
+                _logger.Info("No projects found to update.");
                 return;
             }
-            logger.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
+            _logger.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
 
             // resolve dependency managers for types
             var dependencyManagers = dependencies
@@ -68,12 +68,12 @@ namespace Xs.Commands
                 .Distinct()
                 .ToDictionary(
                     t => t,
-                    t => this.dependencyManagers.FirstOrDefault(m => m.Type == t) ??
+                    t => _dependencyManagers.SingleOrDefault(m => m.Type == t) ??
                     throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
                 );
 
             // resolve configuration and available version of all dependencies
-            var configuration = configurationManager.Load(discoverCfg.Root);
+            var configuration = _configurationManager.Load(discoverCfg.Root);
 
             var updates = (await Task.WhenAll(dependencies.Select(async d =>
             {
@@ -88,14 +88,14 @@ namespace Xs.Commands
                     versions = await dependencyManager.ResolveVersionsAsync(d, dependencyManager.DefaultServer, string.Empty);
 
                 var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-                logger.Trace($"Resolve: {d} - {versions.Length} version(s)");
+                _logger.Trace($"Resolve: {d} - {versions.Length} version(s)");
 
                 if (result == d)
-                    logger.Debug($"Resolve: {d} unchanged");
+                    _logger.Debug($"Resolve: {d} unchanged");
                 else if (result is null)
-                    logger.Warn($"Resolve: {d} unresolved");
+                    _logger.Warn($"Resolve: {d} unresolved");
                 else
-                    logger.Debug($"Resolve: {d} -> {result}");
+                    _logger.Debug($"Resolve: {d} -> {result}");
 
                 return result;
             }))).OfType<Package>().ToArray();
@@ -104,12 +104,12 @@ namespace Xs.Commands
             {
                 foreach (var project in projects)
                     if (UpdateProject(project, updates))
-                        logger.Info($"{project} is to be updated.");
+                        _logger.Info($"{project} is to be updated.");
 
                 return;
             }
 
-            // for each project updated - check if it's dependencies is updated, and if yes - update and add to updated list 
+            // for each project updated - check if it's dependencies is updated, and if yes - update and add to updated list
             var updated = new List<IProject>();
             foreach (var project in projects)
                 if (UpdateProject(project, updates))
@@ -120,28 +120,28 @@ namespace Xs.Commands
 
             if (updated.Count == 0)
             {
-                logger.Info($"No projects updated.");
+                _logger.Info("No projects updated.");
                 return;
             }
 
             // install installable updates
-            logger.Debug($"Clear {updated.Count} projects cache.");
-            await runner.RunAsync(
+            _logger.Debug($"Clear {updated.Count} projects cache.");
+            await _runner.RunAsync(
                 updated.OfType<ICachingProject>(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
                 false,
                 token
             );
 
-            logger.Debug($"Install {updated.Count} projects.");
-            await runner.RunAsync(
+            _logger.Debug($"Install {updated.Count} projects.");
+            await _runner.RunAsync(
                 updated.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(true, tkn),
                 false,
                 token
             );
 
-            logger.Info($"{updated.Count} projects updated.");
+            _logger.Info($"{updated.Count} projects updated.");
         }
 
         private bool UpdateProject(IProject project, Package[] updates)
@@ -177,11 +177,11 @@ namespace Xs.Commands
         [Help("Project type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 
-        [Option(isRequired: false)]
+        [Option]
         [Help("Allow suffixed.")]
         public bool Preview { get; set; }
 
-        [Option("dry", isRequired: false)]
+        [Option("dry")]
         [Help("Dry run.")]
         public bool DryRun { get; set; }
     }
