@@ -22,9 +22,9 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
 
         public override string Id { get; } = "command";
         public override string Description { get; } = "Create command.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ITemplateWriter templateWriter;
-        private readonly ILogger<CommandCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ITemplateWriter _templateWriter;
+        private readonly ILogger<CommandCommand> _logger;
 
         public CommandCommand(
             DiscoverProjectsTask discoverTask,
@@ -32,9 +32,9 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
             ILogger<CommandCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.templateWriter = templateWriter;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _templateWriter = templateWriter;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -43,34 +43,34 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg).ToList();
+            var projects = _discoverTask.Run(discoverCfg).ToList();
 
-            var applicationProject = projects.FilterMask(cfg.ApplicationProject).FirstOrDefault();
+            var applicationProject = projects.FilterMask(cfg.ApplicationProject).SingleOrDefault();
             if (applicationProject is null)
             {
                 Console.WriteLine($"Application project {cfg.ApplicationProject} not found");
                 return;
             }
 
-            var viewModelProject = projects.FilterMask(cfg.ViewModelProject).FirstOrDefault();
+            var viewModelProject = projects.FilterMask(cfg.ViewModelProject).SingleOrDefault();
             if (viewModelProject is null)
             {
                 Console.WriteLine($"ViewModel project {cfg.ViewModelProject} not found");
                 return;
             }
 
-            templateWriter.LoadResources($"{Group.TemplatesDir}.Command");
+            _templateWriter.LoadResources($"{Group.TemplatesDir}.Command");
 
             var data = GetCommandDescription(applicationProject, viewModelProject, token);
 
-            logger.Debug($"Create command {data.Entity}:{data.Name}");
+            _logger.Debug($"Create command {data.Entity}:{data.Name}");
 
             // write files
-            templateWriter.SetRoot(Path.Combine(applicationProject.Directory, Commands, data.Entity));
-            templateWriter.Write(CommandTemplate, $"{data.Name}Command.cs", data);
-            templateWriter.SetRoot(Path.Combine(viewModelProject.Directory, data.Entity, Requests));
-            templateWriter.Write(RequestTemplate, $"{data.Name}Request.cs", data);
-            templateWriter.EnsureAllWritten();
+            _templateWriter.SetRoot(Path.Combine(applicationProject.Directory, Commands, data.Entity));
+            _templateWriter.Write(CommandTemplate, $"{data.Name}Command.cs", data);
+            _templateWriter.SetRoot(Path.Combine(viewModelProject.Directory, Requests, data.Entity));
+            _templateWriter.Write(RequestTemplate, $"{data.Name}Request.cs", data);
+            _templateWriter.EnsureAllWritten();
         }
 
         private CommandDescription GetCommandDescription(
@@ -91,7 +91,7 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
             data.ComposeFields = Helper.PromptFields("Compose field");
             token.ThrowIfCancellationRequested();
             data.CommandNamespace = $"{applicationProject.Name}.{Commands}.{data.Entity}";
-            data.RequestNamespace = $"{viewModelProject.Name}.{data.Entity}.{Requests}";
+            data.RequestNamespace = $"{viewModelProject.Name}.{Requests}.{data.Entity}";
 
             return data;
         }

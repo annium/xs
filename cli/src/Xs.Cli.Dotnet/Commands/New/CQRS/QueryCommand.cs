@@ -47,14 +47,14 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
         {
             var projects = discoverTask.Run(discoverCfg).ToList();
 
-            var applicationProject = projects.FilterMask(cfg.ApplicationProject).FirstOrDefault();
+            var applicationProject = projects.FilterMask(cfg.ApplicationProject).SingleOrDefault();
             if (applicationProject is null)
             {
                 Console.WriteLine($"Application project {cfg.ApplicationProject} not found");
                 return;
             }
 
-            var viewModelProject = projects.FilterMask(cfg.ViewModelProject).FirstOrDefault();
+            var viewModelProject = projects.FilterMask(cfg.ViewModelProject).SingleOrDefault();
             if (viewModelProject is null)
             {
                 Console.WriteLine($"ViewModel project {cfg.ViewModelProject} not found");
@@ -70,11 +70,11 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
             // write files
             templateWriter.SetRoot(Path.Combine(applicationProject.Directory, Queries, data.Entity));
             templateWriter.Write(QueryTemplate, $"{data.Name}Query.cs", data);
-            templateWriter.SetRoot(Path.Combine(viewModelProject.Directory, data.Entity, Requests));
+            templateWriter.SetRoot(Path.Combine(viewModelProject.Directory, Requests, data.Entity));
             templateWriter.Write(RequestTemplate, $"{data.Name}Request.cs", data);
             if (!string.IsNullOrWhiteSpace(data.Response))
             {
-                templateWriter.SetRoot(Path.Combine(viewModelProject.Directory, data.Entity, Responses));
+                templateWriter.SetRoot(Path.Combine(viewModelProject.Directory, Responses, data.Entity));
                 templateWriter.Write(ResponseTemplate, $"{data.Response}Response.cs", data);
             }
         }
@@ -102,8 +102,8 @@ namespace Xs.Cli.Dotnet.Commands.New.CQRS
                 data.ResponseFields = Helper.PromptFields("Response field");
             token.ThrowIfCancellationRequested();
             data.QueryNamespace = $"{applicationProject.Name}.{Queries}.{data.Entity}";
-            data.RequestNamespace = $"{viewModelProject.Name}.{data.Entity}.{Requests}";
-            data.ResponseNamespace = $"{viewModelProject.Name}.{data.Entity}.{Responses}";
+            data.RequestNamespace = $"{viewModelProject.Name}.{Requests}.{data.Entity}";
+            data.ResponseNamespace = $"{viewModelProject.Name}.{Responses}.{data.Entity}";
 
             return data;
         }
