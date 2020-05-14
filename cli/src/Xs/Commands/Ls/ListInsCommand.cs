@@ -15,13 +15,13 @@ namespace Xs.Commands.Ls
     {
         public override string Id { get; } = "ins";
         public override string Description { get; } = "List projects and their dependencies.";
-        private readonly DiscoverProjectsTask discoverTask;
+        private readonly DiscoverProjectsTask _discoverTask;
 
         public ListInsCommand(
             DiscoverProjectsTask discoverTask
         )
         {
-            this.discoverTask = discoverTask;
+            _discoverTask = discoverTask;
         }
 
         public override void Handle(
@@ -30,7 +30,7 @@ namespace Xs.Commands.Ls
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToArray();
@@ -40,20 +40,28 @@ namespace Xs.Commands.Ls
             var showPackages = cfg.Packages || !cfg.Projects;
 
             // if plain dependencies list requested - join deps and log them in single list
-            if (cfg.Plain)
+            if (cfg.Depth == 0)
             {
                 LogPlainDependencies(projects, showProjects, showPackages, cfg);
                 return;
             }
 
-            // otherwise - log nice dependencies tree
+            // otherwise - log nice dependencies tree for given depth level
+            var nest = cfg.Depth;
             var last = projects.Last();
             foreach (var project in projects)
-                LogProjectWithDependencies(new Dependency<IProject>(DependencyType.Normal, project), showProjects, showPackages, string.Empty, project == last);
+                LogProjectWithDependencies(
+                    new Dependency<IProject>(DependencyType.Normal, project),
+                    showProjects,
+                    showPackages,
+                    string.Empty,
+                    nest,
+                    project == last
+                );
         }
 
         private void LogPlainDependencies(
-            IEnumerable<IProject> projects,
+            IReadOnlyCollection<IProject> projects,
             bool showProjects,
             bool showPackages,
             ListInsCommandConfiguration cfg
@@ -79,6 +87,7 @@ namespace Xs.Commands.Ls
             bool showProjects,
             bool showPackages,
             string prefix,
+            int nest,
             bool isLast
         )
         {
@@ -88,7 +97,7 @@ namespace Xs.Commands.Ls
             var node = isLast ? "└─" : "├─";
 
             var depsCount = (showProjects ? projectDeps.Length : 0) + (showPackages ? packageDeps.Length : 0);
-            if (depsCount == 0)
+            if (depsCount == 0 || nest == 0)
             {
                 Console.WriteLine($"{prefix}{node}─ {project} {project.Version} ({dependencyType})");
                 return;
@@ -101,14 +110,14 @@ namespace Xs.Commands.Ls
             {
                 var last = projectDeps.Length > 0 ? null : packageDeps.Last();
                 foreach (var dependency in packageDeps)
-                    LogPackage(dependency, prefix, last is null ? false : dependency == last);
+                    LogPackage(dependency, prefix, !(last is null) && dependency == last);
             }
 
             if (showProjects && projectDeps.Length > 0)
             {
                 var last = projectDeps.Last();
                 foreach (var dependency in projectDeps)
-                    LogProjectWithDependencies(dependency, showProjects, showPackages, prefix, dependency == last);
+                    LogProjectWithDependencies(dependency, true, showPackages, prefix, nest - 1, dependency == last);
             }
         }
 
@@ -162,9 +171,9 @@ namespace Xs.Commands.Ls
         [Help("Show only package dependencies (without projects).")]
         public bool Packages { get; set; }
 
-        [Option]
-        [Help("Show plain dependencies list (no recursion).")]
-        public bool Plain { get; set; }
+        [Option("n")]
+        [Help("Show with given depth of recursion.")]
+        public int Depth { get; set; } = int.MaxValue;
 
         [Option]
         [Help("Show path instead of name.")]

@@ -15,13 +15,13 @@ namespace Xs.Commands.Ls
     {
         public override string Id { get; } = "outs";
         public override string Description { get; } = "List projects and their project dependents.";
-        private readonly DiscoverProjectsTask discoverTask;
+        private readonly DiscoverProjectsTask _discoverTask;
 
         public ListOutsCommand(
             DiscoverProjectsTask discoverTask
         )
         {
-            this.discoverTask = discoverTask;
+            _discoverTask = discoverTask;
         }
 
         public override void Handle(
@@ -30,7 +30,7 @@ namespace Xs.Commands.Ls
             CancellationToken token
         )
         {
-            var allProjects = discoverTask.Run(discoverCfg).ToArray();
+            var allProjects = _discoverTask.Run(discoverCfg).ToArray();
             var projects = allProjects
                 .FilterType(cfg.Type)
                 .FilterMask(cfg.Mask)
@@ -42,14 +42,20 @@ namespace Xs.Commands.Ls
                 var last = projects.Last();
 
                 // if plain dependants list requested - them in single list
-                if (cfg.Plain)
+                if (cfg.Depth == 0)
                 {
                     LogPlainDependants(projects, allProjects, cfg);
                     return;
                 }
 
                 foreach (var project in projects)
-                    LogProjectWithDependants(new Dependency<IProject>(DependencyType.Normal, project), allProjects, string.Empty, project == last);
+                    LogProjectWithDependants(
+                        new Dependency<IProject>(DependencyType.Normal, project),
+                        allProjects,
+                        string.Empty,
+                        cfg.Depth,
+                        project == last
+                    );
 
                 return;
             }
@@ -65,7 +71,7 @@ namespace Xs.Commands.Ls
 
             if (packages.Length > 0)
             {
-                if (cfg.Plain)
+                if (cfg.Depth == 0)
                 {
                     var dependants = allProjects
                         .Where(p => p.Packages.Any(d => packages.Contains(d.Value)))
@@ -87,9 +93,15 @@ namespace Xs.Commands.Ls
                     var last = dependants.Last();
 
                     foreach (var dependant in dependants)
-                        LogProjectWithDependants(new Dependency<IProject>(DependencyType.Normal, dependant), allProjects, string.Empty, dependant == last);
-
+                        LogProjectWithDependants(
+                            new Dependency<IProject>(DependencyType.Normal, dependant),
+                            allProjects,
+                            string.Empty,
+                            cfg.Depth,
+                            dependant == last
+                        );
                 }
+
                 return;
             }
 
@@ -103,7 +115,7 @@ namespace Xs.Commands.Ls
         )
         {
             var dependants = allProjects
-                .Where(e => e.Projects.Select(p => p.Value).Intersect(projects).Count() > 0)
+                .Where(e => e.Projects.Select(p => p.Value).Intersect(projects).Any())
                 .OrderBy(e => e.Name)
                 .ToArray();
             foreach (var dependant in dependants)
@@ -114,6 +126,7 @@ namespace Xs.Commands.Ls
             Dependency<IProject> projectDependency,
             IEnumerable<IProject> projects,
             string prefix,
+            int nest,
             bool isLast
         )
         {
@@ -129,7 +142,7 @@ namespace Xs.Commands.Ls
                 .OrderBy(e => e.Value.Name)
                 .ToArray();
             var node = isLast ? "└─" : "├─";
-            if (dependants.Length == 0)
+            if (dependants.Length == 0 || nest == 0)
             {
                 Console.WriteLine($"{prefix}{node}─ {project} {project.Version} ({dependencyType})");
                 return;
@@ -143,6 +156,7 @@ namespace Xs.Commands.Ls
                     dependant,
                     projects,
                     prefix,
+                    nest - 1,
                     dependant == last
                 );
         }
@@ -179,9 +193,9 @@ namespace Xs.Commands.Ls
         [Help("Project/package type.")]
         public ProjectType Type { get; set; } = ProjectType.None;
 
-        [Option]
-        [Help("Show plain dependants list (no recursion).")]
-        public bool Plain { get; set; }
+        [Option("n")]
+        [Help("Show with given depth of recursion.")]
+        public int Depth { get; set; } = int.MaxValue;
 
         [Option]
         [Help("Show path instead of name.")]
