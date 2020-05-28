@@ -8,6 +8,8 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 {
     internal static class Helper
     {
+        internal const string Areas = "Areas";
+
         public static IList<ValueTuple<string, string>> PromptFields(string label)
         {
             var fields = new List<ValueTuple<string, string>>();
@@ -25,8 +27,13 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
             return fields;
         }
 
-        public static string BuildPath(params string?[] parts) => Path.Combine(parts.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).ToArray());
+        public static string BuildPath(string projectName, string? area, params string[] parts) => string.IsNullOrWhiteSpace(area)
+            ? Path.Combine(new[] { projectName }.Concat(parts).ToArray())
+            : Path.Combine(new[] { projectName, Areas, area! }.Concat(parts).ToArray());
 
-        public static string BuildNamespace(params string?[] parts) => string.Join('.', parts.Where(x => !string.IsNullOrWhiteSpace(x)));
+        public static string BuildNamespace(string projectName, string? area, params string[] parts)
+            => string.IsNullOrWhiteSpace(area)
+                ? string.Join('.', new[] { projectName }.Concat(parts))
+                : string.Join('.', new[] { projectName, Areas, area! }.Concat(parts));
     }
 }
