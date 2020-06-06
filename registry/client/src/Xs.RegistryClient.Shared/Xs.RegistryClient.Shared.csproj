@@ -14,6 +14,6 @@
     <ItemGroup>
         <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
-        <PackageReference Include="NodaTime" Version="2.4.7" />
+        <PackageReference Include="NodaTime" Version="3.0.0" />
     </ItemGroup>
 </Project>

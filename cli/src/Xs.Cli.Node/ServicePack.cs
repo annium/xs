@@ -26,9 +26,10 @@ namespace Xs.Cli.Node
             services.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
             services.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
 
-            services.SelectAssemblyTypes()
+            services.AddAssemblyTypes()
                 .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
-                .RegisterSingleton();
+                .AsSelf()
+                .SingleInstance();
         }
     }
 }

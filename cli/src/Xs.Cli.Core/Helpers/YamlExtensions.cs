@@ -14,7 +14,7 @@ namespace Xs.Cli.Core.Helpers
     public static class Yaml
     {
         public static readonly ISerializer Serializer = new SerializerBuilder()
-            .WithNamingConvention(new UnderscoredNamingConvention())
+            .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .WithTypeInspector(inner => new DataContractTypeInspector(inner))
             .WithTypeConverter(new ProjectTypeTypeConverter())
             .WithTypeConverter(new UriTypeConverter())
@@ -30,7 +30,7 @@ namespace Xs.Cli.Core.Helpers
             this.innerTypeInspector = innerTypeInspector;
         }
 
-        public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object container)
+        public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
         {
             var properties = innerTypeInspector.GetProperties(type, container);
 
@@ -47,9 +47,9 @@ namespace Xs.Cli.Core.Helpers
         public object ReadYaml(IParser parser, Type type) =>
             throw new NotImplementedException();
 
-        public void WriteYaml(IEmitter emitter, object value, Type type)
+        public void WriteYaml(IEmitter emitter, object? value, Type type)
         {
-            var @event = new Scalar(null, null, ((Uri) value).ToString(), ScalarStyle.Any, true, false);
+            var @event = new Scalar(null, null, ((Uri) value!).ToString(), ScalarStyle.Any, true, false);
             emitter.Emit(@event);
         }
     }
@@ -61,9 +61,9 @@ namespace Xs.Cli.Core.Helpers
         public object ReadYaml(IParser parser, Type type) =>
             throw new NotImplementedException();
 
-        public void WriteYaml(IEmitter emitter, object value, Type type)
+        public void WriteYaml(IEmitter emitter, object? value, Type type)
         {
-            var @event = new Scalar(null, null, ((ProjectType) value).ToString(), ScalarStyle.Any, true, false);
+            var @event = new Scalar(null, null, ((ProjectType) value!).ToString(), ScalarStyle.Any, true, false);
             emitter.Emit(@event);
         }
     }

@@ -13,9 +13,10 @@ namespace Xs
             services.AddArguments();
 
             // commands
-            services.SelectAssemblyTypes()
+            services.AddAssemblyTypes()
                 .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
-                .RegisterSingleton();
+                .AsSelf()
+                .SingleInstance();
 
             // tools
             services.AddSingleton<IConfigurationManager, ConfigurationManager>();

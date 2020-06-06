@@ -27,9 +27,10 @@ namespace Xs.Cli.Dotnet
             services.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
 
             // commands
-            services.SelectAssemblyTypes()
+            services.AddAssemblyTypes()
                 .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
-                .RegisterSingleton();
+                .AsSelf()
+                .SingleInstance();
         }
     }
 }

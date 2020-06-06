@@ -31,9 +31,10 @@ namespace Xs.Cli.Core
             services.AddSingleton<IProjectLinker, ProjectLinker>();
 
             // tasks
-            services.SelectAssemblyTypes()
+            services.AddAssemblyTypes()
                 .Where(x => x.Name.EndsWith("Task"))
-                .RegisterSingleton();
+                .AsSelf()
+                .SingleInstance();
 
             RegisterTasks(services);
 
