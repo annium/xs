@@ -20,6 +20,7 @@ namespace Xs.Cli.Core.Tools
         {
             "conf",
             "cs",
+            "cshtml",
             "css",
             "d.ts",
             "dockerignore",
@@ -33,6 +34,7 @@ namespace Xs.Cli.Core.Tools
             "linguirc",
             "module.css",
             "module.scss",
+            "razor",
             "scss",
             "sh",
             "ts",
