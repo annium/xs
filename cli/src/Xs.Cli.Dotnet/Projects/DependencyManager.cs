@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,10 +17,19 @@ namespace Xs.Cli.Dotnet.Projects
         public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
         private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
 
+        private readonly HttpClient _client = new HttpClient(new HttpClientHandler()
+        {
+            AutomaticDecompression = DecompressionMethods.All,
+            MaxConnectionsPerServer = 16,
+        });
+
         public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
         {
-            var registrationBaseUrl = (await Http.Open(serverUri).Get(Constants.ServerPathSuffix).AsAsync<ServiceIndex>())
-                .Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
+            var serverIndex = await Http.Open(serverUri)
+                .UseClient(_client)
+                .Get(Constants.ServerPathSuffix)
+                .AsAsync<ServiceIndex>();
+            var registrationBaseUrl = serverIndex.Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
 
             var registrationUrl = registrationBaseUrl +
                 (registrationBaseUrl.EndsWith('/') ? string.Empty : "/") +
@@ -73,11 +84,9 @@ namespace Xs.Cli.Dotnet.Projects
 
         private class ServiceIndexResource
         {
-            [JsonPropertyName("@id")]
-            public string Id { get; set; } = string.Empty;
+            [JsonPropertyName("@id")] public string Id { get; set; } = string.Empty;
 
-            [JsonPropertyName("@type")]
-            public string Type { get; set; } = string.Empty;
+            [JsonPropertyName("@type")] public string Type { get; set; } = string.Empty;
         }
 
         private class RegistrationIndex
@@ -87,8 +96,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         private class RegistrationPage
         {
-            [JsonPropertyName("@id")]
-            public string Id { get; set; } = string.Empty;
+            [JsonPropertyName("@id")] public string Id { get; set; } = string.Empty;
 
             public RegistrationLeaf[] Items { get; set; } = Array.Empty<RegistrationLeaf>();
         }

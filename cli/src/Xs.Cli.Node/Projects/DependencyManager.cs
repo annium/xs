@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
@@ -14,9 +16,17 @@ namespace Xs.Cli.Node.Projects
         public ProjectType Type { get; } = Constants.ProjectType;
         public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
 
+        private readonly HttpClient _client = new HttpClient(new HttpClientHandler()
+        {
+            AutomaticDecompression = DecompressionMethods.All,
+            MaxConnectionsPerServer = 16,
+        });
+
         public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
         {
-            var request = Http.Open(serverUri).Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()));
+            var request = Http.Open(serverUri)
+                .UseClient(_client)
+                .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()));
             if (accessToken != null)
                 request = request.BearerAuthorization(accessToken);
 
