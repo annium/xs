@@ -21,7 +21,7 @@ namespace Xs.Cli.Dotnet.Models
         {
             new List<TargetFramework> { NetStandard2_0, NetCoreApp2_0, NetCoreApp2_1, NetCoreApp2_2 },
             new List<TargetFramework> { NetStandard2_0, NetStandard2_1, NetCoreApp3_0 },
-            new List<TargetFramework> { NetStandard2_0, NetStandard2_1, NetCoreApp3_1 },
+            new List<TargetFramework> { NetStandard2_1, NetCoreApp3_1 },
         };
 
         private readonly string moniker;
