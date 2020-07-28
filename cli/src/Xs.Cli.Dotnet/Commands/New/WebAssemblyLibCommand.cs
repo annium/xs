@@ -8,16 +8,16 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class WebAssemblyCommand : Command<WebAssemblyCommandConfiguration, DiscoverConfiguration>
+    public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>
     {
-        public override string Id { get; } = "wasm";
-        public override string Description { get; } = "Create new WebAssembly project.";
+        public override string Id { get; } = "wasm.lib";
+        public override string Description { get; } = "Create new WebAssembly Library project.";
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<WebAssemblyCommand> _logger;
+        private readonly ILogger<WebAssemblyLibCommand> _logger;
 
-        public WebAssemblyCommand(
+        public WebAssemblyLibCommand(
             ITemplateWriter templateWriter,
-            ILogger<WebAssemblyCommand> logger
+            ILogger<WebAssemblyLibCommand> logger
         )
         {
             _templateWriter = templateWriter;
@@ -25,7 +25,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         }
 
         public override void Handle(
-            WebAssemblyCommandConfiguration cfg,
+            WebAssemblyLibCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
             CancellationToken token
         )
@@ -33,9 +33,9 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            _logger.Debug($"Create WebAssembly project {name} at {location}");
+            _logger.Debug($"Create WebAssembly Library project {name} at {location}");
 
-            _templateWriter.LoadResources($"{Group.TemplatesDir}.WebAssembly");
+            _templateWriter.LoadResources($"{Group.TemplatesDir}.WebAssemblyLibrary");
             _templateWriter.SetRoot(Path.Combine(location, name));
 
             // setup data
@@ -48,7 +48,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         }
     }
 
-    public class WebAssemblyCommandConfiguration
+    public class WebAssemblyLibCommandConfiguration
     {
         [Position(1)]
         [Help("Project name.")]

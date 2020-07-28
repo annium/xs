@@ -1,0 +1,23 @@
+using System;
+using Annium.Core.DependencyInjection;
+using Annium.Net.Http;
+using BlazorStyled;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace {{name}}
+{
+    public class ServicePack : ServicePackBase
+    {
+        public override void Register(IServiceCollection services, IServiceProvider provider)
+        {
+            services.AddBlazorStyled();
+            services.AddTransient<Func<IHttpRequest>>(sp =>
+            {
+                var request = Http.Open(sp.GetRequiredService<IWebAssemblyHostEnvironment>().BaseAddress);
+
+                return () => request.Clone();
+            });
+        }
+    }
+}

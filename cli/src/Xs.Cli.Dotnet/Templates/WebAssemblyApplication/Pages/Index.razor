@@ -1,0 +1,12 @@
+﻿@page "/"
+
+<div class="@welcome">Hello, world!</div>
+
+@code
+{
+    string? welcome;
+}
+
+<Styled @bind-Classname="welcome">
+    text-decoration: underline;
+</Styled>

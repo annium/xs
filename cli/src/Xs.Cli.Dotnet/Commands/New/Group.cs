@@ -15,7 +15,8 @@ namespace Xs.Cli.Dotnet.Commands.New
             Add<ExeCommand>();
             Add<LibCommand>();
             Add<LibTestsCommand>();
-            Add<WebAssemblyCommand>();
+            Add<WebAssemblyAppCommand>();
+            Add<WebAssemblyLibCommand>();
             Add<WebCommand>();
             Add<WebTestsCommand>();
         }

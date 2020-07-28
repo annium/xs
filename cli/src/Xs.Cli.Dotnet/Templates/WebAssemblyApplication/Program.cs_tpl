@@ -1,8 +1,6 @@
-using System;
-using System.Net.Http;
 using System.Threading.Tasks;
+using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace {{name}}
 {
@@ -12,9 +10,7 @@ namespace {{name}}
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
-
-            builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
+            builder.ConfigureContainer(new ServiceProviderFactory(x => x.UseServicePack<ServicePack>()));
             await builder.Build().RunAsync();
         }
     }
