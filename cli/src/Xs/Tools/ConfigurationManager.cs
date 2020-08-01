@@ -15,39 +15,46 @@ namespace Xs.Tools
 {
     internal class ConfigurationManager : IConfigurationManager
     {
-        private const string configurationFile = ".xs";
-        private const string credentialsFile = ".xs.credentials";
-        private const string ignoreHeader = "# xs ignore patterns";
-        private const string ignoreFile = ".gitignore";
-        private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> specialManagers;
-        private readonly ILogger<ConfigurationManager> logger;
+        private const string ConfigurationFile = ".xs";
+        private const string CredentialsFile = ".xs.credentials";
+        private const string IgnoreHeader = "# xs ignore patterns";
+        private const string IgnoreFile = ".gitignore";
+        private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> _specialManagers;
+        private readonly Func<IConfigurationBuilder> _configurationBuilderFactory;
+        private readonly IMapper _mapper;
+        private readonly ILogger<ConfigurationManager> _logger;
 
         public ConfigurationManager(
             IEnumerable<ISpecialConfigurationManager> specialManagers,
+            Func<IConfigurationBuilder> configurationBuilderFactory,
+            IMapper mapper,
             ILogger<ConfigurationManager> logger
         )
         {
-            this.specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
-            this.logger = logger;
+            _specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
+            _configurationBuilderFactory = configurationBuilderFactory;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public Configuration Load(string folder)
         {
-            logger.Trace($"Load configuration from {folder}");
+            _logger.Trace($"Load configuration from {folder}");
 
-            var cfgFile = ConfigurationFile(folder);
-            var credFile = CredentialsFile(folder);
+            var cfgFile = GetConfigurationFile(folder);
+            var credFile = GetCredentialsFile(folder);
 
             if (!File.Exists(cfgFile))
             {
-                logger.Trace($"Configuration missing in {folder}. Returning default");
+                _logger.Trace($"Configuration missing in {folder}. Returning default");
                 return Configuration.Empty();
             }
-            var config = new ConfigurationBuilder()
+
+            var config = _configurationBuilderFactory()
                 .AddYamlFile(cfgFile)
                 .Build<Config>();
 
-            logger.Trace($"Configuration loaded from {folder}");
+            _logger.Trace($"Configuration loaded from {folder}");
 
             return new Configuration(
                 config.Registry,
@@ -59,58 +66,59 @@ namespace Xs.Tools
 
         public void Save(string folder, IProject[] projects, Configuration configuration)
         {
-            logger.Trace($"Save configuration in {folder}");
-            Write(ConfigurationFile, Yaml.Serializer.Serialize(Mapper.Map<Config>(configuration)));
-            Write(CredentialsFile, configuration.Token);
+            _logger.Trace($"Save configuration in {folder}");
+            var cfg = _mapper.Map<Config>(configuration);
+            Write(GetConfigurationFile, Yaml.Serializer.Serialize(cfg));
+            Write(GetCredentialsFile, configuration.Token);
 
             // save configuration for each project
             var ignorePatterns = new List<string>
             {
                 FileManager.IgnoreFile,
-                credentialsFile
+                CredentialsFile
             };
             foreach ((ProjectType type, Uri uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
             {
-                if (!specialManagers.ContainsKey(type))
+                if (!_specialManagers.ContainsKey(type))
                 {
-                    logger.Trace($"{type} configuration manager not found");
+                    _logger.Trace($"{type} configuration manager not found");
                     continue;
                 }
 
-                var targets = projects.Where(p => p.Type == type);
-                if (targets.Count() == 0)
+                var targets = projects.Where(p => p.Type == type).ToArray();
+                if (!targets.Any())
                 {
-                    logger.Trace($"No {type} projects discovered to save configuration for");
+                    _logger.Trace($"No {type} projects discovered to save configuration for");
                     continue;
                 }
 
-                logger.Trace($"Save {type} -> {uri} configuration");
-                ignorePatterns.AddRange(specialManagers[type].IgnorePatterns);
+                _logger.Trace($"Save {type} -> {uri} configuration");
+                ignorePatterns.AddRange(_specialManagers[type].IgnorePatterns);
                 var typeConfiguration = new ProjectTypeConfiguration(
                     uri,
                     configuration.Token,
                     configuration.Types.FirstOrDefault(c => c.Type == type)
                 );
                 foreach (var project in targets)
-                    specialManagers[type].Save(project, typeConfiguration);
+                    _specialManagers[type].Save(project, typeConfiguration);
             }
 
-            logger.Trace($"Update ignore file in {folder}");
-            var ignoreFile = Path.Combine(folder, ConfigurationManager.ignoreFile);
+            _logger.Trace($"Update ignore file in {folder}");
+            var ignoreFile = Path.Combine(folder, ConfigurationManager.IgnoreFile);
 
             if (File.Exists(ignoreFile))
             {
                 var lines = File.ReadAllLines(ignoreFile).ToList();
-                if (lines.IndexOf(ignoreHeader) >= 0)
+                if (lines.IndexOf(IgnoreHeader) >= 0)
                 {
                     lines = lines.Where(line => !ignorePatterns.Contains(line)).ToList();
-                    var index = lines.IndexOf(ignoreHeader);
+                    var index = lines.IndexOf(IgnoreHeader);
                     lines.InsertRange(index + 1, ignorePatterns);
                 }
                 else
                 {
                     lines.Add(string.Empty);
-                    lines.Add(ignoreHeader);
+                    lines.Add(IgnoreHeader);
                     lines.AddRange(ignorePatterns);
                 }
 
@@ -118,7 +126,7 @@ namespace Xs.Tools
             }
             else
             {
-                File.WriteAllLines(ignoreFile, new[] { ignoreHeader }.Concat(ignorePatterns));
+                File.WriteAllLines(ignoreFile, new[] { IgnoreHeader }.Concat(ignorePatterns));
             }
 
             void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(folder), data);
@@ -126,12 +134,12 @@ namespace Xs.Tools
 
         public void Delete(string folder, IProject[] projects)
         {
-            Delete(ConfigurationFile);
-            Delete(CredentialsFile);
+            Delete(GetConfigurationFile);
+            Delete(GetCredentialsFile);
 
             foreach (var project in projects)
-                if (specialManagers.ContainsKey(project.Type))
-                    specialManagers[project.Type].Delete(project);
+                if (_specialManagers.ContainsKey(project.Type))
+                    _specialManagers[project.Type].Delete(project);
 
             void Delete(Func<string, string> resolve)
             {
@@ -140,18 +148,15 @@ namespace Xs.Tools
             }
         }
 
-        private string ConfigurationFile(string folder) => Path.Combine(folder, configurationFile);
+        private string GetConfigurationFile(string folder) => Path.Combine(folder, ConfigurationFile);
 
-        private string CredentialsFile(string folder) => Path.Combine(folder, credentialsFile);
+        private string GetCredentialsFile(string folder) => Path.Combine(folder, CredentialsFile);
 
         private class Config
         {
-            [DataMember(Order = 0)]
-            public Uri Registry { get; private set; } = new Uri("http://localhost");
-            [DataMember(Order = 1)]
-            public Dictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
-            [DataMember(Order = 2)]
-            public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();
+            [DataMember(Order = 0)] public Uri Registry { get; private set; } = new Uri("http://localhost");
+            [DataMember(Order = 1)] public Dictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
+            [DataMember(Order = 2)] public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();
         }
     }
 }

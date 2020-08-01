@@ -14,13 +14,14 @@ namespace Xs.Cli.Core
     {
         public override void Configure(IServiceCollection services)
         {
-            services.AddSingleton(new ConfigurationBuilder().AddCommandLineArgs().Build<LoggerConfiguration>());
+            services.AddConfiguration<LoggerConfiguration>(builder => builder.AddCommandLineArgs());
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
             services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
 
+            services.AddHttpRequestFactory();
             services.AddLogging(route => route
                 .For(BuildLogFilter(provider.GetRequiredService<LoggerConfiguration>()))
                 .UseConsole());
@@ -31,7 +32,7 @@ namespace Xs.Cli.Core
             services.AddSingleton<IProjectLinker, ProjectLinker>();
 
             // tasks
-            services.AddAssemblyTypes()
+            services.AddAssemblyTypes(GetType().Assembly)
                 .Where(x => x.Name.EndsWith("Task"))
                 .AsSelf()
                 .SingleInstance();

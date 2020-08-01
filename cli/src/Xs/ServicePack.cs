@@ -1,6 +1,5 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Annium.Core.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 using Xs.Tools;
 
@@ -8,12 +7,19 @@ namespace Xs
 {
     public class ServicePack : ServicePackBase
     {
+        public override void Configure(IServiceCollection services)
+        {
+            services.AddRuntimeTools(GetType().Assembly);
+            services.AddConfigurationBuilder();
+        }
+
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
+            services.AddMapper();
             services.AddArguments();
 
             // commands
-            services.AddAssemblyTypes()
+            services.AddAssemblyTypes(GetType().Assembly)
                 .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
                 .AsSelf()
                 .SingleInstance();
@@ -22,14 +28,6 @@ namespace Xs
             services.AddSingleton<IConfigurationManager, ConfigurationManager>();
             services.AddSingleton<ProjectsRunner>();
             services.AddSingleton<Watcher>();
-
-            Mapper.AddConfiguration(ConfigureProfile);
-        }
-
-        private void ConfigureProfile(Profile p)
-        {
-            p.Map<string, Cli.Core.Models.Version>(s => Cli.Core.Models.Version.Parse(s));
-            p.Map<string, Cli.Core.Models.ProjectType>(s => Cli.Core.Models.ProjectType.Get(s));
         }
     }
 }

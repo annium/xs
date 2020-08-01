@@ -7,14 +7,18 @@ namespace Xs.RegistryClient.Server
 {
     public class ServerClient : ClientBase
     {
-        public ServerClient()
-        {
+        private readonly IHttpRequestFactory _httpRequestFactory;
 
+        public ServerClient(
+            IHttpRequestFactory httpRequestFactory
+        )
+        {
+            _httpRequestFactory = httpRequestFactory;
         }
 
         public Task DeletePackageAsync(string token, string name, string version)
         {
-            return Http.Open(uri)
+            return _httpRequestFactory.Get(uri)
                 .Delete($"packages/{HttpUtility.UrlEncode(name)}/{version}")
                 .BearerAuthorization(token)
                 .EnsureSuccessStatusCode(response => $"Delete package failed with {response.StatusCode} ({response.StatusText}).")

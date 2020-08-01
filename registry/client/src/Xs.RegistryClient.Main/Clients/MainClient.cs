@@ -7,14 +7,18 @@ namespace Xs.RegistryClient.Main
 {
     public class MainClient : ClientBase
     {
-        public MainClient()
-        {
+        private readonly IHttpRequestFactory _httpRequestFactory;
 
+        public MainClient(
+            IHttpRequestFactory httpRequestFactory
+        )
+        {
+            _httpRequestFactory = httpRequestFactory;
         }
 
         public Task<string> LoginAsync(string name, string password)
         {
-            return Http.Open(uri)
+            return _httpRequestFactory.Get(uri)
                 .Post("login/app")
                 .JsonContent(new { name, password })
                 .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.StatusText}).")
@@ -23,7 +27,7 @@ namespace Xs.RegistryClient.Main
 
         public Task<Registry> GetRegistryInfoAsync()
         {
-            return Http.Open(uri)
+            return _httpRequestFactory.Get(uri)
                 .Get("registry")
                 .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.StatusText}).")
                 .AsAsync<Registry>();
@@ -31,7 +35,7 @@ namespace Xs.RegistryClient.Main
 
         public Task<MetaPackage[]> SearchAsync(string token, string type, string query)
         {
-            return Http.Open(uri)
+            return _httpRequestFactory.Get(uri)
                 .Get("packages/search")
                 .BearerAuthorization(token)
                 .Param("type", type)

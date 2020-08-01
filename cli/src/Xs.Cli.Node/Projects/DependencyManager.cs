@@ -15,6 +15,7 @@ namespace Xs.Cli.Node.Projects
     {
         public ProjectType Type { get; } = Constants.ProjectType;
         public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
+        private readonly IHttpRequestFactory _httpRequestFactory;
 
         private readonly HttpClient _client = new HttpClient(new HttpClientHandler()
         {
@@ -22,9 +23,16 @@ namespace Xs.Cli.Node.Projects
             MaxConnectionsPerServer = 16,
         });
 
+        public DependencyManager(
+            IHttpRequestFactory httpRequestFactory
+        )
+        {
+            _httpRequestFactory = httpRequestFactory;
+        }
+
         public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
         {
-            var request = Http.Open(serverUri)
+            var request = _httpRequestFactory.Get(serverUri)
                 .UseClient(_client)
                 .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()));
             if (accessToken != null)

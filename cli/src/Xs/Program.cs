@@ -54,12 +54,12 @@ namespace Xs
         }
 
         public static int Main(string[] args) => new Entrypoint()
+            .UseServicePack<ServicePack>()
             .UseServicePack<Xs.RegistryClient.Main.ServicePack>()
             .UseServicePack<Xs.RegistryClient.Server.ServicePack>()
             .UseServicePack<Cli.Core.ServicePack>()
             .UseServicePack<Cli.Dotnet.ServicePack>()
             .UseServicePack<Cli.Node.ServicePack>()
-            .UseServicePack<ServicePack>()
             .Run(Run, args);
     }
 }
