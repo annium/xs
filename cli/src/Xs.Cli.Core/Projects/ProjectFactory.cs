@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Xs.Cli.Core.Commands;
 
 namespace Xs.Cli.Core.Projects
 {
@@ -15,7 +14,7 @@ namespace Xs.Cli.Core.Projects
             _factories = factories;
         }
 
-        public ISpecialProjectFactory FindFactory(string directory)
+        public ISpecialProjectFactory ResolveFactory(string directory)
         {
             return _factories.FirstOrDefault(e => e.IsProjectDirectory(directory));
         }
@@ -24,14 +23,5 @@ namespace Xs.Cli.Core.Projects
         {
             return _factories.Any(e => e.IsProjectFile(file));
         }
-
-        public IProject CreateProject(
-            string directory,
-            ISpecialProjectFactory factory,
-            DiscoverConfiguration configuration
-        ) => factory.CreateProject(
-            directory,
-            configuration
-        );
     }
 }

@@ -68,7 +68,7 @@ namespace Xs.Cli.Core.Tasks
                     root,
                     directory =>
                     {
-                        var factory = _projectFactory.FindFactory(directory);
+                        var factory = _projectFactory.ResolveFactory(directory);
                         if (factory is null)
                             return false;
 
@@ -100,7 +100,7 @@ namespace Xs.Cli.Core.Tasks
             {
                 try
                 {
-                    var project = _projectFactory.CreateProject(directory, factory, configuration);
+                    var project = factory.CreateProject(directory, configuration);
                     projects.Add(project);
                     _logger.Debug($"{project.Type} {project} created at {directory}");
                 }
