@@ -16,7 +16,7 @@ namespace Xs.Cli.Core.Projects
         }
 
         public void PreLink(
-            IEnumerable<IProject> projects,
+            IReadOnlyCollection<IProject> projects,
             IReadOnlyDictionary<ProjectType, HashSet<Package>> packages,
             DiscoverConfiguration configuration,
             Action<Exception> addError
@@ -53,8 +53,8 @@ namespace Xs.Cli.Core.Projects
 
         public void Link(
             IProject project,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
+            IReadOnlyCollection<IProject> projects,
+            IReadOnlyCollection<Package> packages,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         )
