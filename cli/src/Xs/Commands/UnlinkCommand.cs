@@ -32,9 +32,9 @@ namespace Xs.Commands
         {
             discoverCfg.Roots = new[] { cfg.Target };
             var targets = _discoverTask.Run(discoverCfg).ToArray();
-            discoverCfg.Roots = new[] { cfg.Source, cfg.Target };
+            discoverCfg.Roots = new[] { cfg.Source };
             var sources = _discoverTask.Run(discoverCfg)
-                .Where(x => !targets.Any(t => t.File == x.File))
+                .Where(x => targets.All(t => t.File != x.File))
                 .ToArray();
             var version = cfg.Version;
 
