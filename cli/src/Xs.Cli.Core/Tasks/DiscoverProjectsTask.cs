@@ -33,11 +33,27 @@ namespace Xs.Cli.Core.Tasks
             _logger.Debug($"Start discovery of {string.Join(", ", roots)}.");
 
             var candidates = FindProjectCandidates(roots);
-
             var errors = new List<Exception>();
-
-            var projects = CreateProjects(candidates, configuration, errors.Add);
+            var projects = candidates
+                .Select(x => CreateProject(x.Key, x.Value, configuration, errors.Add)!)
+                .Where(x => x != null)
+                .ToList();
+            var directories = projects.Select(x => x.Directory).ToHashSet();
+            var result = projects.OrderBy(e => e.Name).ToArray();
             ThrowIfAnyErrors();
+
+            foreach (var project in result)
+                CollectProjects(
+                    directories,
+                    project,
+                    configuration,
+                    x =>
+                    {
+                        projects.Add(x);
+                        directories.Add(x.Directory);
+                    },
+                    errors.Add
+                );
 
             var types = projects.Select(p => p.Type).Distinct().ToArray();
 
@@ -47,7 +63,7 @@ namespace Xs.Cli.Core.Tasks
 
             _logger.Debug($"Discovery finished. Found {projects.Count} projects.");
 
-            return projects.OrderBy(e => e.Name).ToArray();
+            return result;
 
             void ThrowIfAnyErrors()
             {
@@ -86,37 +102,61 @@ namespace Xs.Cli.Core.Tasks
             return results;
         }
 
-        private HashSet<IProject> CreateProjects(
-            IReadOnlyDictionary<string, ISpecialProjectFactory> candidates,
+        private void CollectProjects(
+            IReadOnlyCollection<string> directories,
+            IProject project,
+            DiscoverConfiguration configuration,
+            Action<IProject> addProject,
+            Action<Exception> addError
+        )
+        {
+            _logger.Debug($"Discover {project} referenced projects.");
+            var lookupDirectories = project.Projects.Select(x => x.Value.Directory).ToArray();
+
+            foreach (var directory in lookupDirectories)
+            {
+                // project may have been already discovered
+                if (directories.Contains(directory))
+                    continue;
+
+                var factory = _projectFactory.ResolveFactory(directory);
+                if (factory is null)
+                {
+                    addError(new InvalidOperationException($"Can't find factory for project in {directory}"));
+                    continue;
+                }
+
+                var dependency = CreateProject(directory, factory, configuration, addError);
+                if (dependency != null)
+                {
+                    addProject(dependency);
+                    CollectProjects(directories, dependency, configuration, addProject, addError);
+                }
+            }
+        }
+
+        private IProject? CreateProject(
+            string directory,
+            ISpecialProjectFactory factory,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         )
         {
-            var projects = new HashSet<IProject>();
-
-            _logger.Debug("Start projects creation.");
-
-            foreach (var (directory, factory) in candidates)
+            try
             {
-                try
-                {
-                    var project = factory.CreateProject(directory, configuration);
-                    projects.Add(project);
-                    _logger.Debug($"{project.Type} {project} created at {directory}");
-                }
-                catch (Exception exception)
-                {
-                    addError(exception);
-                }
+                var project = factory.CreateProject(directory, configuration);
+                _logger.Debug($"{project.Type} {project} created at {directory}");
+                return project;
             }
-
-            _logger.Debug($"{projects.Count} project(s) created.");
-
-            return projects;
+            catch (Exception exception)
+            {
+                addError(exception);
+                return null;
+            }
         }
 
         private void LinkProjects(
-            HashSet<IProject> projects,
+            IReadOnlyCollection<IProject> projects,
             IReadOnlyDictionary<ProjectType, HashSet<Package>> packages,
             DiscoverConfiguration configuration,
             Action<Exception> addError,
