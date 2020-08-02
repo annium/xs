@@ -7,7 +7,7 @@ namespace Xs.Tools
     {
         Configuration Load(string folder);
 
-        void Save(string folder, IProject[] projects, Configuration configuration);
+        void Save(Configuration configuration, IProject[] projects);
 
         void Delete(string folder, IProject[] projects);
     }

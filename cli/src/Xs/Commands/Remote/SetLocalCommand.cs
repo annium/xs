@@ -41,7 +41,7 @@ namespace Xs.Commands.Remote
 
             var projects = _discoverTask.Run(discoverCfg).ToArray();
 
-            _configurationManager.Save(dir, projects, configuration);
+            _configurationManager.Save(configuration, projects);
 
             Console.WriteLine("Registry tracking started");
         }

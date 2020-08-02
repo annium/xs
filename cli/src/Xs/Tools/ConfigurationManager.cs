@@ -40,15 +40,17 @@ namespace Xs.Tools
         public Configuration Load(string folder)
         {
             _logger.Trace($"Load configuration from {folder}");
+            var directory = GetConfigurationFolder(new DirectoryInfo(folder));
 
-            var cfgFile = GetConfigurationFile(folder);
-            var credFile = GetCredentialsFile(folder);
-
-            if (!File.Exists(cfgFile))
+            if (directory is null)
             {
                 _logger.Trace($"Configuration missing in {folder}. Returning default");
                 return Configuration.Empty();
             }
+
+            _logger.Trace($"Loaded configuration from {directory}");
+            var cfgFile = GetConfigurationFile(directory.FullName);
+            var credFile = GetCredentialsFile(directory.FullName);
 
             var config = _configurationBuilderFactory()
                 .AddYamlFile(cfgFile)
@@ -57,16 +59,28 @@ namespace Xs.Tools
             _logger.Trace($"Configuration loaded from {folder}");
 
             return new Configuration(
+                directory.FullName,
                 config.Registry,
                 File.Exists(credFile) ? File.ReadAllText(credFile) : string.Empty,
                 config.Servers,
                 config.Types
             );
+
+            DirectoryInfo? GetConfigurationFolder(DirectoryInfo dir)
+            {
+                if (File.Exists(GetConfigurationFile(dir.FullName)))
+                    return dir;
+
+                if (dir.FullName == dir.Root.FullName)
+                    return null;
+
+                return GetConfigurationFolder(dir.Parent);
+            }
         }
 
-        public void Save(string folder, IProject[] projects, Configuration configuration)
+        public void Save(Configuration configuration, IProject[] projects)
         {
-            _logger.Trace($"Save configuration in {folder}");
+            _logger.Trace($"Save configuration in {configuration.Directory}");
             var cfg = _mapper.Map<Config>(configuration);
             Write(GetConfigurationFile, Yaml.Serializer.Serialize(cfg));
             Write(GetCredentialsFile, configuration.Token);
@@ -103,8 +117,8 @@ namespace Xs.Tools
                     _specialManagers[type].Save(project, typeConfiguration);
             }
 
-            _logger.Trace($"Update ignore file in {folder}");
-            var ignoreFile = Path.Combine(folder, IgnoreFile);
+            _logger.Trace($"Update ignore file in {configuration.Directory}");
+            var ignoreFile = Path.Combine(configuration.Directory, IgnoreFile);
 
             if (File.Exists(ignoreFile))
             {
@@ -129,7 +143,7 @@ namespace Xs.Tools
                 File.WriteAllLines(ignoreFile, new[] { IgnoreHeader }.Concat(ignorePatterns));
             }
 
-            void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(folder), data);
+            void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(configuration.Directory), data);
         }
 
         public void Delete(string folder, IProject[] projects)

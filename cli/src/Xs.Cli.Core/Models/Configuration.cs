@@ -9,6 +9,7 @@ namespace Xs.Cli.Core.Models
         public static Configuration Empty()
         {
             return new Configuration(
+                string.Empty,
                 new Uri("http://localhost"),
                 string.Empty,
                 new Dictionary<ProjectType, Uri>(),
@@ -16,18 +17,21 @@ namespace Xs.Cli.Core.Models
             );
         }
 
+        public string Directory { get; }
         public Uri Registry { get; private set; }
         public string Token { get; private set; }
         public IReadOnlyDictionary<ProjectType, Uri> Servers { get; private set; }
         public SpecialConfiguration[] Types { get; private set; }
 
         public Configuration(
+            string directory,
             Uri registry,
             string token,
             IReadOnlyDictionary<ProjectType, Uri> servers,
             SpecialConfiguration[] types
         )
         {
+            Directory = directory;
             Registry = registry;
             Token = token;
             Servers = servers;
