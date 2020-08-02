@@ -10,6 +10,7 @@ using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Core.Projects
 {
@@ -17,30 +18,30 @@ namespace Xs.Cli.Core.Projects
     {
         public ProjectType Type { get; }
         public string Name { get; private set; }
-        public Models.Version Version { get; private set; }
+        public Version Version { get; private set; }
         public string Description { get; private set; }
         public string Directory { get; private set; }
         public abstract string File { get; }
         public HashSet<Dependency<IProject>> Projects { get; }
         public HashSet<Dependency<Package>> Packages { get; }
-        protected readonly IShell shell;
-        protected readonly LoggerConfiguration loggerConfiguration;
-        protected readonly ILogger<ProjectBase<TProject>> logger;
-        private string currentDirectory;
-        private string currentName;
+        protected readonly IShell Shell;
+        protected readonly LoggerConfiguration LoggerConfiguration;
+        protected readonly ILogger<ProjectBase<TProject>> Logger;
+        private string _currentDirectory;
+        private string _currentName;
 
         protected ProjectBase(ProjectBaseContext<TProject> context)
         {
             Type = context.Type;
-            Name = currentName = context.Name;
+            Name = _currentName = context.Name;
             Version = context.Version;
             Description = context.Description;
-            Directory = currentDirectory = context.Directory;
+            Directory = _currentDirectory = context.Directory;
             Projects = context.Projects;
             Packages = context.Packages;
-            shell = context.Shell;
-            loggerConfiguration = context.LoggerConfiguration;
-            logger = context.Logger;
+            Shell = context.Shell;
+            LoggerConfiguration = context.LoggerConfiguration;
+            Logger = context.Logger;
         }
 
         public void SetName(string name)
@@ -49,7 +50,7 @@ namespace Xs.Cli.Core.Projects
             Directory = FixProjectDirectory(Directory);
         }
 
-        public void SetVersion(Models.Version version)
+        public void SetVersion(Version version)
         {
             Version = version;
         }
@@ -73,7 +74,7 @@ namespace Xs.Cli.Core.Projects
         public void Save()
         {
             // sync directory
-            if (Directory != currentDirectory)
+            if (Directory != _currentDirectory)
             {
                 // ensure target doesn't exist
                 if (SysDirectory.Exists(Directory) || SysFile.Exists(Directory))
@@ -83,23 +84,23 @@ namespace Xs.Cli.Core.Projects
                 var parentDirectory = Path.GetDirectoryName(Directory);
                 if (!SysDirectory.Exists(parentDirectory))
                 {
-                    logger.Trace($"Create {Name} missing target parent directory {parentDirectory}");
+                    Logger.Trace($"Create {Name} missing target parent directory {parentDirectory}");
                     SysDirectory.CreateDirectory(parentDirectory);
                 }
 
-                logger.Debug($"Move {Name} to {Directory}");
+                Logger.Debug($"Move {Name} to {Directory}");
 
-                SysDirectory.Move(currentDirectory, Directory);
+                SysDirectory.Move(_currentDirectory, Directory);
 
-                currentDirectory = Directory;
+                _currentDirectory = Directory;
             }
 
             // sync name
-            if (Name != currentName)
+            if (Name != _currentName)
             {
-                OnNameChangeSave(currentName, Name);
+                OnNameChangeSave(_currentName, Name);
 
-                currentName = Name;
+                _currentName = Name;
             }
 
             // call implementation-specific save logic
@@ -131,16 +132,17 @@ namespace Xs.Cli.Core.Projects
 
         protected async Task RunAsync(string operation, string command, CancellationToken token)
         {
-            logger.Info($"Start {Name} {operation}.");
+            Logger.Info($"Start {Name} {operation}.");
 
-            var result = await shell
+            var result = await Shell
                 .Cmd(command)
-                .Configure(new ProcessStartInfo() { WorkingDirectory = Directory })
-                .Pipe((LogLevel) loggerConfiguration <= LogLevel.Debug)
+                .Configure(new ProcessStartInfo
+                    { WorkingDirectory = Directory })
+                .Pipe((LogLevel) LoggerConfiguration <= LogLevel.Debug)
                 .RunAsync(token);
 
             if (result.IsSuccess)
-                logger.Info($"Finished {Name} {operation}.");
+                Logger.Info($"Finished {Name} {operation}.");
             else
                 throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
         }

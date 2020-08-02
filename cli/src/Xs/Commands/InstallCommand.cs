@@ -15,9 +15,9 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "install";
         public override string Description { get; } = "Install projects' dependencies.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ProjectsRunner runner;
-        private readonly ILogger<InstallCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ProjectsRunner _runner;
+        private readonly ILogger<InstallCommand> _logger;
 
         public InstallCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,9 +25,9 @@ namespace Xs.Commands
             ILogger<InstallCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.runner = runner;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _runner = runner;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -38,15 +38,15 @@ namespace Xs.Commands
         {
             var force = cfg.Force;
 
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToArray();
 
             if (force)
             {
-                logger.Debug($"Clear {projects.Length} projects cache.");
-                await runner.RunAsync(
+                _logger.Debug($"Clear {projects.Length} projects cache.");
+                await _runner.RunAsync(
                     projects.OfType<ICachingProject>(),
                     (project, tkn) => project.ClearCacheAsync(tkn),
                     cfg.Deep,
@@ -54,8 +54,8 @@ namespace Xs.Commands
                 );
             }
 
-            logger.Debug($"Install {projects.Length} projects.");
-            await runner.RunAsync(
+            _logger.Debug($"Install {projects.Length} projects.");
+            await _runner.RunAsync(
                 projects.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(force, tkn),
                 cfg.Deep,

@@ -23,7 +23,7 @@ namespace Xs.Cli.Core.Commands
 
             var exactMatch = list.FirstOrDefault(i => getName(i).Equals(mask, comparison));
             if (exactMatch != null && !exactMatch.Equals(default(T) !))
-                return new T[] { exactMatch };
+                return new[] { exactMatch };
 
             return list.Where(p => getName(p).Contains(mask, comparison));
         }

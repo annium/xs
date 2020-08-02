@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Xs.Cli.Core.Models;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Core.Projects
 {
@@ -8,7 +9,7 @@ namespace Xs.Cli.Core.Projects
     {
         public ProjectType Type { get; } = Constants.MockProjectType;
         public string Name { get; private set; }
-        public Models.Version Version { get; private set; }
+        public Version Version { get; private set; }
         public string Description { get; private set; }
         public string Directory { get; private set; }
         public string File { get; private set; }
@@ -17,7 +18,7 @@ namespace Xs.Cli.Core.Projects
 
         public ProjectMock(
             string name,
-            Models.Version version,
+            Version version,
             string description,
             string directory,
             string file
@@ -42,7 +43,7 @@ namespace Xs.Cli.Core.Projects
         public void SetName(string name) =>
             throw new NotImplementedException();
 
-        public void SetVersion(Models.Version version) =>
+        public void SetVersion(Version version) =>
             throw new NotImplementedException();
 
         public override string ToString() => Name;

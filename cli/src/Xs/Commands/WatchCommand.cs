@@ -20,22 +20,22 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "watch";
         public override string Description { get; } = "Watch projects' changes and install/build/test on fly.";
-        private readonly IProjectFactory projectFactory;
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ProjectsRunner runner;
-        private readonly Watcher watcher;
-        private readonly IShell shell;
-        private readonly ILogger<WatchCommand> logger;
-        private readonly LoggerConfiguration loggerConfiguration;
-        private string mask = string.Empty;
-        private ProjectType type = ProjectType.None;
-        private string command = string.Empty;
-        private bool force;
-        private bool runTests;
-        private string testFilter = string.Empty;
-        private DiscoverConfiguration discoverCfg = new DiscoverConfiguration();
-        private CancellationToken token;
-        private IProject[] projects = Array.Empty<IProject>();
+        private readonly IProjectFactory _projectFactory;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ProjectsRunner _runner;
+        private readonly Watcher _watcher;
+        private readonly IShell _shell;
+        private readonly ILogger<WatchCommand> _logger;
+        private readonly LoggerConfiguration _loggerConfiguration;
+        private string _mask = string.Empty;
+        private ProjectType _type = ProjectType.None;
+        private string _command = string.Empty;
+        private bool _force;
+        private bool _runTests;
+        private string _testFilter = string.Empty;
+        private DiscoverConfiguration _discoverCfg = new DiscoverConfiguration();
+        private CancellationToken _token;
+        private IProject[] _projects = Array.Empty<IProject>();
 
         public WatchCommand(
             IProjectFactory projectFactory,
@@ -47,13 +47,13 @@ namespace Xs.Commands
             LoggerConfiguration loggerConfiguration
         )
         {
-            this.projectFactory = projectFactory;
-            this.discoverTask = discoverTask;
-            this.runner = runner;
-            this.watcher = watcher;
-            this.shell = shell;
-            this.logger = logger;
-            this.loggerConfiguration = loggerConfiguration;
+            _projectFactory = projectFactory;
+            _discoverTask = discoverTask;
+            _runner = runner;
+            _watcher = watcher;
+            _shell = shell;
+            _logger = logger;
+            _loggerConfiguration = loggerConfiguration;
         }
 
         public override async Task HandleAsync(
@@ -62,34 +62,34 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            mask = cfg.Mask;
-            type = cfg.Type;
-            command = cfg.Command;
-            force = cfg.Force;
-            runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
-            testFilter = cfg.TestFilter;
-            this.discoverCfg = discoverCfg;
-            this.token = token;
+            _mask = cfg.Mask;
+            _type = cfg.Type;
+            _command = cfg.Command;
+            _force = cfg.Force;
+            _runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
+            _testFilter = cfg.TestFilter;
+            _discoverCfg = discoverCfg;
+            _token = token;
 
             Discover();
 
-            if (string.IsNullOrWhiteSpace(command))
-                await watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChange, HandleDelete, token);
+            if (string.IsNullOrWhiteSpace(_command))
+                await _watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChange, HandleDelete, token);
             else
-                await watcher.WatchAsync(discoverCfg.Root, FilterChange, CallCommand, CallCommand, token);
+                await _watcher.WatchAsync(discoverCfg.Root, FilterChange, CallCommand, CallCommand, token);
         }
 
         private bool FilterChange(string path) =>
-            projectFactory.IsProjectFile(path) || projects.Any(e => e.IsRelated(path));
+            _projectFactory.IsProjectFile(path) || _projects.Any(e => e.IsRelated(path));
 
         private async Task HandleChange(string path)
         {
-            var isProjectFile = projectFactory.IsProjectFile(path);
+            var isProjectFile = _projectFactory.IsProjectFile(path);
             IProject project;
 
             if (isProjectFile)
             {
-                logger.Info($"Changed project file: {path}");
+                _logger.Info($"Changed project file: {path}");
                 Discover();
 
                 project = GetProjectByPath(path);
@@ -101,13 +101,13 @@ namespace Xs.Commands
             if (project == null)
                 return;
 
-            logger.Info($"Changed {project} related file: {path}");
+            _logger.Info($"Changed {project} related file: {path}");
 
             await BuildAsync(project, includeSelf: true);
-            if (runTests)
+            if (_runTests)
                 await TestAsync(project, includeSelf: true);
 
-            logger.Info($"Done.");
+            _logger.Info($"Done.");
         }
 
         private async Task HandleDelete(string path)
@@ -117,7 +117,7 @@ namespace Xs.Commands
 
             if (isProjectFile)
             {
-                logger.Info($"Deleted project file: {path}");
+                _logger.Info($"Deleted project file: {path}");
                 Discover();
 
                 await InstallAsync(project!, includeSelf: false);
@@ -128,23 +128,23 @@ namespace Xs.Commands
             if (project == null)
                 return;
 
-            logger.Info($"Deleted {project} related file: {path}");
+            _logger.Info($"Deleted {project} related file: {path}");
 
             await BuildAsync(project, includeSelf: !isProjectFile);
-            if (runTests)
+            if (_runTests)
                 await TestAsync(project, includeSelf: !isProjectFile);
 
-            logger.Info($"Done.");
+            _logger.Info($"Done.");
         }
 
         private Task InstallAsync(IProject project, bool includeSelf) =>
-            ExecuteAsync<IInstallableProject>(project, (p, t) => p.InstallAsync(force, t), includeSelf);
+            ExecuteAsync<IInstallableProject>(project, (p, t) => p.InstallAsync(_force, t), includeSelf);
 
         private Task BuildAsync(IProject project, bool includeSelf) =>
-            ExecuteAsync<IBuildableProject>(project, (p, t) => p.BuildAsync(Env.Development, force, t), includeSelf);
+            ExecuteAsync<IBuildableProject>(project, (p, t) => p.BuildAsync(Env.Development, _force, t), includeSelf);
 
         private Task TestAsync(IProject project, bool includeSelf) =>
-            ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, testFilter, t), includeSelf);
+            ExecuteAsync<ITestableProject>(project, (p, t) => p.TestAsync(Env.Development, _testFilter, t), includeSelf);
 
         private async Task ExecuteAsync<TProject>(
             IProject project,
@@ -156,7 +156,7 @@ namespace Xs.Commands
             var selected = CollectDependants(project, includeSelf).OfType<TProject>().ToArray();
 
             if (selected.Length > 0)
-                await runner.RunAsync(selected, handle, false, token);
+                await _runner.RunAsync(selected, handle, false, _token);
         }
 
         private IEnumerable<IProject> CollectDependants(IProject project, bool includeSelf)
@@ -165,7 +165,7 @@ namespace Xs.Commands
             if (includeSelf)
                 list.Add(project);
 
-            var dependants = projects.Where(candidate => candidate.Projects.Any(d => d.Value == project)).ToArray();
+            var dependants = _projects.Where(candidate => candidate.Projects.Any(d => d.Value == project)).ToArray();
             foreach (var dependant in dependants)
                 list.AddRange(CollectDependants(dependant, true));
 
@@ -174,17 +174,17 @@ namespace Xs.Commands
 
         private Task CallCommand(string path)
         {
-            var result = shell
-                .Cmd(command.Replace("%", path))
-                .Pipe((LogLevel) loggerConfiguration <= LogLevel.Debug)
+            var result = _shell
+                .Cmd(_command.Replace("%", path))
+                .Pipe((LogLevel) _loggerConfiguration <= LogLevel.Debug)
                 .Start();
 
-            Task.Run(() => pipe(result.Output));
-            Task.Run(() => pipe(result.Error));
+            Task.Run(() => Pipe(result.Output));
+            Task.Run(() => Pipe(result.Error));
 
             return result.Result;
 
-            static void pipe(StreamReader src)
+            static void Pipe(StreamReader src)
             {
                 while (!src.EndOfStream)
                     Console.WriteLine(src.ReadLine());
@@ -193,21 +193,21 @@ namespace Xs.Commands
 
         private void Discover()
         {
-            var allProjects = discoverTask.Run(discoverCfg).OrderByDescending(p => p.Name.Length).ToArray();
+            var allProjects = _discoverTask.Run(_discoverCfg).OrderByDescending(p => p.Name.Length).ToArray();
             var targets = allProjects
-                .FilterMask(mask)
-                .FilterType(type)
+                .FilterMask(_mask)
+                .FilterType(_type)
                 .ToArray();
 
             var result = new HashSet<IProject>();
             foreach (var project in targets)
                 CollectTargets(project, result);
 
-            projects = result.ToArray();
+            _projects = result.ToArray();
 
-            logger.Debug($"Discovered {projects.Length} project(s) to watch:");
-            foreach (var project in projects)
-                logger.Debug(project.Name);
+            _logger.Debug($"Discovered {_projects.Length} project(s) to watch:");
+            foreach (var project in _projects)
+                _logger.Debug(project.Name);
         }
 
         private void CollectTargets(IProject project, HashSet<IProject> targets)
@@ -221,9 +221,9 @@ namespace Xs.Commands
                 CollectTargets(dependency, targets);
         }
 
-        private IProject GetProjectByPath(string path) => projects.FirstOrDefault(e => e.File == path);
+        private IProject GetProjectByPath(string path) => _projects.FirstOrDefault(e => e.File == path);
 
-        private IProject GetProjectByRelatedPath(string path) => projects.FirstOrDefault(e => e.IsRelated(path));
+        private IProject GetProjectByRelatedPath(string path) => _projects.FirstOrDefault(e => e.IsRelated(path));
     }
 
     internal class WatchCommandConfiguration

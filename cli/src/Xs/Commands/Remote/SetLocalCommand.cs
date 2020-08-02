@@ -13,16 +13,16 @@ namespace Xs.Commands.Remote
     {
         public override string Id { get; } = "set-local";
         public override string Description { get; } = "Set local registry.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly IConfigurationManager configurationManager;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly IConfigurationManager _configurationManager;
 
         public SetLocalCommand(
             DiscoverProjectsTask discoverTask,
             IConfigurationManager configurationManager
         )
         {
-            this.discoverTask = discoverTask;
-            this.configurationManager = configurationManager;
+            _discoverTask = discoverTask;
+            _configurationManager = configurationManager;
         }
 
         public override void Handle(
@@ -34,14 +34,14 @@ namespace Xs.Commands.Remote
             var location = cfg.Registry;
             var dir = discoverCfg.Root;
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = _configurationManager.Load(dir);
             configuration.SetRegistry(location);
             configuration.SetToken(string.Empty);
             configuration.SetServers(ProjectType.List().ToDictionary(type => type, type => location));
 
-            var projects = discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.Run(discoverCfg).ToArray();
 
-            configurationManager.Save(dir, projects, configuration);
+            _configurationManager.Save(dir, projects, configuration);
 
             Console.WriteLine("Registry tracking started");
         }

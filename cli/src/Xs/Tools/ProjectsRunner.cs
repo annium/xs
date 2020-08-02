@@ -10,13 +10,13 @@ namespace Xs.Tools
 {
     internal class ProjectsRunner
     {
-        private readonly ILogger<ProjectsRunner> logger;
+        private readonly ILogger<ProjectsRunner> _logger;
 
         public ProjectsRunner(
             ILogger<ProjectsRunner> logger
         )
         {
-            this.logger = logger;
+            _logger = logger;
         }
 
         public Task RunAsync<TProject>(
@@ -40,7 +40,7 @@ namespace Xs.Tools
             var running = new List<TProject>();
             var errors = new List<Exception>();
 
-            logger.Trace($"Start run with {pending.Count} project(s).");
+            _logger.Trace($"Start run with {pending.Count} project(s).");
 
             while (pending.Count > 0)
             {
@@ -59,7 +59,7 @@ namespace Xs.Tools
                     if (running.Count == 0 && starting.Length == 0)
                         throw new InvalidOperationException($"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run.");
 
-                    logger.Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine,starting.Select(e => e.Name))}");
+                    _logger.Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine,starting.Select(e => e.Name))}");
 
                     running.AddRange(starting);
                 }
@@ -70,7 +70,7 @@ namespace Xs.Tools
                     {
                         try
                         {
-                            logger.Trace($"Starting run for {project}");
+                            _logger.Trace($"Starting run for {project}");
 
                             // handle project
                             await handle(project, token);
@@ -78,7 +78,7 @@ namespace Xs.Tools
                             // if succeed - remove from pending
                             lock(locker) pending.Remove(project);
 
-                            logger.Trace($"Finished run for {project}");
+                            _logger.Trace($"Finished run for {project}");
                         }
                         catch (Exception e)
                         when(e is TaskCanceledException || e is OperationCanceledException)
@@ -86,7 +86,7 @@ namespace Xs.Tools
                             // if canceled - clear pending
                             lock(locker) pending.Clear();
 
-                            logger.Trace($"Cancelled run for {project}");
+                            _logger.Trace($"Cancelled run for {project}");
                         }
                         catch (Exception exception)
                         {
@@ -94,14 +94,14 @@ namespace Xs.Tools
                             errors.Add(exception);
                             lock(locker) pending.Clear();
 
-                            logger.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
+                            _logger.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
                         }
                         finally
                         {
                             // remove from running ones
                             lock(locker) running.Remove(project);
 
-                            logger.Trace($"Finalized run for {project}. Signal.");
+                            _logger.Trace($"Finalized run for {project}. Signal.");
 
                             // signal for next iteration
                             gate.Set();
@@ -109,12 +109,12 @@ namespace Xs.Tools
                     });
 
                 // wait for next iteration
-                logger.Trace("Waiting for a signal.");
+                _logger.Trace("Waiting for a signal.");
                 gate.Wait();
                 gate.Reset();
             }
 
-            logger.Trace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
+            _logger.Trace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
 
             if (errors.Count > 0)
                 throw new AggregateException(errors);

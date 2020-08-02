@@ -13,16 +13,16 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "link";
         public override string Description { get; } = "Link project <-> package dependencies.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ILogger<UseCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ILogger<UseCommand> _logger;
 
         public LinkCommand(
             DiscoverProjectsTask discoverTask,
             ILogger<UseCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -32,11 +32,11 @@ namespace Xs.Commands
         )
         {
             discoverCfg.Roots = new[] { cfg.Source };
-            var sources = discoverTask.Run(discoverCfg).ToArray();
+            var sources = _discoverTask.Run(discoverCfg).ToArray();
             discoverCfg.Roots = new[] { cfg.Target };
-            var targets = discoverTask.Run(discoverCfg).ToArray();
+            var targets = _discoverTask.Run(discoverCfg).ToArray();
 
-            logger.Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
+            _logger.Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
 
             foreach (var src in sources)
             {
@@ -55,13 +55,13 @@ namespace Xs.Commands
                 foreach (var (package, project) in externalDependencies)
                 {
                     // otherwise - it's external and it's reference is converted to project
-                    logger.Trace($"Update {src}: replace {package} with {project}.");
+                    _logger.Trace($"Update {src}: replace {package} with {project}.");
 
                     src.Packages.Remove(package);
                     src.Projects.Add(new Dependency<IProject>(package.Type, project));
                 }
 
-                logger.Debug($"Updated {src}.");
+                _logger.Debug($"Updated {src}.");
 
                 src.Save();
             }

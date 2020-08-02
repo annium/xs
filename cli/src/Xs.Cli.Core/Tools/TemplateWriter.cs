@@ -14,10 +14,9 @@ namespace Xs.Cli.Core.Tools
     internal class TemplateWriter : ITemplateWriter
     {
         private const string TemplateExtension = "tpl";
-        private readonly ILogger<TemplateWriter> logger;
-        private string root = Directory.GetCurrentDirectory();
-        private string[] extensions = new string[]
-        {
+        private readonly ILogger<TemplateWriter> _logger;
+        private string _root = Directory.GetCurrentDirectory();
+        private string[] _extensions = {
             "conf",
             "cs",
             "cshtml",
@@ -40,24 +39,24 @@ namespace Xs.Cli.Core.Tools
             "ts",
             "tsx"
         };
-        private IList<Resource> resources = new List<Resource>();
+        private IList<Resource> _resources = new List<Resource>();
 
         public TemplateWriter(
             ILogger<TemplateWriter> logger
         )
         {
-            this.logger = logger;
+            _logger = logger;
         }
 
         public void LoadResources(string prefix)
         {
-            resources = ResourceLoader.Load(prefix, Assembly.GetCallingAssembly()).ToList();
+            _resources = ResourceLoader.Load(prefix, Assembly.GetCallingAssembly()).ToList();
         }
 
         public void SetRoot(string root)
         {
             Directory.CreateDirectory(root);
-            this.root = root;
+            _root = root;
         }
 
         public void AddExtensions(params string[] extensions)
@@ -66,18 +65,18 @@ namespace Xs.Cli.Core.Tools
                 if (string.IsNullOrWhiteSpace(extension) || extension.Trim() != extension)
                     throw new ArgumentException("Extension must be non - empty untrimmable string ");
 
-            this.extensions = this.extensions.Concat(extensions).ToArray();
+            _extensions = _extensions.Concat(extensions).ToArray();
         }
 
         public void Write(string resourceName, string fileName, object data)
         {
-            var path = Path.GetFullPath(Path.Combine(root, fileName));
+            var path = Path.GetFullPath(Path.Combine(_root, fileName));
             Directory.CreateDirectory(Directory.GetParent(path).FullName);
 
-            var resource = resources.First(r => r.Name == resourceName);
+            var resource = _resources.First(r => r.Name == resourceName);
             if (resourceName.EndsWith(TemplateExtension))
             {
-                logger.Trace($"Write template {resourceName} -> {path}");
+                _logger.Trace($"Write template {resourceName} -> {path}");
                 var scriptObject = new ScriptObject();
                 scriptObject.Import(data);
                 scriptObject.Import(typeof(StringExtensions));
@@ -89,35 +88,35 @@ namespace Xs.Cli.Core.Tools
             }
             else
             {
-                logger.Trace($"Write as is {resourceName} -> {path}");
+                _logger.Trace($"Write as is {resourceName} -> {path}");
                 using var fs = File.Create(path);
                 resource.Content.CopyTo(fs);
             }
 
-            resources.Remove(resource);
+            _resources.Remove(resource);
         }
 
         public void WriteAll(object data)
         {
-            foreach (var name in resources.ToArray().Select(r => r.Name))
-                Write(name, toPath(stripExtension(name, TemplateExtension)), data);
+            foreach (var name in _resources.ToArray().Select(r => r.Name))
+                Write(name, ToPath(StripExtension(name, TemplateExtension)), data);
 
-            string toPath(string name)
+            string ToPath(string name)
             {
-                var extension = extensions
-                    .Where(ext => endsWithExtension(name, ext))
+                var extension = _extensions
+                    .Where(ext => EndsWithExtension(name, ext))
                     .OrderByDescending(ext => ext.Length)
                     .FirstOrDefault();
 
                 if (extension == null)
                     return Path.Combine(name.Split('.'));
 
-                return Path.Combine(stripExtension(name, extension).Split('.')) + $".{extension}";
+                return Path.Combine(StripExtension(name, extension).Split('.')) + $".{extension}";
             }
 
-            static string stripExtension(string name, string extension)
+            static string StripExtension(string name, string extension)
             {
-                if (!endsWithExtension(name, extension))
+                if (!EndsWithExtension(name, extension))
                     return name;
 
                 if (name.Length == extension.Length)
@@ -126,7 +125,7 @@ namespace Xs.Cli.Core.Tools
                 return name.Substring(0, name.Length - extension.Length - 1);
             }
 
-            static bool endsWithExtension(string name, string extension)
+            static bool EndsWithExtension(string name, string extension)
             {
                 if (!name.EndsWith(extension))
                     return false;
@@ -142,9 +141,9 @@ namespace Xs.Cli.Core.Tools
 
         public void EnsureAllWritten()
         {
-            if (resources.Count > 0)
+            if (_resources.Count > 0)
                 throw new InvalidOperationException(
-                    $"{resources.Count} not written:{Environment.NewLine}{string.Join(Environment.NewLine, resources.Select(r => r.Name))}"
+                    $"{_resources.Count} not written:{Environment.NewLine}{string.Join(Environment.NewLine, _resources.Select(r => r.Name))}"
                 );
         }
     }

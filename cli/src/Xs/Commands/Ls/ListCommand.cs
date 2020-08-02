@@ -15,13 +15,13 @@ namespace Xs.Commands.Ls
     {
         public override string Id { get; } = "";
         public override string Description { get; } = "List projects.";
-        private readonly DiscoverProjectsTask discoverTask;
+        private readonly DiscoverProjectsTask _discoverTask;
 
         public ListCommand(
             DiscoverProjectsTask discoverTask
         )
         {
-            this.discoverTask = discoverTask;
+            _discoverTask = discoverTask;
         }
 
         public override void Handle(
@@ -30,7 +30,7 @@ namespace Xs.Commands.Ls
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToList();

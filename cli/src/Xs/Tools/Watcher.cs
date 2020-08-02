@@ -10,16 +10,16 @@ namespace Xs.Tools
 {
     internal class Watcher
     {
-        private readonly Func<Instant> getInstant;
-        private readonly ILogger<Watcher> logger;
+        private readonly Func<Instant> _getInstant;
+        private readonly ILogger<Watcher> _logger;
 
         public Watcher(
             Func<Instant> getInstant,
             ILogger<Watcher> logger
         )
         {
-            this.getInstant = getInstant;
-            this.logger = logger;
+            _getInstant = getInstant;
+            _logger = logger;
         }
 
         public async Task WatchAsync(
@@ -30,7 +30,7 @@ namespace Xs.Tools
             CancellationToken token
         )
         {
-            var semaphore = new PathSemaphore(getInstant, Duration.FromMilliseconds(100));
+            var semaphore = new PathSemaphore(_getInstant, Duration.FromMilliseconds(100));
             var tasks = new Queue<ValueTuple<Func<string, Task>, string>>();
 
             using var watcher = new FileSystemWatcher(root);
@@ -44,7 +44,7 @@ namespace Xs.Tools
             watcher.Renamed += (sender, args) => { AddTask(args.OldFullPath); AddTask(args.FullPath); };
             watcher.Changed += (sender, args) => AddTask(args.FullPath);
             watcher.Deleted += (sender, args) => AddTask(args.FullPath);
-            watcher.Error += (sender, args) => logger.Error(args.GetException());
+            watcher.Error += (sender, args) => _logger.Error(args.GetException());
 
             // no tasks -> reset -> wait
             // add task -> set
@@ -55,11 +55,11 @@ namespace Xs.Tools
                 gate.Reset();
                 if (tasks.Count == 0)
                 {
-                    logger.Trace("Wait for tasks.");
+                    _logger.Trace("Wait for tasks.");
                     gate.Wait(token);
                 }
 
-                logger.Trace($"Pending {tasks.Count} task(s).");
+                _logger.Trace($"Pending {tasks.Count} task(s).");
                 // get and execute task
                 var(task, path) = tasks.Dequeue();
                 try
@@ -69,7 +69,7 @@ namespace Xs.Tools
                 catch (OperationCanceledException) { }
                 catch (Exception exception)
                 {
-                    logger.Error(exception);
+                    _logger.Error(exception);
                 }
             }
 
@@ -79,7 +79,7 @@ namespace Xs.Tools
                     return;
 
                 var task = File.Exists(path) ? handleChange : handleDelete;
-                logger.Trace($"Enqueue task for {path}");
+                _logger.Trace($"Enqueue task for {path}");
                 tasks.Enqueue((task, path));
                 gate.Set();
             }
@@ -87,28 +87,28 @@ namespace Xs.Tools
 
         private class PathSemaphore
         {
-            private readonly IDictionary<string, Instant> data = new Dictionary<string, Instant>();
+            private readonly IDictionary<string, Instant> _data = new Dictionary<string, Instant>();
 
-            private readonly Func<Instant> getInstant;
+            private readonly Func<Instant> _getInstant;
 
-            private readonly Duration duration;
+            private readonly Duration _duration;
 
             public PathSemaphore(Func<Instant> getInstant, Duration duration)
             {
-                this.getInstant = getInstant;
-                this.duration = duration;
+                _getInstant = getInstant;
+                _duration = duration;
             }
 
             public bool IsAvailable(string path)
             {
-                var now = getInstant();
+                var now = _getInstant();
 
                 // if cached, and not yet expired - it's not available
-                if (data.ContainsKey(path) && data[path] >= now)
+                if (_data.ContainsKey(path) && _data[path] >= now)
                     return false;
 
                 // else, if not used yet, or expired - it's available
-                data[path] = getInstant() + duration;
+                _data[path] = _getInstant() + _duration;
 
                 return true;
             }

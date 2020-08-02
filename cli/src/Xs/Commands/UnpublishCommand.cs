@@ -18,11 +18,11 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "unpublish";
         public override string Description { get; } = "Unpublish package from registry.";
-        private readonly IConfigurationManager configurationManager;
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ProjectsRunner runner;
-        private readonly ServerClientFactory serverClientFactory;
-        private readonly ILogger<UnpublishCommand> logger;
+        private readonly IConfigurationManager _configurationManager;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ProjectsRunner _runner;
+        private readonly ServerClientFactory _serverClientFactory;
+        private readonly ILogger<UnpublishCommand> _logger;
 
         public UnpublishCommand(
             IConfigurationManager configurationManager,
@@ -32,11 +32,11 @@ namespace Xs.Commands
             ILogger<UnpublishCommand> logger
         )
         {
-            this.configurationManager = configurationManager;
-            this.discoverTask = discoverTask;
-            this.runner = runner;
-            this.serverClientFactory = serverClientFactory;
-            this.logger = logger;
+            _configurationManager = configurationManager;
+            _discoverTask = discoverTask;
+            _runner = runner;
+            _serverClientFactory = serverClientFactory;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -45,18 +45,18 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var configuration = configurationManager.Load(discoverCfg.Root);
+            var configuration = _configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to unpublish.");
 
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .OfType<IPublishableProject>()
                 .ToArray();
 
             if (projects.Length == 0)
             {
-                logger.Info($"No projects found unpublish.");
+                _logger.Info($"No projects found unpublish.");
                 return;
             }
 
@@ -64,13 +64,13 @@ namespace Xs.Commands
             foreach (var type in projects.Select(p => p.Type).Distinct())
             {
                 if (configuration.Servers.ContainsKey(type))
-                    clients[type] = serverClientFactory.Create(configuration.Servers[type]);
+                    clients[type] = _serverClientFactory.Create(configuration.Servers[type]);
                 else
                     throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
             }
 
-            logger.Debug($"Unpublish {projects.Length} projects.");
-            await runner.RunAsync(
+            _logger.Debug($"Unpublish {projects.Length} projects.");
+            await _runner.RunAsync(
                 projects,
                 (project, tkn) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
                 cfg.Deep,

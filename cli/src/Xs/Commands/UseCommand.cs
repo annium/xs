@@ -13,10 +13,10 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "use";
         public override string Description { get; } = "Set dependency in projects to specific version.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly AddPackageDependencyTask addPackageDependencyTask;
-        private readonly DeletePackageDependencyTask deletePackageDependencyTask;
-        private readonly ILogger<UseCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly AddPackageDependencyTask _addPackageDependencyTask;
+        private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
+        private readonly ILogger<UseCommand> _logger;
 
         public UseCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,10 +25,10 @@ namespace Xs.Commands
             ILogger<UseCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.addPackageDependencyTask = addPackageDependencyTask;
-            this.deletePackageDependencyTask = deletePackageDependencyTask;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _addPackageDependencyTask = addPackageDependencyTask;
+            _deletePackageDependencyTask = deletePackageDependencyTask;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -40,7 +40,7 @@ namespace Xs.Commands
             var name = cfg.Name;
             var version = cfg.Version;
 
-            var allProjects = discoverTask.Run(discoverCfg);
+            var allProjects = _discoverTask.Run(discoverCfg);
             var updatedPackages = allProjects
                 .SelectMany(e => e.Packages)
                 .FilterMask(name)
@@ -54,7 +54,7 @@ namespace Xs.Commands
 
             if (targets.Length == 0)
             {
-                logger.Info($"No projects found to update.");
+                _logger.Info($"No projects found to update.");
                 return;
             }
 
@@ -62,8 +62,8 @@ namespace Xs.Commands
             {
                 var dependency = new Dependency<Package>(old.Type, new Package(old.Value.Type, old.Value.Name, version));
                 var subset = targets.FilterType(dependency.Value.Type).ToArray();
-                deletePackageDependencyTask.Run(subset, old.Value);
-                addPackageDependencyTask.Run(subset, dependency);
+                _deletePackageDependencyTask.Run(subset, old.Value);
+                _addPackageDependencyTask.Run(subset, dependency);
             }
         }
     }

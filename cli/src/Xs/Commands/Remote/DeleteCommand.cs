@@ -12,16 +12,16 @@ namespace Xs.Commands.Remote
     {
         public override string Id { get; } = "delete";
         public override string Description { get; } = "Stop tracking registry.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly IConfigurationManager configurationManager;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly IConfigurationManager _configurationManager;
 
         public DeleteCommand(
             DiscoverProjectsTask discoverTask,
             IConfigurationManager configurationManager
         )
         {
-            this.discoverTask = discoverTask;
-            this.configurationManager = configurationManager;
+            _discoverTask = discoverTask;
+            _configurationManager = configurationManager;
         }
 
         public override void Handle(
@@ -31,9 +31,9 @@ namespace Xs.Commands.Remote
         {
             var dir = discoverCfg.Root;
 
-            var projects = discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.Run(discoverCfg).ToArray();
 
-            configurationManager.Delete(dir, projects);
+            _configurationManager.Delete(dir, projects);
 
             Console.WriteLine("Registry tracking stopped.");
         }

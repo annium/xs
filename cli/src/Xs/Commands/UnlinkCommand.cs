@@ -12,16 +12,16 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "unlink";
         public override string Description { get; } = "Unlink project <-> package dependencies.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ILogger<UseCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ILogger<UseCommand> _logger;
 
         public UnlinkCommand(
             DiscoverProjectsTask discoverTask,
             ILogger<UseCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -31,14 +31,14 @@ namespace Xs.Commands
         )
         {
             discoverCfg.Roots = new[] { cfg.Target };
-            var targets = discoverTask.Run(discoverCfg).ToArray();
+            var targets = _discoverTask.Run(discoverCfg).ToArray();
             discoverCfg.Roots = new[] { cfg.Source, cfg.Target };
-            var sources = discoverTask.Run(discoverCfg)
+            var sources = _discoverTask.Run(discoverCfg)
                 .Where(x => !targets.Any(t => t.File == x.File))
                 .ToArray();
             var version = cfg.Version;
 
-            logger.Debug($"Unlink {sources.Length} projects from {targets.Length} external projects.");
+            _logger.Debug($"Unlink {sources.Length} projects from {targets.Length} external projects.");
 
             foreach (var source in sources)
             {
@@ -51,13 +51,13 @@ namespace Xs.Commands
                 foreach (var project in externalDependencies)
                 {
                     var package = new Package(project.Value.Type, project.Value.Name, version);
-                    logger.Trace($"Update {source}: replace {project} with {package}.");
+                    _logger.Trace($"Update {source}: replace {project} with {package}.");
 
                     source.Projects.Remove(project);
                     source.Packages.Add(new Dependency<Package>(project.Type, package));
                 }
 
-                logger.Debug($"Updated {source}.");
+                _logger.Debug($"Updated {source}.");
 
                 source.Save();
             }

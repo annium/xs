@@ -1,5 +1,5 @@
-using System.Linq;
 using System.IO;
+using System.Linq;
 using Annium.Extensions.Arguments;
 
 namespace Xs.Cli.Core.Commands
@@ -12,11 +12,11 @@ namespace Xs.Cli.Core.Commands
         {
             get
             {
-                return roots;
+                return _roots;
             }
             set
             {
-                roots = value.Select(Path.GetFullPath).ToArray();
+                _roots = value.Select(Path.GetFullPath).ToArray();
             }
         }
 
@@ -34,6 +34,6 @@ namespace Xs.Cli.Core.Commands
         [Help("Allows to ignore inconsistency to fix fursther.")]
         public bool IgnoreConsistency { get; set; }
 
-        private string[] roots = new string[] { Directory.GetCurrentDirectory() };
+        private string[] _roots = { Directory.GetCurrentDirectory() };
     }
 }

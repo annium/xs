@@ -6,23 +6,23 @@ namespace Xs.Cli.Core.Projects
 {
     internal class ProjectFactory : IProjectFactory
     {
-        private readonly IEnumerable<ISpecialProjectFactory> factories;
+        private readonly IEnumerable<ISpecialProjectFactory> _factories;
 
         public ProjectFactory(
             IEnumerable<ISpecialProjectFactory> factories
         )
         {
-            this.factories = factories;
+            _factories = factories;
         }
 
         public ISpecialProjectFactory FindFactory(string directory)
         {
-            return factories.FirstOrDefault(e => e.IsProjectDirectory(directory));
+            return _factories.FirstOrDefault(e => e.IsProjectDirectory(directory));
         }
 
         public bool IsProjectFile(string file)
         {
-            return factories.Any(e => e.IsProjectFile(file));
+            return _factories.Any(e => e.IsProjectFile(file));
         }
 
         public IProject CreateProject(

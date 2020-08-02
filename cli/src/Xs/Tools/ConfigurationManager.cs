@@ -104,7 +104,7 @@ namespace Xs.Tools
             }
 
             _logger.Trace($"Update ignore file in {folder}");
-            var ignoreFile = Path.Combine(folder, ConfigurationManager.IgnoreFile);
+            var ignoreFile = Path.Combine(folder, IgnoreFile);
 
             if (File.Exists(ignoreFile))
             {

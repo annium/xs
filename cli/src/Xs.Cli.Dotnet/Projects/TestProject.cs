@@ -31,7 +31,7 @@ namespace Xs.Cli.Dotnet.Projects
                     "/p:CoverletOutputFormat=lcov",
                     "/p:CoverletOutput=./lcov",
                     "--",
-                    $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)loggerConfiguration)!.ToLowerInvariant()}"
+                    $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)LoggerConfiguration)!.ToLowerInvariant()}"
                 });
 
             if (!string.IsNullOrWhiteSpace(filter))

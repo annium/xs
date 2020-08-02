@@ -11,9 +11,9 @@ namespace Xs.Cli.Core.Tasks
 {
     public class DiscoverProjectsTask
     {
-        private readonly IProjectFactory projectFactory;
-        private readonly IProjectLinker projectLinker;
-        private readonly ILogger<DiscoverProjectsTask> logger;
+        private readonly IProjectFactory _projectFactory;
+        private readonly IProjectLinker _projectLinker;
+        private readonly ILogger<DiscoverProjectsTask> _logger;
 
         public DiscoverProjectsTask(
             IProjectFactory projectFactory,
@@ -21,35 +21,35 @@ namespace Xs.Cli.Core.Tasks
             ILogger<DiscoverProjectsTask> logger
         )
         {
-            this.projectFactory = projectFactory;
-            this.projectLinker = projectLinker;
-            this.logger = logger;
+            _projectFactory = projectFactory;
+            _projectLinker = projectLinker;
+            _logger = logger;
         }
 
         public IEnumerable<IProject> Run(DiscoverConfiguration configuration)
         {
             var roots = configuration.Roots;
 
-            logger.Debug($"Start discovery of {string.Join(", ", roots)}.");
+            _logger.Debug($"Start discovery of {string.Join(", ", roots)}.");
 
             var candidates = FindProjectCandidates(roots);
 
             var errors = new List<Exception>();
 
             var projects = CreateProjects(candidates, configuration, errors.Add);
-            throwIfAnyErrors();
+            ThrowIfAnyErrors();
 
             var types = projects.Select(p => p.Type).Distinct().ToArray();
 
             var packages = types.ToDictionary(type => type, type => new HashSet<Package>());
-            LinkProjects(projects, packages, configuration, errors.Add, throwIfAnyErrors);
-            throwIfAnyErrors();
+            LinkProjects(projects, packages, configuration, errors.Add, ThrowIfAnyErrors);
+            ThrowIfAnyErrors();
 
-            logger.Debug($"Discovery finished. Found {projects.Count} projects.");
+            _logger.Debug($"Discovery finished. Found {projects.Count} projects.");
 
             return projects.OrderBy(e => e.Name).ToArray();
 
-            void throwIfAnyErrors()
+            void ThrowIfAnyErrors()
             {
                 if (errors.Count > 0)
                     throw new AggregateException(errors);
@@ -62,25 +62,25 @@ namespace Xs.Cli.Core.Tasks
 
             foreach (var root in roots)
             {
-                logger.Debug($"Start project candidates lookup at {root}.");
+                _logger.Debug($"Start project candidates lookup at {root}.");
 
                 FileManager.WalkDirectories(
                     root,
                     directory =>
                     {
-                        var factory = projectFactory.FindFactory(directory);
+                        var factory = _projectFactory.FindFactory(directory);
                         if (factory is null)
                             return false;
 
                         results[directory] = factory;
-                        logger.Debug($"{factory.Type} project candidate discovered at {directory}.");
+                        _logger.Debug($"{factory.Type} project candidate discovered at {directory}.");
 
                         return true;
                     },
                     SearchOptions.IgnoreChildrenOnMatch
                 );
 
-                logger.Debug($"{results.Count} project candidate(s) found.");
+                _logger.Debug($"{results.Count} project candidate(s) found.");
             }
 
             return results;
@@ -94,15 +94,15 @@ namespace Xs.Cli.Core.Tasks
         {
             var projects = new HashSet<IProject>();
 
-            logger.Debug("Start projects creation.");
+            _logger.Debug("Start projects creation.");
 
             foreach (var (directory, factory) in candidates)
             {
                 try
                 {
-                    var project = projectFactory.CreateProject(directory, factory, configuration);
+                    var project = _projectFactory.CreateProject(directory, factory, configuration);
                     projects.Add(project);
-                    logger.Debug($"{project.Type} {project} created at {directory}");
+                    _logger.Debug($"{project.Type} {project} created at {directory}");
                 }
                 catch (Exception exception)
                 {
@@ -110,7 +110,7 @@ namespace Xs.Cli.Core.Tasks
                 }
             }
 
-            logger.Debug($"{projects.Count} project(s) created.");
+            _logger.Debug($"{projects.Count} project(s) created.");
 
             return projects;
         }
@@ -123,19 +123,19 @@ namespace Xs.Cli.Core.Tasks
             Action throwIfAnyErrors
         )
         {
-            logger.Debug("Start projects linking.");
+            _logger.Debug("Start projects linking.");
 
-            projectLinker.PreLink(projects, packages, configuration, addError);
+            _projectLinker.PreLink(projects, packages, configuration, addError);
 
             throwIfAnyErrors();
 
             foreach (var project in projects)
             {
                 var typePackages = packages[project.Type];
-                projectLinker.Link(project, projects, typePackages, configuration, addError);
+                _projectLinker.Link(project, projects, typePackages, configuration, addError);
             }
 
-            logger.Debug("Projects linked.");
+            _logger.Debug("Projects linked.");
         }
     }
 }

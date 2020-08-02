@@ -57,7 +57,7 @@ namespace Xs.Cli.Node.Projects
 
         public Task ClearCacheAsync(CancellationToken token)
         {
-            logger.Info($"Start {Name} cache clean.");
+            Logger.Info($"Start {Name} cache clean.");
 
             lock (cacheLocker)
             {
@@ -72,14 +72,14 @@ namespace Xs.Cli.Node.Projects
                 }
             }
 
-            logger.Info($"Finished {Name} cache clean.");
+            Logger.Info($"Finished {Name} cache clean.");
 
             return Task.CompletedTask;
         }
 
         public async Task CleanAsync(bool force, CancellationToken token)
         {
-            logger.Info($"Start {Name} clean.");
+            Logger.Info($"Start {Name} clean.");
 
             DeleteDirectory(ProjectFactory.ModulesDirectory);
             DeleteFiles("*.tgz");
@@ -91,7 +91,7 @@ namespace Xs.Cli.Node.Projects
             if (scripts.ContainsKey("clean"))
                 await RunAsync("yarn clean", "yarn run clean", token);
 
-            logger.Info($"Finished {Name} clean.");
+            Logger.Info($"Finished {Name} clean.");
         }
 
         public Task InstallAsync(bool force, CancellationToken token)

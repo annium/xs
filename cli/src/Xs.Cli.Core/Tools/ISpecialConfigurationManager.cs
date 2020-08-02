@@ -1,4 +1,3 @@
-using System;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 

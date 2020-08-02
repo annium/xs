@@ -13,16 +13,16 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "move";
         public override string Description { get; } = "Move project to different location.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ILogger<MoveCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ILogger<MoveCommand> _logger;
 
         public MoveCommand(
             DiscoverProjectsTask discoverTask,
             ILogger<MoveCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -37,11 +37,11 @@ namespace Xs.Commands
 
             if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(directory))
             {
-                logger.Info("Specify at least new project name or new project directory");
+                _logger.Info("Specify at least new project name or new project directory");
                 return;
             }
 
-            var projects = discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.Run(discoverCfg).ToArray();
             var targets = projects.FilterMask(currentName).ToList();
             if (targets.Count == 0)
                 throw new InvalidOperationException($"Project {currentName} not found.");
@@ -53,7 +53,7 @@ namespace Xs.Commands
             // rename
             if (!string.IsNullOrWhiteSpace(name))
             {
-                logger.Debug($"Rename {currentName} -> {name}");
+                _logger.Debug($"Rename {currentName} -> {name}");
                 project.SetName(name);
             }
 
@@ -61,7 +61,7 @@ namespace Xs.Commands
             if (!string.IsNullOrWhiteSpace(directory))
             {
                 var target = Path.GetFullPath(Path.Combine(directory, Path.GetFileName(project.Directory)));
-                logger.Debug($"Move {project.Directory} -> {target}");
+                _logger.Debug($"Move {project.Directory} -> {target}");
                 project.SetDirectory(target);
             }
 

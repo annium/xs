@@ -15,10 +15,10 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "publish";
         public override string Description { get; } = "Publish packages to registry.";
-        private readonly IConfigurationManager configurationManager;
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ProjectsRunner runner;
-        private readonly ILogger<PublishCommand> logger;
+        private readonly IConfigurationManager _configurationManager;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ProjectsRunner _runner;
+        private readonly ILogger<PublishCommand> _logger;
 
         public PublishCommand(
             IConfigurationManager configurationManager,
@@ -27,10 +27,10 @@ namespace Xs.Commands
             ILogger<PublishCommand> logger
         )
         {
-            this.configurationManager = configurationManager;
-            this.discoverTask = discoverTask;
-            this.runner = runner;
-            this.logger = logger;
+            _configurationManager = configurationManager;
+            _discoverTask = discoverTask;
+            _runner = runner;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -39,18 +39,18 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var configuration = configurationManager.Load(discoverCfg.Root);
+            var configuration = _configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .OfType<IPublishableProject>()
                 .ToArray();
 
             if (projects.Length == 0)
             {
-                logger.Info($"No projects found publish.");
+                _logger.Info($"No projects found publish.");
                 return;
             }
 
@@ -58,8 +58,8 @@ namespace Xs.Commands
                 if (!configuration.Servers.ContainsKey(project.Type))
                     throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
 
-            logger.Debug($"Publish {projects.Length} projects.");
-            await runner.RunAsync(
+            _logger.Debug($"Publish {projects.Length} projects.");
+            await _runner.RunAsync(
                 projects,
                 (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
                 cfg.Deep,

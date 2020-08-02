@@ -11,13 +11,13 @@ namespace Xs.Commands.Remote
     {
         public override string Id { get; } = "show";
         public override string Description { get; } = "Show information about tracked registry.";
-        private readonly IConfigurationManager configurationManager;
+        private readonly IConfigurationManager _configurationManager;
 
         public ShowCommand(
             IConfigurationManager configurationManager
         )
         {
-            this.configurationManager = configurationManager;
+            _configurationManager = configurationManager;
         }
 
         public override void Handle(
@@ -27,7 +27,7 @@ namespace Xs.Commands.Remote
         {
             var dir = discoverCfg.Root;
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = _configurationManager.Load(dir);
 
             if (configuration == null)
                 Console.WriteLine("Registry is not tracked.");

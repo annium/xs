@@ -15,9 +15,9 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "build";
         public override string Description { get; } = "Build projects.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ProjectsRunner runner;
-        private readonly ILogger<BuildCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ProjectsRunner _runner;
+        private readonly ILogger<BuildCommand> _logger;
 
         public BuildCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,9 +25,9 @@ namespace Xs.Commands
             ILogger<BuildCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.runner = runner;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _runner = runner;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -36,13 +36,13 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .OfType<IBuildableProject>()
                 .ToArray();
-            logger.Debug($"Build {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn), cfg.Deep, token);
+            _logger.Debug($"Build {projects.Length} projects.");
+            await _runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn), cfg.Deep, token);
         }
     }
 

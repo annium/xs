@@ -15,9 +15,9 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "clean";
         public override string Description { get; } = "Clean projects.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ProjectsRunner runner;
-        private readonly ILogger<CleanCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ProjectsRunner _runner;
+        private readonly ILogger<CleanCommand> _logger;
 
         public CleanCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,9 +25,9 @@ namespace Xs.Commands
             ILogger<CleanCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.runner = runner;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _runner = runner;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -36,14 +36,14 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .OfType<ICleanableProject>()
                 .ToArray();
 
-            logger.Debug($"Clean {projects.Length} projects.");
-            await runner.RunAsync(projects, (project, tkn) => project.CleanAsync(cfg.Force, tkn), cfg.Deep, token);
+            _logger.Debug($"Clean {projects.Length} projects.");
+            await _runner.RunAsync(projects, (project, tkn) => project.CleanAsync(cfg.Force, tkn), cfg.Deep, token);
         }
     }
 

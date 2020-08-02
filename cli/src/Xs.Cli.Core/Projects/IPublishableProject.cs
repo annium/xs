@@ -1,13 +1,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Core.Projects
 {
     public interface IPublishableProject : IProject
     {
-        Task<string> PackAsync(Models.Version version, CancellationToken token);
+        Task<string> PackAsync(Version version, CancellationToken token);
 
-        Task PublishAsync(Uri registry, string accessToken, Models.Version version, CancellationToken token);
+        Task PublishAsync(Uri registry, string accessToken, Version version, CancellationToken token);
     }
 }

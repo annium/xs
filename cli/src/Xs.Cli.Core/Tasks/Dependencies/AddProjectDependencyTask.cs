@@ -7,35 +7,35 @@ namespace Xs.Cli.Core.Tasks.Dependencies
 {
     public class AddProjectDependencyTask
     {
-        private readonly ILogger<AddProjectDependencyTask> logger;
+        private readonly ILogger<AddProjectDependencyTask> _logger;
 
         public AddProjectDependencyTask(
             ILogger<AddProjectDependencyTask> logger
         )
         {
-            this.logger = logger;
+            _logger = logger;
         }
 
         public void Run(IProject[] targets, Dependency<IProject> dependency)
         {
             var(_, project) = dependency;
 
-            logger.Debug($"Add project {project} as {project.Type} dependency to {targets.Length} projects.");
+            _logger.Debug($"Add project {project} as {project.Type} dependency to {targets.Length} projects.");
             foreach (var target in targets)
             {
                 if (target.Projects.Contains(dependency))
                 {
-                    logger.Debug($"Skip adding project {project} as dependency of {target}. {target} already uses {project}.");
+                    _logger.Debug($"Skip adding project {project} as dependency of {target}. {target} already uses {project}.");
                     continue;
                 }
 
                 if (target.Projects.Any(p => p.Value == project))
                 {
-                    logger.Debug($"Delete project {project} as dependency of {target} due to dependency type change.");
+                    _logger.Debug($"Delete project {project} as dependency of {target} due to dependency type change.");
                     target.Projects.RemoveWhere(p => p.Value == project);
                 }
 
-                logger.Debug($"Add project {project} as dependency of {target}.");
+                _logger.Debug($"Add project {project} as dependency of {target}.");
                 target.Projects.Add(dependency);
                 target.Save();
             }

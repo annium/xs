@@ -12,16 +12,16 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "format";
         public override string Description { get; } = "Format projects.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ILogger<FormatCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ILogger<FormatCommand> _logger;
 
         public FormatCommand(
             DiscoverProjectsTask discoverTask,
             ILogger<FormatCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -30,15 +30,15 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToArray();
 
-            logger.Debug($"Format {projects} project(s)");
+            _logger.Debug($"Format {projects} project(s)");
             foreach (var project in projects)
             {
-                logger.Debug($"Format {project}");
+                _logger.Debug($"Format {project}");
                 project.Save();
             }
         }

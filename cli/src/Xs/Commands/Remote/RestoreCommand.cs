@@ -15,9 +15,9 @@ namespace Xs.Commands.Remote
     {
         public override string Id { get; } = "restore";
         public override string Description { get; } = "Restore tracked registry information.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly IConfigurationManager configurationManager;
-        private readonly MainClientFactory mainClientFactory;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly IConfigurationManager _configurationManager;
+        private readonly MainClientFactory _mainClientFactory;
 
         public RestoreCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,9 +25,9 @@ namespace Xs.Commands.Remote
             MainClientFactory mainClientFactory
         )
         {
-            this.discoverTask = discoverTask;
-            this.configurationManager = configurationManager;
-            this.mainClientFactory = mainClientFactory;
+            _discoverTask = discoverTask;
+            _configurationManager = configurationManager;
+            _mainClientFactory = mainClientFactory;
         }
 
         public override async Task HandleAsync(
@@ -39,9 +39,9 @@ namespace Xs.Commands.Remote
             var user = cfg.User;
             var dir = discoverCfg.Root;
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = _configurationManager.Load(dir);
 
-            var client = mainClientFactory.Create(configuration.Registry);
+            var client = _mainClientFactory.Create(configuration.Registry);
 
             var password = Annium.Extensions.CommandLine.Cli.ReadSecure("Password: ");
 
@@ -52,9 +52,9 @@ namespace Xs.Commands.Remote
                 .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
             );
 
-            var projects = discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.Run(discoverCfg).ToArray();
 
-            configurationManager.Save(dir, projects, configuration);
+            _configurationManager.Save(dir, projects, configuration);
 
             Console.WriteLine("Registry restored");
         }

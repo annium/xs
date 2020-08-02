@@ -23,16 +23,16 @@ namespace Xs.Cli.Core.Helpers
 
     internal class DataContractTypeInspector : TypeInspectorSkeleton
     {
-        private readonly ITypeInspector innerTypeInspector;
+        private readonly ITypeInspector _innerTypeInspector;
 
         public DataContractTypeInspector(ITypeInspector innerTypeInspector)
         {
-            this.innerTypeInspector = innerTypeInspector;
+            _innerTypeInspector = innerTypeInspector;
         }
 
         public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
         {
-            var properties = innerTypeInspector.GetProperties(type, container);
+            var properties = _innerTypeInspector.GetProperties(type, container);
 
             return properties
                 .OrderBy(p => p.GetCustomAttribute<DataMemberAttribute>()?.Order ?? int.MaxValue)

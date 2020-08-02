@@ -13,10 +13,10 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "delete";
         public override string Description { get; } = "Delete dependency from projects.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly DeletePackageDependencyTask deletePackageDependencyTask;
-        private readonly DeleteProjectDependencyTask deleteProjectDependencyTask;
-        private readonly ILogger<DeleteCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
+        private readonly DeleteProjectDependencyTask _deleteProjectDependencyTask;
+        private readonly ILogger<DeleteCommand> _logger;
 
         public DeleteCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,10 +25,10 @@ namespace Xs.Commands
             ILogger<DeleteCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.deletePackageDependencyTask = deletePackageDependencyTask;
-            this.deleteProjectDependencyTask = deleteProjectDependencyTask;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _deletePackageDependencyTask = deletePackageDependencyTask;
+            _deleteProjectDependencyTask = deleteProjectDependencyTask;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -39,23 +39,23 @@ namespace Xs.Commands
         {
             var name = cfg.Dependency;
 
-            var allProjects = discoverTask.Run(discoverCfg);
+            var allProjects = _discoverTask.Run(discoverCfg);
             var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                logger.Info($"No projects found to add dependency to.");
+                _logger.Info($"No projects found to add dependency to.");
                 return;
             }
 
-            logger.Debug($"Try delete dependency {name} from {targets.Length} projects.");
+            _logger.Debug($"Try delete dependency {name} from {targets.Length} projects.");
 
             var projects = allProjects.FilterMask(name).ToArray();
             if (projects.Length > 0)
             {
                 foreach (var project in projects)
-                    deleteProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), project);
+                    _deleteProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), project);
 
                 return;
             }
@@ -65,12 +65,12 @@ namespace Xs.Commands
             // if no packages found
             if (packages.Length == 0)
             {
-                logger.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
+                _logger.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
                 return;
             }
 
             foreach (var package in packages)
-                deletePackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), package);
+                _deletePackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), package);
         }
     }
 

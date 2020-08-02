@@ -11,13 +11,13 @@ namespace Xs.Commands.Audit
     {
         public override string Id { get; } = "rules";
         public override string Description { get; } = "List audit rules.";
-        private readonly IAuditRule[] rules;
+        private readonly IAuditRule[] _rules;
 
         public AuditRulesCommand(
             IEnumerable<IAuditRule> rules
         )
         {
-            this.rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
+            _rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
         }
 
         public override void Handle(
@@ -25,7 +25,7 @@ namespace Xs.Commands.Audit
             CancellationToken token
         )
         {
-            var usedRules = (cfg.Include.Length > 0 ? rules.Where(r => cfg.Include.Contains(r.Code)) : rules)
+            var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)
                 .Where(r => !cfg.Exclude.Contains(r.Code))
                 .ToArray();
 

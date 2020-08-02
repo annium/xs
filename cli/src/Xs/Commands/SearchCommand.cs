@@ -14,9 +14,9 @@ namespace Xs.Commands
     {
         public override string Id { get; } = "search";
         public override string Description { get; } = "Search for packages in tracked registry.";
-        private readonly IConfigurationManager configurationManager;
-        private readonly MainClientFactory mainClientFactory;
-        private readonly ILogger<SearchCommand> logger;
+        private readonly IConfigurationManager _configurationManager;
+        private readonly MainClientFactory _mainClientFactory;
+        private readonly ILogger<SearchCommand> _logger;
 
         public SearchCommand(
             IConfigurationManager configurationManager,
@@ -24,9 +24,9 @@ namespace Xs.Commands
             ILogger<SearchCommand> logger
         )
         {
-            this.configurationManager = configurationManager;
-            this.mainClientFactory = mainClientFactory;
-            this.logger = logger;
+            _configurationManager = configurationManager;
+            _mainClientFactory = mainClientFactory;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -35,14 +35,14 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var configuration = configurationManager.Load(discoverCfg.Root);
+            var configuration = _configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
             {
-                logger.Warn("Track registry first to search within it.");
+                _logger.Warn("Track registry first to search within it.");
                 return;
             }
 
-            var client = mainClientFactory.Create(configuration.Registry);
+            var client = _mainClientFactory.Create(configuration.Registry);
             var packages = await client.SearchAsync(configuration.Token, cfg.Type.ToString(), cfg.Query);
 
             foreach (var package in packages)

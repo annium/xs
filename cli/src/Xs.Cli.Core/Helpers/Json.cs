@@ -5,7 +5,7 @@ namespace Xs.Cli.Core.Helpers
 {
     public static class Json
     {
-        private static readonly JsonSerializerOptions options = new JsonSerializerOptions()
+        private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
         {
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
             PropertyNameCaseInsensitive = true,
@@ -15,7 +15,7 @@ namespace Xs.Cli.Core.Helpers
 
         public static T Read<T>(string value)
         {
-            return JsonSerializer.Deserialize<T>(value, options);
+            return JsonSerializer.Deserialize<T>(value, Options);
         }
 
         public static T ReadFile<T>(string file)
@@ -25,7 +25,7 @@ namespace Xs.Cli.Core.Helpers
 
         public static string Write<T>(T data)
         {
-            return JsonSerializer.Serialize(data, options);
+            return JsonSerializer.Serialize(data, Options);
         }
 
         public static void WriteFile<T>(string file, T data)

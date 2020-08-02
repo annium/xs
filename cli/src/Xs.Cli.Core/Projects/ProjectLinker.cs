@@ -8,11 +8,11 @@ namespace Xs.Cli.Core.Projects
 {
     internal class ProjectLinker : IProjectLinker
     {
-        private readonly IEnumerable<ISpecialProjectLinker> linkers;
+        private readonly IEnumerable<ISpecialProjectLinker> _linkers;
 
         public ProjectLinker(IEnumerable<ISpecialProjectLinker> linkers)
         {
-            this.linkers = linkers;
+            _linkers = linkers;
         }
 
         public void PreLink(
@@ -30,7 +30,7 @@ namespace Xs.Cli.Core.Projects
             var projectsByTypes = projects.GroupBy(p => p.Type).ToDictionary(g => g.Key, g => g.ToArray());
             foreach (var(type, typeProjects) in projectsByTypes)
             {
-                var linker = linkers.FirstOrDefault(l => l.Type == type);
+                var linker = _linkers.FirstOrDefault(l => l.Type == type);
                 if (linker is null)
                 {
                     addError(new InvalidOperationException($"No linker found for project type {type}"));
@@ -76,7 +76,7 @@ namespace Xs.Cli.Core.Projects
                 }
             }
 
-            var linker = linkers.FirstOrDefault(l => l.Type == project.Type);
+            var linker = _linkers.FirstOrDefault(l => l.Type == project.Type);
             linker.Link(
                 project,
                 projects,

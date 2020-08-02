@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
+using Xs.Cli.Core.Tasks;
+using Xs.Cli.Core.Tasks.Dependencies;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core
@@ -46,13 +48,13 @@ namespace Xs.Cli.Core
         private void RegisterTasks(IServiceCollection services)
         {
             // dependencies
-            services.AddSingleton<Tasks.Dependencies.AddPackageDependencyTask>();
-            services.AddSingleton<Tasks.Dependencies.AddProjectDependencyTask>();
-            services.AddSingleton<Tasks.Dependencies.DeletePackageDependencyTask>();
-            services.AddSingleton<Tasks.Dependencies.DeleteProjectDependencyTask>();
+            services.AddSingleton<AddPackageDependencyTask>();
+            services.AddSingleton<AddProjectDependencyTask>();
+            services.AddSingleton<DeletePackageDependencyTask>();
+            services.AddSingleton<DeleteProjectDependencyTask>();
 
             // root
-            services.AddSingleton<Tasks.DiscoverProjectsTask>();
+            services.AddSingleton<DiscoverProjectsTask>();
         }
 
         private Func<LogMessage, bool> BuildLogFilter(LoggerConfiguration cfg)

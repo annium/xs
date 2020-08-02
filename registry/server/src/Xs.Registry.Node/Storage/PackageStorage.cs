@@ -15,7 +15,7 @@ namespace Xs.Registry.Node.Storage
             Configuration configuration
         )
         {
-            this.storage = storageFactory.Create(configuration.PackagesFolder);
+            storage = storageFactory.Create(configuration.PackagesFolder);
             this.configuration = configuration;
         }
 

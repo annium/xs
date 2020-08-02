@@ -7,7 +7,7 @@ namespace Xs.Cli.Core.Tools
     public static class FileManager
     {
         public const string IgnoreFile = ".xs.ignore";
-        private static readonly string[] globallyIgnoredDirectories = new[] { ".git" };
+        private static readonly string[] GloballyIgnoredDirectories = { ".git" };
 
         public static bool FindDirectory(
             string directory,
@@ -84,7 +84,7 @@ namespace Xs.Cli.Core.Tools
 
         private static bool IsDirectoryIgnored(string directory, string[] ignoredDirectories)
         {
-            var ignored = globallyIgnoredDirectories.Any(directory.Contains) ||
+            var ignored = GloballyIgnoredDirectories.Any(directory.Contains) ||
                 ignoredDirectories.Any(directory.Contains) ||
                 !Directory.Exists(directory) ||
                 Directory.GetFiles(directory, IgnoreFile, SearchOption.TopDirectoryOnly).Length > 0;

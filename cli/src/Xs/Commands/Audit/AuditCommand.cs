@@ -17,11 +17,11 @@ namespace Xs.Commands.Audit
 
         public override string Description { get; } = "Audit projects.";
 
-        private readonly DiscoverProjectsTask discoverTask;
+        private readonly DiscoverProjectsTask _discoverTask;
 
-        private readonly IAuditRule[] rules;
+        private readonly IAuditRule[] _rules;
 
-        private readonly ILogger<AuditCommand> logger;
+        private readonly ILogger<AuditCommand> _logger;
 
         public AuditCommand(
             DiscoverProjectsTask discoverTask,
@@ -29,9 +29,9 @@ namespace Xs.Commands.Audit
             ILogger<AuditCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
+            _logger = logger;
         }
 
         public override void Handle(
@@ -40,15 +40,15 @@ namespace Xs.Commands.Audit
             CancellationToken token
         )
         {
-            var projects = discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.Run(discoverCfg)
                 .ToArray();
             var auditedProjects = projects
                 .FilterMask(cfg.Mask)
                 .OfType<IAuditableProject>()
                 .ToArray();
-            logger.Debug($"Audit {auditedProjects.Length} projects.");
+            _logger.Debug($"Audit {auditedProjects.Length} projects.");
 
-            var usedRules = (cfg.Include.Length > 0 ? rules.Where(r => cfg.Include.Contains(r.Code)) : rules)
+            var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)
                 .Where(r => !cfg.Exclude.Contains(r.Code))
                 .Select(r => r.Code)
                 .ToArray();
@@ -59,9 +59,9 @@ namespace Xs.Commands.Audit
                 return;
             }
 
-            logger.Debug($"Use {usedRules.Length} rule(s):");
+            _logger.Debug($"Use {usedRules.Length} rule(s):");
             foreach (var rule in usedRules)
-                logger.Debug(rule);
+                _logger.Debug(rule);
 
             foreach (var project in auditedProjects)
             {

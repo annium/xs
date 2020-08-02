@@ -30,8 +30,8 @@ namespace Xs.Registry.Db.Shared
         )
         {
             this.context = context;
-            this.packages = getPackagesTable(context);
-            this.packageDependencies = getPackageDependenciesTable(context);
+            packages = getPackagesTable(context);
+            packageDependencies = getPackageDependenciesTable(context);
             this.mapper = mapper;
         }
 

@@ -15,9 +15,9 @@ namespace Xs.Commands.Remote
     {
         public override string Id { get; } = "set";
         public override string Description { get; } = "Start tracking registry.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly IConfigurationManager configurationManager;
-        private readonly MainClientFactory mainClientFactory;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly IConfigurationManager _configurationManager;
+        private readonly MainClientFactory _mainClientFactory;
 
         public SetCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,9 +25,9 @@ namespace Xs.Commands.Remote
             MainClientFactory mainClientFactory
         )
         {
-            this.discoverTask = discoverTask;
-            this.configurationManager = configurationManager;
-            this.mainClientFactory = mainClientFactory;
+            _discoverTask = discoverTask;
+            _configurationManager = configurationManager;
+            _mainClientFactory = mainClientFactory;
         }
 
         public override async Task HandleAsync(
@@ -40,11 +40,11 @@ namespace Xs.Commands.Remote
             var user = cfg.User;
             var dir = discoverCfg.Root;
 
-            var client = mainClientFactory.Create(location);
+            var client = _mainClientFactory.Create(location);
 
             var password = Annium.Extensions.CommandLine.Cli.ReadSecure("Password: ");
 
-            var configuration = configurationManager.Load(dir);
+            var configuration = _configurationManager.Load(dir);
             configuration.SetRegistry(location);
             configuration.SetToken(await client.LoginAsync(user, password));
             configuration.SetServers(
@@ -53,9 +53,9 @@ namespace Xs.Commands.Remote
                 .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
             );
 
-            var projects = discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.Run(discoverCfg).ToArray();
 
-            configurationManager.Save(dir, projects, configuration);
+            _configurationManager.Save(dir, projects, configuration);
 
             Console.WriteLine("Registry tracking started");
         }
