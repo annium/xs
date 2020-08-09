@@ -11,13 +11,18 @@ namespace {{name}}
     {
         public override void Register(IServiceCollection services, IServiceProvider provider)
         {
-            services.AddBlazorStyled();
+            services.AddRuntimeTools(GetType().Assembly);
+            services.AddMapper();
+            services.AddHttpRequestFactory();
             services.AddTransient<Func<IHttpRequest>>(sp =>
             {
-                var request = Http.Open(sp.GetRequiredService<IWebAssemblyHostEnvironment>().BaseAddress);
+                var factory = sp.GetRequiredService<IHttpRequestFactory>();
+                var env = sp.GetRequiredService<IWebAssemblyHostEnvironment>();
+                var request = factory.New(env.BaseAddress);
 
                 return () => request.Clone();
             });
+            services.AddBlazorStyled();
         }
     }
 }
