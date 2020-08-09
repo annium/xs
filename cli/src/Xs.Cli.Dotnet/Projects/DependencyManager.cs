@@ -33,7 +33,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
         {
-            var serverIndex = await _httpRequestFactory.Get(serverUri)
+            var serverIndex = await _httpRequestFactory.New(serverUri)
                 .UseClient(_client)
                 .Get(Constants.ServerPathSuffix)
                 .AsAsync<ServiceIndex>();
@@ -73,13 +73,13 @@ namespace Xs.Cli.Dotnet.Projects
 
         private async Task<RegistrationIndex?> LoadIndexAsync(string registrationUrl)
         {
-            var index = await _httpRequestFactory.Get().UseClient(_client).Get(registrationUrl).AsAsync(new RegistrationIndex());
+            var index = await _httpRequestFactory.New().UseClient(_client).Get(registrationUrl).AsAsync(new RegistrationIndex());
             index.Items = (await Task.WhenAll(index.Items.Select(async page =>
             {
                 if (page.Items.Length > 0)
                     return page;
 
-                return await _httpRequestFactory.Get().UseClient(_client).Get(page.Id).AsAsync<RegistrationPage>();
+                return await _httpRequestFactory.New().UseClient(_client).Get(page.Id).AsAsync<RegistrationPage>();
             }))).Where(x => x != null).ToArray();
 
             return index;

@@ -32,7 +32,7 @@ namespace Xs.Cli.Node.Projects
 
         public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
         {
-            var request = _httpRequestFactory.Get(serverUri)
+            var request = _httpRequestFactory.New(serverUri)
                 .UseClient(_client)
                 .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()));
             if (accessToken != null)
