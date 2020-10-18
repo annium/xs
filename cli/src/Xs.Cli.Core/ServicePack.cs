@@ -16,6 +16,7 @@ namespace Xs.Cli.Core
     {
         public override void Configure(IServiceCollection services)
         {
+            services.AddMapper();
             services.AddConfiguration<LoggerConfiguration>(builder => builder.AddCommandLineArgs());
         }
 

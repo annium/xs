@@ -10,7 +10,6 @@ namespace Xs
         public override void Configure(IServiceCollection services)
         {
             services.AddRuntimeTools(GetType().Assembly, false);
-            services.AddConfigurationBuilder();
         }
 
         public override void Register(IServiceCollection services, IServiceProvider provider)
