@@ -42,7 +42,9 @@ namespace Xs.Commands.Remote
 
             var client = _mainClientFactory.Create(location);
 
-            var password = Annium.Extensions.CommandLine.Cli.ReadSecure("Password: ");
+            var password = string.IsNullOrWhiteSpace(cfg.Password)
+                ? Annium.Extensions.CommandLine.Cli.ReadSecure("Password: ")
+                : cfg.Password;
 
             var configuration = _configurationManager.Load(dir);
             configuration.SetRegistry(location);
@@ -70,5 +72,9 @@ namespace Xs.Commands.Remote
         [Option(isRequired: true)]
         [Help("User name.")]
         public string User { get; set; } = string.Empty;
+
+        [Option(isRequired: false)]
+        [Help("User password.")]
+        public string Password { get; set; } = string.Empty;
     }
 }
