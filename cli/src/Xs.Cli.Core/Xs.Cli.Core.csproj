@@ -21,7 +21,7 @@
         <PackageReference Include="Annium.Extensions.Shell" Version="0.1.0" />
         <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
-        <PackageReference Include="NodaTime" Version="3.0.0" />
-        <PackageReference Include="Scriban" Version="2.1.3" />
+        <PackageReference Include="NodaTime" Version="3.0.3" />
+        <PackageReference Include="Scriban" Version="2.1.4" />
     </ItemGroup>
 </Project>
