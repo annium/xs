@@ -85,7 +85,7 @@ namespace Xs.Commands
         private async Task HandleChange(string path)
         {
             var isProjectFile = _projectFactory.IsProjectFile(path);
-            IProject project;
+            IProject? project;
 
             if (isProjectFile)
             {
@@ -93,12 +93,13 @@ namespace Xs.Commands
                 Discover();
 
                 project = GetProjectByPath(path);
-                await InstallAsync(project, includeSelf: true);
+                if (project != null)
+                    await InstallAsync(project, includeSelf: true);
             }
             else
                 project = GetProjectByRelatedPath(path);
 
-            if (project == null)
+            if (project is null)
                 return;
 
             _logger.Info($"Changed {project} related file: {path}");
@@ -221,9 +222,9 @@ namespace Xs.Commands
                 CollectTargets(dependency, targets);
         }
 
-        private IProject GetProjectByPath(string path) => _projects.FirstOrDefault(e => e.File == path);
+        private IProject? GetProjectByPath(string path) => _projects.FirstOrDefault(e => e.File == path);
 
-        private IProject GetProjectByRelatedPath(string path) => _projects.FirstOrDefault(e => e.IsRelated(path));
+        private IProject? GetProjectByRelatedPath(string path) => _projects.FirstOrDefault(e => e.IsRelated(path));
     }
 
     internal class WatchCommandConfiguration

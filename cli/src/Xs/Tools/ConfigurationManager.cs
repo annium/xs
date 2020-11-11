@@ -74,7 +74,7 @@ namespace Xs.Tools
                 if (dir.FullName == dir.Root.FullName)
                     return null;
 
-                return GetConfigurationFolder(dir.Parent);
+                return GetConfigurationFolder(dir.Parent ?? throw new DirectoryNotFoundException($"Directory {dir} has no parent directory"));
             }
         }
 
@@ -111,7 +111,7 @@ namespace Xs.Tools
                 var typeConfiguration = new ProjectTypeConfiguration(
                     uri,
                     configuration.Token,
-                    configuration.Types.FirstOrDefault(c => c.Type == type)
+                    configuration.Types.First(c => c.Type == type)
                 );
                 foreach (var project in targets)
                     _specialManagers[type].Save(project, typeConfiguration);
@@ -168,9 +168,14 @@ namespace Xs.Tools
 
         private class Config
         {
-            [DataMember(Order = 0)] public Uri Registry { get; private set; } = new Uri("http://localhost");
-            [DataMember(Order = 1)] public Dictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
-            [DataMember(Order = 2)] public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();
+            [DataMember(Order = 0)]
+            public Uri Registry { get; private set; } = new Uri("http://localhost");
+
+            [DataMember(Order = 1)]
+            public Dictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
+
+            [DataMember(Order = 2)]
+            public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();
         }
     }
 }

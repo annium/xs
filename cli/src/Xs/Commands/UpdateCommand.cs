@@ -60,6 +60,7 @@ namespace Xs.Commands
                 _logger.Info("No projects found to update.");
                 return;
             }
+
             _logger.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
 
             // resolve dependency managers for types
@@ -69,7 +70,7 @@ namespace Xs.Commands
                 .ToDictionary(
                     t => t,
                     t => _dependencyManagers.SingleOrDefault(m => m.Type == t) ??
-                    throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
+                        throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
                 );
 
             // resolve configuration and available version of all dependencies
@@ -78,10 +79,8 @@ namespace Xs.Commands
             var updates = (await Task.WhenAll(dependencies.Select(async d =>
             {
                 var dependencyManager = dependencyManagers[d.Type];
-                var registryUri = configuration?.Servers.FirstOrDefault(s => s.Key == d.Type).Value;
-                var versions = registryUri != null && !registryUri.IsFile ?
-                    await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration!.Token) :
-                    Array.Empty<Package>();
+                var registryUri = configuration.Servers.FirstOrDefault(s => s.Key == d.Type).Value;
+                var versions = registryUri != null && !registryUri.IsFile ? await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration!.Token) : Array.Empty<Package>();
 
                 // fallback to default server result
                 if (versions.Length == 0)
@@ -90,10 +89,10 @@ namespace Xs.Commands
                 var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
                 _logger.Trace($"Resolve: {d} - {versions.Length} version(s)");
 
-                if (result == d)
-                    _logger.Debug($"Resolve: {d} unchanged");
-                else if (result is null)
+                if (result is null)
                     _logger.Warn($"Resolve: {d} unresolved");
+                else if (result == d)
+                    _logger.Debug($"Resolve: {d} unchanged");
                 else
                     _logger.Debug($"Resolve: {d} -> {result}");
 
