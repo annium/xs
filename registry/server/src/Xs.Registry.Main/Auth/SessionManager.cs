@@ -12,15 +12,15 @@ namespace Xs.Registry.Main.Auth
     {
         private const string AuthCookieName = "AccessToken";
 
-        private readonly Duration LifeTime = Duration.FromDays(1);
+        private readonly Duration _lifeTime = Duration.FromDays(1);
 
-        private readonly Duration ExpirationBuffer = Duration.FromHours(12);
+        private readonly Duration _expirationBuffer = Duration.FromHours(12);
 
-        private readonly Func<Instant> getInstant;
+        private readonly Func<Instant> _getInstant;
 
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly IUserSessionRepository userSessionRepository;
+        private readonly IUserSessionRepository _userSessionRepository;
 
         public SessionManager(
             Func<Instant> getInstant,
@@ -28,36 +28,36 @@ namespace Xs.Registry.Main.Auth
             IUserSessionRepository userSessionRepository
         )
         {
-            this.getInstant = getInstant;
-            this.httpContextAccessor = httpContextAccessor;
-            this.userSessionRepository = userSessionRepository;
+            _getInstant = getInstant;
+            _httpContextAccessor = httpContextAccessor;
+            _userSessionRepository = userSessionRepository;
         }
 
         public(Guid, IActionResult) GetToken()
         {
-            var cookies = httpContextAccessor.HttpContext.Request.Cookies;
+            var cookies = _httpContextAccessor.HttpContext.Request.Cookies;
 
             if (!cookies.ContainsKey(AuthCookieName))
-                return fail(HttpStatusCode.Unauthorized, "Authorization required.");
+                return Fail(HttpStatusCode.Unauthorized, "Authorization required.");
 
             return Guid.TryParse(cookies[AuthCookieName], out var token) ?
                 (token, null) :
-                fail(HttpStatusCode.Forbidden, "Invalid token passed");
+                Fail(HttpStatusCode.Forbidden, "Invalid token passed");
 
-            (Guid, IActionResult) fail(HttpStatusCode statusCode, string message) =>
+            (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
                 (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
         }
 
         public async Task CreateSession(Guid userId)
         {
             // cleanup sessions
-            var now = getInstant();
-            await userSessionRepository.DeleteExpiredAsync(now);
+            var now = _getInstant();
+            await _userSessionRepository.DeleteExpiredAsync(now);
 
             // create new one
             var token = Guid.NewGuid();
             var expires = now + Duration.FromDays(1);
-            await userSessionRepository.CreateAsync(new UserSession(token, userId, expires));
+            await _userSessionRepository.CreateAsync(new UserSession(token, userId, expires));
 
             // set cookie
             SetCookie(token, expires);
@@ -65,16 +65,16 @@ namespace Xs.Registry.Main.Auth
 
         public async Task RefreshSession(UserSession session)
         {
-            var now = getInstant();
+            var now = _getInstant();
 
             // if session is expiring after expiration buffer - no need to prolongate right now
-            if (session.Expires > now + ExpirationBuffer)
+            if (session.Expires > now + _expirationBuffer)
                 return;
 
-            var expires = now + LifeTime;
+            var expires = now + _lifeTime;
 
             // prolongate session
-            await userSessionRepository.ProlongateAsync(session.Token, expires);
+            await _userSessionRepository.ProlongateAsync(session.Token, expires);
 
             // set cookie
             SetCookie(session.Token, expires);
@@ -85,20 +85,20 @@ namespace Xs.Registry.Main.Auth
             var(token, _) = GetToken();
 
             // cleanup sessions
-            await userSessionRepository.DeleteByTokenAsync(token);
+            await _userSessionRepository.DeleteByTokenAsync(token);
 
             // delete cookie
-            httpContextAccessor.HttpContext.Response.Cookies.Delete(AuthCookieName);
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete(AuthCookieName);
         }
 
         private void SetCookie(Guid token, Instant expires)
         {
-            httpContextAccessor.HttpContext.Response.Cookies.Append(
+            _httpContextAccessor.HttpContext.Response.Cookies.Append(
                 AuthCookieName,
                 token.ToString(),
                 new CookieOptions()
                 {
-                    Domain = httpContextAccessor.HttpContext.Request.Host.Host,
+                    Domain = _httpContextAccessor.HttpContext.Request.Host.Host,
                         Path = "/",
                         Expires = expires.ToDateTimeOffset(),
                         Secure = false,

@@ -81,7 +81,7 @@ namespace Xs.Cli.Core.Projects
                     throw new InvalidOperationException($"{Directory} already exists.");
 
                 // create parent directory, if needed
-                var parentDirectory = Path.GetDirectoryName(Directory);
+                var parentDirectory = Path.GetDirectoryName(Directory) ?? throw new DirectoryNotFoundException($"Directory {Directory} has no parent directory");
                 if (!SysDirectory.Exists(parentDirectory))
                 {
                     Logger.Trace($"Create {Name} missing target parent directory {parentDirectory}");

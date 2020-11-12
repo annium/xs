@@ -15,20 +15,20 @@ namespace Xs.Registry.Main.Auth
 {
     internal class AuthorizationFilter : IAsyncAuthorizationFilter
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
 
-        private readonly Func<Instant> getInstant;
+        private readonly Func<Instant> _getInstant;
 
-        private readonly Func<AuthorizationFilterContext, Task<ValueTuple<IActionResult, User>>>[] authHandlers;
+        private readonly Func<AuthorizationFilterContext, Task<ValueTuple<IActionResult, User>>>[] _authHandlers;
 
         public AuthorizationFilter(
             IServiceProvider serviceProvider,
             Access access
         )
         {
-            this.serviceProvider = serviceProvider;
-            getInstant = serviceProvider.GetRequiredService<Func<Instant>>();
-            authHandlers = GetAuthHandlers(access).ToArray();
+            _serviceProvider = serviceProvider;
+            _getInstant = serviceProvider.GetRequiredService<Func<Instant>>();
+            _authHandlers = GetAuthHandlers(access).ToArray();
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -42,7 +42,7 @@ namespace Xs.Registry.Main.Auth
         {
             IActionResult result = null;
             User user = null;
-            foreach (var handleAuthAsync in authHandlers)
+            foreach (var handleAuthAsync in _authHandlers)
             {
                 (result, user) = await handleAuthAsync(context);
                 if (result == null)
@@ -58,7 +58,7 @@ namespace Xs.Registry.Main.Auth
 
         private async Task<ValueTuple<IActionResult, User>> TryApiAuthorizationAsync(AuthorizationFilterContext context)
         {
-            using(var scope = serviceProvider.CreateScope())
+            using(var scope = _serviceProvider.CreateScope())
             {
                 var tokenAccessor = scope.ServiceProvider.GetRequiredService<ITokenAccessor>();
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
@@ -77,7 +77,7 @@ namespace Xs.Registry.Main.Auth
 
         private async Task<ValueTuple<IActionResult, User>> TrySessionAuthorizationAsync(AuthorizationFilterContext context)
         {
-            using(var scope = serviceProvider.CreateScope())
+            using(var scope = _serviceProvider.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
                 var userSessionRepository = scope.ServiceProvider.GetRequiredService<IUserSessionRepository>();
@@ -94,7 +94,7 @@ namespace Xs.Registry.Main.Auth
                     return GetForbiddenResult("Authorization failed. No identity found");
 
                 // if token expired - failure
-                if (session.Expires < getInstant())
+                if (session.Expires < _getInstant())
                     return GetForbiddenResult("Authorization expired. Please login again");
 
                 // refresh session

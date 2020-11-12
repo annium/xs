@@ -32,13 +32,13 @@ namespace Xs.Cli.Core.Projects
         )
         {
             var type = dep.Type;
-            var(_, name, version) = dep.Value;
+            var(_, name, _) = dep.Value;
             var nameLow = name.ToLowerInvariant();
 
             var package = packages
                 .Where(e => e.Name.ToLowerInvariant() == nameLow)
                 .OrderByDescending(e => e.Version)
-                .FirstOrDefault();
+                .First();
 
             return new Dependency<Package>(type, package);
         }

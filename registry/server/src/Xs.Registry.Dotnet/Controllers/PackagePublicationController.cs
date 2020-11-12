@@ -18,9 +18,9 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackagePublicationController : ServerController<User>
     {
-        private readonly Func<Instant> getInstant;
+        private readonly Func<Instant> _getInstant;
 
-        private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
+        private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
 
         public PackagePublicationController(
             Func<Instant> getInstant,
@@ -28,8 +28,8 @@ namespace Xs.Registry.Dotnet.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.getInstant = getInstant;
-            this.packageService = packageService;
+            _getInstant = getInstant;
+            _packageService = packageService;
         }
 
         [HttpPut("api/v2/package")]
@@ -41,9 +41,9 @@ namespace Xs.Registry.Dotnet.Controllers
                 if (packageStream == null)
                     return BadRequest("Use multipart/form-data to upload package.");
 
-                var payload = await readPackage(packageStream);
+                var payload = await ReadPackage(packageStream);
 
-                var result = await packageService.PublishPackageAsync(GetUser(), payload);
+                var result = await _packageService.PublishPackageAsync(GetUser(), payload);
                 switch (result.Status)
                 {
                     case PackageStatus.Forbidden:
@@ -55,7 +55,7 @@ namespace Xs.Registry.Dotnet.Controllers
                 }
             }
 
-            async Task<PackagePayload> readPackage(Stream packageStream)
+            async Task<PackagePayload> ReadPackage(Stream packageStream)
             {
                 using(var packageReader = new NuGet.Packaging.PackageArchiveReader(packageStream, leaveStreamOpen : true))
                 {
@@ -74,7 +74,7 @@ namespace Xs.Registry.Dotnet.Controllers
                         nuspec.GetId(),
                         nuspec.GetVersion().ToNormalizedString(),
                         nuspec.GetDescription(),
-                        getInstant(),
+                        _getInstant(),
                         dependencies,
                         packageStream,
                         packageReader.GetNuspec()

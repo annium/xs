@@ -13,16 +13,16 @@ namespace Xs.Cli.Node.Commands.New
     {
         public override string Id { get; } = "app.react";
         public override string Description { get; } = "Create new app project, using React.";
-        private readonly ITemplateWriter templateWriter;
-        private readonly ILogger<AppReactCommand> logger;
+        private readonly ITemplateWriter _templateWriter;
+        private readonly ILogger<AppReactCommand> _logger;
 
         public AppReactCommand(
             ITemplateWriter templateWriter,
             ILogger<AppReactCommand> logger
         )
         {
-            this.templateWriter = templateWriter;
-            this.logger = logger;
+            _templateWriter = templateWriter;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -34,18 +34,18 @@ namespace Xs.Cli.Node.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            logger.Debug($"Create app project {name} at {location}");
+            _logger.Debug($"Create app project {name} at {location}");
 
-            templateWriter.LoadResources($"{Group.TemplatesDir}.AppReact");
-            templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));
+            _templateWriter.LoadResources($"{Group.TemplatesDir}.AppReact");
+            _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));
 
             // setup data
             var data = new { name };
 
             // write files
-            templateWriter.Write(Group.ProjectTemplate, ProjectFactory.ProjectFileName, data);
-            templateWriter.WriteAll(data);
-            templateWriter.EnsureAllWritten();
+            _templateWriter.Write(Group.ProjectTemplate, ProjectFactory.ProjectFileName, data);
+            _templateWriter.WriteAll(data);
+            _templateWriter.EnsureAllWritten();
         }
     }
 

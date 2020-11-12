@@ -36,7 +36,7 @@ namespace Xs.Cli.Core.Tasks
             var errors = new List<Exception>();
             var projects = candidates
                 .Select(x => CreateProject(x.Key, x.Value, configuration, errors.Add)!)
-                .Where(x => x != null)
+                .Where(x => x != null!)
                 .ToList();
             var directories = projects.Select(x => x.Directory).ToHashSet();
             var result = projects.OrderBy(e => e.Name).ToArray();

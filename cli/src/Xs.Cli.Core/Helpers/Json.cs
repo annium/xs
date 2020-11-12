@@ -15,7 +15,7 @@ namespace Xs.Cli.Core.Helpers
 
         public static T Read<T>(string value)
         {
-            return JsonSerializer.Deserialize<T>(value, Options);
+            return JsonSerializer.Deserialize<T>(value, Options)!;
         }
 
         public static T ReadFile<T>(string file)

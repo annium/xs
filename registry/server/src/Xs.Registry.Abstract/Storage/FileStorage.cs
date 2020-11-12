@@ -6,16 +6,16 @@ namespace Xs.Registry.Abstract.Storage
 {
     internal class FileStorage : IStorage
     {
-        private const int copyBufferSize = 81920;
+        private const int CopyBufferSize = 81920;
 
-        private readonly string root;
+        private readonly string _root;
 
         public FileStorage(
             string root
         )
         {
-            this.root = Path.GetFullPath(root);
-            Directory.CreateDirectory(this.root);
+            _root = Path.GetFullPath(root);
+            Directory.CreateDirectory(_root);
         }
 
         public Task<bool> ExistsAsync(string name)
@@ -43,7 +43,7 @@ namespace Xs.Registry.Abstract.Storage
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             using(var fs = File.Open(path, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
-                await stream.CopyToAsync(fs, copyBufferSize);
+                await stream.CopyToAsync(fs, CopyBufferSize);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Xs.Registry.Abstract.Storage
             File.Delete(path);
 
             // recursively cleanup
-            while (dir != root)
+            while (dir != _root)
             {
                 // if any files - no need to delete dir
                 if (Directory.GetFileSystemEntries(dir).Length > 0)
@@ -76,7 +76,7 @@ namespace Xs.Registry.Abstract.Storage
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"Given {name} is empty.");
 
-            return Path.GetFullPath(Path.Combine(root, name));
+            return Path.GetFullPath(Path.Combine(_root, name));
         }
     }
 }

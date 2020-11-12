@@ -6,42 +6,42 @@ namespace Xs.Cli.Dotnet.Models
 {
     internal class TargetFramework : Equatable<TargetFramework>
     {
-        private static readonly IDictionary<string, TargetFramework> values = new Dictionary<string, TargetFramework>();
+        private static readonly IDictionary<string, TargetFramework> Values = new Dictionary<string, TargetFramework>();
 
-        public static TargetFramework NetStandard2_0 { get; } = new TargetFramework("netstandard2.0");
-        public static TargetFramework NetStandard2_1 { get; } = new TargetFramework("netstandard2.1");
-        public static TargetFramework NetCoreApp2_0 { get; } = new TargetFramework("netcoreapp2.0");
-        public static TargetFramework NetCoreApp2_1 { get; } = new TargetFramework("netcoreapp2.1");
-        public static TargetFramework NetCoreApp2_2 { get; } = new TargetFramework("netcoreapp2.2");
-        public static TargetFramework NetCoreApp3_0 { get; } = new TargetFramework("netcoreapp3.0");
-        public static TargetFramework NetCoreApp3_1 { get; } = new TargetFramework("netcoreapp3.1");
+        public static TargetFramework NetStandard20 { get; } = new TargetFramework("netstandard2.0");
+        public static TargetFramework NetStandard21 { get; } = new TargetFramework("netstandard2.1");
+        public static TargetFramework NetCoreApp20 { get; } = new TargetFramework("netcoreapp2.0");
+        public static TargetFramework NetCoreApp21 { get; } = new TargetFramework("netcoreapp2.1");
+        public static TargetFramework NetCoreApp22 { get; } = new TargetFramework("netcoreapp2.2");
+        public static TargetFramework NetCoreApp30 { get; } = new TargetFramework("netcoreapp3.0");
+        public static TargetFramework NetCoreApp31 { get; } = new TargetFramework("netcoreapp3.1");
         public static TargetFramework Net5 { get; } = new TargetFramework("net5.0");
 
         public static IReadOnlyList<IReadOnlyList<TargetFramework>> SupportedGroups { get; } =
         new List<IReadOnlyList<TargetFramework>>()
         {
-            new List<TargetFramework> { NetStandard2_0, NetCoreApp2_0, NetCoreApp2_1, NetCoreApp2_2 },
-            new List<TargetFramework> { NetStandard2_0, NetStandard2_1, NetCoreApp3_0 },
-            new List<TargetFramework> { NetStandard2_1, NetCoreApp3_1 },
+            new List<TargetFramework> { NetStandard20, NetCoreApp20, NetCoreApp21, NetCoreApp22 },
+            new List<TargetFramework> { NetStandard20, NetStandard21, NetCoreApp30 },
+            new List<TargetFramework> { NetStandard21, NetCoreApp31 },
             new List<TargetFramework> { Net5 },
         };
 
-        private readonly string moniker;
+        private readonly string _moniker;
 
         private TargetFramework(string moniker)
         {
-            this.moniker = moniker;
-            values[moniker] = this;
+            _moniker = moniker;
+            Values[moniker] = this;
         }
 
-        public override string ToString() => moniker;
+        public override string ToString() => _moniker;
 
-        public override int GetHashCode() => moniker.GetHashCode();
+        public override int GetHashCode() => _moniker.GetHashCode();
 
         public static implicit operator TargetFramework(string value)
         {
-            if (values.ContainsKey(value))
-                return values[value];
+            if (Values.ContainsKey(value))
+                return Values[value];
 
             throw new ArgumentException($"Given value '{value}' is not a supported ({nameof(TargetFramework)}) moniker.");
         }

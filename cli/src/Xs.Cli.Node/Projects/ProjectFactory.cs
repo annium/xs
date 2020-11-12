@@ -22,11 +22,11 @@ namespace Xs.Cli.Node.Projects
         public const string ModulesDirectory = "node_modules";
         public const string ProjectFileName = "package.json";
         public const string LockFileName = "yarn.lock";
-        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-        private readonly ProjectMapper mapper;
-        private readonly LoggerConfiguration loggerConfiguration;
-        private readonly IShell shell;
-        private readonly IServiceProvider provider;
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+        private readonly ProjectMapper _mapper;
+        private readonly LoggerConfiguration _loggerConfiguration;
+        private readonly IShell _shell;
+        private readonly IServiceProvider _provider;
 
         public ProjectFactory(
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
@@ -36,11 +36,11 @@ namespace Xs.Cli.Node.Projects
             IServiceProvider provider
         )
         {
-            this.auditRules = auditRules;
-            this.mapper = mapper;
-            this.loggerConfiguration = loggerConfiguration;
-            this.shell = shell;
-            this.provider = provider;
+            _auditRules = auditRules;
+            _mapper = mapper;
+            _loggerConfiguration = loggerConfiguration;
+            _shell = shell;
+            _provider = provider;
         }
 
         public bool IsProjectDirectory(string directory)
@@ -57,9 +57,9 @@ namespace Xs.Cli.Node.Projects
             if (projectFiles.Length != 1)
                 return false;
 
-            return !FileManager.FindDirectory(directory, isMatch, IgnoredFolders);
+            return !FileManager.FindDirectory(directory, IsMatch, IgnoredFolders);
 
-            static bool isMatch(string dir) => Directory.GetFiles(dir, ProjectFileName).Length > 0;
+            static bool IsMatch(string dir) => Directory.GetFiles(dir, ProjectFileName).Length > 0;
         }
 
         public bool IsProjectFile(string file)
@@ -67,7 +67,8 @@ namespace Xs.Cli.Node.Projects
             if (!file.EndsWith(ProjectFileName))
                 return false;
 
-            var directory = Directory.GetParent(file).FullName;
+            var parent = Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
+            var directory = parent.FullName;
             if (FileManager.IsUnrootedDirectoryIgnored(directory, IgnoredFolders))
                 return false;
 
@@ -80,7 +81,7 @@ namespace Xs.Cli.Node.Projects
         )
         {
             var file = new FileInfo(Path.Combine(directory, ProjectFileName));
-            var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = mapper.Load(file.FullName, configuration);
+            var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = _mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
                 .Select(e => GetProjectDependencyMock(file, e))
@@ -91,17 +92,17 @@ namespace Xs.Cli.Node.Projects
             var isTestProject = scripts.ContainsKey("test");
 
             if (isPackable && isTestProject)
-                return new LibraryTestProject(getContext<LibraryTestProject>());
+                return new LibraryTestProject(GetContext<LibraryTestProject>());
 
             if (isPackable)
-                return new LibraryProject(getContext<LibraryProject>());
+                return new LibraryProject(GetContext<LibraryProject>());
 
             if (isTestProject)
-                return new TestProject(getContext<TestProject>());
+                return new TestProject(GetContext<TestProject>());
 
-            return new SealedProject(getContext<SealedProject>());
+            return new SealedProject(GetContext<SealedProject>());
 
-            SpecialProjectContext<TProject> getContext<TProject>() where TProject : SpecialProject<TProject>
+            SpecialProjectContext<TProject> GetContext<TProject>() where TProject : SpecialProject<TProject>
                 => new SpecialProjectContext<TProject>(
                     Constants.ProjectType,
                     name,
@@ -111,11 +112,11 @@ namespace Xs.Cli.Node.Projects
                     projectDependencies,
                     packageDependencies,
                     scripts,
-                    shell,
-                    loggerConfiguration,
-                    provider.GetRequiredService<ILogger<TProject>>(),
-                    auditRules,
-                    mapper
+                    _shell,
+                    _loggerConfiguration,
+                    _provider.GetRequiredService<ILogger<TProject>>(),
+                    _auditRules,
+                    _mapper
                 );
         }
     }

@@ -14,9 +14,9 @@ namespace Xs.Registry.Main.Controllers
     [Route("login")]
     public class LoginController : ServerController<User>
     {
-        private readonly IUserRepository userRepository;
-        private readonly ISecurityManager securityManager;
-        private readonly ISessionManager sessionManager;
+        private readonly IUserRepository _userRepository;
+        private readonly ISecurityManager _securityManager;
+        private readonly ISessionManager _sessionManager;
 
         public LoginController(
             IUserRepository userRepository,
@@ -25,9 +25,9 @@ namespace Xs.Registry.Main.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.userRepository = userRepository;
-            this.securityManager = securityManager;
-            this.sessionManager = sessionManager;
+            _userRepository = userRepository;
+            _securityManager = securityManager;
+            _sessionManager = sessionManager;
         }
 
         [HttpPost]
@@ -37,7 +37,7 @@ namespace Xs.Registry.Main.Controllers
             if (result != null)
                 return result;
 
-            await sessionManager.CreateSession(user.Id);
+            await _sessionManager.CreateSession(user.Id);
 
             return NoContent();
         }
@@ -65,7 +65,7 @@ namespace Xs.Registry.Main.Controllers
         [AuthorizeSession]
         public async Task<IActionResult> LogoutAsync()
         {
-            await sessionManager.DeleteCurrentSession();
+            await _sessionManager.DeleteCurrentSession();
 
             return NoContent();
         }
@@ -81,11 +81,11 @@ namespace Xs.Registry.Main.Controllers
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
                 return (null, BadRequest("Pass login data"));
 
-            var user = await userRepository.FindByNameAsync(name);
+            var user = await _userRepository.FindByNameAsync(name);
             if (user == null)
                 return (null, NotFound("User not found"));
 
-            var passwordHash = securityManager.Hash(password);
+            var passwordHash = _securityManager.Hash(password);
             if (user.PasswordHash != passwordHash)
                 return (null, Forbidden("Invalid password"));
 

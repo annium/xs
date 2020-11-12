@@ -18,15 +18,15 @@ namespace Xs.Cli.Dotnet.Projects
     {
         public const string ProjectFileExtension = ".csproj";
         public const string TestCoveragePackage = "coverlet.msbuild";
-        public static readonly string[] TrackedFileExtensions = new [] { ".cs" };
-        public static readonly string[] IgnoredFolders = new [] { "bin", "obj" };
-        private const string projectFileMask = "*.csproj";
+        public static readonly string[] TrackedFileExtensions = new[] { ".cs" };
+        public static readonly string[] IgnoredFolders = new[] { "bin", "obj" };
+        private const string ProjectFileMask = "*.csproj";
         public ProjectType Type { get; } = Constants.ProjectType;
-        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-        private readonly ProjectMapper mapper;
-        private readonly IShell shell;
-        private readonly LoggerConfiguration loggerConfiguration;
-        private readonly IServiceProvider provider;
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+        private readonly ProjectMapper _mapper;
+        private readonly IShell _shell;
+        private readonly LoggerConfiguration _loggerConfiguration;
+        private readonly IServiceProvider _provider;
 
         public ProjectFactory(
             IEnumerable<IAuditRule<ISpecialProject>> auditRules,
@@ -36,11 +36,11 @@ namespace Xs.Cli.Dotnet.Projects
             IServiceProvider provider
         )
         {
-            this.auditRules = auditRules;
-            this.mapper = mapper;
-            this.shell = shell;
-            this.loggerConfiguration = loggerConfiguration;
-            this.provider = provider;
+            _auditRules = auditRules;
+            _mapper = mapper;
+            _shell = shell;
+            _loggerConfiguration = loggerConfiguration;
+            _provider = provider;
         }
 
         public bool IsProjectDirectory(string directory)
@@ -48,10 +48,10 @@ namespace Xs.Cli.Dotnet.Projects
             // considered project directory, if in current directory there's single project file
             // and it's only one in all subdirectories
             return Directory.Exists(directory) &&
-                Directory.GetFiles(directory, projectFileMask).Length == 1 &&
-                !FileManager.FindDirectory(directory, isMatch, IgnoredFolders);
+                Directory.GetFiles(directory, ProjectFileMask).Length == 1 &&
+                !FileManager.FindDirectory(directory, IsMatch, IgnoredFolders);
 
-            static bool isMatch(string dir) => Directory.GetFiles(dir, projectFileMask).Length > 0;
+            static bool IsMatch(string dir) => Directory.GetFiles(dir, ProjectFileMask).Length > 0;
         }
 
         public bool IsProjectFile(string file)
@@ -59,7 +59,8 @@ namespace Xs.Cli.Dotnet.Projects
             if (!file.EndsWith(ProjectFileExtension))
                 return false;
 
-            var directory = Directory.GetParent(file).FullName;
+            var parent = Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
+            var directory = parent.FullName;
             if (FileManager.IsUnrootedDirectoryIgnored(directory, IgnoredFolders))
                 return false;
 
@@ -71,8 +72,9 @@ namespace Xs.Cli.Dotnet.Projects
             DiscoverConfiguration configuration
         )
         {
-            var file = new FileInfo(Directory.GetFiles(directory, projectFileMask, SearchOption.TopDirectoryOnly).First());
-            var(name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable, isTestProject) = mapper.Load(file.FullName, configuration);
+            var file = new FileInfo(Directory.GetFiles(directory, ProjectFileMask, SearchOption.TopDirectoryOnly).First());
+            var (name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable, isTestProject) =
+                _mapper.Load(file.FullName, configuration);
 
             var projectDependencies = projectDeps
                 .Select(e => GetProjectDependencyMock(file, e))
@@ -81,14 +83,14 @@ namespace Xs.Cli.Dotnet.Projects
             var packageDependencies = packageDeps.ToHashSet();
 
             if (isPackable)
-                return new LibraryProject(getContext<LibraryProject>());
+                return new LibraryProject(GetContext<LibraryProject>());
 
             if (isTestProject)
-                return new TestProject(getContext<TestProject>());
+                return new TestProject(GetContext<TestProject>());
 
-            return new SealedProject(getContext<SealedProject>());
+            return new SealedProject(GetContext<SealedProject>());
 
-            SpecialProjectContext<TProject> getContext<TProject>() where TProject : SpecialProject<TProject>
+            SpecialProjectContext<TProject> GetContext<TProject>() where TProject : SpecialProject<TProject>
                 => new SpecialProjectContext<TProject>(
                     Constants.ProjectType,
                     name,
@@ -97,13 +99,13 @@ namespace Xs.Cli.Dotnet.Projects
                     directory,
                     projectDependencies,
                     packageDependencies,
-                    shell,
-                    loggerConfiguration,
-                    provider.GetRequiredService<ILogger<TProject>>(),
+                    _shell,
+                    _loggerConfiguration,
+                    _provider.GetRequiredService<ILogger<TProject>>(),
                     targetFramework,
                     outputType,
-                    auditRules,
-                    mapper
+                    _auditRules,
+                    _mapper
                 );
         }
     }

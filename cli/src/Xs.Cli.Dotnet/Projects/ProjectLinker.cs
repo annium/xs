@@ -13,7 +13,7 @@ namespace Xs.Cli.Dotnet.Projects
         public ProjectType Type { get; } = Constants.ProjectType;
 
         public void PreLink(
-            IEnumerable<IProject> projects,
+            IReadOnlyCollection<IProject> projects,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         )
@@ -23,7 +23,7 @@ namespace Xs.Cli.Dotnet.Projects
                 // check TargetFramework consistency
                 var typeProjects = projects.OfType<ISpecialProject>().ToArray();
                 var frameworks = typeProjects.Select(p => p.TargetFramework).Distinct();
-                if (!TargetFramework.SupportedGroups.Any(g => frameworks.All(f => g.Contains(f))))
+                if (!TargetFramework.SupportedGroups.Any(g => frameworks.All(g.Contains)))
                 {
                     var usages = string.Join(Environment.NewLine, typeProjects.Select(p => $"{p.Name}: {p.TargetFramework}"));
                     addError(new InvalidOperationException(
@@ -35,8 +35,8 @@ namespace Xs.Cli.Dotnet.Projects
 
         public void Link(
             IProject project,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
+            IReadOnlyCollection<IProject> projects,
+            IReadOnlyCollection<Package> packages,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         )

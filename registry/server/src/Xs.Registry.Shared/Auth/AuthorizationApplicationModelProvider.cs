@@ -10,13 +10,13 @@ namespace Xs.Registry.Shared.Auth
     {
         public int Order { get; } = -990;
 
-        private readonly Func<Access, TAuthorizationFilter> authorizationFilterFactory;
+        private readonly Func<Access, TAuthorizationFilter> _authorizationFilterFactory;
 
         public AuthorizationApplicationModelProvider(
             Func<Access, TAuthorizationFilter> authorizationFilterFactory
         )
         {
-            this.authorizationFilterFactory = authorizationFilterFactory;
+            _authorizationFilterFactory = authorizationFilterFactory;
         }
 
         public void OnProvidersExecuted(ApplicationModelProviderContext context)
@@ -44,7 +44,7 @@ namespace Xs.Registry.Shared.Auth
             if (attribute == null)
                 return;
 
-            actionModel.Filters.Add(authorizationFilterFactory(attribute.Access));
+            actionModel.Filters.Add(_authorizationFilterFactory(attribute.Access));
         }
     }
 }

@@ -14,8 +14,8 @@ namespace Xs.Registry.Main.Controllers
     [Route("packages")]
     public class MetaPackagesController : ServerController<User>
     {
-        private readonly IMetaPackageManager metaPackageManager;
-        private readonly IMetaPackageRepository metaPackageRepository;
+        private readonly IMetaPackageManager _metaPackageManager;
+        private readonly IMetaPackageRepository _metaPackageRepository;
 
         public MetaPackagesController(
             IMetaPackageManager metaPackageManager,
@@ -23,8 +23,8 @@ namespace Xs.Registry.Main.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.metaPackageManager = metaPackageManager;
-            this.metaPackageRepository = metaPackageRepository;
+            _metaPackageManager = metaPackageManager;
+            _metaPackageRepository = metaPackageRepository;
         }
 
         [HttpGet("search")]
@@ -44,7 +44,7 @@ namespace Xs.Registry.Main.Controllers
             if (count < 1)
                 return BadRequest("Count must be positive integer");
 
-            var packages = await metaPackageRepository.FindAsync(GetUser().Id, ownerId, projectType, query, page, count);
+            var packages = await _metaPackageRepository.FindAsync(GetUser().Id, ownerId, projectType, query, page, count);
 
             return Ok(packages.Select(p => new MetaPackageView(p)).ToArray());
         }
@@ -54,12 +54,12 @@ namespace Xs.Registry.Main.Controllers
         public async Task<IActionResult> GetPackageAsync(string type, string name)
         {
             name = HttpUtility.UrlDecode(name);
-            var package = await metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
+            var package = await _metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
 
             if (package == null)
                 return NotFound();
 
-            var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
+            var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.Has(Permission.Read))
                 return Forbidden("You need read permission to get this package.");
 
@@ -71,16 +71,16 @@ namespace Xs.Registry.Main.Controllers
         public async Task<IActionResult> UpdatePackagePermissionsAsync(string type, string name, [FromBody] MetaPackagePermission[] permissions)
         {
             name = HttpUtility.UrlDecode(name);
-            var package = await metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
+            var package = await _metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
 
             if (package == null)
                 return NotFound();
 
-            var access = metaPackageManager.GetAccess(package).ForUser(GetUser());
+            var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.IsOwner)
                 return Forbidden("You need to be owner to update package permissions.");
 
-            await metaPackageRepository.UpdatePermissionsAsync(package.Id, permissions);
+            await _metaPackageRepository.UpdatePermissionsAsync(package.Id, permissions);
 
             return NoContent();
         }

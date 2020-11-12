@@ -12,7 +12,7 @@ namespace Xs.Cli.Node.Projects
         public ProjectType Type { get; } = Constants.ProjectType;
 
         public void PreLink(
-            IEnumerable<IProject> projects,
+            IReadOnlyCollection<IProject> projects,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         )
@@ -22,8 +22,8 @@ namespace Xs.Cli.Node.Projects
 
         public void Link(
             IProject project,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
+            IReadOnlyCollection<IProject> projects,
+            IReadOnlyCollection<Package> packages,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         )

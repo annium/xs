@@ -10,50 +10,48 @@ namespace Xs.Cli.Node.Tools
 {
     internal class SpecialConfigurationManager : ISpecialConfigurationManager
     {
-        private const string file = ".npmrc";
+        private const string File = ".npmrc";
         public ProjectType Type { get; } = Constants.ProjectType;
-        public string[] IgnorePatterns { get; } = new [] { file };
-        private readonly ILogger<SpecialConfigurationManager> logger;
+        public string[] IgnorePatterns { get; } = new [] { File };
+        private readonly ILogger<SpecialConfigurationManager> _logger;
 
         public SpecialConfigurationManager(
             ILogger<SpecialConfigurationManager> logger
         )
         {
-            this.logger = logger;
+            _logger = logger;
         }
 
         public void Save(IProject project, ProjectTypeConfiguration configuration)
         {
-            logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+            _logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
             // with NPM currently it's not possible to publish unscoped packages privately
-            var scope = getScope(project.Name);
+            var scope = GetScope(project.Name);
             if (string.IsNullOrWhiteSpace(scope))
             {
-                logger.Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
+                _logger.Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
                 return;
             }
-
-            var specialConfiguration = (SpecialConfiguration) configuration.Special;
 
             var sb = new StringBuilder();
             sb.AppendLine($"@{scope}:registry={configuration.Server}");
             // add all private scopes
-            if (specialConfiguration != null)
-                foreach (var privateScope in specialConfiguration.PrivateScopes.ToHashSet())
+            if (configuration.Special != null)
+                foreach (var privateScope in ((SpecialConfiguration) configuration.Special).PrivateScopes.ToHashSet())
                     sb.AppendLine($"@{privateScope}:registry={configuration.Server}");
             sb.AppendLine($"//{configuration.Server.Authority}/:_authToken=\"{configuration.Token}\"");
-            File.WriteAllText(FilePath(project), sb.ToString());
+            System.IO.File.WriteAllText(FilePath(project), sb.ToString());
 
-            static string getScope(string name) => name.StartsWith('@') ? name[1..].Split('/') [0] : string.Empty;
+            static string GetScope(string name) => name.StartsWith('@') ? name[1..].Split('/') [0] : string.Empty;
         }
 
         public void Delete(IProject project)
         {
             var path = FilePath(project);
-            if (File.Exists(path)) File.Delete(path);
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
         }
 
-        private string FilePath(IProject project) => Path.Combine(project.Directory, file);
+        private string FilePath(IProject project) => Path.Combine(project.Directory, File);
     }
 }

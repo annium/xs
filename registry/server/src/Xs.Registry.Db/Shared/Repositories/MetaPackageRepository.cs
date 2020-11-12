@@ -9,46 +9,46 @@ namespace Xs.Registry.Db.Shared
 {
     internal class MetaPackageRepository : IMetaPackageRepository
     {
-        private readonly ISharedContext context;
+        private readonly ISharedContext _context;
 
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
         public MetaPackageRepository(
             ISharedContext context,
             IMapper mapper
         )
         {
-            this.context = context;
-            this.mapper = mapper;
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<MetaPackage> CreateAsync(MetaPackage metaPackage)
         {
-            var entity = mapper.Map<Entities.MetaPackage>(metaPackage);
+            var entity = _mapper.Map<Entities.MetaPackage>(metaPackage);
             entity.Id = Guid.NewGuid();
             entity.Permissions.ForEach(p => p.MetaPackageId = entity.Id);
 
-            using(var db = context.GetDataConnection())
+            using(var db = _context.GetDataConnection())
             {
                 await db.InsertAsync(entity);
                 db.BulkCopy(entity.Permissions);
             }
 
-            return mapper.Map<MetaPackage>(entity);
+            return _mapper.Map<MetaPackage>(entity);
         }
 
         public async Task<MetaPackage> GetByIdAsync(Guid id)
         {
-            var entity = await context.MetaPackages
+            var entity = await _context.MetaPackages
                 .LoadWith(p => p.Permissions)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            return mapper.Map<MetaPackage>(entity);
+            return _mapper.Map<MetaPackage>(entity);
         }
 
         public async Task<MetaPackageAccess> GetAccessByIdAsync(Guid id)
         {
-            var data = await context.MetaPackages
+            var data = await _context.MetaPackages
                 .LoadWith(p => p.Permissions)
                 .Where(p => p.Id == id)
                 .Select(p => new { owner = p.OwnerId, permissions = p.Permissions })
@@ -57,7 +57,7 @@ namespace Xs.Registry.Db.Shared
             if (data == null)
                 return null;
 
-            return new MetaPackageAccess(data.owner, data.permissions.Select(mapper.Map<MetaPackagePermission>).ToArray());
+            return new MetaPackageAccess(data.owner, data.permissions.Select(_mapper.Map<MetaPackagePermission>).ToArray());
         }
 
         public async Task<MetaPackage[]> FindAsync(
@@ -69,14 +69,14 @@ namespace Xs.Registry.Db.Shared
             int count
         )
         {
-            var request = context.MetaPackages
+            var request = _context.MetaPackages
                 .InnerJoin(
-                    context.Users,
+                    _context.Users,
                     (m, u) => m.OwnerId == u.Id,
                     (m, u) => new { m, u }
                 )
                 .InnerJoin(
-                    context.MetaPackagePermissions,
+                    _context.MetaPackagePermissions,
                     (mu, p) => mu.m.Id == p.MetaPackageId,
                     (mu, p) => new { m = mu.m, u = mu.u, p }
                 )
@@ -122,20 +122,20 @@ namespace Xs.Registry.Db.Shared
                 .Take(count)
                 .ToArrayAsync();
 
-            var entities = await context.MetaPackages
+            var entities = await _context.MetaPackages
                 .LoadWith(m => m.Owner)
                 .Where(m => ids.Contains(m.Id))
                 .OrderBy(m => m.Name)
                 .ToArrayAsync();
 
-            var permissions = await context.MetaPackagePermissions
+            var permissions = await _context.MetaPackagePermissions
                 .Where(p => ids.Contains(p.MetaPackageId))
                 .ToArrayAsync();
 
             foreach (var entity in entities)
                 entity.Permissions = permissions.Where(p => p.MetaPackageId == entity.Id).ToList();
 
-            return entities.Select(mapper.Map<MetaPackage>).ToArray();
+            return entities.Select(_mapper.Map<MetaPackage>).ToArray();
         }
 
         public async Task<MetaPackage> FindByTypeNameAsync(ProjectType type, string name)
@@ -143,20 +143,20 @@ namespace Xs.Registry.Db.Shared
             var typeString = type.ToString();
             name = name.ToLower();
 
-            var entity = await context.MetaPackages
+            var entity = await _context.MetaPackages
                 .LoadWith(p => p.Owner)
                 .LoadWith(p => p.Permissions)
                 .Where(p => p.Type == typeString && p.LowerName == name)
                 .FirstOrDefaultAsync();
 
-            return mapper.Map<MetaPackage>(entity);
+            return _mapper.Map<MetaPackage>(entity);
         }
 
         public Task UpdateInfoAsync(Guid id, IPackageInfo packageInfo)
         {
-            var published = mapper.Map<DateTime>(packageInfo.Published);
+            var published = _mapper.Map<DateTime>(packageInfo.Published);
 
-            return context.MetaPackages
+            return _context.MetaPackages
                 .Where(p => p.Id == id)
                 .UpdateAsync(u => new Entities.MetaPackage()
                 {
@@ -169,7 +169,7 @@ namespace Xs.Registry.Db.Shared
 
         public Task SetDownloadsAsync(Guid id, int downloads)
         {
-            return context.MetaPackages
+            return _context.MetaPackages
                 .Where(p => p.Id == id)
                 .UpdateAsync(u => new Entities.MetaPackage { Downloads = downloads });
         }
@@ -177,14 +177,14 @@ namespace Xs.Registry.Db.Shared
         public async Task UpdatePermissionsAsync(Guid id, MetaPackagePermission[] permissions)
         {
             foreach (var permission in permissions)
-                await context.MetaPackagePermissions
+                await _context.MetaPackagePermissions
                 .Where(p => p.MetaPackageId == id && p.Category == permission.Category)
                 .UpdateAsync(p => new Entities.MetaPackagePermission { Permission = permission.Permission });
         }
 
         public Task DeleteByIdAsync(Guid id)
         {
-            return context.MetaPackages.Where(p => p.Id == id).DeleteAsync();
+            return _context.MetaPackages.Where(p => p.Id == id).DeleteAsync();
         }
     }
 }

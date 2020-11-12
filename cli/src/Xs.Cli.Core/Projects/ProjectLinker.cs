@@ -69,14 +69,14 @@ namespace Xs.Cli.Core.Projects
             if (configuration.ForceChecks)
             {
                 var duplicatePackage = packages.FirstOrDefault(p => p.Name == project.Name);
-                if (duplicatePackage != null!)
+                if (!(duplicatePackage is null))
                 {
                     addError(new InvalidOperationException($"Project {project} name is used by package {duplicatePackage}."));
                     return;
                 }
             }
 
-            var linker = _linkers.FirstOrDefault(l => l.Type == project.Type);
+            var linker = _linkers.First(l => l.Type == project.Type);
             linker.Link(
                 project,
                 projects,
@@ -87,8 +87,8 @@ namespace Xs.Cli.Core.Projects
         }
 
         private void ValidatePackages(
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
+            IReadOnlyCollection<IProject> projects,
+            IReadOnlyCollection<Package> packages,
             Action<Exception> addError
         )
         {

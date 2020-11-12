@@ -2,7 +2,7 @@ namespace Xs.Registry.Abstract.Packages
 {
     public enum PackageStatus
     {
-        OK,
+        Ok,
         NotFound,
         Forbidden,
         Conflict,

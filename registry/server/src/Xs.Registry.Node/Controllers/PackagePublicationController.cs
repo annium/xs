@@ -16,11 +16,11 @@ namespace Xs.Registry.Node.Controllers
 {
     public class PackagePublicationController : ServerController<User>
     {
-        private readonly Func<Instant> getInstant;
+        private readonly Func<Instant> _getInstant;
 
-        private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
+        private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
 
-        private readonly ILogger<PackagePublicationController> logger;
+        private readonly ILogger<PackagePublicationController> _logger;
 
         public PackagePublicationController(
             Func<Instant> getInstant,
@@ -29,9 +29,9 @@ namespace Xs.Registry.Node.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.getInstant = getInstant;
-            this.packageService = packageService;
-            this.logger = logger;
+            _getInstant = getInstant;
+            _packageService = packageService;
+            _logger = logger;
         }
 
         [HttpPut("{package}")]
@@ -40,19 +40,19 @@ namespace Xs.Registry.Node.Controllers
         {
             if (payload == null)
             {
-                logger.LogInformation($"Publication of {package} declined: Empty payload");
+                _logger.LogInformation($"Publication of {package} declined: Empty payload");
                 return BadRequest("Empty data");
             }
 
             if (!ModelState.IsValid)
             {
-                logger.LogInformation($"Publication of {package} declined: {JsonConvert.SerializeObject(ModelState)}");
+                _logger.LogInformation($"Publication of {package} declined: {JsonConvert.SerializeObject(ModelState)}");
                 return BadRequest("Incorrect data");
             }
 
-            payload.Published = getInstant();
+            payload.Published = _getInstant();
 
-            var result = await packageService.PublishPackageAsync(GetUser(), payload);
+            var result = await _packageService.PublishPackageAsync(GetUser(), payload);
             switch (result.Status)
             {
                 case PackageStatus.Forbidden:

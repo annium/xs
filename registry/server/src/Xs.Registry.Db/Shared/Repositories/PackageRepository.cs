@@ -14,13 +14,13 @@ namespace Xs.Registry.Db.Shared
     where TPackageDependencyEntity : class, Entities.IPackageDependency
     where TContext : IContext
     {
-        private readonly TContext context;
+        private readonly TContext _context;
 
-        private readonly ITable<TPackageEntity> packages;
+        private readonly ITable<TPackageEntity> _packages;
 
-        private readonly ITable<TPackageDependencyEntity> packageDependencies;
+        private readonly ITable<TPackageDependencyEntity> _packageDependencies;
 
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
         public PackageRepository(
             TContext context,
@@ -29,52 +29,52 @@ namespace Xs.Registry.Db.Shared
             IMapper mapper
         )
         {
-            this.context = context;
-            packages = getPackagesTable(context);
-            packageDependencies = getPackageDependenciesTable(context);
-            this.mapper = mapper;
+            _context = context;
+            _packages = getPackagesTable(context);
+            _packageDependencies = getPackageDependenciesTable(context);
+            _mapper = mapper;
         }
 
         public async Task<TPackage> CreateAsync(TPackage package)
         {
-            var entity = mapper.Map<TPackageEntity>(package);
+            var entity = _mapper.Map<TPackageEntity>(package);
             entity.Id = Guid.NewGuid();
             entity.Dependencies.ForEach(d => d.PackageId = entity.Id);
 
-            using(var db = context.GetDataConnection())
+            using(var db = _context.GetDataConnection())
             {
                 await db.InsertAsync(entity);
                 db.BulkCopy(entity.Dependencies);
             }
 
-            return mapper.Map<TPackage>(entity);
+            return _mapper.Map<TPackage>(entity);
         }
 
         public async Task<TPackage[]> FindAllByNameAsync(string name)
         {
             name = name.ToLower();
 
-            var entities = await packages
+            var entities = await _packages
                 .Where(p => p.LowerName == name)
                 .OrderByDescending(p => p.Version)
                 .ToArrayAsync();
 
             var ids = entities.Select(e => e.Id).ToArray();
-            var dependencies = await packageDependencies
+            var dependencies = await _packageDependencies
                 .Where(d => ids.Contains(d.PackageId))
                 .ToArrayAsync();
 
             foreach (var entity in entities)
                 entity.Dependencies = dependencies.Where(p => p.PackageId == entity.Id).ToList();
 
-            return entities.Select(mapper.Map<TPackage>).ToArray();
+            return entities.Select(_mapper.Map<TPackage>).ToArray();
         }
 
         public Task<string[]> FindAllVersionsByNameAsync(string name)
         {
             name = name.ToLower();
 
-            return packages
+            return _packages
                 .Where(p => p.LowerName == name)
                 .Select(p => p.Version)
                 .OrderByDescending(v => v)
@@ -85,33 +85,33 @@ namespace Xs.Registry.Db.Shared
         {
             name = name.ToLower();
 
-            var entity = await packages
+            var entity = await _packages
                 .Where(p => p.LowerName == name && p.Version == version)
                 .FirstOrDefaultAsync();
 
             if (entity != null)
-                entity.Dependencies = await packageDependencies
+                entity.Dependencies = await _packageDependencies
                 .Where(d => d.PackageId == entity.Id)
                 .ToListAsync();
 
-            return mapper.Map<TPackage>(entity);
+            return _mapper.Map<TPackage>(entity);
         }
 
         public Task<int> CountAllDownloadsAsync(string name)
         {
             name = name.ToLower();
 
-            return packages.Where(p => p.LowerName == name).SumAsync(p => p.Downloads);
+            return _packages.Where(p => p.LowerName == name).SumAsync(p => p.Downloads);
         }
 
         public async Task IncrementDownloadsAsync(Guid id)
         {
-            var downloads = await packages
+            var downloads = await _packages
                 .Where(p => p.Id == id)
                 .Select(p => p.Downloads)
                 .FirstOrDefaultAsync();
 
-            await packages
+            await _packages
                 .Where(p => p.Id == id && p.Downloads == downloads)
                 .UpdateAsync(p => new TPackageEntity { Downloads = downloads + 1 });
         }
@@ -120,7 +120,7 @@ namespace Xs.Registry.Db.Shared
         {
             name = name.ToLower();
 
-            return packages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
+            return _packages.Where(p => p.LowerName == name && p.Version == version).DeleteAsync();
         }
     }
 }

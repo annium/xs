@@ -14,7 +14,7 @@ namespace Xs.Cli.Core.Audit
         {
             var results = new List<AuditResult>();
 
-            var version = projects.Max(p => p.Version);
+            var version = projects.Max(p => p.Version)!;
             if (project.Version != version)
             {
                 if (fix)
@@ -67,7 +67,7 @@ namespace Xs.Cli.Core.Audit
                 );
             }
 
-            var correctVersion = others.Max(p => p.Version);
+            var correctVersion = others.Max(p => p.Version)!;
             if (version != correctVersion)
             {
                 if (fix)

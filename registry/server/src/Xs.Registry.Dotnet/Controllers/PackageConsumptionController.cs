@@ -13,11 +13,11 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackageConsumptionController : ServerController<User>
     {
-        private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
+        private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
 
-        private readonly IPackageRepository<Package, PackageDependency> packageRepository;
+        private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
 
-        private readonly Storage.IPackageStorage packageStorage;
+        private readonly Storage.IPackageStorage _packageStorage;
 
         public PackageConsumptionController(
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
@@ -26,16 +26,16 @@ namespace Xs.Registry.Dotnet.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.packageService = packageService;
-            this.packageRepository = packageRepository;
-            this.packageStorage = packageStorage;
+            _packageService = packageService;
+            _packageRepository = packageRepository;
+            _packageStorage = packageStorage;
         }
 
         [HttpGet("v3/package/{name}/index.json")]
         public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken token)
         {
             name = HttpUtility.UrlDecode(name);
-            var versions = await packageRepository.FindAllVersionsByNameAsync(name);
+            var versions = await _packageRepository.FindAllVersionsByNameAsync(name);
 
             if (versions.Length == 0)
                 return NotFound();
@@ -47,7 +47,7 @@ namespace Xs.Registry.Dotnet.Controllers
         public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken token)
         {
             name = HttpUtility.UrlDecode(name);
-            var result = await packageService.ProcessDownloadAsync(null, name, version, true);
+            var result = await _packageService.ProcessDownloadAsync(null, name, version, true);
             switch (result.Status)
             {
                 case PackageStatus.NotFound:
@@ -58,7 +58,7 @@ namespace Xs.Registry.Dotnet.Controllers
                     return ServerError(result);
             }
 
-            var content = await packageStorage.GetPackageAsync(name, version);
+            var content = await _packageStorage.GetPackageAsync(name, version);
 
             return File(content, "application/octet-stream");
         }
@@ -67,7 +67,7 @@ namespace Xs.Registry.Dotnet.Controllers
         public async Task<IActionResult> DownloadNuspecAsync(string name, string version, CancellationToken token)
         {
             name = HttpUtility.UrlDecode(name);
-            var result = await packageService.ProcessDownloadAsync(null, name, version, false);
+            var result = await _packageService.ProcessDownloadAsync(null, name, version, false);
             switch (result.Status)
             {
                 case PackageStatus.NotFound:
@@ -78,7 +78,7 @@ namespace Xs.Registry.Dotnet.Controllers
                     return ServerError(result);
             }
 
-            var content = await packageStorage.GetNuspecAsync(name, version);
+            var content = await _packageStorage.GetNuspecAsync(name, version);
 
             return File(content, "text/xml");
         }

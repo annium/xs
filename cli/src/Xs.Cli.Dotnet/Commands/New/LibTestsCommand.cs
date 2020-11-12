@@ -12,16 +12,16 @@ namespace Xs.Cli.Dotnet.Commands.New
     {
         public override string Id { get; } = "lib.tests";
         public override string Description { get; } = "Create new library tests project.";
-        private readonly ITemplateWriter templateWriter;
-        private readonly ILogger<LibTestsCommand> logger;
+        private readonly ITemplateWriter _templateWriter;
+        private readonly ILogger<LibTestsCommand> _logger;
 
         public LibTestsCommand(
             ITemplateWriter templateWriter,
             ILogger<LibTestsCommand> logger
         )
         {
-            this.templateWriter = templateWriter;
-            this.logger = logger;
+            _templateWriter = templateWriter;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -33,18 +33,18 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            logger.Debug($"Create library tests project {name} at {location}");
+            _logger.Debug($"Create library tests project {name} at {location}");
 
-            templateWriter.LoadResources($"{Group.TemplatesDir}.LibTests");
-            templateWriter.SetRoot(Path.Combine(location, name));
+            _templateWriter.LoadResources($"{Group.TemplatesDir}.LibTests");
+            _templateWriter.SetRoot(Path.Combine(location, name));
 
             // setup data
             var data = new { name };
 
             // write files
-            templateWriter.Write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}", data);
-            templateWriter.WriteAll(data);
-            templateWriter.EnsureAllWritten();
+            _templateWriter.Write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}", data);
+            _templateWriter.WriteAll(data);
+            _templateWriter.EnsureAllWritten();
         }
     }
 

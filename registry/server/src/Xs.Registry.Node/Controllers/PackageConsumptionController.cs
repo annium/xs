@@ -16,11 +16,11 @@ namespace Xs.Registry.Node.Controllers
 {
     public class PackageConsumptionController : ServerController<User>
     {
-        private readonly IPackageService<Package, PackageDependency, PackagePayload> packageService;
+        private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
 
-        private readonly Storage.IPackageStorage packageStorage;
+        private readonly Storage.IPackageStorage _packageStorage;
 
-        private readonly IUrlHelper url;
+        private readonly IUrlHelper _url;
 
         public PackageConsumptionController(
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
@@ -29,9 +29,9 @@ namespace Xs.Registry.Node.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.packageService = packageService;
-            this.packageStorage = packageStorage;
-            this.url = url;
+            _packageService = packageService;
+            _packageStorage = packageStorage;
+            _url = url;
         }
 
         [HttpGet("{name}")]
@@ -39,15 +39,15 @@ namespace Xs.Registry.Node.Controllers
         public async Task<IActionResult> GetPackageAsync([FromRoute] string name)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
-            var result = await packageService.GetPackagesAsync(GetUser(), packageName);
+            var result = await _packageService.GetPackagesAsync(GetUser(), packageName);
             switch (result.Status)
             {
                 case PackageStatus.NotFound:
                     return NotFound();
                 case PackageStatus.Forbidden:
                     return Forbidden(result);
-                case PackageStatus.OK:
-                    return Ok(new PackagesView(result.Data, url));
+                case PackageStatus.Ok:
+                    return Ok(new PackagesView(result.Data, _url));
                 default:
                     return NotFound();
             }
@@ -58,7 +58,7 @@ namespace Xs.Registry.Node.Controllers
         public async Task<IActionResult> DownloadPackageAsync([FromRoute] string name, [FromRoute] string version)
         {
             var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
-            var result = await packageService.ProcessDownloadAsync(GetUser(), packageName, version, true);
+            var result = await _packageService.ProcessDownloadAsync(GetUser(), packageName, version, true);
             switch (result.Status)
             {
                 case PackageStatus.NotFound:
@@ -69,7 +69,7 @@ namespace Xs.Registry.Node.Controllers
                     return ServerError(result);
             }
 
-            var content = await packageStorage.GetAsync(packageName, version);
+            var content = await _packageStorage.GetAsync(packageName, version);
 
             return File(content, MediaTypeNames.Application.Octet);
         }

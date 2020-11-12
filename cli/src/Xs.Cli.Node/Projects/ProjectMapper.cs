@@ -13,7 +13,7 @@ namespace Xs.Cli.Node.Projects
 {
     internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     {
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             PropertyNameCaseInsensitive = true,
@@ -30,7 +30,7 @@ namespace Xs.Cli.Node.Projects
             var project = new RawProject();
             var file = new FileInfo(path);
 
-            var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(file.FullName), jsonSerializerOptions);
+            var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(file.FullName), JsonSerializerOptions)!;
 
             project.Name = info.Name ??
                 throw new InvalidOperationException($"Project {path} is missing name");
@@ -89,9 +89,8 @@ namespace Xs.Cli.Node.Projects
         public void Save(ISpecialProject project)
         {
             var path = project.File;
-            var dir = Directory.GetParent(path).FullName;
 
-            var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(path), jsonSerializerOptions);
+            var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(path), JsonSerializerOptions)!;
 
             info.Name = project.Name;
             info.Version = project.Version.ToString();
@@ -101,14 +100,14 @@ namespace Xs.Cli.Node.Projects
             else
                 info.Private = true;
 
-            info.Dependencies = getDeps(project, DependencyType.Normal);
-            info.DevDependencies = getDeps(project, DependencyType.Dev);
-            info.PeerDependencies = getDeps(project, DependencyType.Peer);
+            info.Dependencies = GetDeps(project, DependencyType.Normal);
+            info.DevDependencies = GetDeps(project, DependencyType.Dev);
+            info.PeerDependencies = GetDeps(project, DependencyType.Peer);
 
-            File.WriteAllText(path, JsonSerializer.Serialize(info, jsonSerializerOptions));
+            File.WriteAllText(path, JsonSerializer.Serialize(info, JsonSerializerOptions));
             File.AppendAllText(path, Environment.NewLine);
 
-            static Dictionary<string, string>? getDeps(ISpecialProject project, DependencyType type)
+            static Dictionary<string, string>? GetDeps(ISpecialProject project, DependencyType type)
             {
                 var deps = project.Projects
                     .Where(e => e.Type == type)
@@ -131,7 +130,8 @@ namespace Xs.Cli.Node.Projects
             string location
         )
         {
-            var path = Path.GetFullPath(Path.Combine(file.DirectoryName, location, ProjectFactory.ProjectFileName));
+            var parent = file.DirectoryName ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
+            var path = Path.GetFullPath(Path.Combine(parent, location, ProjectFactory.ProjectFileName));
             if (!File.Exists(path))
                 throw new InvalidOperationException($"Project {project} has broken project dependency {location}.");
 

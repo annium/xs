@@ -11,7 +11,7 @@ namespace Xs.Registry.Db.Migrations
 {
     [DbContext(typeof(Context))]
     [Migration("20190818102620_init")]
-    partial class init
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

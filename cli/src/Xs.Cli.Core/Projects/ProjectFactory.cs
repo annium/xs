@@ -14,7 +14,7 @@ namespace Xs.Cli.Core.Projects
             _factories = factories;
         }
 
-        public ISpecialProjectFactory ResolveFactory(string directory)
+        public ISpecialProjectFactory? ResolveFactory(string directory)
         {
             return _factories.FirstOrDefault(e => e.IsProjectDirectory(directory));
         }

@@ -111,7 +111,7 @@ namespace Xs.Tools
                 var typeConfiguration = new ProjectTypeConfiguration(
                     uri,
                     configuration.Token,
-                    configuration.Types.First(c => c.Type == type)
+                    configuration.Types.FirstOrDefault(c => c.Type == type)
                 );
                 foreach (var project in targets)
                     _specialManagers[type].Save(project, typeConfiguration);

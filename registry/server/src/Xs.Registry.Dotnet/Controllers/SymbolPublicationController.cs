@@ -16,7 +16,7 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class SymbolPublicationController : ServerController<User>
     {
-        private static readonly HashSet<string> validExtensions = new HashSet<string>
+        private static readonly HashSet<string> ValidExtensions = new HashSet<string>
         {
             ".pdb",
             ".nuspec",
@@ -26,9 +26,9 @@ namespace Xs.Registry.Dotnet.Controllers
             ".p7s"
         };
 
-        private readonly IPackageRepository<Package, PackageDependency> packageRepository;
+        private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
 
-        private readonly ISymbolStorage symbolStorage;
+        private readonly ISymbolStorage _symbolStorage;
 
         public SymbolPublicationController(
             IPackageRepository<Package, PackageDependency> packageRepository,
@@ -36,8 +36,8 @@ namespace Xs.Registry.Dotnet.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.packageRepository = packageRepository;
-            this.symbolStorage = symbolStorage;
+            _packageRepository = packageRepository;
+            _symbolStorage = symbolStorage;
         }
 
         [HttpPut("api/v2/symbol")]
@@ -62,7 +62,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
                     // TODO: when applicable, add permissions usage
 
-                    if ((await packageRepository.FindByNameVersionAsync(name, version)) == null)
+                    if ((await _packageRepository.FindByNameVersionAsync(name, version)) == null)
                         return NotFound($"Package {name} {version} doesn't exist.");
 
                     foreach (var file in files)
@@ -83,14 +83,14 @@ namespace Xs.Registry.Dotnet.Controllers
         {
             var files = (await reader.GetFilesAsync(token)).ToList();
 
-            return files.All(isValidFile) ?
+            return files.All(IsValidFile) ?
                 files.Where(e => Path.GetExtension(e) == ".pdb").ToList() :
                 null;
 
-            bool isValidFile(string path) =>
+            bool IsValidFile(string path) =>
                 !string.IsNullOrEmpty(Path.GetFileName(path)) &&
                 !string.IsNullOrEmpty(Path.GetExtension(path)) &&
-                validExtensions.Contains(Path.GetExtension(path));
+                ValidExtensions.Contains(Path.GetExtension(path));
         }
     }
 }

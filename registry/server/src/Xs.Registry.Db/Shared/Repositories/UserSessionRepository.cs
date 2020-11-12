@@ -8,24 +8,24 @@ namespace Xs.Registry.Db.Shared
 {
     internal class UserSessionRepository : IUserSessionRepository
     {
-        private readonly ISharedContext context;
+        private readonly ISharedContext _context;
 
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
         public UserSessionRepository(
             ISharedContext context,
             IMapper mapper
         )
         {
-            this.context = context;
-            this.mapper = mapper;
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<UserSession> CreateAsync(UserSession userSession)
         {
-            var entity = mapper.Map<Entities.UserSession>(userSession);
+            var entity = _mapper.Map<Entities.UserSession>(userSession);
 
-            await context.UserSessions
+            await _context.UserSessions
                 .InsertAsync(() => new Entities.UserSession
                 {
                     UserId = entity.UserId,
@@ -33,21 +33,21 @@ namespace Xs.Registry.Db.Shared
                         Expires = entity.Expires,
                 });
 
-            return mapper.Map<UserSession>(entity);
+            return _mapper.Map<UserSession>(entity);
         }
 
         public async Task<UserSession> FindByTokenAsync(Guid token)
         {
-            var entity = await context.UserSessions.FirstOrDefaultAsync(u => u.Token == token);
+            var entity = await _context.UserSessions.FirstOrDefaultAsync(u => u.Token == token);
 
-            return mapper.Map<UserSession>(entity);
+            return _mapper.Map<UserSession>(entity);
         }
 
         public Task ProlongateAsync(Guid token, Instant expires)
         {
-            var expiresDate = mapper.Map<DateTime>(expires);
+            var expiresDate = _mapper.Map<DateTime>(expires);
 
-            return context.UserSessions
+            return _context.UserSessions
                 .UpdateAsync(
                     s => s.Token == token,
                     s => new Entities.UserSession { Expires = expiresDate }
@@ -56,14 +56,14 @@ namespace Xs.Registry.Db.Shared
 
         public Task DeleteByTokenAsync(Guid token)
         {
-            return context.UserSessions.DeleteAsync(s => s.Token == token);
+            return _context.UserSessions.DeleteAsync(s => s.Token == token);
         }
 
         public Task DeleteExpiredAsync(Instant now)
         {
-            var nowDate = mapper.Map<DateTime>(now);
+            var nowDate = _mapper.Map<DateTime>(now);
 
-            return context.UserSessions.DeleteAsync(s => s.Expires < nowDate);
+            return _context.UserSessions.DeleteAsync(s => s.Expires < nowDate);
         }
     }
 }

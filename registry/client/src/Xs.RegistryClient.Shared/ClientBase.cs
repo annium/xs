@@ -4,23 +4,23 @@ namespace Xs.RegistryClient.Shared
 {
     public abstract class ClientBase
     {
-        private readonly ClientBase[] clients;
+        private readonly ClientBase[] _clients;
 
-        protected Uri uri = new Uri("http://localhost");
+        protected Uri Uri = new Uri("http://localhost");
 
         public ClientBase(params ClientBase[] clients)
         {
-            this.clients = clients;
+            _clients = clients;
         }
 
         public void SetUri(Uri uri)
         {
-            if (!this.uri.IsLoopback)
+            if (!Uri.IsLoopback)
                 throw new InvalidOperationException($"Uri already assigned.");
 
-            foreach (var client in clients)
+            foreach (var client in _clients)
                 client.SetUri(uri);
-            this.uri = uri;
+            Uri = uri;
         }
     }
 }

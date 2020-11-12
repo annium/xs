@@ -13,8 +13,8 @@ namespace Xs.Registry.Main.Controllers
     [Route("user")]
     public class UserController : ServerController<User>
     {
-        private readonly IUserRepository userRepository;
-        private readonly ISecurityManager securityManager;
+        private readonly IUserRepository _userRepository;
+        private readonly ISecurityManager _securityManager;
 
         public UserController(
             IUserRepository userRepository,
@@ -22,8 +22,8 @@ namespace Xs.Registry.Main.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.userRepository = userRepository;
-            this.securityManager = securityManager;
+            _userRepository = userRepository;
+            _securityManager = securityManager;
         }
 
         [HttpPut]
@@ -34,14 +34,14 @@ namespace Xs.Registry.Main.Controllers
 
             var name = registrationModel.Name;
 
-            if (await userRepository.FindByNameAsync(name) != null)
+            if (await _userRepository.FindByNameAsync(name) != null)
                 return Conflict();
 
-            var passwordHash = securityManager.Hash(registrationModel.Password);
+            var passwordHash = _securityManager.Hash(registrationModel.Password);
 
             var user = new User(name, passwordHash, Guid.NewGuid());
 
-            await userRepository.CreateAsync(user);
+            await _userRepository.CreateAsync(user);
 
             return NoContent();
         }
@@ -56,10 +56,10 @@ namespace Xs.Registry.Main.Controllers
             var user = GetUser();
 
             user.Name = updateModel.Name;
-            user.PasswordHash = securityManager.Hash(updateModel.Password);
+            user.PasswordHash = _securityManager.Hash(updateModel.Password);
             user.ApiToken = Guid.NewGuid();
 
-            await userRepository.UpdateAsync(user);
+            await _userRepository.UpdateAsync(user);
 
             return NoContent();
         }
@@ -72,7 +72,7 @@ namespace Xs.Registry.Main.Controllers
 
             var apiToken = Guid.NewGuid();
 
-            await userRepository.UpdateApiTokenAsync(user.Id, apiToken);
+            await _userRepository.UpdateApiTokenAsync(user.Id, apiToken);
 
             return NoContent();
         }
@@ -83,7 +83,7 @@ namespace Xs.Registry.Main.Controllers
         {
             var user = GetUser();
 
-            await userRepository.DeleteByIdAsync(user.Id);
+            await _userRepository.DeleteByIdAsync(user.Id);
 
             return NoContent();
         }

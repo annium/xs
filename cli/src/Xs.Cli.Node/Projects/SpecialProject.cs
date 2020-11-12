@@ -18,38 +18,38 @@ namespace Xs.Cli.Node.Projects
         IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         // TODO: rewrite through project options - projects can have different shapes in a moment
-        private static readonly object cacheLocker = new object();
-        private static readonly Lazy<string> cacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
-        private static IShell? staticShell;
+        private static readonly object CacheLocker = new object();
+        private static readonly Lazy<string> CacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
+        private static IShell? _StaticShell;
 
         private static string ResolveCacheDir()
         {
-            lock (cacheLocker)
-                return staticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
+            lock (CacheLocker)
+                return _StaticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
         }
 
         public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);
-        protected readonly IReadOnlyDictionary<string, string> scripts;
-        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-        private readonly ProjectMapper mapper;
+        protected readonly IReadOnlyDictionary<string, string> Scripts;
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+        private readonly ProjectMapper _mapper;
 
         public SpecialProject(SpecialProjectContext<TProject> context) : base(context)
         {
-            scripts = context.Scripts;
-            auditRules = context.AuditRules;
-            mapper = context.Mapper;
+            Scripts = context.Scripts;
+            _auditRules = context.AuditRules;
+            _mapper = context.Mapper;
 
             // set static shell if not set yet
-            lock (cacheLocker)
-                if (staticShell is null)
-                    staticShell = context.Shell;
+            lock (CacheLocker)
+                if (_StaticShell is null)
+                    _StaticShell = context.Shell;
         }
 
         public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
         {
             var results = new List<AuditResult>();
 
-            foreach (var rule in auditRules.Where(r => rules.Contains(r.Code)))
+            foreach (var rule in _auditRules.Where(r => rules.Contains(r.Code)))
                 results.AddRange(rule.Execute(projects, this, fix));
 
             return results.ToArray();
@@ -59,9 +59,9 @@ namespace Xs.Cli.Node.Projects
         {
             Logger.Info($"Start {Name} cache clean.");
 
-            lock (cacheLocker)
+            lock (CacheLocker)
             {
-                var entries = SysDirectory.GetDirectories(cacheDir.Value);
+                var entries = SysDirectory.GetDirectories(CacheDir.Value);
                 foreach (var (_, pkg) in Packages)
                 {
                     var name = PackageName.GetPlainName(pkg.Name);
@@ -88,7 +88,7 @@ namespace Xs.Cli.Node.Projects
                 DeleteFiles(ProjectFactory.LockFileName);
             }
 
-            if (scripts.ContainsKey("clean"))
+            if (Scripts.ContainsKey("clean"))
                 await RunAsync("yarn clean", "yarn run clean", token);
 
             Logger.Info($"Finished {Name} clean.");
@@ -109,20 +109,20 @@ namespace Xs.Cli.Node.Projects
         {
             if (force)
             {
-                if (scripts.ContainsKey("clean"))
+                if (Scripts.ContainsKey("clean"))
                     await RunAsync("yarn clean", "yarn run clean", token);
 
                 await InstallAsync(true, token);
             }
 
-            if (scripts.ContainsKey("build"))
+            if (Scripts.ContainsKey("build"))
                 await RunAsync("build", "yarn run build", token);
         }
 
-        protected override void HandleSave() => mapper.Save(this);
+        protected override void HandleSave() => _mapper.Save(this);
 
         protected override bool IsRelated(FileInfo file) =>
             ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-            !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
+            !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName!, ProjectFactory.IgnoredFolders);
     }
 }

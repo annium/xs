@@ -5,28 +5,28 @@ namespace Xs.Registry.Db.Shared
 {
     public class ProjectType
     {
-        private static List<ProjectType> types = new List<ProjectType>();
+        private static List<ProjectType> _Types = new List<ProjectType>();
 
         public static void Register(string name)
         {
-            if (types.FindIndex(e => e.name == name) < 0)
-                types.Add(new ProjectType(name));
+            if (_Types.FindIndex(e => e._name == name) < 0)
+                _Types.Add(new ProjectType(name));
         }
 
-        public static ProjectType Get(string name) => types.Find(e => e.name == name) ??
+        public static ProjectType Get(string name) => _Types.Find(e => e._name == name) ??
             throw new Exception($"Project type {name} is not registered.");
 
-        public static IEnumerable<ProjectType> List() => types.ToArray();
+        public static IEnumerable<ProjectType> List() => _Types.ToArray();
 
-        private readonly string name;
+        private readonly string _name;
 
         private ProjectType(string name)
         {
-            this.name = name;
+            _name = name;
         }
 
-        public override string ToString() => name;
+        public override string ToString() => _name;
 
-        public override int GetHashCode() => name.GetHashCode();
+        public override int GetHashCode() => _name.GetHashCode();
     }
 }

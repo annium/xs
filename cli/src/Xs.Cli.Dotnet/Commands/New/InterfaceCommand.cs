@@ -17,9 +17,9 @@ namespace Xs.Cli.Dotnet.Commands.New
 
         public override string Id { get; } = "interface";
         public override string Description { get; } = "Create new interfaces.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly ITemplateWriter templateWriter;
-        private readonly ILogger<InterfaceCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly ITemplateWriter _templateWriter;
+        private readonly ILogger<InterfaceCommand> _logger;
 
         public InterfaceCommand(
             DiscoverProjectsTask discoverTask,
@@ -27,9 +27,9 @@ namespace Xs.Cli.Dotnet.Commands.New
             ILogger<InterfaceCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.templateWriter = templateWriter;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _templateWriter = templateWriter;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -39,7 +39,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         )
         {
             var output = Path.GetFullPath(Path.Combine(discoverCfg.Root, cfg.Output));
-            var project = discoverTask.Run(discoverCfg)
+            var project = _discoverTask.Run(discoverCfg)
                 .FirstOrDefault(p => output.StartsWith(p.Directory));
 
             if (project is null)
@@ -62,24 +62,24 @@ namespace Xs.Cli.Dotnet.Commands.New
             if (names.Count == 0)
                 return;
 
-            logger.Debug($"{names.Count} interface(s) to create");
+            _logger.Debug($"{names.Count} interface(s) to create");
 
             Directory.CreateDirectory(output);
 
             foreach (var name in names)
             {
-                logger.Debug($"Create interface {name} at {output}");
+                _logger.Debug($"Create interface {name} at {output}");
 
-                templateWriter.LoadResources($"{Group.TemplatesDir}.Class");
-                templateWriter.SetRoot(output);
+                _templateWriter.LoadResources($"{Group.TemplatesDir}.Class");
+                _templateWriter.SetRoot(output);
 
                 // setup data
                 var ns = $"{project.Name}.{Path.GetRelativePath(project.Directory, output).Replace(Path.DirectorySeparatorChar, '.')}";
                 var data = new { ns, name };
 
                 // write files
-                templateWriter.Write(InterfaceTemplate, $"{name}.cs", data);
-                templateWriter.EnsureAllWritten();
+                _templateWriter.Write(InterfaceTemplate, $"{name}.cs", data);
+                _templateWriter.EnsureAllWritten();
             }
         }
     }

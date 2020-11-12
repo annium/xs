@@ -6,26 +6,26 @@ namespace Xs.Registry.Main.Tools
 {
     internal class SecurityManager : ISecurityManager, IDisposable
     {
-        private readonly HashAlgorithm hashAlgorithm = new SHA512CryptoServiceProvider();
+        private readonly HashAlgorithm _hashAlgorithm = new SHA512CryptoServiceProvider();
 
         public string Hash(string data)
         {
-            return Convert.ToBase64String(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(data)));
+            return Convert.ToBase64String(_hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(data)));
         }
 
         #region IDisposable Support
-        private bool disposedValue = false;
+        private bool _disposedValue = false;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    hashAlgorithm.Dispose();
+                    _hashAlgorithm.Dispose();
                 }
 
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

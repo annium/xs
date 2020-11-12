@@ -12,9 +12,9 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackageRegistrationController : ServerController<User>
     {
-        private readonly IPackageRepository<Package, PackageDependency> packageRepository;
+        private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
 
-        private readonly IUrlHelper url;
+        private readonly IUrlHelper _url;
 
         public PackageRegistrationController(
             IPackageRepository<Package, PackageDependency> packageRepository,
@@ -22,14 +22,14 @@ namespace Xs.Registry.Dotnet.Controllers
             IMediator mediator
         ) : base(mediator)
         {
-            this.packageRepository = packageRepository;
-            this.url = url;
+            _packageRepository = packageRepository;
+            _url = url;
         }
 
         [HttpGet("v3/registration/{name}/index.json")]
         public async Task<IActionResult> GetRegistrationIndexAsync(string name, CancellationToken token)
         {
-            var packages = await packageRepository.FindAllByNameAsync(name);
+            var packages = await _packageRepository.FindAllByNameAsync(name);
 
             if (packages.Length == 0)
                 return NotFound();
@@ -40,7 +40,7 @@ namespace Xs.Registry.Dotnet.Controllers
         [HttpGet("v3/registration/{name}/page.json")]
         public async Task<IActionResult> GetRegistrationPageAsync(string name, CancellationToken token)
         {
-            var packages = await packageRepository.FindAllByNameAsync(name);
+            var packages = await _packageRepository.FindAllByNameAsync(name);
 
             if (packages.Length == 0)
                 return NotFound();
@@ -51,7 +51,7 @@ namespace Xs.Registry.Dotnet.Controllers
         [HttpGet("v3/registration/{name}/{version}/leaf.json")]
         public async Task<IActionResult> GetRegistrationLeafAsync(string name, string version, CancellationToken token)
         {
-            var package = await packageRepository.FindByNameVersionAsync(name, version);
+            var package = await _packageRepository.FindByNameVersionAsync(name, version);
 
             if (package == null)
                 return NotFound();
@@ -62,7 +62,7 @@ namespace Xs.Registry.Dotnet.Controllers
         [HttpGet("v3/registration/{name}/{version}/catalog-entry.json")]
         public async Task<IActionResult> GetCatalogEntryAsync(string name, string version, CancellationToken token)
         {
-            var package = await packageRepository.FindByNameVersionAsync(name, version);
+            var package = await _packageRepository.FindByNameVersionAsync(name, version);
 
             if (package == null)
                 return NotFound();
@@ -77,7 +77,7 @@ namespace Xs.Registry.Dotnet.Controllers
             var lower = packages.Min(e => e.Version);
             var upper = packages.Max(e => e.Version);
 
-            return new RegistrationPageView(url.AbsoluteUri($"v3/registration/{id}/page.json"), leafs, lower, upper);
+            return new RegistrationPageView(_url.AbsoluteUri($"v3/registration/{id}/page.json"), leafs, lower, upper);
         }
 
         private RegistrationLeafView GetRegistrationLeaf(Package package)
@@ -86,9 +86,9 @@ namespace Xs.Registry.Dotnet.Controllers
             var version = package.Version;
 
             return new RegistrationLeafView(
-                url.AbsoluteUri($"v3/registration/{id}/{version}/leaf.json"),
+                _url.AbsoluteUri($"v3/registration/{id}/{version}/leaf.json"),
                 GetCatalogEntry(package),
-                url.AbsoluteUri($"v3/package/{id}/{version}/{id}.{version}.nupkg")
+                _url.AbsoluteUri($"v3/package/{id}/{version}/{id}.{version}.nupkg")
             );
         }
 
@@ -98,7 +98,7 @@ namespace Xs.Registry.Dotnet.Controllers
             var name = package.Name;
             var version = package.Version;
 
-            return new CatalogEntryView(url.AbsoluteUri($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
+            return new CatalogEntryView(_url.AbsoluteUri($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
         }
     }
 }

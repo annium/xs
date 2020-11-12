@@ -19,9 +19,9 @@ namespace Xs.Cli.Dotnet.Commands
 
         public override string Id { get; } = "sln";
         public override string Description { get; } = "Create sln file from project.";
-        private readonly DiscoverProjectsTask discoverTask;
-        private readonly IShell shell;
-        private readonly ILogger<SlnCommand> logger;
+        private readonly DiscoverProjectsTask _discoverTask;
+        private readonly IShell _shell;
+        private readonly ILogger<SlnCommand> _logger;
 
         public SlnCommand(
             DiscoverProjectsTask discoverTask,
@@ -29,9 +29,9 @@ namespace Xs.Cli.Dotnet.Commands
             ILogger<SlnCommand> logger
         )
         {
-            this.discoverTask = discoverTask;
-            this.shell = shell;
-            this.logger = logger;
+            _discoverTask = discoverTask;
+            _shell = shell;
+            _logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -41,41 +41,42 @@ namespace Xs.Cli.Dotnet.Commands
         )
         {
             var root = discoverCfg.Root;
-            var preservedProjects = discoverTask.Run(discoverCfg)
+            var preservedProjects = _discoverTask.Run(discoverCfg)
                 .OfType<ISpecialProject>()
                 .ToArray();
 
             var slnFile = SlnFile(root, cfg.Name);
-            logger.Debug($"Write solution file {slnFile}");
-            await shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root}").RunAsync();
+            _logger.Debug($"Write solution file {slnFile}");
+            await _shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root}").RunAsync();
 
             var currentProjects = await GetSolutsionProjectPathsAsync(root, cfg.Name);
             var removedProjects = currentProjects
-                .Where(path => !preservedProjects.Any(pp => pp.File == path))
+                .Where(path => preservedProjects.All(pp => pp.File != path))
                 .ToList();
 
             // add current projects
             foreach (var project in preservedProjects)
             {
-                var parent = Directory.GetParent(project.Directory).FullName;
+                var parent = Directory.GetParent(project.Directory)?.FullName ??
+                    throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
                 if (parent == root)
                 {
-                    logger.Debug($"Add {project} to solution file at root");
-                    await shell.Cmd($"dotnet sln {slnFile} add {project.File}").RunAsync();
+                    _logger.Debug($"Add {project} to solution file at root");
+                    await _shell.Cmd($"dotnet sln {slnFile} add {project.File}").RunAsync();
                 }
                 else
                 {
                     var folder = Path.GetRelativePath(root, parent);
-                    logger.Debug($"Add {project} to solution file at {folder}");
-                    await shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
+                    _logger.Debug($"Add {project} to solution file at {folder}");
+                    await _shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
                 }
             }
 
             // delete missing projects
             foreach (var path in removedProjects)
             {
-                logger.Debug($"Remove {path} from solution file");
-                await shell.Cmd($"dotnet sln {slnFile} remove {path}").RunAsync();
+                _logger.Debug($"Remove {path} from solution file");
+                await _shell.Cmd($"dotnet sln {slnFile} remove {path}").RunAsync();
             }
         }
 
@@ -83,7 +84,7 @@ namespace Xs.Cli.Dotnet.Commands
         {
             var slnFile = SlnFile(root, name);
 
-            var result = await shell.Cmd($"dotnet sln {slnFile} list").RunAsync();
+            var result = await _shell.Cmd($"dotnet sln {slnFile} list").RunAsync();
             if (!result.IsSuccess)
                 return Enumerable.Empty<string>();
 
@@ -91,15 +92,13 @@ namespace Xs.Cli.Dotnet.Commands
 
             // As of now, dotnet sln list doesn't provide machine-friendly output
             // If there are no projects in sln, output is:
-            // 
+            //
             // If there are any projects in sln, output is:
             //      Project(s)
             //      ----------
             //      path/to/project.csproj
             // So, code belong is targeting that specific behavior
-            return output.Length > 2 ?
-                output.Skip(2).Select(p => Path.Combine(root, p)).ToList() :
-                Enumerable.Empty<string>();
+            return output.Length > 2 ? output.Skip(2).Select(p => Path.Combine(root, p)).ToList() : Enumerable.Empty<string>();
         }
 
         private string SlnFile(string root, string name) => Path.Combine(root, $"{name}{SlnExtension}");

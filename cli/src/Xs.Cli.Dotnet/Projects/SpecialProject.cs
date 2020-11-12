@@ -17,26 +17,26 @@ namespace Xs.Cli.Dotnet.Projects
     internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject,
         IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
-        private static readonly object cacheLocker = new object();
+        private static readonly object CacheLocker = new object();
         public override string File => Path.Combine(Directory, ProjectFileName(Name));
         public TargetFramework TargetFramework { get; }
         public OutputType OutputType { get; }
-        private readonly IEnumerable<IAuditRule<ISpecialProject>> auditRules;
-        private readonly ProjectMapper mapper;
+        private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+        private readonly ProjectMapper _mapper;
 
         public SpecialProject(SpecialProjectContext<TProject> context) : base(context)
         {
             TargetFramework = context.TargetFramework;
             OutputType = context.OutputType;
-            auditRules = context.AuditRules;
-            mapper = context.Mapper;
+            _auditRules = context.AuditRules;
+            _mapper = context.Mapper;
         }
 
         public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
         {
             var results = new List<AuditResult>();
 
-            foreach (var rule in auditRules.Where(r => rules.Contains(r.Code)))
+            foreach (var rule in _auditRules.Where(r => rules.Contains(r.Code)))
                 results.AddRange(rule.Execute(projects, this, fix));
 
             return results.ToArray();
@@ -47,7 +47,7 @@ namespace Xs.Cli.Dotnet.Projects
             Logger.Info($"Start {Name} cache clean.");
 
             var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
-            lock (cacheLocker)
+            lock (CacheLocker)
             {
                 foreach (var (_, (_, name, version)) in Packages)
                 {
@@ -97,7 +97,7 @@ namespace Xs.Cli.Dotnet.Projects
                 token);
         }
 
-        protected override void HandleSave() => mapper.Save(this);
+        protected override void HandleSave() => _mapper.Save(this);
 
         protected override string FixProjectDirectory(string directory)
         {
@@ -113,7 +113,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         protected override bool IsRelated(FileInfo file) =>
             ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-            !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName, ProjectFactory.IgnoredFolders);
+            !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName!, ProjectFactory.IgnoredFolders);
 
         private string ProjectFileName(string name) => $"{name}{ProjectFactory.ProjectFileExtension}";
     }

@@ -12,16 +12,16 @@ namespace Xs.Cli.Dotnet.Commands.New
     {
         public override string Id { get; } = "exe";
         public override string Description { get; } = "Create new exe project.";
-        private readonly ITemplateWriter templateWriter;
-        private readonly ILogger<ExeCommand> logger;
+        private readonly ITemplateWriter _templateWriter;
+        private readonly ILogger<ExeCommand> _logger;
 
         public ExeCommand(
             ITemplateWriter templateWriter,
             ILogger<ExeCommand> logger
         )
         {
-            this.templateWriter = templateWriter;
-            this.logger = logger;
+            _templateWriter = templateWriter;
+            _logger = logger;
         }
 
         public override void Handle(
@@ -33,18 +33,18 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            logger.Debug($"Create executable project {name} at {location}");
+            _logger.Debug($"Create executable project {name} at {location}");
 
-            templateWriter.LoadResources($"{Group.TemplatesDir}.Exe");
-            templateWriter.SetRoot(Path.Combine(location, name));
+            _templateWriter.LoadResources($"{Group.TemplatesDir}.Exe");
+            _templateWriter.SetRoot(Path.Combine(location, name));
 
             // setup data
             var data = new { name };
 
             // write files
-            templateWriter.Write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}", data);
-            templateWriter.WriteAll(data);
-            templateWriter.EnsureAllWritten();
+            _templateWriter.Write(Group.ProjectTemplate, $"{name}{ProjectFactory.ProjectFileExtension}", data);
+            _templateWriter.WriteAll(data);
+            _templateWriter.EnsureAllWritten();
         }
     }
 

@@ -13,7 +13,7 @@ namespace Xs.Registry.Db.Shared
 
         public bool IsWorld { get; }
 
-        private readonly Permission permission;
+        private readonly Permission _permission;
 
         internal UserMetaPackageAccess(
             Guid userId,
@@ -26,10 +26,10 @@ namespace Xs.Registry.Db.Shared
             IsOwner = category == PermissionCategory.Owner;
             IsWorld = category == PermissionCategory.World;
 
-            permission = permissions.FirstOrDefault(p => p.Category == category)?.Permission ?? Permission.None;
+            _permission = permissions.FirstOrDefault(p => p.Category == category)?.Permission ?? Permission.None;
         }
 
-        public bool Has(Permission permission) => this.permission.HasFlag(permission);
+        public bool Has(Permission permission) => _permission.HasFlag(permission);
 
         public override int GetHashCode()
         {
@@ -39,7 +39,7 @@ namespace Xs.Registry.Db.Shared
 
                 hash = hash * 31 + IsOwner.GetHashCode();
                 hash = hash * 31 + IsWorld.GetHashCode();
-                hash = hash * 31 + permission.GetHashCode();
+                hash = hash * 31 + _permission.GetHashCode();
 
                 return hash;
             }

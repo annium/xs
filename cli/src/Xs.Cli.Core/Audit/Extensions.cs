@@ -5,10 +5,10 @@ namespace Xs.Cli.Core.Audit
 {
     public static class Extensions
     {
-        public static IServiceCollection AddAuditRule<T, TP>(this IServiceCollection services)
-        where T : class, IAuditRule<TP> where TP : IProject
+        public static IServiceCollection AddAuditRule<T, Tp>(this IServiceCollection services)
+        where T : class, IAuditRule<Tp> where Tp : IProject
         {
-            services.AddSingleton<IAuditRule<TP>, T>();
+            services.AddSingleton<IAuditRule<Tp>, T>();
             services.AddSingleton<IAuditRule, T>();
 
             return services;

@@ -5,18 +5,18 @@ namespace Xs.RegistryClient.Main
 {
     public class MainClientFactory
     {
-        private readonly IServiceProvider provider;
+        private readonly IServiceProvider _provider;
 
         public MainClientFactory(
             IServiceProvider provider
         )
         {
-            this.provider = provider;
+            _provider = provider;
         }
 
         public MainClient Create(Uri uri)
         {
-            var client = provider.GetRequiredService<MainClient>();
+            var client = _provider.GetRequiredService<MainClient>();
 
             client.SetUri(uri);
 

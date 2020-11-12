@@ -10,8 +10,10 @@ namespace Xs.Cli.Core.Projects
             Dependency<string> reference
         )
         {
-            var file = Path.GetFullPath(Path.Combine(location.DirectoryName, reference.Value));
-            var directory = Directory.GetParent(file).FullName;
+            var locationParent = location.DirectoryName ?? throw new DirectoryNotFoundException($"File {location} has no parent directory");
+            var file = Path.GetFullPath(Path.Combine(locationParent, reference.Value));
+            var fileParent = Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {location} has no parent directory");
+            var directory = fileParent.FullName;
 
             var dependency = new ProjectMock<TProject>(
                 location.Name,

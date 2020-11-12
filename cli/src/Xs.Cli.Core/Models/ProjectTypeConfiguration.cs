@@ -7,12 +7,12 @@ namespace Xs.Cli.Core.Models
     {
         public Uri Server { get; }
         public string Token { get; }
-        public SpecialConfiguration Special { get; }
+        public SpecialConfiguration? Special { get; }
 
         public ProjectTypeConfiguration(
             Uri server,
             string token,
-            SpecialConfiguration special
+            SpecialConfiguration? special
         )
         {
             Server = server;

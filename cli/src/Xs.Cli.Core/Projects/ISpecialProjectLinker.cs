@@ -10,15 +10,15 @@ namespace Xs.Cli.Core.Projects
         ProjectType Type { get; }
 
         void PreLink(
-            IEnumerable<IProject> projects,
+            IReadOnlyCollection<IProject> projects,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         );
 
         void Link(
             IProject project,
-            IEnumerable<IProject> projects,
-            IEnumerable<Package> packages,
+            IReadOnlyCollection<IProject> projects,
+            IReadOnlyCollection<Package> packages,
             DiscoverConfiguration configuration,
             Action<Exception> addError
         );

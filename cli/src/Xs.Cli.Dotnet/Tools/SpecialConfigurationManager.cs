@@ -12,31 +12,31 @@ namespace Xs.Cli.Dotnet.Tools
 {
     internal class SpecialConfigurationManager : ISpecialConfigurationManager
     {
-        private const string file = "nuget.config";
+        private const string File = "nuget.config";
         public ProjectType Type { get; } = Constants.ProjectType;
-        public string[] IgnorePatterns { get; } = new [] { file, "lcov.info" };
-        private readonly string registryName = "registry";
-        private readonly string defaultName = "nuget";
-        private readonly Uri defaultUri = new Uri(Constants.DefaultServer);
-        private readonly ILogger<SpecialConfigurationManager> logger;
+        public string[] IgnorePatterns { get; } = new [] { File, "lcov.info" };
+        private readonly string _registryName = "registry";
+        private readonly string _defaultName = "nuget";
+        private readonly Uri _defaultUri = new Uri(Constants.DefaultServer);
+        private readonly ILogger<SpecialConfigurationManager> _logger;
 
         public SpecialConfigurationManager(
             ILogger<SpecialConfigurationManager> logger
         )
         {
-            this.logger = logger;
+            _logger = logger;
         }
 
         public void Save(IProject project, ProjectTypeConfiguration configuration)
         {
-            logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+            _logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
             var sources = new XElement(El.PackageSources);
             sources.Add(new XElement(El.Clear));
 
-            sources.Add(GetAddRule(registryName, configuration.Server));
+            sources.Add(GetAddRule(_registryName, configuration.Server));
 
-            sources.Add(GetAddRule(defaultName, defaultUri));
+            sources.Add(GetAddRule(_defaultName, _defaultUri));
 
             Save(project.Directory, new XElement(El.Configuration, sources));
         }
@@ -44,7 +44,7 @@ namespace Xs.Cli.Dotnet.Tools
         public void Delete(IProject project)
         {
             var path = FilePath(project.Directory);
-            if (File.Exists(path)) File.Delete(path);
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
         }
 
         private void Save(string folder, XElement info)
@@ -69,7 +69,7 @@ namespace Xs.Cli.Dotnet.Tools
             new XAttribute(El.Value, uri.IsFile ? uri.AbsolutePath : new Uri(uri, Constants.ServerPathSuffix).ToString())
         );
 
-        private string FilePath(string folder) => Path.Combine(folder, file);
+        private string FilePath(string folder) => Path.Combine(folder, File);
 
         private static class El
         {

@@ -13,13 +13,13 @@ namespace Xs.Registry.Abstract.Auth
 {
     public class AuthorizationFilter : IAsyncAuthorizationFilter
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         public AuthorizationFilter(
             IServiceProvider serviceProvider
         )
         {
-            this.serviceProvider = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -31,7 +31,7 @@ namespace Xs.Registry.Abstract.Auth
 
         private async Task<IActionResult> HandleAuthorizationAsync(AuthorizationFilterContext context)
         {
-            using(var scope = serviceProvider.CreateScope())
+            using(var scope = _serviceProvider.CreateScope())
             {
                 var tokenAccessors = scope.ServiceProvider.GetRequiredService<IEnumerable<ITokenAccessor>>();
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();

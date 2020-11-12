@@ -71,7 +71,8 @@ namespace Xs.Cli.Core.Tools
         public void Write(string resourceName, string fileName, object data)
         {
             var path = Path.GetFullPath(Path.Combine(_root, fileName));
-            Directory.CreateDirectory(Directory.GetParent(path).FullName);
+            var parent = Directory.GetParent(path) ?? throw new DirectoryNotFoundException($"Directory {path} has no parent");
+            Directory.CreateDirectory(parent.FullName);
 
             var resource = _resources.First(r => r.Name == resourceName);
             if (resourceName.EndsWith(TemplateExtension))
