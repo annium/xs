@@ -1,6 +1,5 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
@@ -11,26 +10,26 @@ namespace Xs.Cli.Dotnet
 {
     public class ServicePack : ServicePackBase
     {
-        public override void Register(IServiceCollection services, IServiceProvider provider)
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
             // projects
-            services.AddSingleton<ISpecialProjectFactory, ProjectFactory>();
-            services.AddSingleton<ISpecialProjectLinker, ProjectLinker>();
-            services.AddSingleton<ProjectMapper>();
-            services.AddSingleton<IDependencyManager, DependencyManager>();
+            container.Add<ISpecialProjectFactory, ProjectFactory>().Singleton();
+            container.Add<ISpecialProjectLinker, ProjectLinker>().Singleton();
+            container.Add<ProjectMapper>().AsSelf().Singleton();
+            container.Add<IDependencyManager, DependencyManager>().Singleton();
 
             // tools
-            services.AddSingleton<ISpecialConfigurationManager, SpecialConfigurationManager>();
+            container.Add<ISpecialConfigurationManager, SpecialConfigurationManager>().Singleton();
 
             // audit rules
-            services.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
-            services.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
+            container.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
+            container.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
 
             // commands
-            services.AddAssemblyTypes(GetType().Assembly)
+            container.AddAll(GetType().Assembly)
                 .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
                 .AsSelf()
-                .SingleInstance();
+                .Singleton();
         }
     }
 }

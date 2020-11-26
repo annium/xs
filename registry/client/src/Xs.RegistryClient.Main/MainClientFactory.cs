@@ -1,5 +1,5 @@
 using System;
-using Microsoft.Extensions.DependencyInjection;
+using Annium.Core.DependencyInjection;
 
 namespace Xs.RegistryClient.Main
 {
@@ -16,7 +16,7 @@ namespace Xs.RegistryClient.Main
 
         public MainClient Create(Uri uri)
         {
-            var client = _provider.GetRequiredService<MainClient>();
+            var client = _provider.Resolve<MainClient>();
 
             client.SetUri(uri);
 

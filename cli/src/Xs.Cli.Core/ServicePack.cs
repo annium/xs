@@ -2,8 +2,6 @@ using System;
 using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
 using Annium.Logging.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
-using NodaTime;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
@@ -14,54 +12,55 @@ namespace Xs.Cli.Core
 {
     public class ServicePack : ServicePackBase
     {
-        public override void Configure(IServiceCollection services)
+        public override void Configure(IServiceContainer container)
         {
-            services.AddMapper();
-            services.AddConfiguration<LoggerConfiguration>(builder => builder.AddCommandLineArgs());
+            container.AddMapper();
+            container.AddConfiguration<LoggerConfiguration>(builder => builder.AddCommandLineArgs());
         }
 
-        public override void Register(IServiceCollection services, IServiceProvider provider)
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
-            services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
+            container.AddTimeProvider();
 
-            services.AddHttpRequestFactory();
-            services.AddLogging(route => route
-                .For(BuildLogFilter(provider.GetRequiredService<LoggerConfiguration>()))
+            container.AddJsonSerializers(opts => opts.ConfigureForOperations().ConfigureForNodaTime());
+            container.AddHttpRequestFactory();
+            container.AddLogging(route => route
+                .For(BuildLogFilter(provider.Resolve<LoggerConfiguration>()))
                 .UseConsole());
-            services.AddShell();
+            container.AddShell();
 
             // projects
-            services.AddSingleton<IProjectFactory, ProjectFactory>();
-            services.AddSingleton<IProjectLinker, ProjectLinker>();
+            container.Add<IProjectFactory, ProjectFactory>().Singleton();
+            container.Add<IProjectLinker, ProjectLinker>().Singleton();
 
             // tasks
-            services.AddAssemblyTypes(GetType().Assembly)
+            container.AddAll(GetType().Assembly)
                 .Where(x => x.Name.EndsWith("Task"))
                 .AsSelf()
-                .SingleInstance();
+                .Singleton();
 
-            RegisterTasks(services);
+            RegisterTasks(container);
 
             // tools
-            services.AddTransient<ITemplateWriter, TemplateWriter>();
+            container.Add<ITemplateWriter, TemplateWriter>().Transient();
         }
 
-        private void RegisterTasks(IServiceCollection services)
+        private void RegisterTasks(IServiceContainer container)
         {
             // dependencies
-            services.AddSingleton<AddPackageDependencyTask>();
-            services.AddSingleton<AddProjectDependencyTask>();
-            services.AddSingleton<DeletePackageDependencyTask>();
-            services.AddSingleton<DeleteProjectDependencyTask>();
+            container.Add<AddPackageDependencyTask>().AsSelf().Singleton();
+            container.Add<AddProjectDependencyTask>().AsSelf().Singleton();
+            container.Add<DeletePackageDependencyTask>().AsSelf().Singleton();
+            container.Add<DeleteProjectDependencyTask>().AsSelf().Singleton();
 
             // root
-            services.AddSingleton<DiscoverProjectsTask>();
+            container.Add<DiscoverProjectsTask>().AsSelf().Singleton();
         }
 
         private Func<LogMessage, bool> BuildLogFilter(LoggerConfiguration cfg)
         {
             if (cfg.Trace)
-                return m => true;
+                return _ => true;
 
             if (cfg.Debug)
                 return m => m.Level >= LogLevel.Debug;

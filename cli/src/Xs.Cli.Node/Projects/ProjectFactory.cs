@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Annium.Core.DependencyInjection;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
@@ -114,7 +114,7 @@ namespace Xs.Cli.Node.Projects
                     scripts,
                     _shell,
                     _loggerConfiguration,
-                    _provider.GetRequiredService<ILogger<TProject>>(),
+                    _provider.Resolve<ILogger<TProject>>(),
                     _auditRules,
                     _mapper
                 );

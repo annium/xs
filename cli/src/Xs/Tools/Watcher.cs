@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Runtime.Time;
 using Annium.Logging.Abstractions;
 using NodaTime;
 
@@ -10,15 +11,15 @@ namespace Xs.Tools
 {
     internal class Watcher
     {
-        private readonly Func<Instant> _getInstant;
+        private readonly ITimeProvider _timeProvider;
         private readonly ILogger<Watcher> _logger;
 
         public Watcher(
-            Func<Instant> getInstant,
+            ITimeProvider timeProvider,
             ILogger<Watcher> logger
         )
         {
-            _getInstant = getInstant;
+            _timeProvider = timeProvider;
             _logger = logger;
         }
 
@@ -30,7 +31,7 @@ namespace Xs.Tools
             CancellationToken token
         )
         {
-            var semaphore = new PathSemaphore(_getInstant, Duration.FromMilliseconds(100));
+            var semaphore = new PathSemaphore(_timeProvider, Duration.FromMilliseconds(100));
             var tasks = new Queue<ValueTuple<Func<string, Task>, string>>();
 
             using var watcher = new FileSystemWatcher(root);
@@ -40,11 +41,11 @@ namespace Xs.Tools
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite;
 
-            watcher.Created += (sender, args) => AddTask(args.FullPath);
-            watcher.Renamed += (sender, args) => { AddTask(args.OldFullPath); AddTask(args.FullPath); };
-            watcher.Changed += (sender, args) => AddTask(args.FullPath);
-            watcher.Deleted += (sender, args) => AddTask(args.FullPath);
-            watcher.Error += (sender, args) => _logger.Error(args.GetException());
+            watcher.Created += (_, args) => AddTask(args.FullPath);
+            watcher.Renamed += (_, args) => { AddTask(args.OldFullPath); AddTask(args.FullPath); };
+            watcher.Changed += (_, args) => AddTask(args.FullPath);
+            watcher.Deleted += (_, args) => AddTask(args.FullPath);
+            watcher.Error += (_, args) => _logger.Error(args.GetException());
 
             // no tasks -> reset -> wait
             // add task -> set
@@ -89,26 +90,26 @@ namespace Xs.Tools
         {
             private readonly IDictionary<string, Instant> _data = new Dictionary<string, Instant>();
 
-            private readonly Func<Instant> _getInstant;
+            private readonly ITimeProvider _timeProvider;
 
             private readonly Duration _duration;
 
-            public PathSemaphore(Func<Instant> getInstant, Duration duration)
+            public PathSemaphore(ITimeProvider timeProvider, Duration duration)
             {
-                _getInstant = getInstant;
+                _timeProvider = timeProvider;
                 _duration = duration;
             }
 
             public bool IsAvailable(string path)
             {
-                var now = _getInstant();
+                var now = _timeProvider.Now;
 
                 // if cached, and not yet expired - it's not available
                 if (_data.ContainsKey(path) && _data[path] >= now)
                     return false;
 
                 // else, if not used yet, or expired - it's available
-                _data[path] = _getInstant() + _duration;
+                _data[path] = _timeProvider.Now + _duration;
 
                 return true;
             }

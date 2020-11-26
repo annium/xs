@@ -16,8 +16,8 @@ namespace {{name}}
             services.AddHttpRequestFactory();
             services.AddTransient<Func<IHttpRequest>>(sp =>
             {
-                var factory = sp.GetRequiredService<IHttpRequestFactory>();
-                var env = sp.GetRequiredService<IWebAssemblyHostEnvironment>();
+                var factory = sp.Resolve<IHttpRequestFactory>();
+                var env = sp.Resolve<IWebAssemblyHostEnvironment>();
                 var request = factory.New(env.BaseAddress);
 
                 return () => request.Clone();

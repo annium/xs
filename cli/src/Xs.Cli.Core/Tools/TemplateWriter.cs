@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Annium.Extensions.Primitives;
+using Annium.Core.Primitives;
 using Annium.Logging.Abstractions;
 using Scriban;
 using Scriban.Runtime;
