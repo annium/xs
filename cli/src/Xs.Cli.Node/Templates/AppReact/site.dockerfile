@@ -1,8 +1,8 @@
 FROM node:alpine as builder
 COPY . /src/
 WORKDIR /src/
-RUN yarn install --force
-RUN yarn build
+RUN pnpm install --force
+RUN pnpm build
 
 
 FROM nginx:alpine

@@ -22,6 +22,7 @@ namespace Xs.Cli.Core.Tools
             "cshtml",
             "css",
             "d.ts",
+            "dockerfile",
             "dockerignore",
             "env",
             "gitignore",

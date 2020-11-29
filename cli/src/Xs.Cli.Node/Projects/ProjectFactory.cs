@@ -21,7 +21,7 @@ namespace Xs.Cli.Node.Projects
         public static readonly string[] IgnoredFolders = new[] { "build", "dist", ModulesDirectory };
         public const string ModulesDirectory = "node_modules";
         public const string ProjectFileName = "package.json";
-        public const string LockFileName = "yarn.lock";
+        public const string LockFileName = "pnpm-lock.yaml";
         private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
         private readonly ProjectMapper _mapper;
         private readonly LoggerConfiguration _loggerConfiguration;

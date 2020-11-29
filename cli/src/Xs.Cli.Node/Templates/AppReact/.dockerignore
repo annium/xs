@@ -2,4 +2,4 @@
 build/
 node_modules/
 *.local
-yarn-error.log
+pnpm-error.log

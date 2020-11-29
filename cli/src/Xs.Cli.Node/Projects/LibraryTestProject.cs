@@ -71,7 +71,7 @@ namespace Xs.Cli.Node.Projects
 
         public Task TestAsync(Env env, string filter, CancellationToken token) =>
             string.IsNullOrWhiteSpace(filter)
-                ? RunAsync("test", $"yarn run test", token)
-                : RunAsync("test", $"yarn run test --testNamePattern {filter}", token);
+                ? RunAsync("test", $"pnpm test", token)
+                : RunAsync("test", $"pnpm test --testNamePattern {filter}", token);
     }
 }

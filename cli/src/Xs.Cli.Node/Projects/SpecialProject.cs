@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +8,6 @@ using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
-using Xs.Cli.Node.Tools;
 using SysDirectory = System.IO.Directory;
 
 namespace Xs.Cli.Node.Projects
@@ -18,15 +16,15 @@ namespace Xs.Cli.Node.Projects
         IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
     {
         // TODO: rewrite through project options - projects can have different shapes in a moment
-        private static readonly object CacheLocker = new object();
-        private static readonly Lazy<string> CacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
+        // private static readonly object CacheLocker = new object();
+        // private static readonly Lazy<string> CacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
         private static IShell? _StaticShell;
 
-        private static string ResolveCacheDir()
-        {
-            lock (CacheLocker)
-                return _StaticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
-        }
+        // private static string ResolveCacheDir()
+        // {
+        //     lock (CacheLocker)
+        //         return _StaticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
+        // }
 
         public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);
         protected readonly IReadOnlyDictionary<string, string> Scripts;
@@ -40,9 +38,9 @@ namespace Xs.Cli.Node.Projects
             _mapper = context.Mapper;
 
             // set static shell if not set yet
-            lock (CacheLocker)
-                if (_StaticShell is null)
-                    _StaticShell = context.Shell;
+            // lock (CacheLocker)
+            //     if (_StaticShell is null)
+            //         _StaticShell = context.Shell;
         }
 
         public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
@@ -59,18 +57,18 @@ namespace Xs.Cli.Node.Projects
         {
             Logger.Info($"Start {Name} cache clean.");
 
-            lock (CacheLocker)
-            {
-                var entries = SysDirectory.GetDirectories(CacheDir.Value);
-                foreach (var (_, pkg) in Packages)
-                {
-                    var name = PackageName.GetPlainName(pkg.Name);
-                    var version = pkg.Version.ToString();
-                    foreach (var entry in entries.Where(e => e.Contains(name) && e.Contains(version)))
-                        if (SysDirectory.Exists(entry))
-                            SysDirectory.Delete(entry, recursive: true);
-                }
-            }
+            // lock (CacheLocker)
+            // {
+            //     var entries = SysDirectory.GetDirectories(CacheDir.Value);
+            //     foreach (var (_, pkg) in Packages)
+            //     {
+            //         var name = PackageName.GetPlainName(pkg.Name);
+            //         var version = pkg.Version.ToString();
+            //         foreach (var entry in entries.Where(e => e.Contains(name) && e.Contains(version)))
+            //             if (SysDirectory.Exists(entry))
+            //                 SysDirectory.Delete(entry, recursive: true);
+            //     }
+            // }
 
             Logger.Info($"Finished {Name} cache clean.");
 
@@ -89,7 +87,7 @@ namespace Xs.Cli.Node.Projects
             }
 
             if (Scripts.ContainsKey("clean"))
-                await RunAsync("yarn clean", "yarn run clean", token);
+                await RunAsync("pnpm clean", "pnpm run clean", token);
 
             Logger.Info($"Finished {Name} clean.");
         }
@@ -102,7 +100,7 @@ namespace Xs.Cli.Node.Projects
                 DeleteFiles(ProjectFactory.LockFileName);
             }
 
-            return RunAsync("install", $"yarn install --no-emoji --no-progress", token);
+            return RunAsync("install", $"pnpm install --silent", token);
         }
 
         public async Task BuildAsync(Env env, bool force, CancellationToken token)
@@ -110,13 +108,13 @@ namespace Xs.Cli.Node.Projects
             if (force)
             {
                 if (Scripts.ContainsKey("clean"))
-                    await RunAsync("yarn clean", "yarn run clean", token);
+                    await RunAsync("pnpm clean", "pnpm run clean", token);
 
                 await InstallAsync(true, token);
             }
 
             if (Scripts.ContainsKey("build"))
-                await RunAsync("build", "yarn run build", token);
+                await RunAsync("build", "pnpm run build", token);
         }
 
         protected override void HandleSave() => _mapper.Save(this);
