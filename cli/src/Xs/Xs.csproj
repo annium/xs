@@ -22,5 +22,7 @@
     <ItemGroup>
         <PackageReference Include="Annium.Core.Entrypoint" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.CommandLine" Version="0.1.0" />
+        <PackageReference Include="QuikGraph.Data" Version="2.2.0" />
+        <PackageReference Include="QuikGraph.Graphviz" Version="2.2.0" />
     </ItemGroup>
 </Project>

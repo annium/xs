@@ -19,6 +19,7 @@ namespace Xs.Commands
             Add<BuildCommand>();
             Add<CleanCommand>();
             Add<DeleteCommand>();
+            Add<DepsGraphCommand>();
             Add<FormatCommand>();
             Add<InstallCommand>();
             Add<LinkCommand>();
