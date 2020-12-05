@@ -26,6 +26,7 @@ namespace Xs
             container.Add<IConfigurationManager, ConfigurationManager>().Singleton();
             container.Add<ProjectsRunner>().AsSelf().Singleton();
             container.Add<Watcher>().AsSelf().Singleton();
+            container.Add<WebServerFactory>().AsSelf().Singleton();
         }
     }
 }
