@@ -1,28 +1,35 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Projects;
+using SysFile = System.IO.File;
 
 namespace Xs.Cli.Dotnet.Projects
 {
     internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProject
     {
-        public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context) { }
+        public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context)
+        {
+        }
 
         public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
         {
             var file = Path.Combine(Directory, $"{Name}.{version}.nupkg");
-            if (System.IO.File.Exists(file))
-                System.IO.File.Delete(file);
+            if (SysFile.Exists(file))
+                SysFile.Delete(file);
 
             SetVersion(version);
             Save();
 
-            await RunAsync(
-                "pack",
-                $"dotnet pack {File} --output . -p:PackageVersion={version} -p:SymbolPackageFormat=snupkg",
-                token);
+            var cmd = new List<string>();
+            cmd.Add($"dotnet pack {File}");
+            cmd.Add($"--output .");
+            cmd.Add($"-p:PackageVersion={version}");
+            cmd.Add($"-p:SymbolPackageFormat=snupkg");
+
+            await RunAsync("pack", string.Join(' ', cmd), token);
 
             return file;
         }
