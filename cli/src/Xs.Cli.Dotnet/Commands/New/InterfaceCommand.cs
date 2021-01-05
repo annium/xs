@@ -70,7 +70,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             {
                 _logger.Debug($"Create interface {name} at {output}");
 
-                _templateWriter.LoadResources($"{Group.TemplatesDir}.Class");
+                _templateWriter.LoadResources($"{Group.TemplatesDir}.Interface");
                 _templateWriter.SetRoot(output);
 
                 // setup data
