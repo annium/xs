@@ -22,8 +22,8 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-        <PackageReference Include="NodaTime" Version="3.0.4" />
+        <PackageReference Include="NodaTime" Version="3.0.5" />
         <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
-        <PackageReference Include="NSwag.AspNetCore" Version="13.10.1" />
+        <PackageReference Include="NSwag.AspNetCore" Version="13.10.2" />
     </ItemGroup>
 </Project>
