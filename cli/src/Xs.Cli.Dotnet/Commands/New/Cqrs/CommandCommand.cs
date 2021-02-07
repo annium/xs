@@ -15,10 +15,11 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 {
     internal class CommandCommand : Command<CommandCommandConfiguration, DiscoverConfiguration>
     {
-        internal const string CommandTemplate = "Command.cs_tpl";
-        internal const string RequestTemplate = "Request.cs_tpl";
-        internal const string Commands = "Commands";
-        internal const string Requests = "Requests";
+        private const string DomainCommandTemplate = "DomainCommand.cs_tpl";
+        private const string ApplicationCommandTemplate = "ApplicationCommand.cs_tpl";
+        private const string RequestTemplate = "Request.cs_tpl";
+        private const string Commands = "Commands";
+        private const string Requests = "Requests";
 
         public override string Id { get; } = "command";
         public override string Description { get; } = "Create command.";
@@ -45,6 +46,13 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         {
             var projects = _discoverTask.Run(discoverCfg).ToList();
 
+            var domainProject = projects.FilterMask(cfg.DomainProject).SingleOrDefault();
+            if (domainProject is null)
+            {
+                Console.WriteLine($"Domain project {cfg.DomainProject} not found");
+                return;
+            }
+
             var applicationProject = projects.FilterMask(cfg.ApplicationProject).SingleOrDefault();
             if (applicationProject is null)
             {
@@ -61,19 +69,22 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Command");
 
-            var data = GetCommandDescription(applicationProject, viewModelProject, cfg.Area, token);
+            var data = GetCommandDescription(domainProject, applicationProject, viewModelProject, cfg.Area, token);
 
             _logger.Debug($"Create command {data.Entity}:{data.Name}");
 
             // write files
+            _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Commands, data.Entity));
+            _templateWriter.Write(DomainCommandTemplate, $"{data.Name}Command.cs", data);
             _templateWriter.SetRoot(BuildPath(applicationProject.Directory, cfg.Area, Commands, data.Entity));
-            _templateWriter.Write(CommandTemplate, $"{data.Name}Command.cs", data);
+            _templateWriter.Write(ApplicationCommandTemplate, $"{data.Name}Command.cs", data);
             _templateWriter.SetRoot(BuildPath(viewModelProject.Directory, cfg.Area, Requests, data.Entity));
             _templateWriter.Write(RequestTemplate, $"{data.Name}Request.cs", data);
             _templateWriter.EnsureAllWritten();
         }
 
         private CommandDescription GetCommandDescription(
+            IProject domainProject,
             IProject applicationProject,
             IProject viewModelProject,
             string? area,
@@ -91,7 +102,8 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
             token.ThrowIfCancellationRequested();
             data.ComposeFields = PromptFields("Compose field");
             token.ThrowIfCancellationRequested();
-            data.CommandNamespace = BuildNamespace(applicationProject.Name, area, Commands, data.Entity);
+            data.DomainCommandNamespace = BuildNamespace(domainProject.Name, area, Commands, data.Entity);
+            data.ApplicationCommandNamespace = BuildNamespace(applicationProject.Name, area, Commands, data.Entity);
             data.RequestNamespace = BuildNamespace(viewModelProject.Name, area, Requests, data.Entity);
 
             return data;
@@ -101,15 +113,25 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         {
             public string Entity { get; set; } = string.Empty;
             public string Name { get; set; } = string.Empty;
-            public IList<ValueTuple<string, string>> RequestFields { get; set; } = new List<ValueTuple<string, string>>();
-            public IList<ValueTuple<string, string>> ComposeFields { get; set; } = new List<ValueTuple<string, string>>();
-            public string CommandNamespace { get; set; } = string.Empty;
+
+            public IList<ValueTuple<string, string>> RequestFields { get; set; } =
+                new List<ValueTuple<string, string>>();
+
+            public IList<ValueTuple<string, string>> ComposeFields { get; set; } =
+                new List<ValueTuple<string, string>>();
+
+            public string DomainCommandNamespace { get; set; } = string.Empty;
+            public string ApplicationCommandNamespace { get; set; } = string.Empty;
             public string RequestNamespace { get; set; } = string.Empty;
         }
     }
 
     internal class CommandCommandConfiguration
     {
+        [Option("domain")]
+        [Help("Domain layer to add command to.")]
+        public string DomainProject { get; set; } = "Domain";
+
         [Option("app")]
         [Help("Application layer to add command to.")]
         public string ApplicationProject { get; set; } = "Application";

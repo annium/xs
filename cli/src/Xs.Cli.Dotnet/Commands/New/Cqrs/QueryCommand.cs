@@ -15,12 +15,13 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 {
     internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfiguration>
     {
-        internal const string QueryTemplate = "Query.cs_tpl";
-        internal const string RequestTemplate = "Request.cs_tpl";
-        internal const string ResponseTemplate = "Response.cs_tpl";
-        internal const string Queries = "Queries";
-        internal const string Requests = "Requests";
-        internal const string Responses = "Responses";
+        private const string DomainQueryTemplate = "DomainQuery.cs_tpl";
+        private const string ApplicationQueryTemplate = "ApplicationQuery.cs_tpl";
+        private const string RequestTemplate = "Request.cs_tpl";
+        private const string ResponseTemplate = "Response.cs_tpl";
+        private const string Queries = "Queries";
+        private const string Requests = "Requests";
+        private const string Responses = "Responses";
 
         public override string Id { get; } = "query";
         public override string Description { get; } = "Create query.";
@@ -47,6 +48,13 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         {
             var projects = _discoverTask.Run(discoverCfg).ToList();
 
+            var domainProject = projects.FilterMask(cfg.DomainProject).SingleOrDefault();
+            if (domainProject is null)
+            {
+                Console.WriteLine($"Domain project {cfg.DomainProject} not found");
+                return;
+            }
+
             var applicationProject = projects.FilterMask(cfg.ApplicationProject).SingleOrDefault();
             if (applicationProject is null)
             {
@@ -63,13 +71,15 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Query");
 
-            var data = GetQueryDescription(applicationProject, viewModelProject, cfg.Area, token);
+            var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, token);
 
             _logger.Debug($"Create query {data.Entity}:{data.Name}");
 
             // write files
+            _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Queries, data.Entity));
+            _templateWriter.Write(DomainQueryTemplate, $"{data.Name}Query.cs", data);
             _templateWriter.SetRoot(BuildPath(applicationProject.Directory, cfg.Area, Queries, data.Entity));
-            _templateWriter.Write(QueryTemplate, $"{data.Name}Query.cs", data);
+            _templateWriter.Write(ApplicationQueryTemplate, $"{data.Name}Query.cs", data);
             _templateWriter.SetRoot(BuildPath(viewModelProject.Directory, cfg.Area, Requests, data.Entity));
             _templateWriter.Write(RequestTemplate, $"{data.Name}Request.cs", data);
             if (!string.IsNullOrWhiteSpace(data.Response))
@@ -77,9 +87,12 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
                 _templateWriter.SetRoot(BuildPath(viewModelProject.Directory, cfg.Area, Responses, data.Entity));
                 _templateWriter.Write(ResponseTemplate, $"{data.Response}Response.cs", data);
             }
+
+            _templateWriter.EnsureAllWritten();
         }
 
         private QueryDescription GetQueryDescription(
+            IProject domainProject,
             IProject applicationProject,
             IProject viewModelProject,
             string? area,
@@ -102,7 +115,8 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
             if (!string.IsNullOrWhiteSpace(data.Response))
                 data.ResponseFields = PromptFields("Response field");
             token.ThrowIfCancellationRequested();
-            data.QueryNamespace = BuildNamespace(applicationProject.Name, area, Queries, data.Entity);
+            data.DomainQueryNamespace = BuildNamespace(domainProject.Name, area, Queries, data.Entity);
+            data.ApplicationQueryNamespace = BuildNamespace(applicationProject.Name, area, Queries, data.Entity);
             data.RequestNamespace = BuildNamespace(viewModelProject.Name, area, Requests, data.Entity);
             data.ResponseNamespace = BuildNamespace(viewModelProject.Name, area, Responses, data.Entity);
 
@@ -114,10 +128,18 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
             public string Entity { get; set; } = string.Empty;
             public string Name { get; set; } = string.Empty;
             public string Response { get; set; } = string.Empty;
-            public IList<ValueTuple<string, string>> RequestFields { get; set; } = new List<ValueTuple<string, string>>();
-            public IList<ValueTuple<string, string>> ComposeFields { get; set; } = new List<ValueTuple<string, string>>();
-            public IList<ValueTuple<string, string>> ResponseFields { get; set; } = new List<ValueTuple<string, string>>();
-            public string QueryNamespace { get; set; } = string.Empty;
+
+            public IList<ValueTuple<string, string>> RequestFields { get; set; } =
+                new List<ValueTuple<string, string>>();
+
+            public IList<ValueTuple<string, string>> ComposeFields { get; set; } =
+                new List<ValueTuple<string, string>>();
+
+            public IList<ValueTuple<string, string>> ResponseFields { get; set; } =
+                new List<ValueTuple<string, string>>();
+
+            public string DomainQueryNamespace { get; set; } = string.Empty;
+            public string ApplicationQueryNamespace { get; set; } = string.Empty;
             public string RequestNamespace { get; set; } = string.Empty;
             public string ResponseNamespace { get; set; } = string.Empty;
         }
@@ -125,6 +147,10 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
     internal class QueryCommandConfiguration
     {
+        [Option("domain")]
+        [Help("Domain layer to add query to.")]
+        public string DomainProject { get; set; } = "Domain";
+
         [Option("app")]
         [Help("Application layer to add query to.")]
         public string ApplicationProject { get; set; } = "Application";
