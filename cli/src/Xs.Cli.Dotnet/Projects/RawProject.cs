@@ -10,7 +10,7 @@ namespace Xs.Cli.Dotnet.Projects
         public string Name { get; set; } = string.Empty;
         public Core.Models.Version Version { get; set; } = Core.Models.Version.Empty;
         public string Description { get; set; } = string.Empty;
-        public TargetFramework TargetFramework { get; set; } = TargetFramework.NetCoreApp30;
+        public TargetFramework TargetFramework { get; set; } = TargetFramework.NetStandard21;
         public OutputType OutputType { get; set; } = OutputType.Library;
         public IEnumerable<Dependency<string>> Projects { get; set; } = Array.Empty<Dependency<string>>();
         public IEnumerable<Dependency<Package>> Packages { get; set; } = Array.Empty<Dependency<Package>>();

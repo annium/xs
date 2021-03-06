@@ -23,7 +23,7 @@ namespace Xs.Cli.Dotnet.Models
             new List<TargetFramework> { NetStandard20, NetCoreApp20, NetCoreApp21, NetCoreApp22 },
             new List<TargetFramework> { NetStandard20, NetStandard21, NetCoreApp30 },
             new List<TargetFramework> { NetStandard21, NetCoreApp31 },
-            new List<TargetFramework> { Net5 },
+            new List<TargetFramework> { NetStandard21, Net5 },
         };
 
         private readonly string _moniker;

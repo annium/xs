@@ -40,16 +40,16 @@ namespace Xs.Cli.Dotnet.Commands
             CancellationToken token
         )
         {
-            var root = discoverCfg.Root;
+            var root = Directory.GetCurrentDirectory();
             var preservedProjects = _discoverTask.Run(discoverCfg)
                 .OfType<ISpecialProject>()
                 .ToArray();
 
             var slnFile = SlnFile(root, cfg.Name);
             _logger.Debug($"Write solution file {slnFile}");
-            await _shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root}").RunAsync();
+            await _shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root} --force").RunAsync();
 
-            var currentProjects = await GetSolutsionProjectPathsAsync(root, cfg.Name);
+            var currentProjects = await GetSolutionProjectPathsAsync(root, cfg.Name);
             var removedProjects = currentProjects
                 .Where(path => preservedProjects.All(pp => pp.File != path))
                 .ToList();
@@ -80,7 +80,7 @@ namespace Xs.Cli.Dotnet.Commands
             }
         }
 
-        private async Task<IEnumerable<string>> GetSolutsionProjectPathsAsync(string root, string name)
+        private async Task<IEnumerable<string>> GetSolutionProjectPathsAsync(string root, string name)
         {
             var slnFile = SlnFile(root, name);
 
@@ -109,5 +109,15 @@ namespace Xs.Cli.Dotnet.Commands
         [Position(1)]
         [Help("Solution file name.")]
         public string Name { get; set; } = string.Empty;
+
+        [Option("d")]
+        [Help("Directory to include.")]
+        public string[] Directories
+        {
+            get => _directories;
+            set => _directories = value.Select(Path.GetFullPath).ToArray();
+        }
+
+        private string[] _directories = { Directory.GetCurrentDirectory() };
     }
 }

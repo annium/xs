@@ -19,7 +19,7 @@ namespace Xs.Cli.Node.Projects
 
         private readonly HttpClient _client = new HttpClient(new HttpClientHandler()
         {
-            AutomaticDecompression = DecompressionMethods.All,
+            AutomaticDecompression = DecompressionMethods.GZip,
             MaxConnectionsPerServer = 16,
         });
 
