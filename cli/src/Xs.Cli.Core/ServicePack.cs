@@ -22,7 +22,11 @@ namespace Xs.Cli.Core
         {
             container.AddTimeProvider();
 
-            container.AddJsonSerializers(opts => opts.ConfigureForOperations().ConfigureForNodaTime());
+            container.AddJsonSerializers()
+                .Configure(opts => opts
+                    .ConfigureForOperations()
+                    .ConfigureForNodaTime()
+                );
             container.AddHttpRequestFactory();
             container.AddLogging(route => route
                 .For(BuildLogFilter(provider.Resolve<LoggerConfiguration>()))
