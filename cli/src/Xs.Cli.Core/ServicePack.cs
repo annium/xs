@@ -26,8 +26,9 @@ namespace Xs.Cli.Core
                 .Configure(opts => opts
                     .ConfigureForOperations()
                     .ConfigureForNodaTime()
-                );
-            container.AddHttpRequestFactory();
+                )
+                .SetDefault();
+            container.AddHttpRequestFactory().SetDefault();
             container.AddLogging(route => route
                 .For(BuildLogFilter(provider.Resolve<LoggerConfiguration>()))
                 .UseConsole());
