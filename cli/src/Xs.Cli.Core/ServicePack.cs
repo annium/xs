@@ -59,6 +59,7 @@ namespace Xs.Cli.Core
             container.Add<DeleteProjectDependencyTask>().AsSelf().Singleton();
 
             // root
+            container.Add<DiscoverChangedFilesTask>().AsSelf().Singleton();
             container.Add<DiscoverProjectsTask>().AsSelf().Singleton();
         }
 

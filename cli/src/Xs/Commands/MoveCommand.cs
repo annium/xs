@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -39,7 +40,7 @@ namespace Xs.Commands
                 return;
             }
 
-            var projects = _discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
             var targets = projects.FilterMask(cfg.Filter).ToArray();
             if (targets.Length == 0)
                 throw new InvalidOperationException($"No projects matched filter {cfg.Filter}.");

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using EmbedIO;
@@ -43,7 +44,7 @@ namespace Xs.Commands
 
         private RequestHandlerCallback HandleRequest(DiscoverConfiguration discoverCfg) => async ctx =>
         {
-            var projects = _discoverTask.Run(discoverCfg).ToList();
+            var projects = _discoverTask.RunAsync(discoverCfg).Await().ToList();
 
             var graph = new EdgeListGraph<string, Edge<string>>();
             foreach (var project in projects)

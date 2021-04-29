@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -49,7 +50,7 @@ namespace Xs.Commands
             if (configuration == null)
                 throw new InvalidOperationException("Registry is not tracked. Track it to unpublish.");
 
-            var projects = _discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.RunAsync(discoverCfg).Await()
                 .FilterMask(cfg.Mask)
                 .OfType<IPublishableProject>()
                 .ToArray();

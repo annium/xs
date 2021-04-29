@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -52,7 +53,7 @@ namespace Xs.Commands
             var version = cfg.Version;
             var dependencyType = cfg.DependencyType;
 
-            var allProjects = _discoverTask.Run(discoverCfg).ToArray();
+            var allProjects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
 
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)

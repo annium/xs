@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -39,7 +40,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         )
         {
             var output = Path.GetFullPath(Path.Combine(discoverCfg.Root, cfg.Output));
-            var project = _discoverTask.Run(discoverCfg)
+            var project = _discoverTask.RunAsync(discoverCfg).Await()
                 .FirstOrDefault(p => output.StartsWith(p.Directory));
 
             if (project is null)

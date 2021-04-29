@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Extensions.Shell;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -18,7 +17,7 @@ namespace Xs.Cli.Node.Projects
         // TODO: rewrite through project options - projects can have different shapes in a moment
         // private static readonly object CacheLocker = new object();
         // private static readonly Lazy<string> CacheDir = new Lazy<string>(valueFactory: ResolveCacheDir, isThreadSafe: true);
-        private static IShell? _StaticShell;
+        // private static IShell? _StaticShell;
 
         // private static string ResolveCacheDir()
         // {

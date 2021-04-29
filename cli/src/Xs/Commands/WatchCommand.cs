@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
@@ -194,7 +195,7 @@ namespace Xs.Commands
 
         private void Discover()
         {
-            var allProjects = _discoverTask.Run(_discoverCfg).OrderByDescending(p => p.Name.Length).ToArray();
+            var allProjects = _discoverTask.RunAsync(_discoverCfg).Await().OrderByDescending(p => p.Name.Length).ToArray();
             var targets = allProjects
                 .FilterMask(_mask)
                 .FilterType(_type)

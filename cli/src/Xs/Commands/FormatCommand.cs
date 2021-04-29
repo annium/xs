@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -30,7 +31,7 @@ namespace Xs.Commands
             CancellationToken token
         )
         {
-            var projects = _discoverTask.Run(discoverCfg)
+            var projects = _discoverTask.RunAsync(discoverCfg).Await()
                 .FilterMask(cfg.Mask)
                 .FilterType(cfg.Type)
                 .ToArray();

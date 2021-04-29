@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
@@ -31,7 +32,7 @@ namespace Xs.Commands.Remote
         {
             var dir = discoverCfg.Root;
 
-            var projects = _discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
 
             _configurationManager.Delete(dir, projects);
 

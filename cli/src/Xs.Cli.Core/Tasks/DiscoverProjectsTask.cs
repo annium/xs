@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
@@ -13,20 +15,23 @@ namespace Xs.Cli.Core.Tasks
     {
         private readonly IProjectFactory _projectFactory;
         private readonly IProjectLinker _projectLinker;
+        private readonly IShell _shell;
         private readonly ILogger<DiscoverProjectsTask> _logger;
 
         public DiscoverProjectsTask(
             IProjectFactory projectFactory,
             IProjectLinker projectLinker,
+            IShell shell,
             ILogger<DiscoverProjectsTask> logger
         )
         {
             _projectFactory = projectFactory;
             _projectLinker = projectLinker;
+            _shell = shell;
             _logger = logger;
         }
 
-        public IEnumerable<IProject> Run(DiscoverConfiguration configuration)
+        public async Task<IReadOnlyCollection<IProject>> RunAsync(DiscoverConfiguration configuration)
         {
             var roots = configuration.Roots;
 
@@ -57,13 +62,22 @@ namespace Xs.Cli.Core.Tasks
 
             var types = projects.Select(p => p.Type).Distinct().ToArray();
 
-            var packages = types.ToDictionary(type => type, type => new HashSet<Package>());
+            var packages = types.ToDictionary(type => type, _ => new HashSet<Package>());
             LinkProjects(projects, packages, configuration, errors.Add, ThrowIfAnyErrors);
             ThrowIfAnyErrors();
 
             _logger.Debug($"Discovery finished. Found {projects.Count} projects.");
 
-            return result;
+            if (!configuration.Changed)
+                return result;
+
+            // filter project with changed files only.
+            _logger.Debug($"Discovery finished. Found {projects.Count} projects.");
+            var changes = await new DiscoverChangedFilesTask(_shell).RunAsync(roots);
+
+            var filteredProjects = result.Where(x => changes.Any(c => c.Contains(x.Directory))).ToArray();
+
+            return filteredProjects;
 
             void ThrowIfAnyErrors()
             {

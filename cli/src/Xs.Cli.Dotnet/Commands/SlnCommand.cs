@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
@@ -41,7 +42,7 @@ namespace Xs.Cli.Dotnet.Commands
         )
         {
             var root = Directory.GetCurrentDirectory();
-            var preservedProjects = _discoverTask.Run(discoverCfg)
+            var preservedProjects = _discoverTask.RunAsync(discoverCfg).Await()
                 .OfType<ISpecialProject>()
                 .ToArray();
 

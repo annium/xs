@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -40,15 +41,15 @@ namespace Xs.Commands
             var name = cfg.Name;
             var version = cfg.Version;
 
-            var allProjects = _discoverTask.Run(discoverCfg);
-            var updatedPackages = allProjects
+            var allProjects = _discoverTask.RunAsync(discoverCfg);
+            var updatedPackages = allProjects.Await()
                 .SelectMany(e => e.Packages)
                 .FilterMask(name)
                 .Where(e => e.Value.Version != version)
                 .Distinct()
                 .ToArray();
 
-            var targets = allProjects
+            var targets = allProjects.Await()
                 .Where(e => e.Packages.Any(d => updatedPackages.Contains(d)))
                 .ToArray();
 

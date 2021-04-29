@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -31,9 +32,9 @@ namespace Xs.Commands
         )
         {
             discoverCfg.Roots = new[] { cfg.Target };
-            var targets = _discoverTask.Run(discoverCfg).ToArray();
+            var targets = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
             discoverCfg.Roots = new[] { cfg.Source };
-            var sources = _discoverTask.Run(discoverCfg)
+            var sources = _discoverTask.RunAsync(discoverCfg).Await()
                 .Where(x => targets.All(t => t.File != x.File))
                 .ToArray();
             var version = cfg.Version;

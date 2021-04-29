@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -46,7 +47,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
             CancellationToken token
         )
         {
-            var projects = _discoverTask.Run(discoverCfg).ToList();
+            var projects = _discoverTask.RunAsync(discoverCfg).Await().ToList();
 
             var domainProject = projects.FilterMask(cfg.DomainProject).SingleOrDefault();
             if (domainProject is null)

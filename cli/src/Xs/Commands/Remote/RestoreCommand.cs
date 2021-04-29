@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Core.Primitives;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
@@ -54,7 +55,7 @@ namespace Xs.Commands.Remote
                 .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
             );
 
-            var projects = _discoverTask.Run(discoverCfg).ToArray();
+            var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
 
             _configurationManager.Save(configuration, projects);
 
