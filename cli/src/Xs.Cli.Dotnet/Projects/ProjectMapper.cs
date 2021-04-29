@@ -106,7 +106,7 @@ namespace Xs.Cli.Dotnet.Projects
             newProps.Add(new XElement(El.TargetFramework!, project.TargetFramework));
             newProps.Add(new XElement(El.OutputType!, project.OutputType));
             newProps.Add(new XElement(El.DebugType!, "portable"));
-            newProps.Add(new XElement(El.LangVersion!, LanguageVersion));
+            newProps.Add(new XElement(El.LangVersion!, oldProps.GetElement(El.LangVersion!)?.Value ?? LanguageVersion));
             newProps.Add(new XElement(El.WarningsAsErrors!, "true"));
             newProps.Add(new XElement(El.IsPackable!, project is IPublishableProject ? "true" : "false"));
             if (project is TestProject)
