@@ -130,7 +130,7 @@ namespace Xs.Cli.Core.Projects
                 SysFile.Delete(file);
         }
 
-        protected async Task RunAsync(string operation, string command, CancellationToken token)
+        protected async Task RunAsync(string operation, string command, CancellationToken ct)
         {
             Logger.Info($"Start {Name} {operation}.");
 
@@ -139,7 +139,7 @@ namespace Xs.Cli.Core.Projects
                 .Configure(new ProcessStartInfo
                     { WorkingDirectory = Directory })
                 .Pipe((LogLevel) LoggerConfiguration <= LogLevel.Debug)
-                .RunAsync(token);
+                .RunAsync(ct);
 
             if (result.IsSuccess)
                 Logger.Info($"Finished {Name} {operation}.");

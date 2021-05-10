@@ -1,11 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
+using Annium.Core.Runtime.Time;
 using Microsoft.AspNetCore.Mvc;
-using NodaTime;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Shared;
@@ -18,17 +19,17 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class PackagePublicationController : ServerController<User>
     {
-        private readonly Func<Instant> _getInstant;
-
+        private readonly ITimeProvider _timeProvider;
         private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
 
         public PackagePublicationController(
-            Func<Instant> getInstant,
+            ITimeProvider timeProvider,
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
-            _getInstant = getInstant;
+            _timeProvider = timeProvider;
             _packageService = packageService;
         }
 
@@ -36,7 +37,7 @@ namespace Xs.Registry.Dotnet.Controllers
         [AuthorizeApi]
         public async Task<IActionResult> PublishPackageAsync()
         {
-            using(var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None))
+            using (var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None))
             {
                 if (packageStream == null)
                     return BadRequest("Use multipart/form-data to upload package.");
@@ -47,7 +48,7 @@ namespace Xs.Registry.Dotnet.Controllers
                 switch (result.Status)
                 {
                     case PackageStatus.Forbidden:
-                        return Forbidden(result);
+                        return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                     case PackageStatus.Conflict:
                         return Conflict(result);
                     default:
@@ -57,7 +58,7 @@ namespace Xs.Registry.Dotnet.Controllers
 
             async Task<PackagePayload> ReadPackage(Stream packageStream)
             {
-                using(var packageReader = new NuGet.Packaging.PackageArchiveReader(packageStream, leaveStreamOpen : true))
+                using (var packageReader = new NuGet.Packaging.PackageArchiveReader(packageStream, leaveStreamOpen: true))
                 {
                     await packageReader.ValidatePackageEntriesAsync(CancellationToken.None);
 
@@ -74,7 +75,7 @@ namespace Xs.Registry.Dotnet.Controllers
                         nuspec.GetId(),
                         nuspec.GetVersion().ToNormalizedString(),
                         nuspec.GetDescription(),
-                        _getInstant(),
+                        _timeProvider.Now,
                         dependencies,
                         packageStream,
                         packageReader.GetNuspec()

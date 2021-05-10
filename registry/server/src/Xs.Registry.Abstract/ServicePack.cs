@@ -1,6 +1,5 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Abstract.Auth;
 using Xs.Registry.Abstract.Storage;
 using Xs.Registry.Shared.Auth;
@@ -15,13 +14,13 @@ namespace Xs.Registry.Abstract
             Add<Shared.ServicePack>();
         }
 
-        public override void Register(IServiceCollection services, IServiceProvider provider)
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
             // auth
-            services.AddSingleton<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp));
+            container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp)).AsSelf().Singleton();
 
             // storage
-            services.AddSingleton<IStorageFactory, FileStorageFactory>();
+            container.Add<IStorageFactory, FileStorageFactory>().Singleton();
         }
     }
 }

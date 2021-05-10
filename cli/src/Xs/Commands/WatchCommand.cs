@@ -60,7 +60,7 @@ namespace Xs.Commands
         public override async Task HandleAsync(
             WatchCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             _mask = cfg.Mask;
@@ -70,14 +70,14 @@ namespace Xs.Commands
             _runTests = cfg.Test || !string.IsNullOrWhiteSpace(cfg.TestFilter);
             _testFilter = cfg.TestFilter;
             _discoverCfg = discoverCfg;
-            _token = token;
+            _token = ct;
 
             Discover();
 
             if (string.IsNullOrWhiteSpace(_command))
-                await _watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChange, HandleDelete, token);
+                await _watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChange, HandleDelete, ct);
             else
-                await _watcher.WatchAsync(discoverCfg.Root, FilterChange, CallCommand, CallCommand, token);
+                await _watcher.WatchAsync(discoverCfg.Root, FilterChange, CallCommand, CallCommand, ct);
         }
 
         private bool FilterChange(string path) =>

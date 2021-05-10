@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +14,9 @@ namespace Xs.Registry.Dotnet.Controllers
 
         public IndexController(
             IUrlHelper url,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _url = url;
         }

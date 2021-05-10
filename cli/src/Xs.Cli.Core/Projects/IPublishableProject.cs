@@ -7,8 +7,8 @@ namespace Xs.Cli.Core.Projects
 {
     public interface IPublishableProject : IProject
     {
-        Task<string> PackAsync(Version version, CancellationToken token);
+        Task<string> PackAsync(Version version, CancellationToken ct);
 
-        Task PublishAsync(Uri registry, string accessToken, Version version, CancellationToken token);
+        Task PublishAsync(Uri registry, string accessToken, Version version, CancellationToken ct);
     }
 }

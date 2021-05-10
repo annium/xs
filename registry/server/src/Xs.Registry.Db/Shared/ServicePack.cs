@@ -1,28 +1,27 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Xs.Registry.Db.Shared
 {
     public class ServicePack : ServicePackBase
     {
-        public override void Configure(IServiceCollection services)
+        public override void Configure(IServiceContainer container)
         {
-            services.AddProfile(ConfigureProfile);
+            container.AddProfile(ConfigureProfile);
         }
 
-        public override void Register(IServiceCollection services, IServiceProvider provider)
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
-            services.AddScoped<ISharedContext>(p => p.GetRequiredService<Context>());
+            container.Add<Context>().AsInterfaces().Scoped();
 
             // repositories
-            services.AddScoped<IMetaPackageRepository, MetaPackageRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserSessionRepository, UserSessionRepository>();
+            container.Add<IMetaPackageRepository, MetaPackageRepository>().Scoped();
+            container.Add<IUserRepository, UserRepository>().Scoped();
+            container.Add<IUserSessionRepository, UserSessionRepository>().Scoped();
 
             // tools
-            services.AddScoped<IMetaPackageManager, MetaPackageManager>();
+            container.Add<IMetaPackageManager, MetaPackageManager>().Scoped();
         }
 
         private void ConfigureProfile(Profile p)
@@ -30,7 +29,7 @@ namespace Xs.Registry.Db.Shared
             p.Map<ProjectType, string>(t => t.ToString());
             p.Map<string, ProjectType>(t => ProjectType.Get(t));
             p.Map<MetaPackage, Entities.MetaPackage>()
-                .Field(e => e.Name.ToLower(), e => e.LowerName);
+                .For(e => e.LowerName, e => e.Name.ToLower());
             p.Map<MetaPackagePermission, Entities.MetaPackagePermission>()
                 .Ignore(e => e.MetaPackageId);
         }

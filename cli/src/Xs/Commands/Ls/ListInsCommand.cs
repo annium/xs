@@ -28,7 +28,7 @@ namespace Xs.Commands.Ls
         public override void Handle(
             ListInsCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var projects = _discoverTask.RunAsync(discoverCfg).Await()

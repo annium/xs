@@ -34,7 +34,7 @@ namespace Xs.Commands
         public override async Task HandleAsync(
             TestCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var projects = _discoverTask.RunAsync(discoverCfg).Await()
@@ -44,7 +44,7 @@ namespace Xs.Commands
                 .ToArray();
 
             _logger.Debug($"Test {projects.Length} projects.");
-            await _runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn), cfg.Deep, token);
+            await _runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn), cfg.Deep, ct);
         }
     }
 

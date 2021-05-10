@@ -42,7 +42,7 @@ namespace Xs.Cli.Node.Projects
             //         _StaticShell = context.Shell;
         }
 
-        public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
+        public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken ct)
         {
             var results = new List<AuditResult>();
 
@@ -52,7 +52,7 @@ namespace Xs.Cli.Node.Projects
             return results.ToArray();
         }
 
-        public Task ClearCacheAsync(CancellationToken token)
+        public Task ClearCacheAsync(CancellationToken ct)
         {
             Logger.Info($"Start {Name} cache clean.");
 
@@ -74,7 +74,7 @@ namespace Xs.Cli.Node.Projects
             return Task.CompletedTask;
         }
 
-        public async Task CleanAsync(bool force, CancellationToken token)
+        public async Task CleanAsync(bool force, CancellationToken ct)
         {
             Logger.Info($"Start {Name} clean.");
 
@@ -86,12 +86,12 @@ namespace Xs.Cli.Node.Projects
             }
 
             if (Scripts.ContainsKey("clean"))
-                await RunAsync("pnpm clean", "pnpm run clean", token);
+                await RunAsync("pnpm clean", "pnpm run clean", ct);
 
             Logger.Info($"Finished {Name} clean.");
         }
 
-        public Task InstallAsync(bool force, CancellationToken token)
+        public Task InstallAsync(bool force, CancellationToken ct)
         {
             if (force)
             {
@@ -99,21 +99,21 @@ namespace Xs.Cli.Node.Projects
                 DeleteFiles(ProjectFactory.LockFileName);
             }
 
-            return RunAsync("install", $"pnpm install --silent", token);
+            return RunAsync("install", $"pnpm install --silent", ct);
         }
 
-        public async Task BuildAsync(Env env, bool force, CancellationToken token)
+        public async Task BuildAsync(Env env, bool force, CancellationToken ct)
         {
             if (force)
             {
                 if (Scripts.ContainsKey("clean"))
-                    await RunAsync("pnpm clean", "pnpm run clean", token);
+                    await RunAsync("pnpm clean", "pnpm run clean", ct);
 
-                await InstallAsync(true, token);
+                await InstallAsync(true, ct);
             }
 
             if (Scripts.ContainsKey("build"))
-                await RunAsync("build", "pnpm run build", token);
+                await RunAsync("build", "pnpm run build", ct);
         }
 
         protected override void HandleSave() => _mapper.Save(this);

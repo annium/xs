@@ -28,7 +28,7 @@ namespace Xs.Commands
         public override void Handle(
             UnlinkCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             discoverCfg.Roots = new[] { cfg.Target };

@@ -28,7 +28,7 @@ namespace Xs.Tools
             Func<string, bool> filter,
             Func<string, Task> handleChange,
             Func<string, Task> handleDelete,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var semaphore = new PathSemaphore(_timeProvider, Duration.FromMilliseconds(100));
@@ -51,13 +51,13 @@ namespace Xs.Tools
             // add task -> set
             // problems: task was added after check and set was called before reset
 
-            while (!token.IsCancellationRequested)
+            while (!ct.IsCancellationRequested)
             {
                 gate.Reset();
                 if (tasks.Count == 0)
                 {
                     _logger.Trace("Wait for tasks.");
-                    gate.Wait(token);
+                    gate.Wait(ct);
                 }
 
                 _logger.Trace($"Pending {tasks.Count} task(s).");

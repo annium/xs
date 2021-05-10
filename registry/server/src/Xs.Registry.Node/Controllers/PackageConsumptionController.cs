@@ -1,3 +1,5 @@
+using System;
+using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
@@ -26,8 +28,9 @@ namespace Xs.Registry.Node.Controllers
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
             Storage.IPackageStorage packageStorage,
             IUrlHelper url,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _packageService = packageService;
             _packageStorage = packageStorage;
@@ -45,7 +48,7 @@ namespace Xs.Registry.Node.Controllers
                 case PackageStatus.NotFound:
                     return NotFound();
                 case PackageStatus.Forbidden:
-                    return Forbidden(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                 case PackageStatus.Ok:
                     return Ok(new PackagesView(result.Data, _url));
                 default:
@@ -64,9 +67,9 @@ namespace Xs.Registry.Node.Controllers
                 case PackageStatus.NotFound:
                     return NotFound();
                 case PackageStatus.Forbidden:
-                    return Forbidden(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                 case PackageStatus.InternalError:
-                    return ServerError(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
             }
 
             var content = await _packageStorage.GetAsync(packageName, version);

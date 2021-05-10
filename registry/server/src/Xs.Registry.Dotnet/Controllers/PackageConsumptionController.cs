@@ -1,3 +1,5 @@
+using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -23,8 +25,9 @@ namespace Xs.Registry.Dotnet.Controllers
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
             IPackageRepository<Package, PackageDependency> packageRepository,
             Storage.IPackageStorage packageStorage,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _packageService = packageService;
             _packageRepository = packageRepository;
@@ -32,7 +35,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("v3/package/{name}/index.json")]
-        public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken token)
+        public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken ct)
         {
             name = HttpUtility.UrlDecode(name);
             var versions = await _packageRepository.FindAllVersionsByNameAsync(name);
@@ -44,7 +47,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("v3/package/{name}/{version}/{name2}.{version2}.nupkg")]
-        public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken token)
+        public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken ct)
         {
             name = HttpUtility.UrlDecode(name);
             var result = await _packageService.ProcessDownloadAsync(null, name, version, true);
@@ -53,9 +56,9 @@ namespace Xs.Registry.Dotnet.Controllers
                 case PackageStatus.NotFound:
                     return NotFound();
                 case PackageStatus.Forbidden:
-                    return Forbidden(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                 case PackageStatus.InternalError:
-                    return ServerError(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
             }
 
             var content = await _packageStorage.GetPackageAsync(name, version);
@@ -64,7 +67,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("v3/package/{name}/{version}/{name2}.nuspec")]
-        public async Task<IActionResult> DownloadNuspecAsync(string name, string version, CancellationToken token)
+        public async Task<IActionResult> DownloadNuspecAsync(string name, string version, CancellationToken ct)
         {
             name = HttpUtility.UrlDecode(name);
             var result = await _packageService.ProcessDownloadAsync(null, name, version, false);
@@ -73,9 +76,9 @@ namespace Xs.Registry.Dotnet.Controllers
                 case PackageStatus.NotFound:
                     return NotFound();
                 case PackageStatus.Forbidden:
-                    return Forbidden(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                 case PackageStatus.InternalError:
-                    return ServerError(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
             }
 
             var content = await _packageStorage.GetNuspecAsync(name, version);

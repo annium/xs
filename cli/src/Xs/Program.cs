@@ -11,14 +11,14 @@ namespace Xs
         private static void Run(
             IServiceProvider provider,
             string[] args,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var verbose = args.Contains("--verbose");
 
             try
             {
-                new Commander(provider).Run<Commands.Group>(args, token);
+                new Commander(provider).Run<Commands.Group>(args, ct);
             }
             catch (AggregateException exception)
             {

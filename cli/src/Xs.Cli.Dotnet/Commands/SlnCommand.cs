@@ -38,7 +38,7 @@ namespace Xs.Cli.Dotnet.Commands
         public override async Task HandleAsync(
             SlnCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var root = Directory.GetCurrentDirectory();

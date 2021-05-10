@@ -9,9 +9,9 @@ namespace Xs.Cli.Node.Projects
     {
         public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
 
-        public Task TestAsync(Env env, string filter, CancellationToken token) =>
+        public Task TestAsync(Env env, string filter, CancellationToken ct) =>
             string.IsNullOrWhiteSpace(filter) ?
-            RunAsync("test", $"pnpm test", token) :
-            RunAsync("test", $"pnpm test --testNamePattern {filter}", token);
+            RunAsync("test", $"pnpm test", ct) :
+            RunAsync("test", $"pnpm test --testNamePattern {filter}", ct);
     }
 }

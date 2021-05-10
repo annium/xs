@@ -1,10 +1,11 @@
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
+using Annium.Core.Runtime.Time;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NodaTime;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Node;
 using Xs.Registry.Db.Shared;
@@ -16,20 +17,19 @@ namespace Xs.Registry.Node.Controllers
 {
     public class PackagePublicationController : ServerController<User>
     {
-        private readonly Func<Instant> _getInstant;
-
+        private readonly ITimeProvider _timeProvider;
         private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
-
         private readonly ILogger<PackagePublicationController> _logger;
 
         public PackagePublicationController(
-            Func<Instant> getInstant,
+            ITimeProvider timeProvider,
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
             ILogger<PackagePublicationController> logger,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
-            _getInstant = getInstant;
+            _timeProvider = timeProvider;
             _packageService = packageService;
             _logger = logger;
         }
@@ -50,13 +50,13 @@ namespace Xs.Registry.Node.Controllers
                 return BadRequest("Incorrect data");
             }
 
-            payload.Published = _getInstant();
+            payload.Published = _timeProvider.Now;
 
             var result = await _packageService.PublishPackageAsync(GetUser(), payload);
             switch (result.Status)
             {
                 case PackageStatus.Forbidden:
-                    return Forbidden(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                 case PackageStatus.Conflict:
                     return Conflict(result);
                 default:

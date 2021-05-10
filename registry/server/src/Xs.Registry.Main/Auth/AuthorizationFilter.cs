@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Annium.Core.Runtime.Time;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using NodaTime;
 using Xs.Registry.Db.Shared;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
@@ -17,7 +17,7 @@ namespace Xs.Registry.Main.Auth
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly Func<Instant> _getInstant;
+        private readonly ITimeProvider _timeProvider;
 
         private readonly Func<AuthorizationFilterContext, Task<ValueTuple<IActionResult, User>>>[] _authHandlers;
 
@@ -27,7 +27,7 @@ namespace Xs.Registry.Main.Auth
         )
         {
             _serviceProvider = serviceProvider;
-            _getInstant = serviceProvider.GetRequiredService<Func<Instant>>();
+            _timeProvider = serviceProvider.GetRequiredService<ITimeProvider>();
             _authHandlers = GetAuthHandlers(access).ToArray();
         }
 
@@ -94,7 +94,7 @@ namespace Xs.Registry.Main.Auth
                     return GetForbiddenResult("Authorization failed. No identity found");
 
                 // if token expired - failure
-                if (session.Expires < _getInstant())
+                if (session.Expires < _timeProvider.Now)
                     return GetForbiddenResult("Authorization expired. Please login again");
 
                 // refresh session

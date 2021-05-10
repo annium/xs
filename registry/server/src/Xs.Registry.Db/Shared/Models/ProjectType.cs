@@ -5,18 +5,20 @@ namespace Xs.Registry.Db.Shared
 {
     public class ProjectType
     {
-        private static List<ProjectType> _Types = new List<ProjectType>();
+        private static readonly List<ProjectType> Types = new();
 
-        public static void Register(string name)
+        public static ProjectType Register(string name)
         {
-            if (_Types.FindIndex(e => e._name == name) < 0)
-                _Types.Add(new ProjectType(name));
+            if (Types.FindIndex(e => e._name == name) < 0)
+                Types.Add(new ProjectType(name));
+
+            return Get(name);
         }
 
-        public static ProjectType Get(string name) => _Types.Find(e => e._name == name) ??
+        public static ProjectType Get(string name) => Types.Find(e => e._name == name) ??
             throw new Exception($"Project type {name} is not registered.");
 
-        public static IEnumerable<ProjectType> List() => _Types.ToArray();
+        public static IEnumerable<ProjectType> List() => Types.ToArray();
 
         private readonly string _name;
 

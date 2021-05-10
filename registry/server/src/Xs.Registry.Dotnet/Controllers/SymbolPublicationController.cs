@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,8 +34,9 @@ namespace Xs.Registry.Dotnet.Controllers
         public SymbolPublicationController(
             IPackageRepository<Package, PackageDependency> packageRepository,
             ISymbolStorage symbolStorage,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _packageRepository = packageRepository;
             _symbolStorage = symbolStorage;
@@ -42,18 +44,18 @@ namespace Xs.Registry.Dotnet.Controllers
 
         [HttpPut("api/v2/symbol")]
         [AuthorizeApi]
-        public async Task<IActionResult> PublishSymbolsAsync(CancellationToken token)
+        public async Task<IActionResult> PublishSymbolsAsync(CancellationToken ct)
         {
-            using(var symbolsStream = await Request.GetUploadStreamOrNullAsync(token))
+            using (var symbolsStream = await Request.GetUploadStreamOrNullAsync(ct))
             {
                 if (symbolsStream == null)
                     return BadRequest("Use multipart/form-data to upload symbols.");
 
-                using(var packageReader = new NuGet.Packaging.PackageArchiveReader(symbolsStream, leaveStreamOpen : true))
+                using (var packageReader = new NuGet.Packaging.PackageArchiveReader(symbolsStream, leaveStreamOpen: true))
                 {
-                    await packageReader.ValidatePackageEntriesAsync(token);
+                    await packageReader.ValidatePackageEntriesAsync(ct);
 
-                    var files = await GetPdbPathsOrNull(packageReader, token);
+                    var files = await GetPdbPathsOrNull(packageReader, ct);
                     if (files == null)
                         return BadRequest("Ensure symbol package is valid.");
 
@@ -78,14 +80,12 @@ namespace Xs.Registry.Dotnet.Controllers
 
         private async Task<IReadOnlyList<string>> GetPdbPathsOrNull(
             NuGet.Packaging.PackageArchiveReader reader,
-            CancellationToken token
+            CancellationToken ct
         )
         {
-            var files = (await reader.GetFilesAsync(token)).ToList();
+            var files = (await reader.GetFilesAsync(ct)).ToList();
 
-            return files.All(IsValidFile) ?
-                files.Where(e => Path.GetExtension(e) == ".pdb").ToList() :
-                null;
+            return files.All(IsValidFile) ? files.Where(e => Path.GetExtension(e) == ".pdb").ToList() : null;
 
             bool IsValidFile(string path) =>
                 !string.IsNullOrEmpty(Path.GetFileName(path)) &&

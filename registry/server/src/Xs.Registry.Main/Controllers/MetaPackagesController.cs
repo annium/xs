@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Core.Mediator;
@@ -20,8 +21,9 @@ namespace Xs.Registry.Main.Controllers
         public MetaPackagesController(
             IMetaPackageManager metaPackageManager,
             IMetaPackageRepository metaPackageRepository,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _metaPackageManager = metaPackageManager;
             _metaPackageRepository = metaPackageRepository;
@@ -61,7 +63,7 @@ namespace Xs.Registry.Main.Controllers
 
             var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.Has(Permission.Read))
-                return Forbidden("You need read permission to get this package.");
+                return new ObjectResult("You need read permission to get this package.") { StatusCode = (int) HttpStatusCode.Forbidden };
 
             return Ok(new MetaPackageView(package));
         }
@@ -78,7 +80,7 @@ namespace Xs.Registry.Main.Controllers
 
             var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
             if (!access.IsOwner)
-                return Forbidden("You need to be owner to update package permissions.");
+                return new ObjectResult("You need to be owner to update package permissions.") { StatusCode = (int) HttpStatusCode.Forbidden };
 
             await _metaPackageRepository.UpdatePermissionsAsync(package.Id, permissions);
 

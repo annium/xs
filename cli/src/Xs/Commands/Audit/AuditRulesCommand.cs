@@ -22,7 +22,7 @@ namespace Xs.Commands.Audit
 
         public override void Handle(
             AuditRulesCommandConfiguration cfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)

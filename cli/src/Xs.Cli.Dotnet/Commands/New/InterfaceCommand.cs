@@ -36,7 +36,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         public override void Handle(
             InterfaceCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var output = Path.GetFullPath(Path.Combine(discoverCfg.Root, cfg.Output));

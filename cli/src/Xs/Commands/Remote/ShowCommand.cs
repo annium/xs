@@ -22,7 +22,7 @@ namespace Xs.Commands.Remote
 
         public override void Handle(
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var dir = discoverCfg.Root;

@@ -28,7 +28,7 @@ namespace Xs.Commands
         public override void Handle(
             FormatCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var projects = _discoverTask.RunAsync(discoverCfg).Await()

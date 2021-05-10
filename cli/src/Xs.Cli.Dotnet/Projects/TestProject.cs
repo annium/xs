@@ -13,7 +13,7 @@ namespace Xs.Cli.Dotnet.Projects
     {
         public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
 
-        public Task TestAsync(Env env, string filter, CancellationToken token)
+        public Task TestAsync(Env env, string filter, CancellationToken ct)
         {
             var configuration = env == Env.Development ? "Debug" : "Release";
 
@@ -37,7 +37,7 @@ namespace Xs.Cli.Dotnet.Projects
             if (!string.IsNullOrWhiteSpace(filter))
                 cmd.Add($"filter={filter}");
 
-            return RunAsync("test", string.Join(' ', cmd), token);
+            return RunAsync("test", string.Join(' ', cmd), ct);
         }
     }
 }

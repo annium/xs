@@ -32,7 +32,7 @@ namespace Xs.Cli.Dotnet.Projects
             _mapper = context.Mapper;
         }
 
-        public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken token)
+        public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken ct)
         {
             var results = new List<AuditResult>();
 
@@ -42,7 +42,7 @@ namespace Xs.Cli.Dotnet.Projects
             return results.ToArray();
         }
 
-        public Task ClearCacheAsync(CancellationToken token)
+        public Task ClearCacheAsync(CancellationToken ct)
         {
             Logger.Info($"Start {Name} cache clean.");
 
@@ -62,7 +62,7 @@ namespace Xs.Cli.Dotnet.Projects
             return Task.CompletedTask;
         }
 
-        public Task CleanAsync(bool force, CancellationToken token)
+        public Task CleanAsync(bool force, CancellationToken ct)
         {
             Logger.Info($"Start {Name} clean.");
 
@@ -77,14 +77,14 @@ namespace Xs.Cli.Dotnet.Projects
             return Task.CompletedTask;
         }
 
-        public Task InstallAsync(bool force, CancellationToken token)
+        public Task InstallAsync(bool force, CancellationToken ct)
         {
             var forceFlag = force ? "--no-cache" : string.Empty;
 
-            return RunAsync("install", $"dotnet restore {forceFlag} --no-dependencies {File}", token);
+            return RunAsync("install", $"dotnet restore {forceFlag} --no-dependencies {File}", ct);
         }
 
-        public Task BuildAsync(Env env, bool force, CancellationToken token)
+        public Task BuildAsync(Env env, bool force, CancellationToken ct)
         {
             var configuration = env == Env.Development ? "Debug" : "Release";
 
@@ -94,7 +94,7 @@ namespace Xs.Cli.Dotnet.Projects
             return RunAsync(
                 "build",
                 $"dotnet build --configuration {configuration} --no-dependencies {File}",
-                token);
+                ct);
         }
 
         protected override void HandleSave() => _mapper.Save(this);

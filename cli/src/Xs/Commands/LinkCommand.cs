@@ -29,7 +29,7 @@ namespace Xs.Commands
         public override void Handle(
             LinkCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             discoverCfg.Roots = new[] { cfg.Source };

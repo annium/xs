@@ -27,7 +27,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         public override void Handle(
             LibTestsCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var location = discoverCfg.Root;

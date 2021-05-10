@@ -46,7 +46,7 @@ namespace Xs.Commands
         public override async Task HandleAsync(
             AddCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var name = cfg.Name;

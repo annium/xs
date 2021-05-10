@@ -34,7 +34,7 @@ namespace Xs.Commands.Remote
         public override async Task HandleAsync(
             SetCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var location = cfg.Registry;

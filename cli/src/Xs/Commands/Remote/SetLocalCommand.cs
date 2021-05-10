@@ -29,7 +29,7 @@ namespace Xs.Commands.Remote
         public override void Handle(
             SetLocalCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var location = cfg.Registry;

@@ -1,9 +1,6 @@
 using System.IO;
 using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
-using Annium.Core.Mapper;
-using Microsoft.Extensions.DependencyInjection;
-using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Main
 {
@@ -15,16 +12,9 @@ namespace Xs.Registry.Main
             Add<Db.BaseServicePack>();
         }
 
-        public override void Configure(IServiceCollection services)
+        public override void Configure(IServiceContainer container)
         {
-            var rawConfiguration = new ConfigurationBuilder()
-                .AddYamlFile(Path.Combine("configuration", "main.yml"))
-                .Build<RawConfiguration>();
-            foreach (var type in rawConfiguration.Servers.Keys)
-                ProjectType.Register(type);
-            var configuration = Mapper.Map<Configuration>(rawConfiguration);
-
-            services.AddSingleton(configuration);
+            container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
         }
     }
 }

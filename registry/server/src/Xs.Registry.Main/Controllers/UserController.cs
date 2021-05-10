@@ -19,8 +19,9 @@ namespace Xs.Registry.Main.Controllers
         public UserController(
             IUserRepository userRepository,
             ISecurityManager securityManager,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _userRepository = userRepository;
             _securityManager = securityManager;

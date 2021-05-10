@@ -2,6 +2,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Annium.Net.Http;
 using Annium.Testing;
+using Xunit;
 
 namespace Xs.Registry.Node.Tests.Controllers
 {

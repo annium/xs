@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Core.Mediator;
@@ -20,8 +22,9 @@ namespace Xs.Registry.Node.Controllers
 
         public PackagesController(
             IPackageService<Package, PackageDependency, PackagePayload> packageService,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _packageService = packageService;
         }
@@ -35,7 +38,7 @@ namespace Xs.Registry.Node.Controllers
             switch (result.Status)
             {
                 case PackageStatus.Forbidden:
-                    return Forbidden(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                 case PackageStatus.Ok:
                     return Ok(result.Data.Select(p => new PackageView(p)).ToArray());
                 default:
@@ -54,7 +57,7 @@ namespace Xs.Registry.Node.Controllers
                 case PackageStatus.NotFound:
                     return NotFound();
                 case PackageStatus.Forbidden:
-                    return Forbidden(result);
+                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
                 default:
                     return NoContent();
             }

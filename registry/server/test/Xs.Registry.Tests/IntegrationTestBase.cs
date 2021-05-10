@@ -8,7 +8,7 @@ namespace Xs.Registry.Tests
     where TStartup : class
     where TServicePack : ServicePackBase, new()
     {
-        protected IRequest Main => GetRequest<TStartup>(
+        protected IHttpRequest Main => GetRequest<TStartup>(
             builder => builder.UseServicePack<TServicePack>()
         );
 

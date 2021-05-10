@@ -14,10 +14,10 @@ namespace Xs.Cli.Node.Projects
         {
         }
 
-        public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
+        public async Task<string> PackAsync(Core.Models.Version version, CancellationToken ct)
         {
-            await InstallAsync(false, token);
-            await BuildAsync(Env.Production, true, token);
+            await InstallAsync(false, ct);
+            await BuildAsync(Env.Production, true, ct);
 
             var fileName = $"{Name}-{version}.tgz";
             if (Name.StartsWith('@'))
@@ -41,7 +41,7 @@ namespace Xs.Cli.Node.Projects
 
                 Save();
 
-                await RunAsync("pack", $"npm pack {Directory}", token);
+                await RunAsync("pack", $"npm pack {Directory}", ct);
             }
             finally
             {
@@ -57,13 +57,13 @@ namespace Xs.Cli.Node.Projects
             return file;
         }
 
-        public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
+        public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken ct)
         {
-            var packageFile = await PackAsync(version, token);
+            var packageFile = await PackAsync(version, ct);
 
             // due to NPM limitations, basically allowing single registry per scope, registry here is missing
             // instead, registry is specified in .npmrc
-            await RunAsync("publish", $"npm publish {packageFile}", token);
+            await RunAsync("publish", $"npm publish {packageFile}", ct);
 
             System.IO.File.Delete(packageFile);
         }

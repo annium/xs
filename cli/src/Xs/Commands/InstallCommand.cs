@@ -34,7 +34,7 @@ namespace Xs.Commands
         public override async Task HandleAsync(
             InstallCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var force = cfg.Force;
@@ -51,7 +51,7 @@ namespace Xs.Commands
                     projects.OfType<ICachingProject>(),
                     (project, tkn) => project.ClearCacheAsync(tkn),
                     cfg.Deep,
-                    token
+                    ct
                 );
             }
 
@@ -60,7 +60,7 @@ namespace Xs.Commands
                 projects.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(force, tkn),
                 cfg.Deep,
-                token
+                ct
             );
         }
     }

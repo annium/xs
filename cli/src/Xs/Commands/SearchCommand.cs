@@ -32,7 +32,7 @@ namespace Xs.Commands
         public override async Task HandleAsync(
             SearchCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var configuration = _configurationManager.Load(discoverCfg.Root);

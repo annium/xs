@@ -38,7 +38,7 @@ namespace Xs.Commands.Audit
         public override void Handle(
             AuditCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var projects = _discoverTask.RunAsync(discoverCfg).Await()
@@ -66,7 +66,7 @@ namespace Xs.Commands.Audit
 
             foreach (var project in auditedProjects)
             {
-                var results = project.Audit(projects, usedRules, cfg.Fix, token);
+                var results = project.Audit(projects, usedRules, cfg.Fix, ct);
                 if (results.Length > 0)
                 {
                     Console.WriteLine($"{project}: {results.Length} result(s):");

@@ -37,7 +37,7 @@ namespace Xs.Commands
         public override async Task HandleAsync(
             PublishCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var configuration = _configurationManager.Load(discoverCfg.Root);
@@ -64,7 +64,7 @@ namespace Xs.Commands
                 projects,
                 (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
                 cfg.Deep,
-                token
+                ct
             );
         }
     }

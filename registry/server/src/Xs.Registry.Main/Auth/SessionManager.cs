@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Annium.Core.Runtime.Time;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
@@ -16,33 +17,31 @@ namespace Xs.Registry.Main.Auth
 
         private readonly Duration _expirationBuffer = Duration.FromHours(12);
 
-        private readonly Func<Instant> _getInstant;
 
+        private readonly ITimeProvider _timeProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly IUserSessionRepository _userSessionRepository;
 
         public SessionManager(
-            Func<Instant> getInstant,
+            ITimeProvider timeProvider,
             IHttpContextAccessor httpContextAccessor,
             IUserSessionRepository userSessionRepository
         )
         {
-            _getInstant = getInstant;
+            _timeProvider = timeProvider;
             _httpContextAccessor = httpContextAccessor;
             _userSessionRepository = userSessionRepository;
         }
 
-        public(Guid, IActionResult) GetToken()
+        public (Guid, IActionResult) GetToken()
         {
             var cookies = _httpContextAccessor.HttpContext.Request.Cookies;
 
             if (!cookies.ContainsKey(AuthCookieName))
                 return Fail(HttpStatusCode.Unauthorized, "Authorization required.");
 
-            return Guid.TryParse(cookies[AuthCookieName], out var token) ?
-                (token, null) :
-                Fail(HttpStatusCode.Forbidden, "Invalid token passed");
+            return Guid.TryParse(cookies[AuthCookieName], out var token) ? (token, null) : Fail(HttpStatusCode.Forbidden, "Invalid token passed");
 
             (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
                 (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
@@ -51,7 +50,7 @@ namespace Xs.Registry.Main.Auth
         public async Task CreateSession(Guid userId)
         {
             // cleanup sessions
-            var now = _getInstant();
+            var now = _timeProvider.Now;
             await _userSessionRepository.DeleteExpiredAsync(now);
 
             // create new one
@@ -65,7 +64,7 @@ namespace Xs.Registry.Main.Auth
 
         public async Task RefreshSession(UserSession session)
         {
-            var now = _getInstant();
+            var now = _timeProvider.Now;
 
             // if session is expiring after expiration buffer - no need to prolongate right now
             if (session.Expires > now + _expirationBuffer)
@@ -82,7 +81,7 @@ namespace Xs.Registry.Main.Auth
 
         public async Task DeleteCurrentSession()
         {
-            var(token, _) = GetToken();
+            var (token, _) = GetToken();
 
             // cleanup sessions
             await _userSessionRepository.DeleteByTokenAsync(token);
@@ -99,11 +98,11 @@ namespace Xs.Registry.Main.Auth
                 new CookieOptions()
                 {
                     Domain = _httpContextAccessor.HttpContext.Request.Host.Host,
-                        Path = "/",
-                        Expires = expires.ToDateTimeOffset(),
-                        Secure = false,
-                        SameSite = SameSiteMode.None,
-                        HttpOnly = true,
+                    Path = "/",
+                    Expires = expires.ToDateTimeOffset(),
+                    Secure = false,
+                    SameSite = SameSiteMode.None,
+                    HttpOnly = true,
                 }
             );
         }

@@ -5,26 +5,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using NodaTime;
 
 namespace Xs.Registry.Shared
 {
     public class ServicePack : ServicePackBase
     {
-        public override void Register(IServiceCollection services, IServiceProvider provider)
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
-            services.AddSingleton<Func<Instant>>(() => SystemClock.Instance.GetCurrentInstant());
+            container.AddTimeProvider();
 
             // helpers
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddScoped<IUrlHelper>(p =>
+            container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
+            container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
+            container.Add<IUrlHelper>(p =>
             {
                 var actionContext = p.GetRequiredService<IActionContextAccessor>().ActionContext;
                 return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
-            });
+            }).AsSelf().Scoped();
 
-            services.AddLogging(route => route.UseConsole());
+            container.AddJsonSerializers().SetDefault();
+            container.AddHttpRequestFactory().SetDefault();
+            container.AddMediator();
+
+            container.AddLogging(route => route.UseConsole());
         }
     }
 }

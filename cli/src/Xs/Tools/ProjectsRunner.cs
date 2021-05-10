@@ -23,7 +23,7 @@ namespace Xs.Tools
             IEnumerable<TProject> projects,
             Func<TProject, CancellationToken, Task> handle,
             bool runOnDependencies,
-            CancellationToken token
+            CancellationToken ct
         )
         where TProject : IProject
         {
@@ -44,7 +44,7 @@ namespace Xs.Tools
 
             while (pending.Count > 0)
             {
-                token.ThrowIfCancellationRequested();
+                ct.ThrowIfCancellationRequested();
 
                 TProject[] starting;
                 lock(locker)
@@ -73,7 +73,7 @@ namespace Xs.Tools
                             _logger.Trace($"Starting run for {project}");
 
                             // handle project
-                            await handle(project, token);
+                            await handle(project, ct);
 
                             // if succeed - remove from pending
                             lock(locker) pending.Remove(project);

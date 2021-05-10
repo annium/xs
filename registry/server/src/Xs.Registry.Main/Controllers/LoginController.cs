@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +23,9 @@ namespace Xs.Registry.Main.Controllers
             IUserRepository userRepository,
             ISecurityManager securityManager,
             ISessionManager sessionManager,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _userRepository = userRepository;
             _securityManager = securityManager;
@@ -33,7 +35,7 @@ namespace Xs.Registry.Main.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginPayload loginPayload)
         {
-            var(user, result) = await LoginUserInternalAsync(loginPayload);
+            var (user, result) = await LoginUserInternalAsync(loginPayload);
             if (result != null)
                 return result;
 
@@ -45,7 +47,7 @@ namespace Xs.Registry.Main.Controllers
         [HttpPost("app")]
         public async Task<IActionResult> LoginAppAsync([FromBody] UserLoginPayload loginPayload)
         {
-            var(user, result) = await LoginUserInternalAsync(loginPayload);
+            var (user, result) = await LoginUserInternalAsync(loginPayload);
             if (result != null)
                 return result;
 
@@ -87,7 +89,7 @@ namespace Xs.Registry.Main.Controllers
 
             var passwordHash = _securityManager.Hash(password);
             if (user.PasswordHash != passwordHash)
-                return (null, Forbidden("Invalid password"));
+                return (null, new ObjectResult("Invalid password") { StatusCode = (int) HttpStatusCode.Forbidden });
 
             return (user, null);
         }

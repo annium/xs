@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,15 +20,16 @@ namespace Xs.Registry.Dotnet.Controllers
         public PackageRegistrationController(
             IPackageRepository<Package, PackageDependency> packageRepository,
             IUrlHelper url,
-            IMediator mediator
-        ) : base(mediator)
+            IMediator mediator,
+            IServiceProvider sp
+        ) : base(mediator, sp)
         {
             _packageRepository = packageRepository;
             _url = url;
         }
 
         [HttpGet("v3/registration/{name}/index.json")]
-        public async Task<IActionResult> GetRegistrationIndexAsync(string name, CancellationToken token)
+        public async Task<IActionResult> GetRegistrationIndexAsync(string name, CancellationToken ct)
         {
             var packages = await _packageRepository.FindAllByNameAsync(name);
 
@@ -38,7 +40,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("v3/registration/{name}/page.json")]
-        public async Task<IActionResult> GetRegistrationPageAsync(string name, CancellationToken token)
+        public async Task<IActionResult> GetRegistrationPageAsync(string name, CancellationToken ct)
         {
             var packages = await _packageRepository.FindAllByNameAsync(name);
 
@@ -49,7 +51,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("v3/registration/{name}/{version}/leaf.json")]
-        public async Task<IActionResult> GetRegistrationLeafAsync(string name, string version, CancellationToken token)
+        public async Task<IActionResult> GetRegistrationLeafAsync(string name, string version, CancellationToken ct)
         {
             var package = await _packageRepository.FindByNameVersionAsync(name, version);
 
@@ -60,7 +62,7 @@ namespace Xs.Registry.Dotnet.Controllers
         }
 
         [HttpGet("v3/registration/{name}/{version}/catalog-entry.json")]
-        public async Task<IActionResult> GetCatalogEntryAsync(string name, string version, CancellationToken token)
+        public async Task<IActionResult> GetCatalogEntryAsync(string name, string version, CancellationToken ct)
         {
             var package = await _packageRepository.FindByNameVersionAsync(name, version);
 

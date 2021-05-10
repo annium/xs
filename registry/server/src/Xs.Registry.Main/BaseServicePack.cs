@@ -1,6 +1,5 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Tools;
 using Xs.Registry.Shared.Auth;
@@ -15,18 +14,23 @@ namespace Xs.Registry.Main
             Add<Db.Shared.ServicePack>();
         }
 
-        public override void Register(IServiceCollection services, IServiceProvider provider)
+        public override void Configure(IServiceContainer container)
+        {
+            container.AddRuntimeTools(GetType().Assembly, false);
+        }
+
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
             // auth
-            services.AddSingleton<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access));
-            services.AddScoped<ISessionManager, SessionManager>();
-            services.AddSingleton<ITokenAccessor>(new BearerTokenAccessor());
+            container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access)).AsSelf().Singleton();
+            container.Add<ISessionManager, SessionManager>().Scoped();
+            container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
             // tools
-            services.AddSingleton<ISecurityManager, SecurityManager>();
+            container.Add<ISecurityManager, SecurityManager>().Singleton();
 
             // mapping
-            services.AddMapper();
+            container.AddMapper();
         }
     }
 }

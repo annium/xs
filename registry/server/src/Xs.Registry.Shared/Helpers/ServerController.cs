@@ -1,7 +1,6 @@
 using System;
 using Annium.AspNetCore.Extensions;
 using Annium.Core.Mediator;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Xs.Registry.Shared.Helpers
 {
@@ -9,7 +8,9 @@ namespace Xs.Registry.Shared.Helpers
     {
         public const string UserProperty = "serverUser";
 
-        protected ServerController(IMediator mediator) : base(mediator) { }
+        protected ServerController(IMediator mediator, IServiceProvider sp) : base(mediator, sp)
+        {
+        }
 
         protected TUser GetUser()
         {

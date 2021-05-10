@@ -1,11 +1,11 @@
+using System;
 using Annium.Core.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Node;
-using Xs.Registry.Db.Shared;
 using Xs.Registry.Node.Payloads;
 using Xs.Registry.Node.Storage;
 using Xs.Registry.Shared.Auth;
+using IPackageStorage = Xs.Registry.Abstract.Packages.IPackageStorage;
 
 namespace Xs.Registry.Node
 {
@@ -17,27 +17,28 @@ namespace Xs.Registry.Node
             Add<Db.Node.ServicePack>();
         }
 
-        public override void Configure(IServiceCollection services)
+        public override void Configure(IServiceContainer container)
         {
-            services.AddSingleton(new Configuration());
+            container.AddRuntimeTools(GetType().Assembly, false);
+            container.Add(new Configuration()).AsSelf().Singleton();
         }
 
-        public override void Register(IServiceCollection services, System.IServiceProvider provider)
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
             // auth
-            services.AddSingleton<ITokenAccessor>(new BearerTokenAccessor());
+            container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsSelf().Singleton();
 
             // packages
-            services.AddScoped<IPackageService<Package, PackageDependency, PackagePayload>, PackageService<Package, PackageDependency, PackagePayload>>();
-            services.AddSingleton<IPayloadParser<PackagePayload, Package, PackageDependency>, PayloadParser>();
-            services.AddSingleton<ProjectType>(Constants.ProjectType);
+            container.Add<IPackageService<Package, PackageDependency, PackagePayload>, PackageService<Package, PackageDependency, PackagePayload>>().Scoped();
+            container.Add<IPayloadParser<PackagePayload, Package, PackageDependency>, PayloadParser>().Singleton();
+            container.Add(Constants.ProjectType).AsSelf().Singleton();
 
             // storage
-            services.AddSingleton<Abstract.Packages.IPackageStorage, PackageStorage>();
-            services.AddSingleton<Storage.IPackageStorage, PackageStorage>();
+            container.Add<IPackageStorage, PackageStorage>().Singleton();
+            container.Add<Storage.IPackageStorage, PackageStorage>().Singleton();
 
             // mapping
-            services.AddMapper();
+            container.AddMapper();
         }
     }
 }

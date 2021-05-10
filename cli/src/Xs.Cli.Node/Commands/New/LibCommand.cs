@@ -28,7 +28,7 @@ namespace Xs.Cli.Node.Commands.New
         public override void Handle(
             LibCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var location = discoverCfg.Root;

@@ -4,7 +4,7 @@ namespace Xs.Registry.Abstract.Storage
 {
     internal class FileStorageFactory : IStorageFactory
     {
-        private IDictionary<string, IStorage> _storages = new Dictionary<string, IStorage>();
+        private readonly IDictionary<string, IStorage> _storages = new Dictionary<string, IStorage>();
 
         public IStorage Create(string root)
         {

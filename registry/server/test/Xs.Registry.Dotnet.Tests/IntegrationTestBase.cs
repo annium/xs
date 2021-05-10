@@ -4,7 +4,7 @@ namespace Xs.Registry.Dotnet.Tests
 {
     public class IntegrationTestBase : Registry.Tests.IntegrationTestBase<Main.Startup, Main.TestServicePack>
     {
-        protected IRequest Server => GetRequest<Startup>(
+        protected IHttpRequest Server => GetRequest<Startup>(
             builder => builder.UseServicePack<TestServicePack>()
         );
     }

@@ -5,6 +5,6 @@ namespace Xs.Cli.Core.Projects
 {
     public interface ICachingProject : IProject
     {
-        Task ClearCacheAsync(CancellationToken token);
+        Task ClearCacheAsync(CancellationToken ct);
     }
 }

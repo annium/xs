@@ -14,7 +14,7 @@ namespace Xs.Cli.Dotnet.Projects
         {
         }
 
-        public async Task<string> PackAsync(Core.Models.Version version, CancellationToken token)
+        public async Task<string> PackAsync(Core.Models.Version version, CancellationToken ct)
         {
             var file = Path.Combine(Directory, $"{Name}.{version}.nupkg");
             if (SysFile.Exists(file))
@@ -29,14 +29,14 @@ namespace Xs.Cli.Dotnet.Projects
             cmd.Add($"-p:PackageVersion={version}");
             cmd.Add($"-p:SymbolPackageFormat=snupkg");
 
-            await RunAsync("pack", string.Join(' ', cmd), token);
+            await RunAsync("pack", string.Join(' ', cmd), ct);
 
             return file;
         }
 
-        public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken token)
+        public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken ct)
         {
-            var packageFile = await PackAsync(version, token);
+            var packageFile = await PackAsync(version, ct);
 
             var source = registry.IsFile ? registry.AbsolutePath : new Uri(registry, Constants.ServerPathSuffix).ToString();
 
@@ -44,7 +44,7 @@ namespace Xs.Cli.Dotnet.Projects
             if (!registry.IsFile)
                 cmd += $" --api-key {accessToken}";
 
-            await RunAsync("publish", cmd, token);
+            await RunAsync("publish", cmd, ct);
 
             System.IO.File.Delete(packageFile);
         }

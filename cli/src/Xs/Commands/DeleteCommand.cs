@@ -35,7 +35,7 @@ namespace Xs.Commands
         public override void Handle(
             DeleteCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var name = cfg.Dependency;

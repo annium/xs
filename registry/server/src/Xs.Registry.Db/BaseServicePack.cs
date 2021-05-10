@@ -12,35 +12,34 @@ namespace Xs.Registry.Db
 {
     public class BaseServicePack : ServicePackBase
     {
-        public override void Configure(IServiceCollection services)
+        public override void Configure(IServiceContainer container)
         {
-            var cfg = new ConfigurationBuilder()
-                .AddYamlFile(Path.Combine("configuration", "db.yml"))
-                .Build<Configuration>();
+            container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "db.yml")));
+        }
 
+        public override void Register(IServiceContainer container, IServiceProvider provider)
+        {
             // register context itself
-            services
+            container.Collection
                 .AddEntityFrameworkNpgsql()
                 .AddDbContext<Context>(builder =>
                 {
-                    builder.UseNpgsql(
-                        string.Join(';', new string[]
-                        {
-                            $"Host={cfg.Host}",
-                            $"Port={cfg.Port}",
-                            $"Database={cfg.Name}",
-                            $"Username={cfg.User}",
-                            $"Password={cfg.Pass}",
-                            $"SSL Mode=Prefer",
-                            $"Trust Server Certificate=true",
-                        })
-                    );
+                    var cfg = provider.Resolve<Configuration>();
+                    builder.UseNpgsql(string.Join(';',
+                        $"Host={cfg.Host}",
+                        $"Port={cfg.Port}",
+                        $"Database={cfg.Name}",
+                        $"Username={cfg.User}",
+                        $"Password={cfg.Pass}",
+                        "SSL Mode=Prefer",
+                        "Trust Server Certificate=true"
+                    ));
                 });
 
             // init linq2db for EF Core
             LinqToDBForEFTools.Initialize();
             DataConnection.TurnTraceSwitchOn(TraceLevel.Verbose);
-            DataConnection.WriteTraceLine = (message, context) => Console.WriteLine($"{context}: {message}");
+            DataConnection.WriteTraceLine = (message, context, lvl) => Console.WriteLine($"{lvl} {context}: {message}");
             LinqToDB.Common.Configuration.Linq.AllowMultipleQuery = true;
         }
     }

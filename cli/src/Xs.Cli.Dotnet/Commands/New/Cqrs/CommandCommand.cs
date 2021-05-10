@@ -42,7 +42,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         public override void Handle(
             CommandCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var projects = _discoverTask.RunAsync(discoverCfg).Await().ToList();
@@ -70,7 +70,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Command");
 
-            var data = GetCommandDescription(domainProject, applicationProject, viewModelProject, cfg.Area, token);
+            var data = GetCommandDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
             _logger.Debug($"Create command {data.Entity}:{data.Name}");
 
@@ -89,20 +89,20 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
             IProject applicationProject,
             IProject viewModelProject,
             string? area,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var data = new CommandDescription
             {
                 Entity = CommandLine.Prompt("Entities: "),
             };
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.Name = CommandLine.Prompt("Command name: ");
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.RequestFields = PromptFields("Request field");
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.ComposeFields = PromptFields("Compose field");
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.DomainCommandNamespace = BuildNamespace(domainProject.Name, area, Commands, data.Entity);
             data.ApplicationCommandNamespace = BuildNamespace(applicationProject.Name, area, Commands, data.Entity);
             data.RequestNamespace = BuildNamespace(viewModelProject.Name, area, Requests, data.Entity);

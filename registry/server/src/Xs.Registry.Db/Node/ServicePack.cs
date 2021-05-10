@@ -2,31 +2,31 @@ using System;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
 using LinqToDB;
-using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Db.Node
 {
     public class ServicePack : ServicePackBase
     {
-        public override void Configure(IServiceCollection services)
+        public override void Configure(IServiceContainer container)
         {
-            services.AddProfile(ConfigureProfile);
+            container.AddProfile(ConfigureProfile);
         }
 
-        public override void Register(IServiceCollection services, IServiceProvider provider)
+        public override void Register(IServiceContainer container, IServiceProvider provider)
         {
-            services.AddScoped<INodeContext>(p => p.GetRequiredService<Context>());
+            container.Add<Context>().AsInterfaces().Scoped();
 
             // repositories
-            services.AddSingleton<Func<Context, ITable<Entities.Package>>>((Context context) => context.NodePackages);
-            services.AddSingleton<Func<Context, ITable<Entities.PackageDependency>>>((Context context) => context.NodePackageDependencies);
-            services.AddScoped<Shared.IPackageRepository<Package, PackageDependency>, Shared.PackageRepository<Package, PackageDependency, Entities.Package, Entities.PackageDependency, Context>>();
+            container.Add<Func<Context, ITable<Entities.Package>>>(context => context.NodePackages).AsSelf().Singleton();
+            container.Add<Func<Context, ITable<Entities.PackageDependency>>>(context => context.NodePackageDependencies).AsSelf().Singleton();
+            container.Add<IPackageRepository<Package, PackageDependency>, PackageRepository<Package, PackageDependency, Entities.Package, Entities.PackageDependency, Context>>().AsSelf().Scoped();
         }
 
         private void ConfigureProfile(Profile p)
         {
             p.Map<Package, Entities.Package>()
-                .Field(e => e.Name.ToLower(), e => e.LowerName);
+                .For(e => e.LowerName, e => e.Name.ToLower());
             p.Map<PackageDependency, Entities.PackageDependency>()
                 .Ignore(e => e.PackageId);
         }

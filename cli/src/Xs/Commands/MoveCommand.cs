@@ -31,7 +31,7 @@ namespace Xs.Commands
         public override void Handle(
             MoveCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             if (!cfg.IsMove && !cfg.IsRename)

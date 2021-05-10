@@ -9,7 +9,6 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
-using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
@@ -37,7 +36,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         public override void Handle(
             ClassCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var output = Path.GetFullPath(Path.Combine(discoverCfg.Root, cfg.Output));

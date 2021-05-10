@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Annium.Net.Http;
 using Annium.Testing;
 using Xs.Registry.Main.Payloads;
+using Xunit;
 
 namespace Xs.Registry.Main.Tests.Conftrollers
 {

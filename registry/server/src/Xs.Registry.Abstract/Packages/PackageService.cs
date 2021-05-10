@@ -158,7 +158,7 @@ namespace Xs.Registry.Abstract.Packages
         }
 
         private async Task<IStatusResult<PackageStatus>> PublishNewPackageAsync(
-            StageExecutor executor,
+            IStageExecutor executor,
             MetaPackage metaPackage,
             UserMetaPackageAccess access,
             TPayload payload
@@ -174,7 +174,7 @@ namespace Xs.Registry.Abstract.Packages
         }
 
         private async Task<IStatusResult<PackageStatus>> RepublishPackageVersionAsync(
-            StageExecutor executor,
+            IStageExecutor executor,
             MetaPackage metaPackage,
             UserMetaPackageAccess access,
             TPayload payload
@@ -197,7 +197,7 @@ namespace Xs.Registry.Abstract.Packages
         }
 
         private async Task<IStatusResult<PackageStatus>> PublishPackageVersionAsync(
-            StageExecutor executor,
+            IStageExecutor executor,
             MetaPackage metaPackage,
             UserMetaPackageAccess access,
             TPayload payload

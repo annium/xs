@@ -28,7 +28,7 @@ namespace Xs.Commands.Ls
         public override void Handle(
             ListOutsCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var allProjects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();

@@ -42,7 +42,7 @@ namespace Xs.Commands
         public override async Task HandleAsync(
             UpdateCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var projects = _discoverTask.RunAsync(discoverCfg).Await()
@@ -130,7 +130,7 @@ namespace Xs.Commands
                 updated.OfType<ICachingProject>(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
                 false,
-                token
+                ct
             );
 
             _logger.Debug($"Install {updated.Count} projects.");
@@ -138,7 +138,7 @@ namespace Xs.Commands
                 updated.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(true, tkn),
                 false,
-                token
+                ct
             );
 
             _logger.Info($"{updated.Count} projects updated.");

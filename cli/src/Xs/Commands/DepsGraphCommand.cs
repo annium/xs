@@ -36,10 +36,10 @@ namespace Xs.Commands
 
         public override async Task HandleAsync(
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
-            await _webServerFactory.StartAsync(HandleRequest(discoverCfg), token);
+            await _webServerFactory.StartAsync(HandleRequest(discoverCfg), ct);
         }
 
         private RequestHandlerCallback HandleRequest(DiscoverConfiguration discoverCfg) => async ctx =>

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Annium.Core.DependencyInjection;
-using Annium.Core.Mapper;
-using Microsoft.Extensions.DependencyInjection;
+using Xs.Registry.Db;
 using Xs.Registry.Db.Shared;
 
 namespace Xs.Registry.Main
@@ -12,21 +11,23 @@ namespace Xs.Registry.Main
         public TestServicePack()
         {
             Add<BaseServicePack>();
-            Add<Db.TestBaseServicePack>();
+            Add<TestBaseServicePack>();
         }
 
-        public override void Configure(IServiceCollection services)
+        public override void Configure(IServiceContainer container)
         {
-            var rawConfiguration = new RawConfiguration();
-            rawConfiguration.Servers = new Dictionary<string, Uri>();
-            rawConfiguration.Servers["dotnet"] = new Uri("http://localhost:9902");
-            rawConfiguration.Servers["node"] = new Uri("http://localhost:9903");
+            var serversCfg = new[]
+            {
+                ("dotnet", "http://localhost:9902"),
+                ("node", "http://localhost:9903")
+            };
 
-            foreach (var type in rawConfiguration.Servers.Keys)
-                ProjectType.Register(type);
-            var configuration = Mapper.Map<Configuration>(rawConfiguration);
+            var servers = new Dictionary<ProjectType, Uri>();
+            foreach (var (type, location) in serversCfg)
+                servers[ProjectType.Register(type)] = new Uri(location);
+            var configuration = new Configuration { Servers = servers };
 
-            services.AddSingleton(configuration);
+            container.Add(configuration).AsSelf().Singleton();
         }
     }
 }

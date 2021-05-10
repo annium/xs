@@ -44,7 +44,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         public override void Handle(
             QueryCommandConfiguration cfg,
             DiscoverConfiguration discoverCfg,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var projects = _discoverTask.RunAsync(discoverCfg).Await().ToList();
@@ -72,7 +72,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Query");
 
-            var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, token);
+            var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
             _logger.Debug($"Create query {data.Entity}:{data.Name}");
 
@@ -97,25 +97,25 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
             IProject applicationProject,
             IProject viewModelProject,
             string? area,
-            CancellationToken token
+            CancellationToken ct
         )
         {
             var data = new QueryDescription
             {
                 Entity = CommandLine.Prompt("Entities: "),
             };
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.Name = CommandLine.Prompt("Query name: ");
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.Response = CommandLine.Confirm("Add response") ? CommandLine.Prompt("Response name: ") : string.Empty;
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.RequestFields = PromptFields("Request field");
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.ComposeFields = PromptFields("Compose field");
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             if (!string.IsNullOrWhiteSpace(data.Response))
                 data.ResponseFields = PromptFields("Response field");
-            token.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
             data.DomainQueryNamespace = BuildNamespace(domainProject.Name, area, Queries, data.Entity);
             data.ApplicationQueryNamespace = BuildNamespace(applicationProject.Name, area, Queries, data.Entity);
             data.RequestNamespace = BuildNamespace(viewModelProject.Name, area, Requests, data.Entity);
