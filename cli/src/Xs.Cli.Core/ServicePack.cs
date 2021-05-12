@@ -38,12 +38,6 @@ namespace Xs.Cli.Core
             container.Add<IProjectFactory, ProjectFactory>().Singleton();
             container.Add<IProjectLinker, ProjectLinker>().Singleton();
 
-            // tasks
-            container.AddAll(GetType().Assembly)
-                .Where(x => x.Name.EndsWith("Task"))
-                .AsSelf()
-                .Singleton();
-
             RegisterTasks(container);
 
             // tools

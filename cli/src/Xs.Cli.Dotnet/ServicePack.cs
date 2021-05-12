@@ -24,12 +24,6 @@ namespace Xs.Cli.Dotnet
             // audit rules
             container.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
             container.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
-
-            // commands
-            container.AddAll(GetType().Assembly)
-                .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
-                .AsSelf()
-                .Singleton();
         }
     }
 }

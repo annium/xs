@@ -8,7 +8,7 @@ namespace Xs
     {
         public override void Configure(IServiceContainer container)
         {
-            container.AddRuntimeTools(GetType().Assembly, false);
+            container.AddRuntimeTools(GetType().Assembly, false, "Xs*");
         }
 
         public override void Register(IServiceContainer container, IServiceProvider provider)
@@ -17,8 +17,14 @@ namespace Xs
             container.AddArguments();
 
             // commands
-            container.AddAll(GetType().Assembly)
+            container.AddAll()
                 .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
+                .AsSelf()
+                .Singleton();
+
+            // tasks
+            container.AddAll()
+                .Where(x => x.Name.EndsWith("Task"))
                 .AsSelf()
                 .Singleton();
 
