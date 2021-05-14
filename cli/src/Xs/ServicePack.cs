@@ -8,7 +8,7 @@ namespace Xs
     {
         public override void Configure(IServiceContainer container)
         {
-            container.AddRuntimeTools(GetType().Assembly, false, "Xs*");
+            container.AddRuntimeTools(GetType().Assembly, false);
         }
 
         public override void Register(IServiceContainer container, IServiceProvider provider)
