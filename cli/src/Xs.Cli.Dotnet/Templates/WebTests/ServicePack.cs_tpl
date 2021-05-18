@@ -1,9 +1,0 @@
-using Annium.Core.DependencyInjection;
-
-namespace {{name}}
-{
-    public class ServicePack : ServicePackBase
-    {
-
-    }
-}
