@@ -2,6 +2,7 @@ using System;
 using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
 using Annium.Logging.Abstractions;
+using Annium.Logging.Shared;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;

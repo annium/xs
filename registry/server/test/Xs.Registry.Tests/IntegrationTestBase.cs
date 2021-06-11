@@ -5,10 +5,12 @@ using Annium.Net.Http;
 namespace Xs.Registry.Tests
 {
     public class IntegrationTestBase<TStartup, TServicePack> : IntegrationTest
-    where TStartup : class
-    where TServicePack : ServicePackBase, new()
+        where TStartup : class
+        where TServicePack : ServicePackBase, new()
     {
-        protected IHttpRequest Main => GetRequest<TStartup>(
+        protected IHttpRequest Main => AppFactory.GetHttpRequest();
+
+        private IWebApplicationFactory AppFactory => GetAppFactory<TStartup>(
             builder => builder.UseServicePack<TServicePack>()
         );
 
