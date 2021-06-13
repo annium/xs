@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using Annium.Extensions.Arguments;
 using Annium.Core.Entrypoint;
-using Annium.Core.Internal;
 
 namespace Xs
 {
@@ -15,7 +14,6 @@ namespace Xs
             CancellationToken ct
         )
         {
-            Log.Trace(() => "start");
             var verbose = args.Contains("--verbose");
 
             try
