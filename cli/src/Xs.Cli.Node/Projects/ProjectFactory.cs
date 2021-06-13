@@ -16,7 +16,7 @@ namespace Xs.Cli.Node.Projects
 {
     internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
     {
-        public ProjectType Type { get; } = Constants.ProjectType;
+        public ProjectType Type => Constants.ProjectType;
         public static readonly string[] TrackedFileExtensions = new[] { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };
         public static readonly string[] IgnoredFolders = new[] { "build", "dist", ModulesDirectory };
         public const string ModulesDirectory = "node_modules";
@@ -103,7 +103,7 @@ namespace Xs.Cli.Node.Projects
             return new SealedProject(GetContext<SealedProject>());
 
             SpecialProjectContext<TProject> GetContext<TProject>() where TProject : SpecialProject<TProject>
-                => new SpecialProjectContext<TProject>(
+                => new(
                     Constants.ProjectType,
                     name,
                     version,

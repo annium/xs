@@ -12,12 +12,12 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands
 {
-    internal class MoveCommand : Command<MoveCommandConfiguration, DiscoverConfiguration>
+    internal class MoveCommand : Command<MoveCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "move";
-        public override string Description { get; } = "Move project to different location.";
+        public override string Id => "move";
+        public override string Description => "Move project to different location.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
-        private readonly ILogger<MoveCommand> _logger;
 
         public MoveCommand(
             DiscoverProjectsTask discoverTask,
@@ -25,7 +25,7 @@ namespace Xs.Commands
         )
         {
             _discoverTask = discoverTask;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -36,7 +36,7 @@ namespace Xs.Commands
         {
             if (!cfg.IsMove && !cfg.IsRename)
             {
-                _logger.Info("Specify at least new project name or new project directory");
+                this.Info("Specify at least new project name or new project directory");
                 return;
             }
 
@@ -69,13 +69,13 @@ namespace Xs.Commands
         private void Move(IProject project, string directory)
         {
             var target = Path.GetFullPath(Path.Combine(directory, Path.GetFileName(project.Directory)));
-            _logger.Debug($"Move {project.Directory} -> {target}");
+            this.Debug($"Move {project.Directory} -> {target}");
             project.SetDirectory(target);
         }
 
         private void Rename(IProject project, string name)
         {
-            _logger.Debug($"Rename {project.Name} -> {name}");
+            this.Debug($"Rename {project.Name} -> {name}");
             project.SetName(name);
         }
 

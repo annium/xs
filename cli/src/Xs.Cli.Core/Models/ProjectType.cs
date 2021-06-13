@@ -6,10 +6,10 @@ namespace Xs.Cli.Core.Models
 {
     public class ProjectType : Equatable<ProjectType>
     {
-        private static readonly List<ProjectType> Types = new List<ProjectType>();
+        private static readonly List<ProjectType> Types = new();
 
         // TODO: use instead of null
-        public static readonly ProjectType None = new ProjectType(string.Empty);
+        public static readonly ProjectType None = new(string.Empty);
 
         public static void Register(string name)
         {

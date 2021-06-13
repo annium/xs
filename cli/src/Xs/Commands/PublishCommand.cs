@@ -12,14 +12,14 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>
+    internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "publish";
-        public override string Description { get; } = "Publish packages to registry.";
+        public override string Id => "publish";
+        public override string Description => "Publish packages to registry.";
+        public ILogger Logger { get; }
         private readonly IConfigurationManager _configurationManager;
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ProjectsRunner _runner;
-        private readonly ILogger<PublishCommand> _logger;
 
         public PublishCommand(
             IConfigurationManager configurationManager,
@@ -31,7 +31,7 @@ namespace Xs.Commands
             _configurationManager = configurationManager;
             _discoverTask = discoverTask;
             _runner = runner;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -51,7 +51,7 @@ namespace Xs.Commands
 
             if (projects.Length == 0)
             {
-                _logger.Info($"No projects found publish.");
+                this.Info($"No projects found publish.");
                 return;
             }
 
@@ -59,7 +59,7 @@ namespace Xs.Commands
                 if (!configuration.Servers.ContainsKey(project.Type))
                     throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
 
-            _logger.Debug($"Publish {projects.Length} projects.");
+            this.Debug($"Publish {projects.Length} projects.");
             await _runner.RunAsync(
                 projects,
                 (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),

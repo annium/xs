@@ -15,16 +15,16 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>
+    internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "add";
-        public override string Description { get; } = "Add dependency to projects.";
+        public override string Id => "add";
+        public override string Description => "Add dependency to projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly IEnumerable<IDependencyManager> _dependencyManagers;
         private readonly IConfigurationManager _configurationManager;
         private readonly AddPackageDependencyTask _addPackageDependencyTask;
         private readonly AddProjectDependencyTask _addProjectDependencyTask;
-        private readonly ILogger<AddCommand> _logger;
 
         public AddCommand(
             DiscoverProjectsTask discoverTask,
@@ -40,7 +40,7 @@ namespace Xs.Commands
             _discoverTask = discoverTask;
             _dependencyManagers = dependencyManagers;
             _configurationManager = configurationManager;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -58,7 +58,7 @@ namespace Xs.Commands
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                _logger.Info("No projects found to add dependency to.");
+                this.Info("No projects found to add dependency to.");
                 return;
             }
 
@@ -75,14 +75,14 @@ namespace Xs.Commands
             {
                 foreach (var project in projects)
                 {
-                    _logger.Debug($"Add '{projectType}' project dependency '{name}' to {targets.Length} projects.");
+                    this.Debug($"Add '{projectType}' project dependency '{name}' to {targets.Length} projects.");
                     _addProjectDependencyTask.Run(targets, new Dependency<IProject>(dependencyType, project));
                 }
 
                 return;
             }
 
-            _logger.Debug($"Assume dependency {name} is package.");
+            this.Debug($"Assume dependency {name} is package.");
             var packages = allPackages.FilterMask(name).ToArray();
 
             // if no packages match name and no version given - resolve
@@ -159,12 +159,12 @@ namespace Xs.Commands
                 versions = await dependencyManager.ResolveVersionsAsync(packageStub, dependencyManager.DefaultServer, string.Empty);
 
             var package = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-            _logger.Trace($"Resolve: {packageStub} - {versions.Length} version(s)");
+            this.Trace($"Resolve: {packageStub} - {versions.Length} version(s)");
 
             if (package is null)
                 throw new InvalidOperationException($"Resolve: {packageStub} unresolved");
 
-            _logger.Debug($"Resolve: {packageStub} -> {package}");
+            this.Debug($"Resolve: {packageStub} -> {package}");
 
             return package;
         }

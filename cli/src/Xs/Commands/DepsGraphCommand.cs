@@ -17,8 +17,8 @@ namespace Xs.Commands
 {
     internal class DepsGraphCommand : AsyncCommand<DiscoverConfiguration>
     {
-        public override string Id { get; } = "deps-graph";
-        public override string Description { get; } = "Show dependencies graph.";
+        public override string Id => "deps-graph";
+        public override string Description => "Show dependencies graph.";
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly WebServerFactory _webServerFactory;
         private readonly IShell _shell;

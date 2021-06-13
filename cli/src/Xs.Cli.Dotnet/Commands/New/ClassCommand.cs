@@ -12,15 +12,15 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class ClassCommand : Command<ClassCommandConfiguration, DiscoverConfiguration>
+    public class ClassCommand : Command<ClassCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
         private const string ClassTemplate = "Class.cs_tpl";
 
-        public override string Id { get; } = "class";
-        public override string Description { get; } = "Create new classes.";
+        public override string Id => "class";
+        public override string Description => "Create new classes.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<ClassCommand> _logger;
 
         public ClassCommand(
             DiscoverProjectsTask discoverTask,
@@ -30,7 +30,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         {
             _discoverTask = discoverTask;
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -63,13 +63,13 @@ namespace Xs.Cli.Dotnet.Commands.New
             if (names.Count == 0)
                 return;
 
-            _logger.Debug($"{names.Count} class(es) to create");
+            this.Debug($"{names.Count} class(es) to create");
 
             Directory.CreateDirectory(output);
 
             foreach (var name in names)
             {
-                _logger.Debug($"Create class {name} at {output}");
+                this.Debug($"Create class {name} at {output}");
 
                 _templateWriter.LoadResources($"{Group.TemplatesDir}.Class");
                 _templateWriter.SetRoot(output);

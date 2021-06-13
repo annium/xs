@@ -13,11 +13,11 @@ namespace Xs.Cli.Node.Projects
 {
     internal class DependencyManager : IDependencyManager
     {
-        public ProjectType Type { get; } = Constants.ProjectType;
-        public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
+        public ProjectType Type => Constants.ProjectType;
+        public Uri DefaultServer { get; } = new(Constants.DefaultServer);
         private readonly IHttpRequestFactory _httpRequestFactory;
 
-        private readonly HttpClient _client = new HttpClient(new HttpClientHandler()
+        private readonly HttpClient _client = new(new HttpClientHandler()
         {
             AutomaticDecompression = DecompressionMethods.GZip,
             MaxConnectionsPerServer = 16,
@@ -65,7 +65,7 @@ namespace Xs.Cli.Node.Projects
         {
             public string Name { get; set; } = string.Empty;
 
-            public Dictionary<string, IndexVersion> Versions { get; set; } = new Dictionary<string, IndexVersion>();
+            public Dictionary<string, IndexVersion> Versions { get; set; } = new();
         }
 
         private class IndexVersion

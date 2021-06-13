@@ -8,7 +8,7 @@ namespace Xs.Registry.Shared.Auth
     internal class AuthorizationApplicationModelProvider<TAuthorizationFilter> : IApplicationModelProvider
     where TAuthorizationFilter : IAsyncAuthorizationFilter
     {
-        public int Order { get; } = -990;
+        public int Order => -990;
 
         private readonly Func<Access, TAuthorizationFilter> _authorizationFilterFactory;
 

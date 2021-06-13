@@ -7,7 +7,7 @@ namespace Xs.Registry.Db.Shared
     public struct UserMetaPackageAccess
     {
         public static readonly UserMetaPackageAccess None =
-            new UserMetaPackageAccess(Guid.NewGuid(), Guid.NewGuid(), Array.Empty<MetaPackagePermission>());
+            new(Guid.NewGuid(), Guid.NewGuid(), Array.Empty<MetaPackagePermission>());
 
         public bool IsOwner { get; }
 

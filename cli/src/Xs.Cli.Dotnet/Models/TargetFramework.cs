@@ -8,14 +8,14 @@ namespace Xs.Cli.Dotnet.Models
     {
         private static readonly IDictionary<string, TargetFramework> Values = new Dictionary<string, TargetFramework>();
 
-        public static TargetFramework NetStandard20 { get; } = new TargetFramework("netstandard2.0");
-        public static TargetFramework NetStandard21 { get; } = new TargetFramework("netstandard2.1");
-        public static TargetFramework NetCoreApp20 { get; } = new TargetFramework("netcoreapp2.0");
-        public static TargetFramework NetCoreApp21 { get; } = new TargetFramework("netcoreapp2.1");
-        public static TargetFramework NetCoreApp22 { get; } = new TargetFramework("netcoreapp2.2");
-        public static TargetFramework NetCoreApp30 { get; } = new TargetFramework("netcoreapp3.0");
-        public static TargetFramework NetCoreApp31 { get; } = new TargetFramework("netcoreapp3.1");
-        public static TargetFramework Net5 { get; } = new TargetFramework("net5.0");
+        public static TargetFramework NetStandard20 { get; } = new("netstandard2.0");
+        public static TargetFramework NetStandard21 { get; } = new("netstandard2.1");
+        public static TargetFramework NetCoreApp20 { get; } = new("netcoreapp2.0");
+        public static TargetFramework NetCoreApp21 { get; } = new("netcoreapp2.1");
+        public static TargetFramework NetCoreApp22 { get; } = new("netcoreapp2.2");
+        public static TargetFramework NetCoreApp30 { get; } = new("netcoreapp3.0");
+        public static TargetFramework NetCoreApp31 { get; } = new("netcoreapp3.1");
+        public static TargetFramework Net5 { get; } = new("net5.0");
 
         public static IReadOnlyList<IReadOnlyList<TargetFramework>> SupportedGroups { get; } =
         new List<IReadOnlyList<TargetFramework>>()

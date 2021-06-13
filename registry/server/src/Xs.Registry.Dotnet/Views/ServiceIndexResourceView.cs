@@ -11,6 +11,6 @@ namespace Xs.Registry.Dotnet.Views
         [JsonProperty("@type")]
         public string Type { get; set; }
 
-        public string Comment { get; } = string.Empty;
+        public string Comment => string.Empty;
     }
 }

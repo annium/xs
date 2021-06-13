@@ -14,7 +14,8 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Core.Projects
 {
-    public abstract class ProjectBase<TProject> : IProject where TProject : ProjectBase<TProject>
+    public abstract class ProjectBase<TProject> : IProject, ILogSubject
+        where TProject : ProjectBase<TProject>
     {
         public ProjectType Type { get; }
         public string Name { get; private set; }
@@ -24,9 +25,9 @@ namespace Xs.Cli.Core.Projects
         public abstract string File { get; }
         public HashSet<Dependency<IProject>> Projects { get; }
         public HashSet<Dependency<Package>> Packages { get; }
+        public ILogger Logger { get; }
         protected readonly IShell Shell;
         protected readonly LoggerConfiguration LoggerConfiguration;
-        protected readonly ILogger<ProjectBase<TProject>> Logger;
         private string _currentDirectory;
         private string _currentName;
 
@@ -84,11 +85,11 @@ namespace Xs.Cli.Core.Projects
                 var parentDirectory = Path.GetDirectoryName(Directory) ?? throw new DirectoryNotFoundException($"Directory {Directory} has no parent directory");
                 if (!SysDirectory.Exists(parentDirectory))
                 {
-                    Logger.Trace($"Create {Name} missing target parent directory {parentDirectory}");
+                    this.Trace($"Create {Name} missing target parent directory {parentDirectory}");
                     SysDirectory.CreateDirectory(parentDirectory);
                 }
 
-                Logger.Debug($"Move {Name} to {Directory}");
+                this.Debug($"Move {Name} to {Directory}");
 
                 SysDirectory.Move(_currentDirectory, Directory);
 
@@ -115,13 +116,15 @@ namespace Xs.Cli.Core.Projects
 
         protected virtual string FixProjectDirectory(string directory) => directory;
 
-        protected virtual void OnNameChangeSave(string oldName, string newName) { }
+        protected virtual void OnNameChangeSave(string oldName, string newName)
+        {
+        }
 
         protected void DeleteDirectory(string path)
         {
             path = Path.Combine(Directory, path);
             if (SysDirectory.Exists(path))
-                SysDirectory.Delete(path, recursive : true);
+                SysDirectory.Delete(path, recursive: true);
         }
 
         protected void DeleteFiles(string mask)
@@ -132,7 +135,7 @@ namespace Xs.Cli.Core.Projects
 
         protected async Task RunAsync(string operation, string command, CancellationToken ct)
         {
-            Logger.Info($"Start {Name} {operation}.");
+            this.Info($"Start {Name} {operation}.");
 
             var result = await Shell
                 .Cmd(command)
@@ -142,7 +145,7 @@ namespace Xs.Cli.Core.Projects
                 .RunAsync(ct);
 
             if (result.IsSuccess)
-                Logger.Info($"Finished {Name} {operation}.");
+                this.Info($"Finished {Name} {operation}.");
             else
                 throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
         }

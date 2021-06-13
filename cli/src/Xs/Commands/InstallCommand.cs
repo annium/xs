@@ -12,13 +12,13 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>
+    internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "install";
-        public override string Description { get; } = "Install projects' dependencies.";
+        public override string Id => "install";
+        public override string Description => "Install projects' dependencies.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ProjectsRunner _runner;
-        private readonly ILogger<InstallCommand> _logger;
 
         public InstallCommand(
             DiscoverProjectsTask discoverTask,
@@ -28,7 +28,7 @@ namespace Xs.Commands
         {
             _discoverTask = discoverTask;
             _runner = runner;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -46,7 +46,7 @@ namespace Xs.Commands
 
             if (force)
             {
-                _logger.Debug($"Clear {projects.Length} projects cache.");
+                this.Debug($"Clear {projects.Length} projects cache.");
                 await _runner.RunAsync(
                     projects.OfType<ICachingProject>(),
                     (project, tkn) => project.ClearCacheAsync(tkn),
@@ -55,7 +55,7 @@ namespace Xs.Commands
                 );
             }
 
-            _logger.Debug($"Install {projects.Length} projects.");
+            this.Debug($"Install {projects.Length} projects.");
             await _runner.RunAsync(
                 projects.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(force, tkn),

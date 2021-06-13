@@ -13,12 +13,12 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class DependencyManager : IDependencyManager
     {
-        public ProjectType Type { get; } = Constants.ProjectType;
-        public Uri DefaultServer { get; } = new Uri(Constants.DefaultServer);
+        public ProjectType Type => Constants.ProjectType;
+        public Uri DefaultServer { get; } = new(Constants.DefaultServer);
         private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
         private readonly IHttpRequestFactory _httpRequestFactory;
 
-        private readonly HttpClient _client = new HttpClient(new HttpClientHandler
+        private readonly HttpClient _client = new(new HttpClientHandler
         {
             AutomaticDecompression = DecompressionMethods.GZip,
             MaxConnectionsPerServer = 16,
@@ -111,7 +111,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         private class RegistrationLeaf
         {
-            public RegistrationCatalogEntry CatalogEntry { get; set; } = new RegistrationCatalogEntry();
+            public RegistrationCatalogEntry CatalogEntry { get; set; } = new();
         }
 
         private class RegistrationCatalogEntry

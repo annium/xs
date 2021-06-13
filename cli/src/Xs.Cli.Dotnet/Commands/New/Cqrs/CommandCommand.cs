@@ -14,7 +14,7 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 {
-    internal class CommandCommand : Command<CommandCommandConfiguration, DiscoverConfiguration>
+    internal class CommandCommand : Command<CommandCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
         private const string DomainCommandTemplate = "DomainCommand.cs_tpl";
         private const string ApplicationCommandTemplate = "ApplicationCommand.cs_tpl";
@@ -22,11 +22,11 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         private const string Commands = "Commands";
         private const string Requests = "Requests";
 
-        public override string Id { get; } = "command";
-        public override string Description { get; } = "Create command.";
+        public override string Id => "command";
+        public override string Description => "Create command.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<CommandCommand> _logger;
 
         public CommandCommand(
             DiscoverProjectsTask discoverTask,
@@ -36,7 +36,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         {
             _discoverTask = discoverTask;
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -72,7 +72,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             var data = GetCommandDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-            _logger.Debug($"Create command {data.Entity}:{data.Name}");
+            this.Debug($"Create command {data.Entity}:{data.Name}");
 
             // write files
             _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Commands, data.Entity));

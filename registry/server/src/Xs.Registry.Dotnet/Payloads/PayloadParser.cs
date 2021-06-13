@@ -8,7 +8,7 @@ namespace Xs.Registry.Dotnet.Payloads
     {
         public Package Parse(Guid metaPackageId, PackagePayload payload)
         {
-            return new Package(
+            return new(
                 metaPackageId,
                 payload.Name,
                 payload.Version,

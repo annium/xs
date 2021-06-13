@@ -11,12 +11,12 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Tasks
 {
-    public class DiscoverProjectsTask
+    public class DiscoverProjectsTask : ILogSubject
     {
+        public ILogger Logger { get; }
         private readonly IProjectFactory _projectFactory;
         private readonly IProjectLinker _projectLinker;
         private readonly IShell _shell;
-        private readonly ILogger<DiscoverProjectsTask> _logger;
 
         public DiscoverProjectsTask(
             IProjectFactory projectFactory,
@@ -28,14 +28,14 @@ namespace Xs.Cli.Core.Tasks
             _projectFactory = projectFactory;
             _projectLinker = projectLinker;
             _shell = shell;
-            _logger = logger;
+            Logger = logger;
         }
 
         public async Task<IReadOnlyCollection<IProject>> RunAsync(DiscoverConfiguration configuration)
         {
             var roots = configuration.Roots;
 
-            _logger.Debug($"Start discovery of {string.Join(", ", roots)}.");
+            this.Debug($"Start discovery of {string.Join(", ", roots)}.");
 
             var candidates = FindProjectCandidates(roots);
             var errors = new List<Exception>();
@@ -66,13 +66,13 @@ namespace Xs.Cli.Core.Tasks
             LinkProjects(projects, packages, configuration, errors.Add, ThrowIfAnyErrors);
             ThrowIfAnyErrors();
 
-            _logger.Debug($"Discovery finished. Found {projects.Count} projects.");
+            this.Debug($"Discovery finished. Found {projects.Count} projects.");
 
             if (!configuration.Changed)
                 return result;
 
             // filter project with changed files only.
-            _logger.Debug($"Discovery finished. Found {projects.Count} projects.");
+            this.Debug($"Discovery finished. Found {projects.Count} projects.");
             var changes = await new DiscoverChangedFilesTask(_shell).RunAsync(roots);
 
             var filteredProjects = result.Where(x => changes.Any(c => c.Contains(x.Directory))).ToArray();
@@ -92,7 +92,7 @@ namespace Xs.Cli.Core.Tasks
 
             foreach (var root in roots)
             {
-                _logger.Debug($"Start project candidates lookup at {root}.");
+                this.Debug($"Start project candidates lookup at {root}.");
 
                 FileManager.WalkDirectories(
                     root,
@@ -103,14 +103,14 @@ namespace Xs.Cli.Core.Tasks
                             return false;
 
                         results[directory] = factory;
-                        _logger.Debug($"{factory.Type} project candidate discovered at {directory}.");
+                        this.Debug($"{factory.Type} project candidate discovered at {directory}.");
 
                         return true;
                     },
                     SearchOptions.IgnoreChildrenOnMatch
                 );
 
-                _logger.Debug($"{results.Count} project candidate(s) found.");
+                this.Debug($"{results.Count} project candidate(s) found.");
             }
 
             return results;
@@ -124,7 +124,7 @@ namespace Xs.Cli.Core.Tasks
             Action<Exception> addError
         )
         {
-            _logger.Debug($"Discover {project} referenced projects.");
+            this.Debug($"Discover {project} referenced projects.");
             var lookupDirectories = project.Projects.Select(x => x.Value.Directory).ToArray();
 
             foreach (var directory in lookupDirectories)
@@ -159,7 +159,7 @@ namespace Xs.Cli.Core.Tasks
             try
             {
                 var project = factory.CreateProject(directory, configuration);
-                _logger.Debug($"{project.Type} {project} created at {directory}");
+                this.Debug($"{project.Type} {project} created at {directory}");
                 return project;
             }
             catch (Exception exception)
@@ -177,7 +177,7 @@ namespace Xs.Cli.Core.Tasks
             Action throwIfAnyErrors
         )
         {
-            _logger.Debug("Start projects linking.");
+            this.Debug("Start projects linking.");
 
             _projectLinker.PreLink(projects, packages, configuration, addError);
 
@@ -189,7 +189,7 @@ namespace Xs.Cli.Core.Tasks
                 _projectLinker.Link(project, projects, typePackages, configuration, addError);
             }
 
-            _logger.Debug("Projects linked.");
+            this.Debug("Projects linked.");
         }
     }
 }

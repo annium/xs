@@ -6,7 +6,7 @@ namespace Xs.Cli.Core.Models
 {
     public class Version : Comparable<Version>
     {
-        public static Version Empty { get; } = new Version(0, 0, 0, string.Empty);
+        public static Version Empty { get; } = new(0, 0, 0, string.Empty);
 
         public static Version Parse(string raw)
         {

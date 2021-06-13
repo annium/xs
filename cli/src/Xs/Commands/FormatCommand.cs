@@ -9,12 +9,12 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands
 {
-    internal class FormatCommand : Command<FormatCommandConfiguration, DiscoverConfiguration>
+    internal class FormatCommand : Command<FormatCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "format";
-        public override string Description { get; } = "Format projects.";
+        public override string Id => "format";
+        public override string Description => "Format projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
-        private readonly ILogger<FormatCommand> _logger;
 
         public FormatCommand(
             DiscoverProjectsTask discoverTask,
@@ -22,7 +22,7 @@ namespace Xs.Commands
         )
         {
             _discoverTask = discoverTask;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -36,10 +36,10 @@ namespace Xs.Commands
                 .FilterType(cfg.Type)
                 .ToArray();
 
-            _logger.Debug($"Format {projects} project(s)");
+            this.Debug($"Format {projects} project(s)");
             foreach (var project in projects)
             {
-                _logger.Debug($"Format {project}");
+                this.Debug($"Format {project}");
                 project.Save();
             }
         }

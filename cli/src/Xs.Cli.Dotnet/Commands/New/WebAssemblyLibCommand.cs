@@ -8,12 +8,12 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>
+    public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "wasm.lib";
-        public override string Description { get; } = "Create new WebAssembly Library project.";
+        public override string Id => "wasm.lib";
+        public override string Description => "Create new WebAssembly Library project.";
+        public ILogger Logger { get; }
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<WebAssemblyLibCommand> _logger;
 
         public WebAssemblyLibCommand(
             ITemplateWriter templateWriter,
@@ -21,7 +21,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         )
         {
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -33,7 +33,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            _logger.Debug($"Create WebAssembly Library project {name} at {location}");
+            this.Debug($"Create WebAssembly Library project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.WebAssemblyLibrary");
             _templateWriter.SetRoot(Path.Combine(location, name));

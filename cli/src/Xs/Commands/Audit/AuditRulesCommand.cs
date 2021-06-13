@@ -9,8 +9,8 @@ namespace Xs.Commands.Audit
 {
     internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>
     {
-        public override string Id { get; } = "rules";
-        public override string Description { get; } = "List audit rules.";
+        public override string Id => "rules";
+        public override string Description => "List audit rules.";
         private readonly IAuditRule[] _rules;
 
         public AuditRulesCommand(

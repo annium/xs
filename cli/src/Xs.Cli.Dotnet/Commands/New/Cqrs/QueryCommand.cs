@@ -14,7 +14,7 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 {
-    internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfiguration>
+    internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
         private const string DomainQueryTemplate = "DomainQuery.cs_tpl";
         private const string ApplicationQueryTemplate = "ApplicationQuery.cs_tpl";
@@ -23,12 +23,11 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         private const string Queries = "Queries";
         private const string Requests = "Requests";
         private const string Responses = "Responses";
-
-        public override string Id { get; } = "query";
-        public override string Description { get; } = "Create query.";
+        public ILogger Logger { get; }
+        public override string Id => "query";
+        public override string Description => "Create query.";
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<QueryCommand> _logger;
 
         public QueryCommand(
             DiscoverProjectsTask discoverTask,
@@ -38,7 +37,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
         {
             _discoverTask = discoverTask;
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -74,7 +73,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-            _logger.Debug($"Create query {data.Entity}:{data.Name}");
+            this.Debug($"Create query {data.Entity}:{data.Name}");
 
             // write files
             _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Queries, data.Entity));

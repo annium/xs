@@ -9,12 +9,12 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New
 {
-    public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>
+    public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "app.react";
-        public override string Description { get; } = "Create new app project, using React.";
+        public override string Id => "app.react";
+        public override string Description => "Create new app project, using React.";
+        public ILogger Logger { get; }
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<AppReactCommand> _logger;
 
         public AppReactCommand(
             ITemplateWriter templateWriter,
@@ -22,7 +22,7 @@ namespace Xs.Cli.Node.Commands.New
         )
         {
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -34,7 +34,7 @@ namespace Xs.Cli.Node.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            _logger.Debug($"Create app project {name} at {location}");
+            this.Debug($"Create app project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.AppReact");
             _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));

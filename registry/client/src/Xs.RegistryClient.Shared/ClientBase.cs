@@ -6,7 +6,7 @@ namespace Xs.RegistryClient.Shared
     {
         private readonly ClientBase[] _clients;
 
-        protected Uri Uri = new Uri("http://localhost");
+        protected Uri Uri = new("http://localhost");
 
         public ClientBase(params ClientBase[] clients)
         {

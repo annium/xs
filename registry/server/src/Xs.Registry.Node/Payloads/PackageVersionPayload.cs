@@ -10,9 +10,9 @@ namespace Xs.Registry.Node.Payloads
         [StringLength(100, MinimumLength = 3)]
         public string Main { get; set; }
 
-        public Dictionary<string, string> Dependencies { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Dependencies { get; set; } = new();
 
-        public Dictionary<string, string> DevDependencies { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> DevDependencies { get; set; } = new();
 
         [Required]
         [JsonProperty("dist")]

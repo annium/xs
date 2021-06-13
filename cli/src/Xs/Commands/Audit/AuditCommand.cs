@@ -12,17 +12,13 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Audit
 {
-    internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>
+    internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "";
-
-        public override string Description { get; } = "Audit projects.";
-
+        public override string Id => "";
+        public override string Description => "Audit projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
-
         private readonly IAuditRule[] _rules;
-
-        private readonly ILogger<AuditCommand> _logger;
 
         public AuditCommand(
             DiscoverProjectsTask discoverTask,
@@ -32,7 +28,7 @@ namespace Xs.Commands.Audit
         {
             _discoverTask = discoverTask;
             _rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -47,7 +43,7 @@ namespace Xs.Commands.Audit
                 .FilterMask(cfg.Mask)
                 .OfType<IAuditableProject>()
                 .ToArray();
-            _logger.Debug($"Audit {auditedProjects.Length} projects.");
+            this.Debug($"Audit {auditedProjects.Length} projects.");
 
             var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)
                 .Where(r => !cfg.Exclude.Contains(r.Code))
@@ -60,9 +56,9 @@ namespace Xs.Commands.Audit
                 return;
             }
 
-            _logger.Debug($"Use {usedRules.Length} rule(s):");
+            this.Debug($"Use {usedRules.Length} rule(s):");
             foreach (var rule in usedRules)
-                _logger.Debug(rule);
+                this.Debug(rule);
 
             foreach (var project in auditedProjects)
             {

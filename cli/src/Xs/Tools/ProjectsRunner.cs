@@ -8,15 +8,15 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Tools
 {
-    internal class ProjectsRunner
+    internal class ProjectsRunner : ILogSubject
     {
-        private readonly ILogger<ProjectsRunner> _logger;
+        public ILogger Logger { get; }
 
         public ProjectsRunner(
             ILogger<ProjectsRunner> logger
         )
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         public Task RunAsync<TProject>(
@@ -25,7 +25,7 @@ namespace Xs.Tools
             bool runOnDependencies,
             CancellationToken ct
         )
-        where TProject : IProject
+            where TProject : IProject
         {
             var locker = new object();
             using var gate = new ManualResetEventSlim(false);
@@ -40,14 +40,14 @@ namespace Xs.Tools
             var running = new List<TProject>();
             var errors = new List<Exception>();
 
-            _logger.Trace($"Start run with {pending.Count} project(s).");
+            this.Trace($"Start run with {pending.Count} project(s).");
 
             while (pending.Count > 0)
             {
                 ct.ThrowIfCancellationRequested();
 
                 TProject[] starting;
-                lock(locker)
+                lock (locker)
                 {
                     // get projects, that have no pending dependencies and exclude those already running
                     starting = pending
@@ -59,49 +59,49 @@ namespace Xs.Tools
                     if (running.Count == 0 && starting.Length == 0)
                         throw new InvalidOperationException($"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run.");
 
-                    _logger.Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine,starting.Select(e => e.Name))}");
+                    this.Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine, starting.Select(e => e.Name))}");
 
                     running.AddRange(starting);
                 }
 
                 // run each of starting projects
                 foreach (var project in starting)
-                    Task.Run(async() =>
+                    Task.Run(async () =>
                     {
                         try
                         {
-                            _logger.Trace($"Starting run for {project}");
+                            this.Trace($"Starting run for {project}");
 
                             // handle project
                             await handle(project, ct);
 
                             // if succeed - remove from pending
-                            lock(locker) pending.Remove(project);
+                            lock (locker) pending.Remove(project);
 
-                            _logger.Trace($"Finished run for {project}");
+                            this.Trace($"Finished run for {project}");
                         }
                         catch (Exception e)
-                        when(e is TaskCanceledException || e is OperationCanceledException)
+                            when (e is TaskCanceledException || e is OperationCanceledException)
                         {
                             // if canceled - clear pending
-                            lock(locker) pending.Clear();
+                            lock (locker) pending.Clear();
 
-                            _logger.Trace($"Cancelled run for {project}");
+                            this.Trace($"Cancelled run for {project}");
                         }
                         catch (Exception exception)
                         {
                             // if failed - add exception and clear pending to avoid next iterations
                             errors.Add(exception);
-                            lock(locker) pending.Clear();
+                            lock (locker) pending.Clear();
 
-                            _logger.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
+                            this.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
                         }
                         finally
                         {
                             // remove from running ones
-                            lock(locker) running.Remove(project);
+                            lock (locker) running.Remove(project);
 
-                            _logger.Trace($"Finalized run for {project}. Signal.");
+                            this.Trace($"Finalized run for {project}. Signal.");
 
                             // signal for next iteration
                             gate.Set();
@@ -109,12 +109,12 @@ namespace Xs.Tools
                     });
 
                 // wait for next iteration
-                _logger.Trace("Waiting for a signal.");
+                this.Trace("Waiting for a signal.");
                 gate.Wait();
                 gate.Reset();
             }
 
-            _logger.Trace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
+            this.Trace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
 
             if (errors.Count > 0)
                 throw new AggregateException(errors);
@@ -123,7 +123,7 @@ namespace Xs.Tools
         }
 
         private void CollectTargets<TProject>(TProject project, HashSet<TProject> targets)
-        where TProject : IProject
+            where TProject : IProject
         {
             // if target not added - it was already handled
             // is used to prevent circular calls

@@ -12,13 +12,13 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>
+    internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "build";
-        public override string Description { get; } = "Build projects.";
+        public override string Id => "build";
+        public override string Description => "Build projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ProjectsRunner _runner;
-        private readonly ILogger<BuildCommand> _logger;
 
         public BuildCommand(
             DiscoverProjectsTask discoverTask,
@@ -28,7 +28,7 @@ namespace Xs.Commands
         {
             _discoverTask = discoverTask;
             _runner = runner;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -42,7 +42,7 @@ namespace Xs.Commands
                 .FilterType(cfg.Type)
                 .OfType<IBuildableProject>()
                 .ToArray();
-            _logger.Debug($"Build {projects.Length} projects.");
+            this.Debug($"Build {projects.Length} projects.");
             await _runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn), cfg.Deep, ct);
         }
     }

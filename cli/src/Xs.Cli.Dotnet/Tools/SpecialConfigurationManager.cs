@@ -10,26 +10,26 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Tools
 {
-    internal class SpecialConfigurationManager : ISpecialConfigurationManager
+    internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
     {
         private const string File = "nuget.config";
-        public ProjectType Type { get; } = Constants.ProjectType;
-        public string[] IgnorePatterns { get; } = new [] { File, "lcov.info" };
+        public ProjectType Type => Constants.ProjectType;
+        public string[] IgnorePatterns { get; } = new[] { File, "lcov.info" };
+        public ILogger Logger { get; }
         private readonly string _registryName = "registry";
         private readonly string _defaultName = "nuget";
-        private readonly Uri _defaultUri = new Uri(Constants.DefaultServer);
-        private readonly ILogger<SpecialConfigurationManager> _logger;
+        private readonly Uri _defaultUri = new(Constants.DefaultServer);
 
         public SpecialConfigurationManager(
             ILogger<SpecialConfigurationManager> logger
         )
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         public void Save(IProject project, ProjectTypeConfiguration configuration)
         {
-            _logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+            this.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
             var sources = new XElement(El.PackageSources);
             sources.Add(new XElement(El.Clear));
@@ -63,7 +63,7 @@ namespace Xs.Cli.Dotnet.Tools
             info.Save(xw);
         }
 
-        private XElement GetAddRule(string name, Uri uri) => new XElement(
+        private XElement GetAddRule(string name, Uri uri) => new(
             El.Add,
             new XAttribute(El.Key, name),
             new XAttribute(El.Value, uri.IsFile ? uri.AbsolutePath : new Uri(uri, Constants.ServerPathSuffix).ToString())

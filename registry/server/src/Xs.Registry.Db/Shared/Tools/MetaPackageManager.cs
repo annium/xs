@@ -24,6 +24,6 @@ namespace Xs.Registry.Db.Shared
         }
 
         public MetaPackageAccess GetAccess(MetaPackage metaPackage) =>
-            new MetaPackageAccess(metaPackage.OwnerId, metaPackage.Permissions);
+            new(metaPackage.OwnerId, metaPackage.Permissions);
     }
 }

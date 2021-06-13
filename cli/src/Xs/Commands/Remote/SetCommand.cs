@@ -14,8 +14,8 @@ namespace Xs.Commands.Remote
 {
     internal class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfiguration>
     {
-        public override string Id { get; } = "set";
-        public override string Description { get; } = "Start tracking registry.";
+        public override string Id => "set";
+        public override string Description => "Start tracking registry.";
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly IConfigurationManager _configurationManager;
         private readonly MainClientFactory _mainClientFactory;
@@ -68,7 +68,7 @@ namespace Xs.Commands.Remote
     {
         [Position(1)]
         [Help("Registry location.")]
-        public Uri Registry { get; set; } = new Uri("http://localhost");
+        public Uri Registry { get; set; } = new("http://localhost");
 
         [Option(isRequired: true)]
         [Help("User name.")]

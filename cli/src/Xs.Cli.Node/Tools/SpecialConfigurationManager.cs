@@ -8,29 +8,29 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Tools
 {
-    internal class SpecialConfigurationManager : ISpecialConfigurationManager
+    internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
     {
         private const string File = ".npmrc";
-        public ProjectType Type { get; } = Constants.ProjectType;
-        public string[] IgnorePatterns { get; } = new [] { File };
-        private readonly ILogger<SpecialConfigurationManager> _logger;
+        public ProjectType Type => Constants.ProjectType;
+        public string[] IgnorePatterns { get; } = new[] { File };
+        public ILogger Logger { get; }
 
         public SpecialConfigurationManager(
             ILogger<SpecialConfigurationManager> logger
         )
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         public void Save(IProject project, ProjectTypeConfiguration configuration)
         {
-            _logger.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+            this.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
             // with NPM currently it's not possible to publish unscoped packages privately
             var scope = GetScope(project.Name);
             if (string.IsNullOrWhiteSpace(scope))
             {
-                _logger.Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
+                this.Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
                 return;
             }
 
@@ -43,7 +43,7 @@ namespace Xs.Cli.Node.Tools
             sb.AppendLine($"//{configuration.Server.Authority}/:_authToken=\"{configuration.Token}\"");
             System.IO.File.WriteAllText(FilePath(project), sb.ToString());
 
-            static string GetScope(string name) => name.StartsWith('@') ? name[1..].Split('/') [0] : string.Empty;
+            static string GetScope(string name) => name.StartsWith('@') ? name[1..].Split('/')[0] : string.Empty;
         }
 
         public void Delete(IProject project)

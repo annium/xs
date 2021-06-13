@@ -7,14 +7,14 @@ namespace Xs.Cli.Core.Projects
 {
     public class ProjectMock<TProject> : IProject where TProject : class, IProject
     {
-        public ProjectType Type { get; } = Constants.MockProjectType;
+        public ProjectType Type => Constants.MockProjectType;
         public string Name { get; private set; }
         public Version Version { get; private set; }
         public string Description { get; private set; }
         public string Directory { get; private set; }
         public string File { get; private set; }
-        public HashSet<Dependency<IProject>> Projects => new HashSet<Dependency<IProject>>();
-        public HashSet<Dependency<Package>> Packages => new HashSet<Dependency<Package>>();
+        public HashSet<Dependency<IProject>> Projects => new();
+        public HashSet<Dependency<Package>> Packages => new();
 
         public ProjectMock(
             string name,

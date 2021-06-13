@@ -9,10 +9,10 @@ using NodaTime;
 
 namespace Xs.Tools
 {
-    internal class Watcher
+    internal class Watcher : ILogSubject
     {
+        public ILogger Logger { get; }
         private readonly ITimeProvider _timeProvider;
-        private readonly ILogger<Watcher> _logger;
 
         public Watcher(
             ITimeProvider timeProvider,
@@ -20,7 +20,7 @@ namespace Xs.Tools
         )
         {
             _timeProvider = timeProvider;
-            _logger = logger;
+            Logger = logger;
         }
 
         public async Task WatchAsync(
@@ -42,10 +42,14 @@ namespace Xs.Tools
             watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite;
 
             watcher.Created += (_, args) => AddTask(args.FullPath);
-            watcher.Renamed += (_, args) => { AddTask(args.OldFullPath); AddTask(args.FullPath); };
+            watcher.Renamed += (_, args) =>
+            {
+                AddTask(args.OldFullPath);
+                AddTask(args.FullPath);
+            };
             watcher.Changed += (_, args) => AddTask(args.FullPath);
             watcher.Deleted += (_, args) => AddTask(args.FullPath);
-            watcher.Error += (_, args) => _logger.Error(args.GetException());
+            watcher.Error += (_, args) => this.Error(args.GetException());
 
             // no tasks -> reset -> wait
             // add task -> set
@@ -56,21 +60,23 @@ namespace Xs.Tools
                 gate.Reset();
                 if (tasks.Count == 0)
                 {
-                    _logger.Trace("Wait for tasks.");
+                    this.Trace("Wait for tasks.");
                     gate.Wait(ct);
                 }
 
-                _logger.Trace($"Pending {tasks.Count} task(s).");
+                this.Trace($"Pending {tasks.Count} task(s).");
                 // get and execute task
-                var(task, path) = tasks.Dequeue();
+                var (task, path) = tasks.Dequeue();
                 try
                 {
                     await task(path);
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException)
+                {
+                }
                 catch (Exception exception)
                 {
-                    _logger.Error(exception);
+                    this.Error(exception);
                 }
             }
 
@@ -80,7 +86,7 @@ namespace Xs.Tools
                     return;
 
                 var task = File.Exists(path) ? handleChange : handleDelete;
-                _logger.Trace($"Enqueue task for {path}");
+                this.Trace($"Enqueue task for {path}");
                 tasks.Enqueue((task, path));
                 gate.Set();
             }

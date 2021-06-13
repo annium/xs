@@ -12,13 +12,13 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>
+    internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "test";
-        public override string Description { get; } = "Test projects.";
+        public override string Id => "test";
+        public override string Description => "Test projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ProjectsRunner _runner;
-        private readonly ILogger<TestCommand> _logger;
 
         public TestCommand(
             DiscoverProjectsTask discoverTask,
@@ -28,7 +28,7 @@ namespace Xs.Commands
         {
             _discoverTask = discoverTask;
             _runner = runner;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -43,7 +43,7 @@ namespace Xs.Commands
                 .OfType<ITestableProject>()
                 .ToArray();
 
-            _logger.Debug($"Test {projects.Length} projects.");
+            this.Debug($"Test {projects.Length} projects.");
             await _runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn), cfg.Deep, ct);
         }
     }

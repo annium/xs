@@ -9,12 +9,12 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New
 {
-    public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>
+    public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "lib.react";
-        public override string Description { get; } = "Create new library project, using React.";
+        public override string Id => "lib.react";
+        public override string Description => "Create new library project, using React.";
+        public ILogger Logger { get; }
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<LibReactCommand> _logger;
 
         public LibReactCommand(
             ITemplateWriter templateWriter,
@@ -22,7 +22,7 @@ namespace Xs.Cli.Node.Commands.New
         )
         {
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -34,7 +34,7 @@ namespace Xs.Cli.Node.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            _logger.Debug($"Create library project {name} at {location}");
+            this.Debug($"Create library project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.LibReact");
             _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));

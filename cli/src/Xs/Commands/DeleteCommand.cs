@@ -10,14 +10,14 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands
 {
-    internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>
+    internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "delete";
-        public override string Description { get; } = "Delete dependency from projects.";
+        public override string Id => "delete";
+        public override string Description => "Delete dependency from projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
         private readonly DeleteProjectDependencyTask _deleteProjectDependencyTask;
-        private readonly ILogger<DeleteCommand> _logger;
 
         public DeleteCommand(
             DiscoverProjectsTask discoverTask,
@@ -29,7 +29,7 @@ namespace Xs.Commands
             _discoverTask = discoverTask;
             _deletePackageDependencyTask = deletePackageDependencyTask;
             _deleteProjectDependencyTask = deleteProjectDependencyTask;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -46,11 +46,11 @@ namespace Xs.Commands
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                _logger.Info($"No projects found to add dependency to.");
+                this.Info($"No projects found to add dependency to.");
                 return;
             }
 
-            _logger.Debug($"Try delete dependency {name} from {targets.Length} projects.");
+            this.Debug($"Try delete dependency {name} from {targets.Length} projects.");
 
             var projects = allProjects.FilterMask(name).ToArray();
             if (projects.Length > 0)
@@ -66,7 +66,7 @@ namespace Xs.Commands
             // if no packages found
             if (packages.Length == 0)
             {
-                _logger.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
+                this.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
                 return;
             }
 

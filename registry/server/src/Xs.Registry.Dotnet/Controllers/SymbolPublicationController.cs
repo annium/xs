@@ -17,7 +17,7 @@ namespace Xs.Registry.Dotnet.Controllers
 {
     public class SymbolPublicationController : ServerController<User>
     {
-        private static readonly HashSet<string> ValidExtensions = new HashSet<string>
+        private static readonly HashSet<string> ValidExtensions = new()
         {
             ".pdb",
             ".nuspec",

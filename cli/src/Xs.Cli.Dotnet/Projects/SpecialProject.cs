@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -14,10 +15,17 @@ using SysFile = System.IO.File;
 
 namespace Xs.Cli.Dotnet.Projects
 {
-    internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject,
-        IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
+    internal abstract class SpecialProject<TProject> :
+        ProjectBase<TProject>,
+        ISpecialProject,
+        IAuditableProject,
+        ICachingProject,
+        ICleanableProject,
+        IInstallableProject,
+        IBuildableProject
+        where TProject : SpecialProject<TProject>
     {
-        private static readonly object CacheLocker = new object();
+        private static readonly object CacheLocker = new();
         public override string File => Path.Combine(Directory, ProjectFileName(Name));
         public TargetFramework TargetFramework { get; }
         public OutputType OutputType { get; }
@@ -44,7 +52,7 @@ namespace Xs.Cli.Dotnet.Projects
 
         public Task ClearCacheAsync(CancellationToken ct)
         {
-            Logger.Info($"Start {Name} cache clean.");
+            this.Info($"Start {Name} cache clean.");
 
             var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
             lock (CacheLocker)
@@ -57,14 +65,14 @@ namespace Xs.Cli.Dotnet.Projects
                 }
             }
 
-            Logger.Info($"Finished {Name} cache clean.");
+            this.Info($"Finished {Name} cache clean.");
 
             return Task.CompletedTask;
         }
 
         public Task CleanAsync(bool force, CancellationToken ct)
         {
-            Logger.Info($"Start {Name} clean.");
+            this.Info($"Start {Name} clean.");
 
             DeleteDirectory("bin");
             DeleteDirectory("obj");
@@ -72,7 +80,7 @@ namespace Xs.Cli.Dotnet.Projects
             DeleteFiles("*.nupkg");
             DeleteFiles("*.snupkg");
 
-            Logger.Info($"Finished {Name} clean.");
+            this.Info($"Finished {Name} clean.");
 
             return Task.CompletedTask;
         }

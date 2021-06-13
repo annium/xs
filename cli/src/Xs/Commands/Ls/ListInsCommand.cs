@@ -14,8 +14,8 @@ namespace Xs.Commands.Ls
 {
     internal class ListInsCommand : Command<ListInsCommandConfiguration, DiscoverConfiguration>
     {
-        public override string Id { get; } = "ins";
-        public override string Description { get; } = "List projects and their dependencies.";
+        public override string Id => "ins";
+        public override string Description => "List projects and their dependencies.";
         private readonly DiscoverProjectsTask _discoverTask;
 
         public ListInsCommand(

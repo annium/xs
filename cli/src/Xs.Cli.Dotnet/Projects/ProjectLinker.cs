@@ -10,7 +10,7 @@ namespace Xs.Cli.Dotnet.Projects
 {
     internal class ProjectLinker : SpecialProjectLinkerBase, ISpecialProjectLinker
     {
-        public ProjectType Type { get; } = Constants.ProjectType;
+        public ProjectType Type => Constants.ProjectType;
 
         public void PreLink(
             IReadOnlyCollection<IProject> projects,

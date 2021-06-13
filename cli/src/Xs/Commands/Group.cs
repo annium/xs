@@ -2,8 +2,8 @@ namespace Xs.Commands
 {
     internal class Group : Annium.Extensions.Arguments.Group
     {
-        public override string Id { get; } = "xs";
-        public override string Description { get; } = "xs toolkit";
+        public override string Id => "xs";
+        public override string Description => "xs toolkit";
 
         public Group()
         {

@@ -7,8 +7,8 @@ namespace Xs.Cli.Core.Audit
 {
     public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject> where TProject : IProject
     {
-        public string Code { get; } = "deps-consist";
-        public string Description { get; } = "Finds inconsistent dependencies across projects. Fix uses latest for all projects";
+        public string Code => "deps-consist";
+        public string Description => "Finds inconsistent dependencies across projects. Fix uses latest for all projects";
 
         public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
         {

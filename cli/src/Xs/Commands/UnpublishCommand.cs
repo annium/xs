@@ -15,15 +15,15 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>
+    internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "unpublish";
-        public override string Description { get; } = "Unpublish package from registry.";
+        public override string Id => "unpublish";
+        public override string Description => "Unpublish package from registry.";
+        public ILogger Logger { get; }
         private readonly IConfigurationManager _configurationManager;
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ProjectsRunner _runner;
         private readonly ServerClientFactory _serverClientFactory;
-        private readonly ILogger<UnpublishCommand> _logger;
 
         public UnpublishCommand(
             IConfigurationManager configurationManager,
@@ -37,7 +37,7 @@ namespace Xs.Commands
             _discoverTask = discoverTask;
             _runner = runner;
             _serverClientFactory = serverClientFactory;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -57,7 +57,7 @@ namespace Xs.Commands
 
             if (projects.Length == 0)
             {
-                _logger.Info($"No projects found unpublish.");
+                this.Info($"No projects found unpublish.");
                 return;
             }
 
@@ -70,7 +70,7 @@ namespace Xs.Commands
                     throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
             }
 
-            _logger.Debug($"Unpublish {projects.Length} projects.");
+            this.Debug($"Unpublish {projects.Length} projects.");
             await _runner.RunAsync(
                 projects,
                 (project, tkn) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),

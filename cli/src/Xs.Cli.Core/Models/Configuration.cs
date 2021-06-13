@@ -8,7 +8,7 @@ namespace Xs.Cli.Core.Models
     {
         public static Configuration Empty()
         {
-            return new Configuration(
+            return new(
                 string.Empty,
                 new Uri("http://localhost"),
                 string.Empty,

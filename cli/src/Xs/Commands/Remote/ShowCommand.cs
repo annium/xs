@@ -9,8 +9,8 @@ namespace Xs.Commands.Remote
 {
     internal class ShowCommand : Command<DiscoverConfiguration>
     {
-        public override string Id { get; } = "show";
-        public override string Description { get; } = "Show information about tracked registry.";
+        public override string Id => "show";
+        public override string Description => "Show information about tracked registry.";
         private readonly IConfigurationManager _configurationManager;
 
         public ShowCommand(

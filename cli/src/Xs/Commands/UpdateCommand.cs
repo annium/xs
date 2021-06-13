@@ -14,15 +14,15 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>
+    internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "update";
-        public override string Description { get; } = "Update dependencies in projects.";
+        public override string Id => "update";
+        public override string Description => "Update dependencies in projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly IEnumerable<IDependencyManager> _dependencyManagers;
         private readonly IConfigurationManager _configurationManager;
         private readonly ProjectsRunner _runner;
-        private readonly ILogger<UpdateCommand> _logger;
 
         public UpdateCommand(
             DiscoverProjectsTask discoverTask,
@@ -36,7 +36,7 @@ namespace Xs.Commands
             _dependencyManagers = dependencyManagers;
             _configurationManager = configurationManager;
             _runner = runner;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -51,18 +51,18 @@ namespace Xs.Commands
                 .ToArray();
             if (projects.Length == 0)
             {
-                _logger.Info("No projects found to update.");
+                this.Info("No projects found to update.");
                 return;
             }
 
             var dependencies = projects.SelectMany(e => e.Packages).Select(e => e.Value).Distinct().ToArray();
             if (dependencies.Length == 0)
             {
-                _logger.Info("No projects found to update.");
+                this.Info("No projects found to update.");
                 return;
             }
 
-            _logger.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
+            this.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
 
             // resolve dependency managers for types
             var dependencyManagers = dependencies
@@ -88,14 +88,14 @@ namespace Xs.Commands
                     versions = await dependencyManager.ResolveVersionsAsync(d, dependencyManager.DefaultServer, string.Empty);
 
                 var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-                _logger.Trace($"Resolve: {d} - {versions.Length} version(s)");
+                this.Trace($"Resolve: {d} - {versions.Length} version(s)");
 
                 if (result is null)
-                    _logger.Warn($"Resolve: {d} unresolved");
+                    this.Warn($"Resolve: {d} unresolved");
                 else if (result == d)
-                    _logger.Debug($"Resolve: {d} unchanged");
+                    this.Debug($"Resolve: {d} unchanged");
                 else
-                    _logger.Debug($"Resolve: {d} -> {result}");
+                    this.Debug($"Resolve: {d} -> {result}");
 
                 return result;
             }))).OfType<Package>().ToArray();
@@ -104,7 +104,7 @@ namespace Xs.Commands
             {
                 foreach (var project in projects)
                     if (UpdateProject(project, updates))
-                        _logger.Info($"{project} is to be updated.");
+                        this.Info($"{project} is to be updated.");
 
                 return;
             }
@@ -120,12 +120,12 @@ namespace Xs.Commands
 
             if (updated.Count == 0)
             {
-                _logger.Info("No projects updated.");
+                this.Info("No projects updated.");
                 return;
             }
 
             // install installable updates
-            _logger.Debug($"Clear {updated.Count} projects cache.");
+            this.Debug($"Clear {updated.Count} projects cache.");
             await _runner.RunAsync(
                 updated.OfType<ICachingProject>(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
@@ -133,7 +133,7 @@ namespace Xs.Commands
                 ct
             );
 
-            _logger.Debug($"Install {updated.Count} projects.");
+            this.Debug($"Install {updated.Count} projects.");
             await _runner.RunAsync(
                 updated.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(true, tkn),
@@ -141,7 +141,7 @@ namespace Xs.Commands
                 ct
             );
 
-            _logger.Info($"{updated.Count} projects updated.");
+            this.Info($"{updated.Count} projects updated.");
         }
 
         private bool UpdateProject(IProject project, Package[] updates)

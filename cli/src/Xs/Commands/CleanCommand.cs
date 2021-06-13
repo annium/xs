@@ -12,13 +12,13 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>
+    internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "clean";
-        public override string Description { get; } = "Clean projects.";
+        public override string Id => "clean";
+        public override string Description => "Clean projects.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ProjectsRunner _runner;
-        private readonly ILogger<CleanCommand> _logger;
 
         public CleanCommand(
             DiscoverProjectsTask discoverTask,
@@ -28,7 +28,7 @@ namespace Xs.Commands
         {
             _discoverTask = discoverTask;
             _runner = runner;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -43,7 +43,7 @@ namespace Xs.Commands
                 .OfType<ICleanableProject>()
                 .ToArray();
 
-            _logger.Debug($"Clean {projects.Length} projects.");
+            this.Debug($"Clean {projects.Length} projects.");
             await _runner.RunAsync(projects, (project, tkn) => project.CleanAsync(cfg.Force, tkn), cfg.Deep, ct);
         }
     }

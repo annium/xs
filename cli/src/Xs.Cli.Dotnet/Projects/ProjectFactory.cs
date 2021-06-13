@@ -21,7 +21,7 @@ namespace Xs.Cli.Dotnet.Projects
         public static readonly string[] TrackedFileExtensions = new[] { ".cs" };
         public static readonly string[] IgnoredFolders = new[] { "bin", "obj" };
         private const string ProjectFileMask = "*.csproj";
-        public ProjectType Type { get; } = Constants.ProjectType;
+        public ProjectType Type => Constants.ProjectType;
         private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
         private readonly ProjectMapper _mapper;
         private readonly IShell _shell;
@@ -91,7 +91,7 @@ namespace Xs.Cli.Dotnet.Projects
             return new SealedProject(GetContext<SealedProject>());
 
             SpecialProjectContext<TProject> GetContext<TProject>() where TProject : SpecialProject<TProject>
-                => new SpecialProjectContext<TProject>(
+                => new(
                     Constants.ProjectType,
                     name,
                     version,

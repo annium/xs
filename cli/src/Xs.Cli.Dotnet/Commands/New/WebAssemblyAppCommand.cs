@@ -8,12 +8,12 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class WebAssemblyAppCommand : Command<WebAssemblyAppCommandConfiguration, DiscoverConfiguration>
+    public class WebAssemblyAppCommand : Command<WebAssemblyAppCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "wasm.app";
-        public override string Description { get; } = "Create new WebAssembly Application project.";
+        public override string Id => "wasm.app";
+        public override string Description => "Create new WebAssembly Application project.";
+        public ILogger Logger { get; }
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<WebAssemblyAppCommand> _logger;
 
         public WebAssemblyAppCommand(
             ITemplateWriter templateWriter,
@@ -21,7 +21,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         )
         {
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -33,7 +33,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            _logger.Debug($"Create WebAssembly Application project {name} at {location}");
+            this.Debug($"Create WebAssembly Application project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.WebAssemblyApplication");
             _templateWriter.SetRoot(Path.Combine(location, name));

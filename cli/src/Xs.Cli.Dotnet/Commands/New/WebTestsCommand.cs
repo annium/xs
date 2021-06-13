@@ -8,12 +8,12 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>
+    public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "web.tests";
-        public override string Description { get; } = "Create new web tests project.";
+        public override string Id => "web.tests";
+        public override string Description => "Create new web tests project.";
+        public ILogger Logger { get; }
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<WebTestsCommand> _logger;
 
         public WebTestsCommand(
             ITemplateWriter templateWriter,
@@ -21,7 +21,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         )
         {
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -33,7 +33,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            _logger.Debug($"Create web tests project {name} at {location}");
+            this.Debug($"Create web tests project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.WebTests");
             _templateWriter.SetRoot(Path.Combine(location, name));

@@ -8,12 +8,12 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>
+    public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "lib.tests";
-        public override string Description { get; } = "Create new library tests project.";
+        public override string Id => "lib.tests";
+        public override string Description => "Create new library tests project.";
+        public ILogger Logger { get; }
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<LibTestsCommand> _logger;
 
         public LibTestsCommand(
             ITemplateWriter templateWriter,
@@ -21,7 +21,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         )
         {
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -33,7 +33,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            _logger.Debug($"Create library tests project {name} at {location}");
+            this.Debug($"Create library tests project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.LibTests");
             _templateWriter.SetRoot(Path.Combine(location, name));

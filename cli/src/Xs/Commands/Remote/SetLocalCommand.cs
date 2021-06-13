@@ -12,8 +12,8 @@ namespace Xs.Commands.Remote
 {
     internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverConfiguration>
     {
-        public override string Id { get; } = "set-local";
-        public override string Description { get; } = "Set local registry.";
+        public override string Id => "set-local";
+        public override string Description => "Set local registry.";
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly IConfigurationManager _configurationManager;
 
@@ -52,6 +52,6 @@ namespace Xs.Commands.Remote
     {
         [Position(1)]
         [Help("Registry location.")]
-        public Uri Registry { get; set; } = new Uri("http://localhost");
+        public Uri Registry { get; set; } = new("http://localhost");
     }
 }

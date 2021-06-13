@@ -5,29 +5,29 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tasks.Dependencies
 {
-    public class DeletePackageDependencyTask
+    public class DeletePackageDependencyTask : ILogSubject
     {
-        private readonly ILogger<DeletePackageDependencyTask> _logger;
+        public ILogger Logger { get; }
 
         public DeletePackageDependencyTask(
             ILogger<DeletePackageDependencyTask> logger
         )
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         public void Run(IProject[] targets, Package package)
         {
-            _logger.Debug($"Delete package {package} as {package.Type} dependency from {targets.Length} projects.");
+            this.Debug($"Delete package {package} as {package.Type} dependency from {targets.Length} projects.");
             foreach (var target in targets)
             {
                 if (!target.Packages.Any(p => p.Value == package))
                 {
-                    _logger.Debug($"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}.");
+                    this.Debug($"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}.");
                     continue;
                 }
 
-                _logger.Debug($"Delete package {package} from dependencies of {target}.");
+                this.Debug($"Delete package {package} from dependencies of {target}.");
                 target.Packages.RemoveWhere(p => p.Value == package);
                 target.Save();
             }

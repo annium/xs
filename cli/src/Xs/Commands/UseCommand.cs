@@ -10,14 +10,14 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands
 {
-    internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfiguration>
+    internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "use";
-        public override string Description { get; } = "Set dependency in projects to specific version.";
+        public override string Id => "use";
+        public override string Description => "Set dependency in projects to specific version.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly AddPackageDependencyTask _addPackageDependencyTask;
         private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
-        private readonly ILogger<UseCommand> _logger;
 
         public UseCommand(
             DiscoverProjectsTask discoverTask,
@@ -29,7 +29,7 @@ namespace Xs.Commands
             _discoverTask = discoverTask;
             _addPackageDependencyTask = addPackageDependencyTask;
             _deletePackageDependencyTask = deletePackageDependencyTask;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -55,7 +55,7 @@ namespace Xs.Commands
 
             if (targets.Length == 0)
             {
-                _logger.Info($"No projects found to update.");
+                this.Info($"No projects found to update.");
                 return;
             }
 
@@ -74,6 +74,7 @@ namespace Xs.Commands
         [Position(1)]
         [Help("Dependency name.")]
         public string Name { get; set; } = string.Empty;
+
         [Position(2)]
         [Help("Dependency version.")]
         public Version Version { get; set; } = Version.Empty;

@@ -20,6 +20,6 @@ namespace Xs.Registry.Db.Shared
 
         public UserMetaPackageAccess ForUser(User user) =>
             // for empty user - assume world access
-            new UserMetaPackageAccess(user == null ? Guid.Empty : user.Id, OwnerId, Permissions);
+            new(user == null ? Guid.Empty : user.Id, OwnerId, Permissions);
     }
 }

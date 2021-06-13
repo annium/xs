@@ -11,12 +11,14 @@ using Xs.Cli.Core.Helpers;
 
 namespace Xs.Cli.Core.Tools
 {
-    internal class TemplateWriter : ITemplateWriter
+    internal class TemplateWriter : ITemplateWriter, ILogSubject
     {
+        public ILogger Logger { get; }
         private const string TemplateExtension = "tpl";
-        private readonly ILogger<TemplateWriter> _logger;
         private string _root = Directory.GetCurrentDirectory();
-        private string[] _extensions = {
+
+        private string[] _extensions =
+        {
             "conf",
             "cs",
             "cshtml",
@@ -40,13 +42,14 @@ namespace Xs.Cli.Core.Tools
             "ts",
             "tsx"
         };
+
         private IList<Resource> _resources = new List<Resource>();
 
         public TemplateWriter(
             ILogger<TemplateWriter> logger
         )
         {
-            _logger = logger;
+            Logger = logger;
         }
 
         public void LoadResources(string prefix)
@@ -78,7 +81,7 @@ namespace Xs.Cli.Core.Tools
             var resource = _resources.First(r => r.Name == resourceName);
             if (resourceName.EndsWith(TemplateExtension))
             {
-                _logger.Trace($"Write template {resourceName} -> {path}");
+                this.Trace($"Write template {resourceName} -> {path}");
                 var scriptObject = new ScriptObject();
                 scriptObject.Import(data);
                 scriptObject.Import(typeof(StringExtensions));
@@ -90,7 +93,7 @@ namespace Xs.Cli.Core.Tools
             }
             else
             {
-                _logger.Trace($"Write as is {resourceName} -> {path}");
+                this.Trace($"Write as is {resourceName} -> {path}");
                 using var fs = File.Create(path);
                 resource.Content.CopyTo(fs);
             }

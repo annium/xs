@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -54,7 +55,7 @@ namespace Xs.Cli.Node.Projects
 
         public Task ClearCacheAsync(CancellationToken ct)
         {
-            Logger.Info($"Start {Name} cache clean.");
+            this.Info($"Start {Name} cache clean.");
 
             // lock (CacheLocker)
             // {
@@ -69,14 +70,14 @@ namespace Xs.Cli.Node.Projects
             //     }
             // }
 
-            Logger.Info($"Finished {Name} cache clean.");
+            this.Info($"Finished {Name} cache clean.");
 
             return Task.CompletedTask;
         }
 
         public async Task CleanAsync(bool force, CancellationToken ct)
         {
-            Logger.Info($"Start {Name} clean.");
+            this.Info($"Start {Name} clean.");
 
             DeleteDirectory(ProjectFactory.ModulesDirectory);
             DeleteFiles("*.tgz");
@@ -88,7 +89,7 @@ namespace Xs.Cli.Node.Projects
             if (Scripts.ContainsKey("clean"))
                 await RunAsync("pnpm clean", "pnpm run clean", ct);
 
-            Logger.Info($"Finished {Name} clean.");
+            this.Info($"Finished {Name} clean.");
         }
 
         public Task InstallAsync(bool force, CancellationToken ct)

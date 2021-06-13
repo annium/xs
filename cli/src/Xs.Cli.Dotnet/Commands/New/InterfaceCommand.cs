@@ -12,15 +12,15 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New
 {
-    public class InterfaceCommand : Command<InterfaceCommandConfiguration, DiscoverConfiguration>
+    public class InterfaceCommand : Command<InterfaceCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
         private const string InterfaceTemplate = "Interface.cs_tpl";
 
-        public override string Id { get; } = "interface";
-        public override string Description { get; } = "Create new interfaces.";
+        public override string Id => "interface";
+        public override string Description => "Create new interfaces.";
+        public ILogger Logger { get; }
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ITemplateWriter _templateWriter;
-        private readonly ILogger<InterfaceCommand> _logger;
 
         public InterfaceCommand(
             DiscoverProjectsTask discoverTask,
@@ -30,7 +30,7 @@ namespace Xs.Cli.Dotnet.Commands.New
         {
             _discoverTask = discoverTask;
             _templateWriter = templateWriter;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override void Handle(
@@ -63,13 +63,13 @@ namespace Xs.Cli.Dotnet.Commands.New
             if (names.Count == 0)
                 return;
 
-            _logger.Debug($"{names.Count} interface(s) to create");
+            this.Debug($"{names.Count} interface(s) to create");
 
             Directory.CreateDirectory(output);
 
             foreach (var name in names)
             {
-                _logger.Debug($"Create interface {name} at {output}");
+                this.Debug($"Create interface {name} at {output}");
 
                 _templateWriter.LoadResources($"{Group.TemplatesDir}.Interface");
                 _templateWriter.SetRoot(output);

@@ -17,16 +17,16 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>
+    internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "watch";
-        public override string Description { get; } = "Watch projects' changes and install/build/test on fly.";
+        public override string Id => "watch";
+        public override string Description => "Watch projects' changes and install/build/test on fly.";
+        public ILogger Logger { get; }
         private readonly IProjectFactory _projectFactory;
         private readonly DiscoverProjectsTask _discoverTask;
         private readonly ProjectsRunner _runner;
         private readonly Watcher _watcher;
         private readonly IShell _shell;
-        private readonly ILogger<WatchCommand> _logger;
         private readonly LoggerConfiguration _loggerConfiguration;
         private string _mask = string.Empty;
         private ProjectType _type = ProjectType.None;
@@ -34,7 +34,7 @@ namespace Xs.Commands
         private bool _force;
         private bool _runTests;
         private string _testFilter = string.Empty;
-        private DiscoverConfiguration _discoverCfg = new DiscoverConfiguration();
+        private DiscoverConfiguration _discoverCfg = new();
         private CancellationToken _token;
         private IProject[] _projects = Array.Empty<IProject>();
 
@@ -53,7 +53,7 @@ namespace Xs.Commands
             _runner = runner;
             _watcher = watcher;
             _shell = shell;
-            _logger = logger;
+            Logger = logger;
             _loggerConfiguration = loggerConfiguration;
         }
 
@@ -90,7 +90,7 @@ namespace Xs.Commands
 
             if (isProjectFile)
             {
-                _logger.Info($"Changed project file: {path}");
+                this.Info($"Changed project file: {path}");
                 Discover();
 
                 project = GetProjectByPath(path);
@@ -103,13 +103,13 @@ namespace Xs.Commands
             if (project is null)
                 return;
 
-            _logger.Info($"Changed {project} related file: {path}");
+            this.Info($"Changed {project} related file: {path}");
 
             await BuildAsync(project, includeSelf: true);
             if (_runTests)
                 await TestAsync(project, includeSelf: true);
 
-            _logger.Info($"Done.");
+            this.Info($"Done.");
         }
 
         private async Task HandleDelete(string path)
@@ -119,7 +119,7 @@ namespace Xs.Commands
 
             if (isProjectFile)
             {
-                _logger.Info($"Deleted project file: {path}");
+                this.Info($"Deleted project file: {path}");
                 Discover();
 
                 await InstallAsync(project!, includeSelf: false);
@@ -130,13 +130,13 @@ namespace Xs.Commands
             if (project == null)
                 return;
 
-            _logger.Info($"Deleted {project} related file: {path}");
+            this.Info($"Deleted {project} related file: {path}");
 
             await BuildAsync(project, includeSelf: !isProjectFile);
             if (_runTests)
                 await TestAsync(project, includeSelf: !isProjectFile);
 
-            _logger.Info($"Done.");
+            this.Info($"Done.");
         }
 
         private Task InstallAsync(IProject project, bool includeSelf) =>
@@ -207,9 +207,9 @@ namespace Xs.Commands
 
             _projects = result.ToArray();
 
-            _logger.Debug($"Discovered {_projects.Length} project(s) to watch:");
+            this.Debug($"Discovered {_projects.Length} project(s) to watch:");
             foreach (var project in _projects)
-                _logger.Debug(project.Name);
+                this.Debug(project.Name);
         }
 
         private void CollectTargets(IProject project, HashSet<IProject> targets)

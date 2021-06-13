@@ -13,16 +13,16 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Tools
 {
-    internal class ConfigurationManager : IConfigurationManager
+    internal class ConfigurationManager : IConfigurationManager, ILogSubject
     {
         private const string ConfigurationFile = ".xs";
         private const string CredentialsFile = ".xs.credentials";
         private const string IgnoreHeader = "# xs ignore patterns";
         private const string IgnoreFile = ".gitignore";
+        public ILogger Logger { get; }
         private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> _specialManagers;
         private readonly Func<IConfigurationBuilder> _configurationBuilderFactory;
         private readonly IMapper _mapper;
-        private readonly ILogger<ConfigurationManager> _logger;
 
         public ConfigurationManager(
             IEnumerable<ISpecialConfigurationManager> specialManagers,
@@ -34,21 +34,21 @@ namespace Xs.Tools
             _specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
             _configurationBuilderFactory = configurationBuilderFactory;
             _mapper = mapper;
-            _logger = logger;
+            Logger = logger;
         }
 
         public Configuration Load(string folder)
         {
-            _logger.Trace($"Load configuration from {folder}");
+            this.Trace($"Load configuration from {folder}");
             var directory = GetConfigurationFolder(new DirectoryInfo(folder));
 
             if (directory is null)
             {
-                _logger.Trace($"Configuration missing in {folder}. Returning default");
+                this.Trace($"Configuration missing in {folder}. Returning default");
                 return Configuration.Empty();
             }
 
-            _logger.Trace($"Loaded configuration from {directory}");
+            this.Trace($"Loaded configuration from {directory}");
             var cfgFile = GetConfigurationFile(directory.FullName);
             var credFile = GetCredentialsFile(directory.FullName);
 
@@ -56,7 +56,7 @@ namespace Xs.Tools
                 .AddYamlFile(cfgFile)
                 .Build<Config>();
 
-            _logger.Trace($"Configuration loaded from {folder}");
+            this.Trace($"Configuration loaded from {folder}");
 
             return new Configuration(
                 directory.FullName,
@@ -80,7 +80,7 @@ namespace Xs.Tools
 
         public void Save(Configuration configuration, IProject[] projects)
         {
-            _logger.Trace($"Save configuration in {configuration.Directory}");
+            this.Trace($"Save configuration in {configuration.Directory}");
             var cfg = _mapper.Map<Config>(configuration);
             Write(GetConfigurationFile, Yaml.Serializer.Serialize(cfg));
             Write(GetCredentialsFile, configuration.Token);
@@ -95,18 +95,18 @@ namespace Xs.Tools
             {
                 if (!_specialManagers.ContainsKey(type))
                 {
-                    _logger.Trace($"{type} configuration manager not found");
+                    this.Trace($"{type} configuration manager not found");
                     continue;
                 }
 
                 var targets = projects.Where(p => p.Type == type).ToArray();
                 if (!targets.Any())
                 {
-                    _logger.Trace($"No {type} projects discovered to save configuration for");
+                    this.Trace($"No {type} projects discovered to save configuration for");
                     continue;
                 }
 
-                _logger.Trace($"Save {type} -> {uri} configuration");
+                this.Trace($"Save {type} -> {uri} configuration");
                 ignorePatterns.AddRange(_specialManagers[type].IgnorePatterns);
                 var typeConfiguration = new ProjectTypeConfiguration(
                     uri,
@@ -117,7 +117,7 @@ namespace Xs.Tools
                     _specialManagers[type].Save(project, typeConfiguration);
             }
 
-            _logger.Trace($"Update ignore file in {configuration.Directory}");
+            this.Trace($"Update ignore file in {configuration.Directory}");
             var ignoreFile = Path.Combine(configuration.Directory, IgnoreFile);
 
             if (File.Exists(ignoreFile))
@@ -169,10 +169,10 @@ namespace Xs.Tools
         private class Config
         {
             [DataMember(Order = 0)]
-            public Uri Registry { get; private set; } = new Uri("http://localhost");
+            public Uri Registry { get; private set; } = new("http://localhost");
 
             [DataMember(Order = 1)]
-            public Dictionary<ProjectType, Uri> Servers { get; private set; } = new Dictionary<ProjectType, Uri>();
+            public Dictionary<ProjectType, Uri> Servers { get; private set; } = new();
 
             [DataMember(Order = 2)]
             public SpecialConfiguration[] Types { get; private set; } = Array.Empty<SpecialConfiguration>();

@@ -2,8 +2,8 @@ namespace Xs.Commands.Remote
 {
     internal class Group : Annium.Extensions.Arguments.Group
     {
-        public override string Id { get; } = "remote";
-        public override string Description { get; } = "Manage tracked registries.";
+        public override string Id => "remote";
+        public override string Description => "Manage tracked registries.";
 
         public Group()
         {

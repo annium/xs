@@ -2,9 +2,9 @@ namespace Xs.Commands.Audit
 {
     internal class Group : Annium.Extensions.Arguments.Group
     {
-        public override string Id { get; } = "audit";
+        public override string Id => "audit";
 
-        public override string Description { get; } = "Audit projects.";
+        public override string Description => "Audit projects.";
 
         public Group()
         {

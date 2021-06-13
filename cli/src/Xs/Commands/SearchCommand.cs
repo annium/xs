@@ -10,13 +10,13 @@ using Xs.Tools;
 
 namespace Xs.Commands
 {
-    internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>
+    internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ILogSubject
     {
-        public override string Id { get; } = "search";
-        public override string Description { get; } = "Search for packages in tracked registry.";
+        public override string Id => "search";
+        public override string Description => "Search for packages in tracked registry.";
+        public ILogger Logger { get; }
         private readonly IConfigurationManager _configurationManager;
         private readonly MainClientFactory _mainClientFactory;
-        private readonly ILogger<SearchCommand> _logger;
 
         public SearchCommand(
             IConfigurationManager configurationManager,
@@ -26,7 +26,7 @@ namespace Xs.Commands
         {
             _configurationManager = configurationManager;
             _mainClientFactory = mainClientFactory;
-            _logger = logger;
+            Logger = logger;
         }
 
         public override async Task HandleAsync(
@@ -38,7 +38,7 @@ namespace Xs.Commands
             var configuration = _configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
             {
-                _logger.Warn("Track registry first to search within it.");
+                this.Warn("Track registry first to search within it.");
                 return;
             }
 
