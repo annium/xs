@@ -90,7 +90,7 @@ namespace Xs.Commands
 
             if (isProjectFile)
             {
-                this.Info($"Changed project file: {path}");
+                this.Log().Info($"Changed project file: {path}");
                 Discover();
 
                 project = GetProjectByPath(path);
@@ -103,13 +103,13 @@ namespace Xs.Commands
             if (project is null)
                 return;
 
-            this.Info($"Changed {project} related file: {path}");
+            this.Log().Info($"Changed {project} related file: {path}");
 
             await BuildAsync(project, includeSelf: true);
             if (_runTests)
                 await TestAsync(project, includeSelf: true);
 
-            this.Info($"Done.");
+            this.Log().Info($"Done.");
         }
 
         private async Task HandleDelete(string path)
@@ -119,7 +119,7 @@ namespace Xs.Commands
 
             if (isProjectFile)
             {
-                this.Info($"Deleted project file: {path}");
+                this.Log().Info($"Deleted project file: {path}");
                 Discover();
 
                 await InstallAsync(project!, includeSelf: false);
@@ -130,13 +130,13 @@ namespace Xs.Commands
             if (project == null)
                 return;
 
-            this.Info($"Deleted {project} related file: {path}");
+            this.Log().Info($"Deleted {project} related file: {path}");
 
             await BuildAsync(project, includeSelf: !isProjectFile);
             if (_runTests)
                 await TestAsync(project, includeSelf: !isProjectFile);
 
-            this.Info($"Done.");
+            this.Log().Info($"Done.");
         }
 
         private Task InstallAsync(IProject project, bool includeSelf) =>
@@ -207,9 +207,9 @@ namespace Xs.Commands
 
             _projects = result.ToArray();
 
-            this.Debug($"Discovered {_projects.Length} project(s) to watch:");
+            this.Log().Debug($"Discovered {_projects.Length} project(s) to watch:");
             foreach (var project in _projects)
-                this.Debug(project.Name);
+                this.Log().Debug(project.Name);
         }
 
         private void CollectTargets(IProject project, HashSet<IProject> targets)

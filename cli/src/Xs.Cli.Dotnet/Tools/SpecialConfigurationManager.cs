@@ -29,7 +29,7 @@ namespace Xs.Cli.Dotnet.Tools
 
         public void Save(IProject project, ProjectTypeConfiguration configuration)
         {
-            this.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+            this.Log().Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
             var sources = new XElement(El.PackageSources);
             sources.Add(new XElement(El.Clear));

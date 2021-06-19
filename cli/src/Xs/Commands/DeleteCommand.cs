@@ -46,11 +46,11 @@ namespace Xs.Commands
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                this.Info($"No projects found to add dependency to.");
+                this.Log().Info($"No projects found to add dependency to.");
                 return;
             }
 
-            this.Debug($"Try delete dependency {name} from {targets.Length} projects.");
+            this.Log().Debug($"Try delete dependency {name} from {targets.Length} projects.");
 
             var projects = allProjects.FilterMask(name).ToArray();
             if (projects.Length > 0)
@@ -66,7 +66,7 @@ namespace Xs.Commands
             // if no packages found
             if (packages.Length == 0)
             {
-                this.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
+                this.Log().Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
                 return;
             }
 

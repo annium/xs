@@ -38,7 +38,7 @@ namespace Xs.Commands
             var configuration = _configurationManager.Load(discoverCfg.Root);
             if (configuration == null)
             {
-                this.Warn("Track registry first to search within it.");
+                this.Log().Warn("Track registry first to search within it.");
                 return;
             }
 

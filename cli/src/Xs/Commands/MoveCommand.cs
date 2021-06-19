@@ -36,7 +36,7 @@ namespace Xs.Commands
         {
             if (!cfg.IsMove && !cfg.IsRename)
             {
-                this.Info("Specify at least new project name or new project directory");
+                this.Log().Info("Specify at least new project name or new project directory");
                 return;
             }
 
@@ -69,13 +69,13 @@ namespace Xs.Commands
         private void Move(IProject project, string directory)
         {
             var target = Path.GetFullPath(Path.Combine(directory, Path.GetFileName(project.Directory)));
-            this.Debug($"Move {project.Directory} -> {target}");
+            this.Log().Debug($"Move {project.Directory} -> {target}");
             project.SetDirectory(target);
         }
 
         private void Rename(IProject project, string name)
         {
-            this.Debug($"Rename {project.Name} -> {name}");
+            this.Log().Debug($"Rename {project.Name} -> {name}");
             project.SetName(name);
         }
 

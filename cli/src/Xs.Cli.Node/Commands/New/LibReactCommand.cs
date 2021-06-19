@@ -34,7 +34,7 @@ namespace Xs.Cli.Node.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            this.Debug($"Create library project {name} at {location}");
+            this.Log().Debug($"Create library project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.LibReact");
             _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));

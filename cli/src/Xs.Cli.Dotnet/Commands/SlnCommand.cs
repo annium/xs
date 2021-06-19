@@ -47,7 +47,7 @@ namespace Xs.Cli.Dotnet.Commands
                 .ToArray();
 
             var slnFile = SlnFile(root, cfg.Name);
-            this.Debug($"Write solution file {slnFile}");
+            this.Log().Debug($"Write solution file {slnFile}");
             await _shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root} --force").RunAsync();
 
             var currentProjects = await GetSolutionProjectPathsAsync(root, cfg.Name);
@@ -62,13 +62,13 @@ namespace Xs.Cli.Dotnet.Commands
                     throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
                 if (parent == root)
                 {
-                    this.Debug($"Add {project} to solution file at root");
+                    this.Log().Debug($"Add {project} to solution file at root");
                     await _shell.Cmd($"dotnet sln {slnFile} add {project.File}").RunAsync();
                 }
                 else
                 {
                     var folder = Path.GetRelativePath(root, parent);
-                    this.Debug($"Add {project} to solution file at {folder}");
+                    this.Log().Debug($"Add {project} to solution file at {folder}");
                     await _shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
                 }
             }
@@ -76,7 +76,7 @@ namespace Xs.Cli.Dotnet.Commands
             // delete missing projects
             foreach (var path in removedProjects)
             {
-                this.Debug($"Remove {path} from solution file");
+                this.Log().Debug($"Remove {path} from solution file");
                 await _shell.Cmd($"dotnet sln {slnFile} remove {path}").RunAsync();
             }
         }

@@ -63,13 +63,13 @@ namespace Xs.Cli.Dotnet.Commands.New
             if (names.Count == 0)
                 return;
 
-            this.Debug($"{names.Count} interface(s) to create");
+            this.Log().Debug($"{names.Count} interface(s) to create");
 
             Directory.CreateDirectory(output);
 
             foreach (var name in names)
             {
-                this.Debug($"Create interface {name} at {output}");
+                this.Log().Debug($"Create interface {name} at {output}");
 
                 _templateWriter.LoadResources($"{Group.TemplatesDir}.Interface");
                 _templateWriter.SetRoot(output);

@@ -42,7 +42,7 @@ namespace Xs.Commands
                 .FilterType(cfg.Type)
                 .OfType<IBuildableProject>()
                 .ToArray();
-            this.Debug($"Build {projects.Length} projects.");
+            this.Log().Debug($"Build {projects.Length} projects.");
             await _runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn), cfg.Deep, ct);
         }
     }

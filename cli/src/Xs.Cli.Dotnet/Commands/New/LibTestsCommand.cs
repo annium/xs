@@ -33,7 +33,7 @@ namespace Xs.Cli.Dotnet.Commands.New
             var location = discoverCfg.Root;
             var name = cfg.Name;
 
-            this.Debug($"Create library tests project {name} at {location}");
+            this.Log().Debug($"Create library tests project {name} at {location}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.LibTests");
             _templateWriter.SetRoot(Path.Combine(location, name));

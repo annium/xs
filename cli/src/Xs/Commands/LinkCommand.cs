@@ -37,7 +37,7 @@ namespace Xs.Commands
             discoverCfg.Roots = new[] { cfg.Target };
             var targets = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
 
-            this.Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
+            this.Log().Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
 
             foreach (var src in sources)
             {
@@ -56,13 +56,13 @@ namespace Xs.Commands
                 foreach (var (package, project) in externalDependencies)
                 {
                     // otherwise - it's external and it's reference is converted to project
-                    this.Trace($"Update {src}: replace {package} with {project}.");
+                    this.Log().Trace($"Update {src}: replace {package} with {project}.");
 
                     src.Packages.Remove(package);
                     src.Projects.Add(new Dependency<IProject>(package.Type, project));
                 }
 
-                this.Debug($"Updated {src}.");
+                this.Log().Debug($"Updated {src}.");
 
                 src.Save();
             }

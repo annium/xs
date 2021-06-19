@@ -43,7 +43,7 @@ namespace Xs.Commands
                 .OfType<ICleanableProject>()
                 .ToArray();
 
-            this.Debug($"Clean {projects.Length} projects.");
+            this.Log().Debug($"Clean {projects.Length} projects.");
             await _runner.RunAsync(projects, (project, tkn) => project.CleanAsync(cfg.Force, tkn), cfg.Deep, ct);
         }
     }

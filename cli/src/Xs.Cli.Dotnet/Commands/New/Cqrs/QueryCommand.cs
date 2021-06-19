@@ -73,7 +73,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-            this.Debug($"Create query {data.Entity}:{data.Name}");
+            this.Log().Debug($"Create query {data.Entity}:{data.Name}");
 
             // write files
             _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Queries, data.Entity));

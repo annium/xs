@@ -51,18 +51,18 @@ namespace Xs.Commands
                 .ToArray();
             if (projects.Length == 0)
             {
-                this.Info("No projects found to update.");
+                this.Log().Info("No projects found to update.");
                 return;
             }
 
             var dependencies = projects.SelectMany(e => e.Packages).Select(e => e.Value).Distinct().ToArray();
             if (dependencies.Length == 0)
             {
-                this.Info("No projects found to update.");
+                this.Log().Info("No projects found to update.");
                 return;
             }
 
-            this.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
+            this.Log().Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
 
             // resolve dependency managers for types
             var dependencyManagers = dependencies
@@ -88,14 +88,14 @@ namespace Xs.Commands
                     versions = await dependencyManager.ResolveVersionsAsync(d, dependencyManager.DefaultServer, string.Empty);
 
                 var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-                this.Trace($"Resolve: {d} - {versions.Length} version(s)");
+                this.Log().Trace($"Resolve: {d} - {versions.Length} version(s)");
 
                 if (result is null)
-                    this.Warn($"Resolve: {d} unresolved");
+                    this.Log().Warn($"Resolve: {d} unresolved");
                 else if (result == d)
-                    this.Debug($"Resolve: {d} unchanged");
+                    this.Log().Debug($"Resolve: {d} unchanged");
                 else
-                    this.Debug($"Resolve: {d} -> {result}");
+                    this.Log().Debug($"Resolve: {d} -> {result}");
 
                 return result;
             }))).OfType<Package>().ToArray();
@@ -104,7 +104,7 @@ namespace Xs.Commands
             {
                 foreach (var project in projects)
                     if (UpdateProject(project, updates))
-                        this.Info($"{project} is to be updated.");
+                        this.Log().Info($"{project} is to be updated.");
 
                 return;
             }
@@ -120,12 +120,12 @@ namespace Xs.Commands
 
             if (updated.Count == 0)
             {
-                this.Info("No projects updated.");
+                this.Log().Info("No projects updated.");
                 return;
             }
 
             // install installable updates
-            this.Debug($"Clear {updated.Count} projects cache.");
+            this.Log().Debug($"Clear {updated.Count} projects cache.");
             await _runner.RunAsync(
                 updated.OfType<ICachingProject>(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
@@ -133,7 +133,7 @@ namespace Xs.Commands
                 ct
             );
 
-            this.Debug($"Install {updated.Count} projects.");
+            this.Log().Debug($"Install {updated.Count} projects.");
             await _runner.RunAsync(
                 updated.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(true, tkn),
@@ -141,7 +141,7 @@ namespace Xs.Commands
                 ct
             );
 
-            this.Info($"{updated.Count} projects updated.");
+            this.Log().Info($"{updated.Count} projects updated.");
         }
 
         private bool UpdateProject(IProject project, Package[] updates)

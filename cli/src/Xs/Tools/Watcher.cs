@@ -49,7 +49,7 @@ namespace Xs.Tools
             };
             watcher.Changed += (_, args) => AddTask(args.FullPath);
             watcher.Deleted += (_, args) => AddTask(args.FullPath);
-            watcher.Error += (_, args) => this.Error(args.GetException());
+            watcher.Error += (_, args) => this.Log().Error(args.GetException());
 
             // no tasks -> reset -> wait
             // add task -> set
@@ -60,11 +60,11 @@ namespace Xs.Tools
                 gate.Reset();
                 if (tasks.Count == 0)
                 {
-                    this.Trace("Wait for tasks.");
+                    this.Log().Trace("Wait for tasks.");
                     gate.Wait(ct);
                 }
 
-                this.Trace($"Pending {tasks.Count} task(s).");
+                this.Log().Trace($"Pending {tasks.Count} task(s).");
                 // get and execute task
                 var (task, path) = tasks.Dequeue();
                 try
@@ -76,7 +76,7 @@ namespace Xs.Tools
                 }
                 catch (Exception exception)
                 {
-                    this.Error(exception);
+                    this.Log().Error(exception);
                 }
             }
 
@@ -86,7 +86,7 @@ namespace Xs.Tools
                     return;
 
                 var task = File.Exists(path) ? handleChange : handleDelete;
-                this.Trace($"Enqueue task for {path}");
+                this.Log().Trace($"Enqueue task for {path}");
                 tasks.Enqueue((task, path));
                 gate.Set();
             }

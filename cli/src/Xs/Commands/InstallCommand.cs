@@ -46,7 +46,7 @@ namespace Xs.Commands
 
             if (force)
             {
-                this.Debug($"Clear {projects.Length} projects cache.");
+                this.Log().Debug($"Clear {projects.Length} projects cache.");
                 await _runner.RunAsync(
                     projects.OfType<ICachingProject>(),
                     (project, tkn) => project.ClearCacheAsync(tkn),
@@ -55,7 +55,7 @@ namespace Xs.Commands
                 );
             }
 
-            this.Debug($"Install {projects.Length} projects.");
+            this.Log().Debug($"Install {projects.Length} projects.");
             await _runner.RunAsync(
                 projects.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(force, tkn),

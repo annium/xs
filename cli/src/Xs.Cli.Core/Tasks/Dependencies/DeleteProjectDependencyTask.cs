@@ -17,16 +17,16 @@ namespace Xs.Cli.Core.Tasks.Dependencies
 
         public void Run(IProject[] targets, IProject project)
         {
-            this.Debug($"Delete project {project} as {project.Type} dependency from {targets.Length} projects.");
+            this.Log().Debug($"Delete project {project} as {project.Type} dependency from {targets.Length} projects.");
             foreach (var target in targets)
             {
                 if (!target.Projects.Any(p => p.Value == project))
                 {
-                    this.Debug($"Skip deleting project {project} as dependency of {target}. {target} doesn't use {project}.");
+                    this.Log().Debug($"Skip deleting project {project} as dependency of {target}. {target} doesn't use {project}.");
                     continue;
                 }
 
-                this.Debug($"Delete project {project} from dependencies of {target}.");
+                this.Log().Debug($"Delete project {project} from dependencies of {target}.");
                 target.Projects.RemoveWhere(p => p.Value == project);
                 target.Save();
             }

@@ -81,7 +81,7 @@ namespace Xs.Cli.Core.Tools
             var resource = _resources.First(r => r.Name == resourceName);
             if (resourceName.EndsWith(TemplateExtension))
             {
-                this.Trace($"Write template {resourceName} -> {path}");
+                this.Log().Trace($"Write template {resourceName} -> {path}");
                 var scriptObject = new ScriptObject();
                 scriptObject.Import(data);
                 scriptObject.Import(typeof(StringExtensions));
@@ -93,7 +93,7 @@ namespace Xs.Cli.Core.Tools
             }
             else
             {
-                this.Trace($"Write as is {resourceName} -> {path}");
+                this.Log().Trace($"Write as is {resourceName} -> {path}");
                 using var fs = File.Create(path);
                 resource.Content.CopyTo(fs);
             }

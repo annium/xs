@@ -58,7 +58,7 @@ namespace Xs.Commands
             var targets = allProjects.FilterMask(cfg.Mask).ToArray();
             if (targets.Length == 0)
             {
-                this.Info("No projects found to add dependency to.");
+                this.Log().Info("No projects found to add dependency to.");
                 return;
             }
 
@@ -75,14 +75,14 @@ namespace Xs.Commands
             {
                 foreach (var project in projects)
                 {
-                    this.Debug($"Add '{projectType}' project dependency '{name}' to {targets.Length} projects.");
+                    this.Log().Debug($"Add '{projectType}' project dependency '{name}' to {targets.Length} projects.");
                     _addProjectDependencyTask.Run(targets, new Dependency<IProject>(dependencyType, project));
                 }
 
                 return;
             }
 
-            this.Debug($"Assume dependency {name} is package.");
+            this.Log().Debug($"Assume dependency {name} is package.");
             var packages = allPackages.FilterMask(name).ToArray();
 
             // if no packages match name and no version given - resolve
@@ -159,12 +159,12 @@ namespace Xs.Commands
                 versions = await dependencyManager.ResolveVersionsAsync(packageStub, dependencyManager.DefaultServer, string.Empty);
 
             var package = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-            this.Trace($"Resolve: {packageStub} - {versions.Length} version(s)");
+            this.Log().Trace($"Resolve: {packageStub} - {versions.Length} version(s)");
 
             if (package is null)
                 throw new InvalidOperationException($"Resolve: {packageStub} unresolved");
 
-            this.Debug($"Resolve: {packageStub} -> {package}");
+            this.Log().Debug($"Resolve: {packageStub} -> {package}");
 
             return package;
         }

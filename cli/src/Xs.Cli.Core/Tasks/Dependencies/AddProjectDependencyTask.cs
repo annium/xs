@@ -20,22 +20,22 @@ namespace Xs.Cli.Core.Tasks.Dependencies
         {
             var (_, project) = dependency;
 
-            this.Debug($"Add project {project} as {project.Type} dependency to {targets.Length} projects.");
+            this.Log().Debug($"Add project {project} as {project.Type} dependency to {targets.Length} projects.");
             foreach (var target in targets)
             {
                 if (target.Projects.Contains(dependency))
                 {
-                    this.Debug($"Skip adding project {project} as dependency of {target}. {target} already uses {project}.");
+                    this.Log().Debug($"Skip adding project {project} as dependency of {target}. {target} already uses {project}.");
                     continue;
                 }
 
                 if (target.Projects.Any(p => p.Value == project))
                 {
-                    this.Debug($"Delete project {project} as dependency of {target} due to dependency type change.");
+                    this.Log().Debug($"Delete project {project} as dependency of {target} due to dependency type change.");
                     target.Projects.RemoveWhere(p => p.Value == project);
                 }
 
-                this.Debug($"Add project {project} as dependency of {target}.");
+                this.Log().Debug($"Add project {project} as dependency of {target}.");
                 target.Projects.Add(dependency);
                 target.Save();
             }

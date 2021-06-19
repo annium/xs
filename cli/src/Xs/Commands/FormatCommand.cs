@@ -36,10 +36,10 @@ namespace Xs.Commands
                 .FilterType(cfg.Type)
                 .ToArray();
 
-            this.Debug($"Format {projects} project(s)");
+            this.Log().Debug($"Format {projects} project(s)");
             foreach (var project in projects)
             {
-                this.Debug($"Format {project}");
+                this.Log().Debug($"Format {project}");
                 project.Save();
             }
         }

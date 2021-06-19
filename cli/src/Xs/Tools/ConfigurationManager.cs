@@ -39,16 +39,16 @@ namespace Xs.Tools
 
         public Configuration Load(string folder)
         {
-            this.Trace($"Load configuration from {folder}");
+            this.Log().Trace($"Load configuration from {folder}");
             var directory = GetConfigurationFolder(new DirectoryInfo(folder));
 
             if (directory is null)
             {
-                this.Trace($"Configuration missing in {folder}. Returning default");
+                this.Log().Trace($"Configuration missing in {folder}. Returning default");
                 return Configuration.Empty();
             }
 
-            this.Trace($"Loaded configuration from {directory}");
+            this.Log().Trace($"Loaded configuration from {directory}");
             var cfgFile = GetConfigurationFile(directory.FullName);
             var credFile = GetCredentialsFile(directory.FullName);
 
@@ -56,7 +56,7 @@ namespace Xs.Tools
                 .AddYamlFile(cfgFile)
                 .Build<Config>();
 
-            this.Trace($"Configuration loaded from {folder}");
+            this.Log().Trace($"Configuration loaded from {folder}");
 
             return new Configuration(
                 directory.FullName,
@@ -80,7 +80,7 @@ namespace Xs.Tools
 
         public void Save(Configuration configuration, IProject[] projects)
         {
-            this.Trace($"Save configuration in {configuration.Directory}");
+            this.Log().Trace($"Save configuration in {configuration.Directory}");
             var cfg = _mapper.Map<Config>(configuration);
             Write(GetConfigurationFile, Yaml.Serializer.Serialize(cfg));
             Write(GetCredentialsFile, configuration.Token);
@@ -95,18 +95,18 @@ namespace Xs.Tools
             {
                 if (!_specialManagers.ContainsKey(type))
                 {
-                    this.Trace($"{type} configuration manager not found");
+                    this.Log().Trace($"{type} configuration manager not found");
                     continue;
                 }
 
                 var targets = projects.Where(p => p.Type == type).ToArray();
                 if (!targets.Any())
                 {
-                    this.Trace($"No {type} projects discovered to save configuration for");
+                    this.Log().Trace($"No {type} projects discovered to save configuration for");
                     continue;
                 }
 
-                this.Trace($"Save {type} -> {uri} configuration");
+                this.Log().Trace($"Save {type} -> {uri} configuration");
                 ignorePatterns.AddRange(_specialManagers[type].IgnorePatterns);
                 var typeConfiguration = new ProjectTypeConfiguration(
                     uri,
@@ -117,7 +117,7 @@ namespace Xs.Tools
                     _specialManagers[type].Save(project, typeConfiguration);
             }
 
-            this.Trace($"Update ignore file in {configuration.Directory}");
+            this.Log().Trace($"Update ignore file in {configuration.Directory}");
             var ignoreFile = Path.Combine(configuration.Directory, IgnoreFile);
 
             if (File.Exists(ignoreFile))

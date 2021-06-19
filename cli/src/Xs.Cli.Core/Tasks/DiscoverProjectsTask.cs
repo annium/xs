@@ -35,7 +35,7 @@ namespace Xs.Cli.Core.Tasks
         {
             var roots = configuration.Roots;
 
-            this.Debug($"Start discovery of {string.Join(", ", roots)}.");
+            this.Log().Debug($"Start discovery of {string.Join(", ", roots)}.");
 
             var candidates = FindProjectCandidates(roots);
             var errors = new List<Exception>();
@@ -66,13 +66,13 @@ namespace Xs.Cli.Core.Tasks
             LinkProjects(projects, packages, configuration, errors.Add, ThrowIfAnyErrors);
             ThrowIfAnyErrors();
 
-            this.Debug($"Discovery finished. Found {projects.Count} projects.");
+            this.Log().Debug($"Discovery finished. Found {projects.Count} projects.");
 
             if (!configuration.Changed)
                 return result;
 
             // filter project with changed files only.
-            this.Debug($"Discovery finished. Found {projects.Count} projects.");
+            this.Log().Debug($"Discovery finished. Found {projects.Count} projects.");
             var changes = await new DiscoverChangedFilesTask(_shell).RunAsync(roots);
 
             var filteredProjects = result.Where(x => changes.Any(c => c.Contains(x.Directory))).ToArray();
@@ -92,7 +92,7 @@ namespace Xs.Cli.Core.Tasks
 
             foreach (var root in roots)
             {
-                this.Debug($"Start project candidates lookup at {root}.");
+                this.Log().Debug($"Start project candidates lookup at {root}.");
 
                 FileManager.WalkDirectories(
                     root,
@@ -103,14 +103,14 @@ namespace Xs.Cli.Core.Tasks
                             return false;
 
                         results[directory] = factory;
-                        this.Debug($"{factory.Type} project candidate discovered at {directory}.");
+                        this.Log().Debug($"{factory.Type} project candidate discovered at {directory}.");
 
                         return true;
                     },
                     SearchOptions.IgnoreChildrenOnMatch
                 );
 
-                this.Debug($"{results.Count} project candidate(s) found.");
+                this.Log().Debug($"{results.Count} project candidate(s) found.");
             }
 
             return results;
@@ -124,7 +124,7 @@ namespace Xs.Cli.Core.Tasks
             Action<Exception> addError
         )
         {
-            this.Debug($"Discover {project} referenced projects.");
+            this.Log().Debug($"Discover {project} referenced projects.");
             var lookupDirectories = project.Projects.Select(x => x.Value.Directory).ToArray();
 
             foreach (var directory in lookupDirectories)
@@ -159,7 +159,7 @@ namespace Xs.Cli.Core.Tasks
             try
             {
                 var project = factory.CreateProject(directory, configuration);
-                this.Debug($"{project.Type} {project} created at {directory}");
+                this.Log().Debug($"{project.Type} {project} created at {directory}");
                 return project;
             }
             catch (Exception exception)
@@ -177,7 +177,7 @@ namespace Xs.Cli.Core.Tasks
             Action throwIfAnyErrors
         )
         {
-            this.Debug("Start projects linking.");
+            this.Log().Debug("Start projects linking.");
 
             _projectLinker.PreLink(projects, packages, configuration, addError);
 
@@ -189,7 +189,7 @@ namespace Xs.Cli.Core.Tasks
                 _projectLinker.Link(project, projects, typePackages, configuration, addError);
             }
 
-            this.Debug("Projects linked.");
+            this.Log().Debug("Projects linked.");
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Xs.Commands
 
             if (targets.Length == 0)
             {
-                this.Info($"No projects found to update.");
+                this.Log().Info($"No projects found to update.");
                 return;
             }
 

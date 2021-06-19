@@ -72,7 +72,7 @@ namespace Xs.Cli.Dotnet.Commands.New.Cqrs
 
             var data = GetCommandDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-            this.Debug($"Create command {data.Entity}:{data.Name}");
+            this.Log().Debug($"Create command {data.Entity}:{data.Name}");
 
             // write files
             _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Commands, data.Entity));

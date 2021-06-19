@@ -39,7 +39,7 @@ namespace Xs.Commands
                 .ToArray();
             var version = cfg.Version;
 
-            this.Debug($"Unlink {sources.Length} projects from {targets.Length} external projects.");
+            this.Log().Debug($"Unlink {sources.Length} projects from {targets.Length} external projects.");
 
             foreach (var source in sources)
             {
@@ -52,13 +52,13 @@ namespace Xs.Commands
                 foreach (var project in externalDependencies)
                 {
                     var package = new Package(project.Value.Type, project.Value.Name, version);
-                    this.Trace($"Update {source}: replace {project} with {package}.");
+                    this.Log().Trace($"Update {source}: replace {project} with {package}.");
 
                     source.Projects.Remove(project);
                     source.Packages.Add(new Dependency<Package>(project.Type, package));
                 }
 
-                this.Debug($"Updated {source}.");
+                this.Log().Debug($"Updated {source}.");
 
                 source.Save();
             }

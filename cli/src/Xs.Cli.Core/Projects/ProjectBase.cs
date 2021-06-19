@@ -85,11 +85,11 @@ namespace Xs.Cli.Core.Projects
                 var parentDirectory = Path.GetDirectoryName(Directory) ?? throw new DirectoryNotFoundException($"Directory {Directory} has no parent directory");
                 if (!SysDirectory.Exists(parentDirectory))
                 {
-                    this.Trace($"Create {Name} missing target parent directory {parentDirectory}");
+                    this.Log().Trace($"Create {Name} missing target parent directory {parentDirectory}");
                     SysDirectory.CreateDirectory(parentDirectory);
                 }
 
-                this.Debug($"Move {Name} to {Directory}");
+                this.Log().Debug($"Move {Name} to {Directory}");
 
                 SysDirectory.Move(_currentDirectory, Directory);
 
@@ -135,7 +135,7 @@ namespace Xs.Cli.Core.Projects
 
         protected async Task RunAsync(string operation, string command, CancellationToken ct)
         {
-            this.Info($"Start {Name} {operation}.");
+            this.Log().Info($"Start {Name} {operation}.");
 
             var result = await Shell
                 .Cmd(command)
@@ -145,7 +145,7 @@ namespace Xs.Cli.Core.Projects
                 .RunAsync(ct);
 
             if (result.IsSuccess)
-                this.Info($"Finished {Name} {operation}.");
+                this.Log().Info($"Finished {Name} {operation}.");
             else
                 throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
         }

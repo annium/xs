@@ -43,7 +43,7 @@ namespace Xs.Commands.Audit
                 .FilterMask(cfg.Mask)
                 .OfType<IAuditableProject>()
                 .ToArray();
-            this.Debug($"Audit {auditedProjects.Length} projects.");
+            this.Log().Debug($"Audit {auditedProjects.Length} projects.");
 
             var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)
                 .Where(r => !cfg.Exclude.Contains(r.Code))
@@ -56,9 +56,9 @@ namespace Xs.Commands.Audit
                 return;
             }
 
-            this.Debug($"Use {usedRules.Length} rule(s):");
+            this.Log().Debug($"Use {usedRules.Length} rule(s):");
             foreach (var rule in usedRules)
-                this.Debug(rule);
+                this.Log().Debug(rule);
 
             foreach (var project in auditedProjects)
             {

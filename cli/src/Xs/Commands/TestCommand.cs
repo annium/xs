@@ -43,7 +43,7 @@ namespace Xs.Commands
                 .OfType<ITestableProject>()
                 .ToArray();
 
-            this.Debug($"Test {projects.Length} projects.");
+            this.Log().Debug($"Test {projects.Length} projects.");
             await _runner.RunAsync(projects, (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn), cfg.Deep, ct);
         }
     }

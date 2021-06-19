@@ -63,13 +63,13 @@ namespace Xs.Cli.Dotnet.Commands.New
             if (names.Count == 0)
                 return;
 
-            this.Debug($"{names.Count} class(es) to create");
+            this.Log().Debug($"{names.Count} class(es) to create");
 
             Directory.CreateDirectory(output);
 
             foreach (var name in names)
             {
-                this.Debug($"Create class {name} at {output}");
+                this.Log().Debug($"Create class {name} at {output}");
 
                 _templateWriter.LoadResources($"{Group.TemplatesDir}.Class");
                 _templateWriter.SetRoot(output);
