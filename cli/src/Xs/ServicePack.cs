@@ -16,12 +16,6 @@ namespace Xs
             container.AddMapper();
             container.AddArguments();
 
-            // commands
-            container.AddAll()
-                .Where(x => x.Name.EndsWith("Group") || x.Name.EndsWith("Command"))
-                .AsSelf()
-                .Singleton();
-
             // tasks
             container.AddAll()
                 .Where(x => x.Name.EndsWith("Task"))
