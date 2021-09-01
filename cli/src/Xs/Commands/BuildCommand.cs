@@ -43,7 +43,12 @@ namespace Xs.Commands
                 .OfType<IBuildableProject>()
                 .ToArray();
             this.Log().Debug($"Build {projects.Length} projects.");
-            await _runner.RunAsync(projects, (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn), cfg.Deep, ct);
+            await _runner.RunAsync(
+                projects,
+                (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn),
+                new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
+                ct
+            );
         }
     }
 
@@ -68,5 +73,9 @@ namespace Xs.Commands
         [Option("d")]
         [Help("Build dependencies.")]
         public bool Deep { get; set; }
+
+        [Option("p")]
+        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+        public int Parallelism { get; set; }
     }
 }

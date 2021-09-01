@@ -158,7 +158,7 @@ namespace Xs.Commands
             var selected = CollectDependants(project, includeSelf).OfType<TProject>().ToArray();
 
             if (selected.Length > 0)
-                await _runner.RunAsync(selected, handle, false, _token);
+                await _runner.RunAsync(selected, handle, new ProjectsRunner.Config(), _token);
         }
 
         private IEnumerable<IProject> CollectDependants(IProject project, bool includeSelf)

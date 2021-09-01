@@ -22,7 +22,7 @@ namespace Xs.Tools
         public Task RunAsync<TProject>(
             IEnumerable<TProject> projects,
             Func<TProject, CancellationToken, Task> handle,
-            bool runOnDependencies,
+            Config config,
             CancellationToken ct
         )
             where TProject : IProject
@@ -31,7 +31,7 @@ namespace Xs.Tools
             using var gate = new ManualResetEventSlim(false);
 
             var pending = new HashSet<TProject>();
-            if (runOnDependencies)
+            if (config.RunOnDependencies)
                 foreach (var project in projects)
                     CollectTargets(project, pending);
             else
@@ -50,10 +50,10 @@ namespace Xs.Tools
                 lock (locker)
                 {
                     // get projects, that have no pending dependencies and exclude those already running
-                    starting = pending
-                        .Where(e => e.Projects.All(d => !pending.Any(p => p as IProject == d.Value)))
-                        .Except(running)
-                        .ToArray();
+                    var startingSet = pending
+                        .Where(e => e.Projects.All(d => pending.All(p => p as IProject != d.Value)))
+                        .Except(running);
+                    starting = config.Parallelism > 0 ? startingSet.Take(config.Parallelism).ToArray() : startingSet.ToArray();
 
                     // if there are no projects running and nothing to start - we have a deadlock
                     if (running.Count == 0 && starting.Length == 0)
@@ -132,6 +132,18 @@ namespace Xs.Tools
 
             foreach (var dependency in project.Projects.Select(d => d.Value).OfType<TProject>())
                 CollectTargets(dependency, targets);
+        }
+
+        internal readonly struct Config
+        {
+            public readonly int Parallelism;
+            public readonly bool RunOnDependencies;
+
+            public Config(int parallelism, bool runOnDependencies)
+            {
+                Parallelism = parallelism;
+                RunOnDependencies = runOnDependencies;
+            }
         }
     }
 }

@@ -74,7 +74,7 @@ namespace Xs.Commands
             await _runner.RunAsync(
                 projects,
                 (project, tkn) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
-                cfg.Deep,
+                new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
                 ct
             );
         }
@@ -93,5 +93,9 @@ namespace Xs.Commands
         [Option("d")]
         [Help("Unpublish dependencies.")]
         public bool Deep { get; set; }
+
+        [Option("p")]
+        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+        public int Parallelism { get; set; }
     }
 }

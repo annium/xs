@@ -71,7 +71,7 @@ namespace Xs.Commands
                 .ToDictionary(
                     t => t,
                     t => _dependencyManagers.SingleOrDefault(m => m.Type == t) ??
-                        throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
+                         throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
                 );
 
             // resolve configuration and available version of all dependencies
@@ -129,7 +129,7 @@ namespace Xs.Commands
             await _runner.RunAsync(
                 updated.OfType<ICachingProject>(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
-                false,
+                new ProjectsRunner.Config(cfg.Parallelism, false),
                 ct
             );
 
@@ -137,7 +137,7 @@ namespace Xs.Commands
             await _runner.RunAsync(
                 updated.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(true, tkn),
-                false,
+                new ProjectsRunner.Config(cfg.Parallelism, false),
                 ct
             );
 
@@ -184,5 +184,9 @@ namespace Xs.Commands
         [Option("dry")]
         [Help("Dry run.")]
         public bool DryRun { get; set; }
+
+        [Option("p")]
+        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+        public int Parallelism { get; set; }
     }
 }

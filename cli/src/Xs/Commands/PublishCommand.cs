@@ -63,7 +63,7 @@ namespace Xs.Commands
             await _runner.RunAsync(
                 projects,
                 (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
-                cfg.Deep,
+                new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
                 ct
             );
         }
@@ -82,5 +82,9 @@ namespace Xs.Commands
         [Option("d")]
         [Help("Publish dependencies.")]
         public bool Deep { get; set; }
+
+        [Option("p")]
+        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+        public int Parallelism { get; set; }
     }
 }

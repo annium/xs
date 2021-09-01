@@ -50,7 +50,7 @@ namespace Xs.Commands
                 await _runner.RunAsync(
                     projects.OfType<ICachingProject>(),
                     (project, tkn) => project.ClearCacheAsync(tkn),
-                    cfg.Deep,
+                    new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
                     ct
                 );
             }
@@ -59,7 +59,7 @@ namespace Xs.Commands
             await _runner.RunAsync(
                 projects.OfType<IInstallableProject>(),
                 (project, tkn) => project.InstallAsync(force, tkn),
-                cfg.Deep,
+                new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
                 ct
             );
         }
@@ -82,5 +82,9 @@ namespace Xs.Commands
         [Option("d")]
         [Help("Install dependencies.")]
         public bool Deep { get; set; }
+
+        [Option("p")]
+        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+        public int Parallelism { get; set; }
     }
 }

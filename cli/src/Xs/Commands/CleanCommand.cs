@@ -44,7 +44,12 @@ namespace Xs.Commands
                 .ToArray();
 
             this.Log().Debug($"Clean {projects.Length} projects.");
-            await _runner.RunAsync(projects, (project, tkn) => project.CleanAsync(cfg.Force, tkn), cfg.Deep, ct);
+            await _runner.RunAsync(
+                projects,
+                (project, tkn) => project.CleanAsync(cfg.Force, tkn),
+                new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
+                ct
+            );
         }
     }
 
@@ -65,5 +70,9 @@ namespace Xs.Commands
         [Option("f", isRequired: false)]
         [Help("Force clean.")]
         public bool Force { get; set; }
+
+        [Option("p")]
+        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+        public int Parallelism { get; set; }
     }
 }
