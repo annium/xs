@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
-using Annium.Core.Runtime.Time;
+using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Db.Dotnet;

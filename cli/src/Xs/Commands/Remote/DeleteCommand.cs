@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
-using Annium.Core.Primitives;
+using Annium.Core.Primitives.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
