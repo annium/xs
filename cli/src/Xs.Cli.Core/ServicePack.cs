@@ -58,7 +58,7 @@ namespace Xs.Cli.Core
             container.Add<DiscoverProjectsTask>().AsSelf().Singleton();
         }
 
-        private Func<LogMessage, bool> BuildLogFilter(LoggerConfiguration cfg)
+        private Func<LogMessage<DefaultLogContext>, bool> BuildLogFilter(LoggerConfiguration cfg)
         {
             if (cfg.Trace)
                 return _ => true;
