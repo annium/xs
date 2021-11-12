@@ -6,7 +6,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <OutputType>Library</OutputType>
         <DebugType>portable</DebugType>
-        <LangVersion>9.0</LangVersion>
+        <LangVersion>10.0</LangVersion>
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
         <ImplicitUsings>enable</ImplicitUsings>

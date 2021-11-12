@@ -3,10 +3,10 @@
         <PackageId>Xs.Registry.Shared</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry shared project. Contains all shared between main and project servers, except separated DB stuff.</Description>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <OutputType>Library</OutputType>
         <DebugType>portable</DebugType>
-        <LangVersion>9.0</LangVersion>
+        <LangVersion>10.0</LangVersion>
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
@@ -23,7 +23,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-        <PackageReference Include="NodaTime" Version="3.0.5" />
+        <PackageReference Include="NodaTime" Version="3.0.9" />
         <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
         <PackageReference Include="NSwag.AspNetCore" Version="13.10.4" />
     </ItemGroup>
