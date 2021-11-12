@@ -17,7 +17,7 @@ namespace Xs.Cli.Dotnet.Projects
         private static readonly string[] ImplicitPackages = {"Microsoft.AspNetCore.App"};
         private static readonly string[] BooleanStrings = {"true", "false"};
         private static readonly string[] DisabledProperties = {El.PublishReadyToRun, El.PublishReadyToRunShowWarnings};
-        private const string LanguageVersion = "9.0";
+        private const string LanguageVersion = "10.0";
 
         public RawProject Load(string path, DiscoverConfiguration configuration)
         {
@@ -53,7 +53,7 @@ namespace Xs.Cli.Dotnet.Projects
                 project.Description = properties.GetElement(El.Description!)?.Value ?? string.Empty;
             }
 
-            project.TargetFramework = properties.GetElement(El.TargetFramework!)?.Value ?? TargetFramework.NetStandard21;
+            project.TargetFramework = properties.GetElement(El.TargetFramework!)?.Value ?? TargetFramework.Net6;
             if (configuration.SkipChecks)
                 project.OutputType = properties.GetElement(El.OutputType!)?.Value == "Exe"
                     ? OutputType.Exe
