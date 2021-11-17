@@ -21,7 +21,7 @@ namespace Xs.Cli.Core
 
         public override void Register(IServiceContainer container, IServiceProvider provider)
         {
-            container.AddTimeProvider();
+            container.AddTime().WithRealTime().SetDefault();
 
             container.AddJsonSerializers()
                 .Configure(opts => opts

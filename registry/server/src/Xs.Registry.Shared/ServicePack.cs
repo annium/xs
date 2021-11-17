@@ -12,7 +12,7 @@ namespace Xs.Registry.Shared
     {
         public override void Register(IServiceContainer container, IServiceProvider provider)
         {
-            container.AddTimeProvider();
+            container.AddTime().WithRealTime().SetDefault();
 
             // helpers
             container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
