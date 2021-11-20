@@ -9,7 +9,6 @@
         <LangVersion>10.0</LangVersion>
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
-        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />

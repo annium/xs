@@ -9,6 +9,5 @@
         <LangVersion>10.0</LangVersion>
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
-        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 </Project>

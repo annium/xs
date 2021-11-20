@@ -10,7 +10,6 @@
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <ImplicitUsings>enable</ImplicitUsings>
         <PublishReadyToRun>true</PublishReadyToRun>
         <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
     </PropertyGroup>
