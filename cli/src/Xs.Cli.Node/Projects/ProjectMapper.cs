@@ -20,7 +20,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
         WriteIndented = true,
-        IgnoreNullValues = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
 
     private const string FilePrefix = "file:";
