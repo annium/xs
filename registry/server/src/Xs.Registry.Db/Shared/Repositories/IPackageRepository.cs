@@ -1,22 +1,21 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Xs.Registry.Db.Shared
+namespace Xs.Registry.Db.Shared;
+
+public interface IPackageRepository<TPackage, TPackageDependency> where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
 {
-    public interface IPackageRepository<TPackage, TPackageDependency> where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
-    {
-        Task<TPackage> CreateAsync(TPackage package);
+    Task<TPackage> CreateAsync(TPackage package);
 
-        Task<TPackage[]> FindAllByNameAsync(string name);
+    Task<TPackage[]> FindAllByNameAsync(string name);
 
-        Task<string[]> FindAllVersionsByNameAsync(string name);
+    Task<string[]> FindAllVersionsByNameAsync(string name);
 
-        Task<TPackage> FindByNameVersionAsync(string name, string version);
+    Task<TPackage> FindByNameVersionAsync(string name, string version);
 
-        Task<int> CountAllDownloadsAsync(string name);
+    Task<int> CountAllDownloadsAsync(string name);
 
-        Task IncrementDownloadsAsync(Guid id);
+    Task IncrementDownloadsAsync(Guid id);
 
-        Task DeleteByNameVersionAsync(string name, string version);
-    }
+    Task DeleteByNameVersionAsync(string name, string version);
 }

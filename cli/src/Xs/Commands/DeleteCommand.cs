@@ -8,85 +8,84 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tasks.Dependencies;
 
-namespace Xs.Commands
+namespace Xs.Commands;
+
+internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>, ILogSubject
 {
-    internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>, ILogSubject
+    public override string Id => "delete";
+    public override string Description => "Delete dependency from projects.";
+    public ILogger Logger { get; }
+    private readonly DiscoverProjectsTask _discoverTask;
+    private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
+    private readonly DeleteProjectDependencyTask _deleteProjectDependencyTask;
+
+    public DeleteCommand(
+        DiscoverProjectsTask discoverTask,
+        DeletePackageDependencyTask deletePackageDependencyTask,
+        DeleteProjectDependencyTask deleteProjectDependencyTask,
+        ILogger<DeleteCommand> logger
+    )
     {
-        public override string Id => "delete";
-        public override string Description => "Delete dependency from projects.";
-        public ILogger Logger { get; }
-        private readonly DiscoverProjectsTask _discoverTask;
-        private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
-        private readonly DeleteProjectDependencyTask _deleteProjectDependencyTask;
-
-        public DeleteCommand(
-            DiscoverProjectsTask discoverTask,
-            DeletePackageDependencyTask deletePackageDependencyTask,
-            DeleteProjectDependencyTask deleteProjectDependencyTask,
-            ILogger<DeleteCommand> logger
-        )
-        {
-            _discoverTask = discoverTask;
-            _deletePackageDependencyTask = deletePackageDependencyTask;
-            _deleteProjectDependencyTask = deleteProjectDependencyTask;
-            Logger = logger;
-        }
-
-        public override void Handle(
-            DeleteCommandConfiguration cfg,
-            DiscoverConfiguration discoverCfg,
-            CancellationToken ct
-        )
-        {
-            var name = cfg.Dependency;
-
-            var allProjects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
-            var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
-
-            var targets = allProjects.FilterMask(cfg.Mask).ToArray();
-            if (targets.Length == 0)
-            {
-                this.Log().Info($"No projects found to add dependency to.");
-                return;
-            }
-
-            this.Log().Debug($"Try delete dependency {name} from {targets.Length} projects.");
-
-            var projects = allProjects.FilterMask(name).ToArray();
-            if (projects.Length > 0)
-            {
-                foreach (var project in projects)
-                    _deleteProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), project);
-
-                return;
-            }
-
-            var packages = allPackages.FilterMask(name).Distinct().ToArray();
-
-            // if no packages found
-            if (packages.Length == 0)
-            {
-                this.Log().Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
-                return;
-            }
-
-            foreach (var package in packages)
-                _deletePackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), package);
-        }
+        _discoverTask = discoverTask;
+        _deletePackageDependencyTask = deletePackageDependencyTask;
+        _deleteProjectDependencyTask = deleteProjectDependencyTask;
+        Logger = logger;
     }
 
-    internal class DeleteCommandConfiguration
+    public override void Handle(
+        DeleteCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
     {
-        [Position(1)]
-        [Help("Projects mask.")]
-        public string Mask { get; set; } = string.Empty;
+        var name = cfg.Dependency;
 
-        [Position(2)]
-        [Help("Dependency.")]
-        public string Dependency { get; set; } = string.Empty;
+        var allProjects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
 
-        [Position(3, isRequired: false)]
-        [Help("Dependency type.")]
-        public DependencyType Type { get; set; } = DependencyType.Normal;
+        var targets = allProjects.FilterMask(cfg.Mask).ToArray();
+        if (targets.Length == 0)
+        {
+            this.Log().Info($"No projects found to add dependency to.");
+            return;
+        }
+
+        this.Log().Debug($"Try delete dependency {name} from {targets.Length} projects.");
+
+        var projects = allProjects.FilterMask(name).ToArray();
+        if (projects.Length > 0)
+        {
+            foreach (var project in projects)
+                _deleteProjectDependencyTask.Run(targets.FilterType(project.Type).ToArray(), project);
+
+            return;
+        }
+
+        var packages = allPackages.FilterMask(name).Distinct().ToArray();
+
+        // if no packages found
+        if (packages.Length == 0)
+        {
+            this.Log().Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
+            return;
+        }
+
+        foreach (var package in packages)
+            _deletePackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), package);
     }
+}
+
+internal class DeleteCommandConfiguration
+{
+    [Position(1)]
+    [Help("Projects mask.")]
+    public string Mask { get; set; } = string.Empty;
+
+    [Position(2)]
+    [Help("Dependency.")]
+    public string Dependency { get; set; } = string.Empty;
+
+    [Position(3, isRequired: false)]
+    [Help("Dependency type.")]
+    public DependencyType Type { get; set; } = DependencyType.Normal;
 }

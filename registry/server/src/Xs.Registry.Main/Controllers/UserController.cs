@@ -8,85 +8,84 @@ using Xs.Registry.Main.Tools;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Main.Controllers
+namespace Xs.Registry.Main.Controllers;
+
+[Route("user")]
+public class UserController : ServerController<User>
 {
-    [Route("user")]
-    public class UserController : ServerController<User>
+    private readonly IUserRepository _userRepository;
+    private readonly ISecurityManager _securityManager;
+
+    public UserController(
+        IUserRepository userRepository,
+        ISecurityManager securityManager,
+        IMediator mediator,
+        IServiceProvider sp
+    ) : base(mediator, sp)
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ISecurityManager _securityManager;
+        _userRepository = userRepository;
+        _securityManager = securityManager;
+    }
 
-        public UserController(
-            IUserRepository userRepository,
-            ISecurityManager securityManager,
-            IMediator mediator,
-            IServiceProvider sp
-        ) : base(mediator, sp)
-        {
-            _userRepository = userRepository;
-            _securityManager = securityManager;
-        }
+    [HttpPut]
+    public async Task<IActionResult> CreateUserAsync([FromBody] UserRegistrationPayload registrationModel)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        [HttpPut]
-        public async Task<IActionResult> CreateUserAsync([FromBody] UserRegistrationPayload registrationModel)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        var name = registrationModel.Name;
 
-            var name = registrationModel.Name;
+        if (await _userRepository.FindByNameAsync(name) != null)
+            return Conflict();
 
-            if (await _userRepository.FindByNameAsync(name) != null)
-                return Conflict();
+        var passwordHash = _securityManager.Hash(registrationModel.Password);
 
-            var passwordHash = _securityManager.Hash(registrationModel.Password);
+        var user = new User(name, passwordHash, Guid.NewGuid());
 
-            var user = new User(name, passwordHash, Guid.NewGuid());
+        await _userRepository.CreateAsync(user);
 
-            await _userRepository.CreateAsync(user);
+        return NoContent();
+    }
 
-            return NoContent();
-        }
+    [HttpPost]
+    [AuthorizeSession]
+    public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        [HttpPost]
-        [AuthorizeSession]
-        public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdatePayload updateModel)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        var user = GetUser();
 
-            var user = GetUser();
+        user.Name = updateModel.Name;
+        user.PasswordHash = _securityManager.Hash(updateModel.Password);
+        user.ApiToken = Guid.NewGuid();
 
-            user.Name = updateModel.Name;
-            user.PasswordHash = _securityManager.Hash(updateModel.Password);
-            user.ApiToken = Guid.NewGuid();
+        await _userRepository.UpdateAsync(user);
 
-            await _userRepository.UpdateAsync(user);
+        return NoContent();
+    }
 
-            return NoContent();
-        }
+    [HttpPost("token")]
+    [AuthorizeSession]
+    public async Task<IActionResult> UpdateUserApiTokenAsync()
+    {
+        var user = GetUser();
 
-        [HttpPost("token")]
-        [AuthorizeSession]
-        public async Task<IActionResult> UpdateUserApiTokenAsync()
-        {
-            var user = GetUser();
+        var apiToken = Guid.NewGuid();
 
-            var apiToken = Guid.NewGuid();
+        await _userRepository.UpdateApiTokenAsync(user.Id, apiToken);
 
-            await _userRepository.UpdateApiTokenAsync(user.Id, apiToken);
+        return NoContent();
+    }
 
-            return NoContent();
-        }
+    [HttpDelete]
+    [AuthorizeSession]
+    public async Task<IActionResult> DeleteUserAsync()
+    {
+        var user = GetUser();
 
-        [HttpDelete]
-        [AuthorizeSession]
-        public async Task<IActionResult> DeleteUserAsync()
-        {
-            var user = GetUser();
+        await _userRepository.DeleteByIdAsync(user.Id);
 
-            await _userRepository.DeleteByIdAsync(user.Id);
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }

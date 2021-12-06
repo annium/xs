@@ -2,10 +2,9 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Xs.Registry.Shared.Auth
+namespace Xs.Registry.Shared.Auth;
+
+public interface ITokenAccessor
 {
-    public interface ITokenAccessor
-    {
-        ValueTuple<Guid, IActionResult> GetToken(HttpRequest request);
-    }
+    ValueTuple<Guid, IActionResult> GetToken(HttpRequest request);
 }

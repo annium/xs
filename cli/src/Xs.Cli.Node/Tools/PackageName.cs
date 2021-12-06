@@ -1,13 +1,12 @@
-namespace Xs.Cli.Node.Tools
-{
-    internal static class PackageName
-    {
-        public static string GetPlainName(string name)
-        {
-            if (!name.StartsWith('@'))
-                return name;
+namespace Xs.Cli.Node.Tools;
 
-            return string.Join('-', name.Substring(1).Split('/'));
-        }
+internal static class PackageName
+{
+    public static string GetPlainName(string name)
+    {
+        if (!name.StartsWith('@'))
+            return name;
+
+        return string.Join('-', name.Substring(1).Split('/'));
     }
 }

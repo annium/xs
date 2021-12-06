@@ -7,52 +7,51 @@ using Xs.Cli.Core.Tools;
 using Xs.Cli.Node.Projects;
 using Xs.Cli.Node.Tools;
 
-namespace Xs.Cli.Node.Commands.New
+namespace Xs.Cli.Node.Commands.New;
+
+public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ILogSubject
 {
-    public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ILogSubject
+    public override string Id => "lib.react";
+    public override string Description => "Create new library project, using React.";
+    public ILogger Logger { get; }
+    private readonly ITemplateWriter _templateWriter;
+
+    public LibReactCommand(
+        ITemplateWriter templateWriter,
+        ILogger<LibReactCommand> logger
+    )
     {
-        public override string Id => "lib.react";
-        public override string Description => "Create new library project, using React.";
-        public ILogger Logger { get; }
-        private readonly ITemplateWriter _templateWriter;
-
-        public LibReactCommand(
-            ITemplateWriter templateWriter,
-            ILogger<LibReactCommand> logger
-        )
-        {
-            _templateWriter = templateWriter;
-            Logger = logger;
-        }
-
-        public override void Handle(
-            LibReactCommandConfiguration cfg,
-            DiscoverConfiguration discoverCfg,
-            CancellationToken ct
-        )
-        {
-            var location = discoverCfg.Root;
-            var name = cfg.Name;
-
-            this.Log().Debug($"Create library project {name} at {location}");
-
-            _templateWriter.LoadResources($"{Group.TemplatesDir}.LibReact");
-            _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));
-
-            // setup data
-            var data = new { name };
-
-            // write files
-            _templateWriter.Write(Group.ProjectTemplate, ProjectFactory.ProjectFileName, data);
-            _templateWriter.WriteAll(data);
-            _templateWriter.EnsureAllWritten();
-        }
+        _templateWriter = templateWriter;
+        Logger = logger;
     }
 
-    public class LibReactCommandConfiguration
+    public override void Handle(
+        LibReactCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
     {
-        [Position(1)]
-        [Help("Project name.")]
-        public string Name { get; set; } = string.Empty;
+        var location = discoverCfg.Root;
+        var name = cfg.Name;
+
+        this.Log().Debug($"Create library project {name} at {location}");
+
+        _templateWriter.LoadResources($"{Group.TemplatesDir}.LibReact");
+        _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));
+
+        // setup data
+        var data = new { name };
+
+        // write files
+        _templateWriter.Write(Group.ProjectTemplate, ProjectFactory.ProjectFileName, data);
+        _templateWriter.WriteAll(data);
+        _templateWriter.EnsureAllWritten();
     }
+}
+
+public class LibReactCommandConfiguration
+{
+    [Position(1)]
+    [Help("Project name.")]
+    public string Name { get; set; } = string.Empty;
 }

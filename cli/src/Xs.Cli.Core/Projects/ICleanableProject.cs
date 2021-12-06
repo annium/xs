@@ -1,10 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xs.Cli.Core.Projects
+namespace Xs.Cli.Core.Projects;
+
+public interface ICleanableProject : IProject
 {
-    public interface ICleanableProject : IProject
-    {
-        Task CleanAsync(bool force, CancellationToken ct);
-    }
+    Task CleanAsync(bool force, CancellationToken ct);
 }

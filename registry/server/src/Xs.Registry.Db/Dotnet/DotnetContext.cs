@@ -2,31 +2,30 @@ using LinqToDB;
 using Microsoft.EntityFrameworkCore;
 using Xs.Registry.Db.Dotnet.Entities;
 
-namespace Xs.Registry.Db
+namespace Xs.Registry.Db;
+
+internal partial class Context : Dotnet.IDotnetContext
 {
-    internal partial class Context : Dotnet.IDotnetContext
+    public DbSet<Package> DotnetPackagesSet { get; set; }
+
+    public ITable<Package> DotnetPackages => Table(DotnetPackagesSet);
+
+    public DbSet<PackageDependency> DotnetPackageDependenciesSet { get; set; }
+
+    public ITable<PackageDependency> DotnetPackageDependencies => Table(DotnetPackageDependenciesSet);
+
+    private void ConfigureDotnet(ModelBuilder builder)
     {
-        public DbSet<Package> DotnetPackagesSet { get; set; }
+        builder.Entity<Package>()
+            .HasAlternateKey(p => new { p.LowerName, p.Version });
+        builder.Entity<Package>()
+            .HasOne<Shared.Entities.MetaPackage>().WithMany().IsRequired()
+            .HasForeignKey(p => p.MetaPackageId).OnDelete(DeleteBehavior.Cascade);
 
-        public ITable<Package> DotnetPackages => Table(DotnetPackagesSet);
-
-        public DbSet<PackageDependency> DotnetPackageDependenciesSet { get; set; }
-
-        public ITable<PackageDependency> DotnetPackageDependencies => Table(DotnetPackageDependenciesSet);
-
-        private void ConfigureDotnet(ModelBuilder builder)
-        {
-            builder.Entity<Package>()
-                .HasAlternateKey(p => new { p.LowerName, p.Version });
-            builder.Entity<Package>()
-                .HasOne<Shared.Entities.MetaPackage>().WithMany().IsRequired()
-                .HasForeignKey(p => p.MetaPackageId).OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<PackageDependency>()
-                .HasKey(p => new { p.PackageId, p.Framework, p.Name });
-            builder.Entity<PackageDependency>()
-                .HasOne<Package>().WithMany(p => p.Dependencies).IsRequired()
-                .HasForeignKey(d => d.PackageId).OnDelete(DeleteBehavior.Cascade);
-        }
+        builder.Entity<PackageDependency>()
+            .HasKey(p => new { p.PackageId, p.Framework, p.Name });
+        builder.Entity<PackageDependency>()
+            .HasOne<Package>().WithMany(p => p.Dependencies).IsRequired()
+            .HasForeignKey(d => d.PackageId).OnDelete(DeleteBehavior.Cascade);
     }
 }

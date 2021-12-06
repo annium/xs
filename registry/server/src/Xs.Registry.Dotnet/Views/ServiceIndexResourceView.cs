@@ -1,16 +1,15 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Xs.Registry.Dotnet.Views
+namespace Xs.Registry.Dotnet.Views;
+
+internal class ServiceIndexResourceView
 {
-    internal class ServiceIndexResourceView
-    {
-        [JsonProperty("@id")]
-        public Uri Uri { get; set; }
+    [JsonProperty("@id")]
+    public Uri Uri { get; set; }
 
-        [JsonProperty("@type")]
-        public string Type { get; set; }
+    [JsonProperty("@type")]
+    public string Type { get; set; }
 
-        public string Comment => string.Empty;
-    }
+    public string Comment => string.Empty;
 }

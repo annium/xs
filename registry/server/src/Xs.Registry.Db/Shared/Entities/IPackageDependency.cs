@@ -1,13 +1,12 @@
 using System;
 
-namespace Xs.Registry.Db.Shared.Entities
+namespace Xs.Registry.Db.Shared.Entities;
+
+public interface IPackageDependency
 {
-    public interface IPackageDependency
-    {
-        Guid PackageId { get; set; }
+    Guid PackageId { get; set; }
 
-        string Name { get; }
+    string Name { get; }
 
-        string Version { get; }
-    }
+    string Version { get; }
 }

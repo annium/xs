@@ -8,56 +8,55 @@ using Xs.Cli.Core.Models;
 using Xs.RegistryClient.Main;
 using Xs.Tools;
 
-namespace Xs.Commands
+namespace Xs.Commands;
+
+internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ILogSubject
 {
-    internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ILogSubject
+    public override string Id => "search";
+    public override string Description => "Search for packages in tracked registry.";
+    public ILogger Logger { get; }
+    private readonly IConfigurationManager _configurationManager;
+    private readonly MainClientFactory _mainClientFactory;
+
+    public SearchCommand(
+        IConfigurationManager configurationManager,
+        MainClientFactory mainClientFactory,
+        ILogger<SearchCommand> logger
+    )
     {
-        public override string Id => "search";
-        public override string Description => "Search for packages in tracked registry.";
-        public ILogger Logger { get; }
-        private readonly IConfigurationManager _configurationManager;
-        private readonly MainClientFactory _mainClientFactory;
-
-        public SearchCommand(
-            IConfigurationManager configurationManager,
-            MainClientFactory mainClientFactory,
-            ILogger<SearchCommand> logger
-        )
-        {
-            _configurationManager = configurationManager;
-            _mainClientFactory = mainClientFactory;
-            Logger = logger;
-        }
-
-        public override async Task HandleAsync(
-            SearchCommandConfiguration cfg,
-            DiscoverConfiguration discoverCfg,
-            CancellationToken ct
-        )
-        {
-            var configuration = _configurationManager.Load(discoverCfg.Root);
-            if (configuration == null)
-            {
-                this.Log().Warn("Track registry first to search within it.");
-                return;
-            }
-
-            var client = _mainClientFactory.Create(configuration.Registry);
-            var packages = await client.SearchAsync(configuration.Token, cfg.Type.ToString(), cfg.Query);
-
-            foreach (var package in packages)
-                Console.WriteLine($"{package.Name}: {package.Version} ({package.Description})");
-        }
+        _configurationManager = configurationManager;
+        _mainClientFactory = mainClientFactory;
+        Logger = logger;
     }
 
-    internal class SearchCommandConfiguration
+    public override async Task HandleAsync(
+        SearchCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
     {
-        [Position(1)]
-        [Help("Project type.")]
-        public ProjectType Type { get; set; } = ProjectType.None;
+        var configuration = _configurationManager.Load(discoverCfg.Root);
+        if (configuration == null)
+        {
+            this.Log().Warn("Track registry first to search within it.");
+            return;
+        }
 
-        [Position(2)]
-        [Help("Search query.")]
-        public string Query { get; set; } = string.Empty;
+        var client = _mainClientFactory.Create(configuration.Registry);
+        var packages = await client.SearchAsync(configuration.Token, cfg.Type.ToString(), cfg.Query);
+
+        foreach (var package in packages)
+            Console.WriteLine($"{package.Name}: {package.Version} ({package.Description})");
     }
+}
+
+internal class SearchCommandConfiguration
+{
+    [Position(1)]
+    [Help("Project type.")]
+    public ProjectType Type { get; set; } = ProjectType.None;
+
+    [Position(2)]
+    [Help("Search query.")]
+    public string Query { get; set; } = string.Empty;
 }

@@ -4,18 +4,17 @@ using Annium.Net.Http;
 using Annium.Testing;
 using Xunit;
 
-namespace Xs.Registry.Dotnet.Tests.Controllers
-{
-    public class IndexControllerTest : IntegrationTestBase
-    {
-        [Fact]
-        public async Task Get_ReturnsIndex()
-        {
-            // act
-            var response = await Server.Get("/v3/index.json").RunAsync();
+namespace Xs.Registry.Dotnet.Tests.Controllers;
 
-            // assert
-            response.StatusCode.IsEqual(HttpStatusCode.OK);
-        }
+public class IndexControllerTest : IntegrationTestBase
+{
+    [Fact]
+    public async Task Get_ReturnsIndex()
+    {
+        // act
+        var response = await Server.Get("/v3/index.json").RunAsync();
+
+        // assert
+        response.StatusCode.IsEqual(HttpStatusCode.OK);
     }
 }

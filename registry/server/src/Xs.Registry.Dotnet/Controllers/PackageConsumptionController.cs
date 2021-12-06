@@ -11,79 +11,78 @@ using Xs.Registry.Db.Shared;
 using Xs.Registry.Dotnet.Payloads;
 using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Dotnet.Controllers
+namespace Xs.Registry.Dotnet.Controllers;
+
+public class PackageConsumptionController : ServerController<User>
 {
-    public class PackageConsumptionController : ServerController<User>
+    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+
+    private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
+
+    private readonly Storage.IPackageStorage _packageStorage;
+
+    public PackageConsumptionController(
+        IPackageService<Package, PackageDependency, PackagePayload> packageService,
+        IPackageRepository<Package, PackageDependency> packageRepository,
+        Storage.IPackageStorage packageStorage,
+        IMediator mediator,
+        IServiceProvider sp
+    ) : base(mediator, sp)
     {
-        private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+        _packageService = packageService;
+        _packageRepository = packageRepository;
+        _packageStorage = packageStorage;
+    }
 
-        private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
+    [HttpGet("v3/package/{name}/index.json")]
+    public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken ct)
+    {
+        name = HttpUtility.UrlDecode(name);
+        var versions = await _packageRepository.FindAllVersionsByNameAsync(name);
 
-        private readonly Storage.IPackageStorage _packageStorage;
+        if (versions.Length == 0)
+            return NotFound();
 
-        public PackageConsumptionController(
-            IPackageService<Package, PackageDependency, PackagePayload> packageService,
-            IPackageRepository<Package, PackageDependency> packageRepository,
-            Storage.IPackageStorage packageStorage,
-            IMediator mediator,
-            IServiceProvider sp
-        ) : base(mediator, sp)
+        return Ok(new { versions });
+    }
+
+    [HttpGet("v3/package/{name}/{version}/{name2}.{version2}.nupkg")]
+    public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken ct)
+    {
+        name = HttpUtility.UrlDecode(name);
+        var result = await _packageService.ProcessDownloadAsync(null, name, version, true);
+        switch (result.Status)
         {
-            _packageService = packageService;
-            _packageRepository = packageRepository;
-            _packageStorage = packageStorage;
-        }
-
-        [HttpGet("v3/package/{name}/index.json")]
-        public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken ct)
-        {
-            name = HttpUtility.UrlDecode(name);
-            var versions = await _packageRepository.FindAllVersionsByNameAsync(name);
-
-            if (versions.Length == 0)
+            case PackageStatus.NotFound:
                 return NotFound();
-
-            return Ok(new { versions });
+            case PackageStatus.Forbidden:
+                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+            case PackageStatus.InternalError:
+                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
         }
 
-        [HttpGet("v3/package/{name}/{version}/{name2}.{version2}.nupkg")]
-        public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken ct)
+        var content = await _packageStorage.GetPackageAsync(name, version);
+
+        return File(content, "application/octet-stream");
+    }
+
+    [HttpGet("v3/package/{name}/{version}/{name2}.nuspec")]
+    public async Task<IActionResult> DownloadNuspecAsync(string name, string version, CancellationToken ct)
+    {
+        name = HttpUtility.UrlDecode(name);
+        var result = await _packageService.ProcessDownloadAsync(null, name, version, false);
+        switch (result.Status)
         {
-            name = HttpUtility.UrlDecode(name);
-            var result = await _packageService.ProcessDownloadAsync(null, name, version, true);
-            switch (result.Status)
-            {
-                case PackageStatus.NotFound:
-                    return NotFound();
-                case PackageStatus.Forbidden:
-                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-                case PackageStatus.InternalError:
-                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
-            }
-
-            var content = await _packageStorage.GetPackageAsync(name, version);
-
-            return File(content, "application/octet-stream");
+            case PackageStatus.NotFound:
+                return NotFound();
+            case PackageStatus.Forbidden:
+                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+            case PackageStatus.InternalError:
+                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
         }
 
-        [HttpGet("v3/package/{name}/{version}/{name2}.nuspec")]
-        public async Task<IActionResult> DownloadNuspecAsync(string name, string version, CancellationToken ct)
-        {
-            name = HttpUtility.UrlDecode(name);
-            var result = await _packageService.ProcessDownloadAsync(null, name, version, false);
-            switch (result.Status)
-            {
-                case PackageStatus.NotFound:
-                    return NotFound();
-                case PackageStatus.Forbidden:
-                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-                case PackageStatus.InternalError:
-                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
-            }
+        var content = await _packageStorage.GetNuspecAsync(name, version);
 
-            var content = await _packageStorage.GetNuspecAsync(name, version);
-
-            return File(content, "text/xml");
-        }
+        return File(content, "text/xml");
     }
 }

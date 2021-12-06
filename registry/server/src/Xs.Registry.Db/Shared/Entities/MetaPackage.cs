@@ -3,40 +3,39 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Xs.Registry.Db.Shared.Entities
+namespace Xs.Registry.Db.Shared.Entities;
+
+[Table(nameof(Context.MetaPackages))]
+internal class MetaPackage
 {
-    [Table(nameof(Context.MetaPackages))]
-    internal class MetaPackage
-    {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public Guid Id { get; set; }
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
 
-        [Required]
-        public string Type { get; set; }
+    [Required]
+    public string Type { get; set; }
 
-        [Required]
-        public string Name { get; set; }
+    [Required]
+    public string Name { get; set; }
 
-        [Required]
-        public string LowerName { get; set; }
+    [Required]
+    public string LowerName { get; set; }
 
-        [Required]
-        public string Version { get; set; }
+    [Required]
+    public string Version { get; set; }
 
-        [Required]
-        public string Description { get; set; }
+    [Required]
+    public string Description { get; set; }
 
-        [Required]
-        public DateTime Published { get; set; }
+    [Required]
+    public DateTime Published { get; set; }
 
-        [Required]
-        public int Downloads { get; set; }
+    [Required]
+    public int Downloads { get; set; }
 
-        [Required]
-        public Guid OwnerId { get; set; }
+    [Required]
+    public Guid OwnerId { get; set; }
 
-        public User Owner { get; set; }
+    public User Owner { get; set; }
 
-        public List<MetaPackagePermission> Permissions { get; set; }
-    }
+    public List<MetaPackagePermission> Permissions { get; set; }
 }

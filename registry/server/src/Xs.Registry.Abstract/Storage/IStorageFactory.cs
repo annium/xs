@@ -1,7 +1,6 @@
-namespace Xs.Registry.Abstract.Storage
+namespace Xs.Registry.Abstract.Storage;
+
+public interface IStorageFactory
 {
-    public interface IStorageFactory
-    {
-        IStorage Create(string root);
-    }
+    IStorage Create(string root);
 }

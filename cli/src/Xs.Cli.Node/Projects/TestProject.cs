@@ -3,15 +3,14 @@ using System.Threading.Tasks;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
-namespace Xs.Cli.Node.Projects
-{
-    internal class TestProject : SpecialProject<TestProject>, ITestableProject
-    {
-        public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
+namespace Xs.Cli.Node.Projects;
 
-        public Task TestAsync(Env env, string filter, CancellationToken ct) =>
-            string.IsNullOrWhiteSpace(filter) ?
+internal class TestProject : SpecialProject<TestProject>, ITestableProject
+{
+    public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
+
+    public Task TestAsync(Env env, string filter, CancellationToken ct) =>
+        string.IsNullOrWhiteSpace(filter) ?
             RunAsync("test", $"pnpm test", ct) :
             RunAsync("test", $"pnpm test --testNamePattern {filter}", ct);
-    }
 }

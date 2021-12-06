@@ -1,8 +1,7 @@
-namespace Xs.Registry.Db.Node
+namespace Xs.Registry.Db.Node;
+
+public enum DependencyType
 {
-    public enum DependencyType
-    {
-        Normal,
-        Dev,
-    }
+    Normal,
+    Dev,
 }

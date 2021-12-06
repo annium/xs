@@ -1,16 +1,15 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Xs.Registry.Abstract.Storage
+namespace Xs.Registry.Abstract.Storage;
+
+public interface IStorage
 {
-    public interface IStorage
-    {
-        Task<bool> ExistsAsync(string name);
+    Task<bool> ExistsAsync(string name);
 
-        Task<Stream> GetAsync(string name);
+    Task<Stream> GetAsync(string name);
 
-        Task SaveAsync(string name, Stream stream);
+    Task SaveAsync(string name, Stream stream);
 
-        Task DeleteAsync(string name);
-    }
+    Task DeleteAsync(string name);
 }

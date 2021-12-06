@@ -1,12 +1,11 @@
 using System;
 
-namespace Xs.Registry.Shared.Auth
-{
-    [Flags]
-    public enum Access
-    {
-        Api = 1,
+namespace Xs.Registry.Shared.Auth;
 
-        Session = 2,
-    }
+[Flags]
+public enum Access
+{
+    Api = 1,
+
+    Session = 2,
 }

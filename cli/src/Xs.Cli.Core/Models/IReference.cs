@@ -1,9 +1,8 @@
-namespace Xs.Cli.Core.Models
+namespace Xs.Cli.Core.Models;
+
+public interface IReference
 {
-    public interface IReference
-    {
-        ProjectType Type { get; }
-        string Name { get; }
-        Version Version { get; }
-    }
+    ProjectType Type { get; }
+    string Name { get; }
+    Version Version { get; }
 }

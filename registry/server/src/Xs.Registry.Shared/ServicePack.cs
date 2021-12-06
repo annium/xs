@@ -6,28 +6,27 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Xs.Registry.Shared
+namespace Xs.Registry.Shared;
+
+public class ServicePack : ServicePackBase
 {
-    public class ServicePack : ServicePackBase
+    public override void Register(IServiceContainer container, IServiceProvider provider)
     {
-        public override void Register(IServiceContainer container, IServiceProvider provider)
+        container.AddTime().WithRealTime().SetDefault();
+
+        // helpers
+        container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
+        container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
+        container.Add<IUrlHelper>(p =>
         {
-            container.AddTime().WithRealTime().SetDefault();
+            var actionContext = p.GetRequiredService<IActionContextAccessor>().ActionContext;
+            return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
+        }).AsSelf().Scoped();
 
-            // helpers
-            container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
-            container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
-            container.Add<IUrlHelper>(p =>
-            {
-                var actionContext = p.GetRequiredService<IActionContextAccessor>().ActionContext;
-                return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
-            }).AsSelf().Scoped();
+        container.AddJsonSerializers().SetDefault();
+        container.AddHttpRequestFactory().SetDefault();
+        container.AddMediator();
 
-            container.AddJsonSerializers().SetDefault();
-            container.AddHttpRequestFactory().SetDefault();
-            container.AddMediator();
-
-            container.AddLogging(route => route.UseConsole());
-        }
+        container.AddLogging(route => route.UseConsole());
     }
 }

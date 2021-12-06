@@ -10,69 +10,68 @@ using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Tools;
 
-namespace Xs.Commands
+namespace Xs.Commands;
+
+internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>, ILogSubject
 {
-    internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>, ILogSubject
+    public override string Id => "clean";
+    public override string Description => "Clean projects.";
+    public ILogger Logger { get; }
+    private readonly DiscoverProjectsTask _discoverTask;
+    private readonly ProjectsRunner _runner;
+
+    public CleanCommand(
+        DiscoverProjectsTask discoverTask,
+        ProjectsRunner runner,
+        ILogger<CleanCommand> logger
+    )
     {
-        public override string Id => "clean";
-        public override string Description => "Clean projects.";
-        public ILogger Logger { get; }
-        private readonly DiscoverProjectsTask _discoverTask;
-        private readonly ProjectsRunner _runner;
-
-        public CleanCommand(
-            DiscoverProjectsTask discoverTask,
-            ProjectsRunner runner,
-            ILogger<CleanCommand> logger
-        )
-        {
-            _discoverTask = discoverTask;
-            _runner = runner;
-            Logger = logger;
-        }
-
-        public override async Task HandleAsync(
-            CleanCommandConfiguration cfg,
-            DiscoverConfiguration discoverCfg,
-            CancellationToken ct
-        )
-        {
-            var projects = _discoverTask.RunAsync(discoverCfg).Await()
-                .FilterMask(cfg.Mask)
-                .FilterType(cfg.Type)
-                .OfType<ICleanableProject>()
-                .ToArray();
-
-            this.Log().Debug($"Clean {projects.Length} projects.");
-            await _runner.RunAsync(
-                projects,
-                (project, tkn) => project.CleanAsync(cfg.Force, tkn),
-                new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
-                ct
-            );
-        }
+        _discoverTask = discoverTask;
+        _runner = runner;
+        Logger = logger;
     }
 
-    internal class CleanCommandConfiguration
+    public override async Task HandleAsync(
+        CleanCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
     {
-        [Position(1, isRequired: false)]
-        [Help("Projects mask.")]
-        public string Mask { get; set; } = "all";
+        var projects = _discoverTask.RunAsync(discoverCfg).Await()
+            .FilterMask(cfg.Mask)
+            .FilterType(cfg.Type)
+            .OfType<ICleanableProject>()
+            .ToArray();
 
-        [Position(2, isRequired: false)]
-        [Help("Project type.")]
-        public ProjectType Type { get; set; } = ProjectType.None;
-
-        [Option("d")]
-        [Help("Clean dependencies.")]
-        public bool Deep { get; set; }
-
-        [Option("f", isRequired: false)]
-        [Help("Force clean.")]
-        public bool Force { get; set; }
-
-        [Option("p")]
-        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
-        public int Parallelism { get; set; }
+        this.Log().Debug($"Clean {projects.Length} projects.");
+        await _runner.RunAsync(
+            projects,
+            (project, tkn) => project.CleanAsync(cfg.Force, tkn),
+            new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
+            ct
+        );
     }
+}
+
+internal class CleanCommandConfiguration
+{
+    [Position(1, isRequired: false)]
+    [Help("Projects mask.")]
+    public string Mask { get; set; } = "all";
+
+    [Position(2, isRequired: false)]
+    [Help("Project type.")]
+    public ProjectType Type { get; set; } = ProjectType.None;
+
+    [Option("d")]
+    [Help("Clean dependencies.")]
+    public bool Deep { get; set; }
+
+    [Option("f", isRequired: false)]
+    [Help("Force clean.")]
+    public bool Force { get; set; }
+
+    [Option("p")]
+    [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+    public int Parallelism { get; set; }
 }

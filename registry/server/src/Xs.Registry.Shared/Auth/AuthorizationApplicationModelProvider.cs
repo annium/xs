@@ -3,48 +3,47 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Xs.Registry.Shared.Auth
-{
-    internal class AuthorizationApplicationModelProvider<TAuthorizationFilter> : IApplicationModelProvider
+namespace Xs.Registry.Shared.Auth;
+
+internal class AuthorizationApplicationModelProvider<TAuthorizationFilter> : IApplicationModelProvider
     where TAuthorizationFilter : IAsyncAuthorizationFilter
+{
+    public int Order => -990;
+
+    private readonly Func<Access, TAuthorizationFilter> _authorizationFilterFactory;
+
+    public AuthorizationApplicationModelProvider(
+        Func<Access, TAuthorizationFilter> authorizationFilterFactory
+    )
     {
-        public int Order => -990;
+        _authorizationFilterFactory = authorizationFilterFactory;
+    }
 
-        private readonly Func<Access, TAuthorizationFilter> _authorizationFilterFactory;
+    public void OnProvidersExecuted(ApplicationModelProviderContext context)
+    {
+        //Intentionally empty
+    }
 
-        public AuthorizationApplicationModelProvider(
-            Func<Access, TAuthorizationFilter> authorizationFilterFactory
-        )
-        {
-            _authorizationFilterFactory = authorizationFilterFactory;
-        }
+    public void OnProvidersExecuting(ApplicationModelProviderContext context)
+    {
+        foreach (var controllerModel in context.Result.Controllers)
+            ProcessControllerModel(controllerModel);
+    }
 
-        public void OnProvidersExecuted(ApplicationModelProviderContext context)
-        {
-            //Intentionally empty
-        }
+    private void ProcessControllerModel(ControllerModel controllerModel)
+    {
+        foreach (var actionModel in controllerModel.Actions)
+            ProcessActionModel(actionModel);
+    }
 
-        public void OnProvidersExecuting(ApplicationModelProviderContext context)
-        {
-            foreach (var controllerModel in context.Result.Controllers)
-                ProcessControllerModel(controllerModel);
-        }
+    private void ProcessActionModel(ActionModel actionModel)
+    {
+        var attribute = actionModel.Attributes.OfType<AuthorizeAttribute>().FirstOrDefault();
 
-        private void ProcessControllerModel(ControllerModel controllerModel)
-        {
-            foreach (var actionModel in controllerModel.Actions)
-                ProcessActionModel(actionModel);
-        }
+        //if no Authorize attribute - no filter needed
+        if (attribute == null)
+            return;
 
-        private void ProcessActionModel(ActionModel actionModel)
-        {
-            var attribute = actionModel.Attributes.OfType<AuthorizeAttribute>().FirstOrDefault();
-
-            //if no Authorize attribute - no filter needed
-            if (attribute == null)
-                return;
-
-            actionModel.Filters.Add(_authorizationFilterFactory(attribute.Access));
-        }
+        actionModel.Filters.Add(_authorizationFilterFactory(attribute.Access));
     }
 }

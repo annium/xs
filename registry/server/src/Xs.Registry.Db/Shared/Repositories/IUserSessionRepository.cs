@@ -2,18 +2,17 @@ using System;
 using System.Threading.Tasks;
 using NodaTime;
 
-namespace Xs.Registry.Db.Shared
+namespace Xs.Registry.Db.Shared;
+
+public interface IUserSessionRepository
 {
-    public interface IUserSessionRepository
-    {
-        Task<UserSession> CreateAsync(UserSession userSession);
+    Task<UserSession> CreateAsync(UserSession userSession);
 
-        Task<UserSession> FindByTokenAsync(Guid token);
+    Task<UserSession> FindByTokenAsync(Guid token);
 
-        Task ProlongateAsync(Guid token, Instant expires);
+    Task ProlongateAsync(Guid token, Instant expires);
 
-        Task DeleteByTokenAsync(Guid token);
+    Task DeleteByTokenAsync(Guid token);
 
-        Task DeleteExpiredAsync(Instant now);
-    }
+    Task DeleteExpiredAsync(Instant now);
 }

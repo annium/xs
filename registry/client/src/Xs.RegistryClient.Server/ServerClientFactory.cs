@@ -1,26 +1,25 @@
 using System;
 using Annium.Core.DependencyInjection;
 
-namespace Xs.RegistryClient.Server
+namespace Xs.RegistryClient.Server;
+
+public class ServerClientFactory
 {
-    public class ServerClientFactory
+    private readonly IServiceProvider _provider;
+
+    public ServerClientFactory(
+        IServiceProvider provider
+    )
     {
-        private readonly IServiceProvider _provider;
+        _provider = provider;
+    }
 
-        public ServerClientFactory(
-            IServiceProvider provider
-        )
-        {
-            _provider = provider;
-        }
+    public ServerClient Create(Uri uri)
+    {
+        var client = _provider.Resolve<ServerClient>();
 
-        public ServerClient Create(Uri uri)
-        {
-            var client = _provider.Resolve<ServerClient>();
+        client.SetUri(uri);
 
-            client.SetUri(uri);
-
-            return client;
-        }
+        return client;
     }
 }

@@ -1,9 +1,8 @@
-namespace Xs.Registry.Db.Shared
-{
-    public interface IPackageDependency
-    {
-        string Name { get; }
+namespace Xs.Registry.Db.Shared;
 
-        string Version { get; }
-    }
+public interface IPackageDependency
+{
+    string Name { get; }
+
+    string Version { get; }
 }

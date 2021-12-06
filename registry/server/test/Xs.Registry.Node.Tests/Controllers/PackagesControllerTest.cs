@@ -4,19 +4,18 @@ using Annium.Net.Http;
 using Annium.Testing;
 using Xunit;
 
-namespace Xs.Registry.Node.Tests.Controllers
-{
-    public class PackagesControllerTest : IntegrationTestBase
-    {
-        [Fact]
-        public async Task Get_MissingPackage_ReturnsNotFound()
-        {
-            // act
-            var response = await Server.Get("/packages/fake").RunAsync();
+namespace Xs.Registry.Node.Tests.Controllers;
 
-            // assert
-            // TODO: apply authorization
-            response.StatusCode.IsEqual(HttpStatusCode.Unauthorized);
-        }
+public class PackagesControllerTest : IntegrationTestBase
+{
+    [Fact]
+    public async Task Get_MissingPackage_ReturnsNotFound()
+    {
+        // act
+        var response = await Server.Get("/packages/fake").RunAsync();
+
+        // assert
+        // TODO: apply authorization
+        response.StatusCode.IsEqual(HttpStatusCode.Unauthorized);
     }
 }

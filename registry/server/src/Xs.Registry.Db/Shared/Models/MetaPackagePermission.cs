@@ -1,18 +1,17 @@
-namespace Xs.Registry.Db.Shared
+namespace Xs.Registry.Db.Shared;
+
+public class MetaPackagePermission
 {
-    public class MetaPackagePermission
+    public PermissionCategory Category { get; }
+
+    public Permission Permission { get; }
+
+    public MetaPackagePermission(
+        PermissionCategory category,
+        Permission permission
+    )
     {
-        public PermissionCategory Category { get; }
-
-        public Permission Permission { get; }
-
-        public MetaPackagePermission(
-            PermissionCategory category,
-            Permission permission
-        )
-        {
-            Category = category;
-            Permission = permission;
-        }
+        Category = category;
+        Permission = permission;
     }
 }

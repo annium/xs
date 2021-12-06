@@ -1,14 +1,13 @@
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
-namespace Xs.Tools
+namespace Xs.Tools;
+
+public interface IConfigurationManager
 {
-    public interface IConfigurationManager
-    {
-        Configuration Load(string folder);
+    Configuration Load(string folder);
 
-        void Save(Configuration configuration, IProject[] projects);
+    void Save(Configuration configuration, IProject[] projects);
 
-        void Delete(string folder, IProject[] projects);
-    }
+    void Delete(string folder, IProject[] projects);
 }

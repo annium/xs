@@ -4,33 +4,32 @@ using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Tools;
 using Xs.Registry.Shared.Auth;
 
-namespace Xs.Registry.Main
+namespace Xs.Registry.Main;
+
+internal class BaseServicePack : ServicePackBase
 {
-    internal class BaseServicePack : ServicePackBase
+    public BaseServicePack()
     {
-        public BaseServicePack()
-        {
-            Add<Shared.ServicePack>();
-            Add<Db.Shared.ServicePack>();
-        }
+        Add<Shared.ServicePack>();
+        Add<Db.Shared.ServicePack>();
+    }
 
-        public override void Configure(IServiceContainer container)
-        {
-            container.AddRuntimeTools(GetType().Assembly, false);
-        }
+    public override void Configure(IServiceContainer container)
+    {
+        container.AddRuntimeTools(GetType().Assembly, false);
+    }
 
-        public override void Register(IServiceContainer container, IServiceProvider provider)
-        {
-            // auth
-            container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access)).AsSelf().Singleton();
-            container.Add<ISessionManager, SessionManager>().Scoped();
-            container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
+    public override void Register(IServiceContainer container, IServiceProvider provider)
+    {
+        // auth
+        container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access)).AsSelf().Singleton();
+        container.Add<ISessionManager, SessionManager>().Scoped();
+        container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
-            // tools
-            container.Add<ISecurityManager, SecurityManager>().Singleton();
+        // tools
+        container.Add<ISecurityManager, SecurityManager>().Singleton();
 
-            // mapping
-            container.AddMapper();
-        }
+        // mapping
+        container.AddMapper();
     }
 }

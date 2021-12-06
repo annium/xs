@@ -1,8 +1,7 @@
-namespace Xs.Registry.Db.Shared
+namespace Xs.Registry.Db.Shared;
+
+public enum PermissionCategory
 {
-    public enum PermissionCategory
-    {
-        Owner,
-        World
-    }
+    Owner,
+    World
 }

@@ -13,56 +13,55 @@ using Xs.Registry.Dotnet.Views;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Dotnet.Controllers
+namespace Xs.Registry.Dotnet.Controllers;
+
+[Route("packages")]
+public class PackagesController : ServerController<User>
 {
-    [Route("packages")]
-    public class PackagesController : ServerController<User>
+    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+
+    public PackagesController(
+        IPackageService<Package, PackageDependency, PackagePayload> packageService,
+        IMediator mediator,
+        IServiceProvider sp
+    ) : base(mediator, sp)
     {
-        private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+        _packageService = packageService;
+    }
 
-        public PackagesController(
-            IPackageService<Package, PackageDependency, PackagePayload> packageService,
-            IMediator mediator,
-            IServiceProvider sp
-        ) : base(mediator, sp)
+    [HttpGet("{name}")]
+    [AuthorizeApi]
+    public async Task<IActionResult> GetPackagesAsync(string name)
+    {
+        name = HttpUtility.UrlDecode(name);
+        var result = await _packageService.GetPackagesAsync(GetUser(), name);
+        switch (result.Status)
         {
-            _packageService = packageService;
+            case PackageStatus.NotFound:
+                return NotFound();
+            case PackageStatus.Forbidden:
+                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+            case PackageStatus.Ok:
+                return Ok(result.Data.Select(p => new PackageView(p)).ToArray());
+            default:
+                return NotFound();
         }
+    }
 
-        [HttpGet("{name}")]
-        [AuthorizeApi]
-        public async Task<IActionResult> GetPackagesAsync(string name)
+    [HttpDelete("{name}/{version}")]
+    [AuthorizeApi]
+    public async Task<IActionResult> DeletePackageAsync(string name, string version)
+    {
+        name = HttpUtility.UrlDecode(name);
+        var result = await _packageService.UnpublishPackageAsync(GetUser(), name, version);
+        switch (result.Status)
         {
-            name = HttpUtility.UrlDecode(name);
-            var result = await _packageService.GetPackagesAsync(GetUser(), name);
-            switch (result.Status)
-            {
-                case PackageStatus.NotFound:
-                    return NotFound();
-                case PackageStatus.Forbidden:
-                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-                case PackageStatus.Ok:
-                    return Ok(result.Data.Select(p => new PackageView(p)).ToArray());
-                default:
-                    return NotFound();
-            }
-        }
-
-        [HttpDelete("{name}/{version}")]
-        [AuthorizeApi]
-        public async Task<IActionResult> DeletePackageAsync(string name, string version)
-        {
-            name = HttpUtility.UrlDecode(name);
-            var result = await _packageService.UnpublishPackageAsync(GetUser(), name, version);
-            switch (result.Status)
-            {
-                case PackageStatus.NotFound:
-                    return NotFound();
-                case PackageStatus.Forbidden:
-                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-                default:
-                    return NoContent();
-            }
+            case PackageStatus.NotFound:
+                return NotFound();
+            case PackageStatus.Forbidden:
+                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+            default:
+                return NoContent();
         }
     }
 }

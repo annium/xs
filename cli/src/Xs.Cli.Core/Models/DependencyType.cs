@@ -1,9 +1,8 @@
-namespace Xs.Cli.Core.Models
+namespace Xs.Cli.Core.Models;
+
+public enum DependencyType
 {
-    public enum DependencyType
-    {
-        Normal,
-        Dev,
-        Peer,
-    }
+    Normal,
+    Dev,
+    Peer,
 }

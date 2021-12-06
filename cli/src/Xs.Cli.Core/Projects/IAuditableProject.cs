@@ -1,10 +1,9 @@
 using System.Threading;
 using Xs.Cli.Core.Audit;
 
-namespace Xs.Cli.Core.Projects
+namespace Xs.Cli.Core.Projects;
+
+public interface IAuditableProject : IProject
 {
-    public interface IAuditableProject : IProject
-    {
-        AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken ct);
-    }
+    AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken ct);
 }

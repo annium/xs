@@ -6,38 +6,37 @@ using Newtonsoft.Json;
 using Xs.Registry.Db.Node;
 using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Node.Views
+namespace Xs.Registry.Node.Views;
+
+public class PackageVersionView
 {
-    public class PackageVersionView
+    public string Name { get; }
+
+    public string Version { get; }
+
+    public string Description { get; }
+
+    public string Main { get; }
+
+    public IReadOnlyDictionary<string, string> Dependencies { get; }
+
+    public IReadOnlyDictionary<string, string> DevDependencies { get; }
+
+    [JsonProperty("dist")]
+    public PackageDistributionView Distribution { get; }
+
+    public PackageVersionView(Package package, IUrlHelper urlHelper)
     {
-        public string Name { get; }
-
-        public string Version { get; }
-
-        public string Description { get; }
-
-        public string Main { get; }
-
-        public IReadOnlyDictionary<string, string> Dependencies { get; }
-
-        public IReadOnlyDictionary<string, string> DevDependencies { get; }
-
-        [JsonProperty("dist")]
-        public PackageDistributionView Distribution { get; }
-
-        public PackageVersionView(Package package, IUrlHelper urlHelper)
-        {
-            Name = package.Name.ToString();
-            Version = package.Version;
-            Description = package.Description;
-            Main = package.Main;
-            Dependencies = package.Dependencies.Where(d => d.Type == DependencyType.Normal).ToDictionary(d => d.Name, d => d.Version);
-            DevDependencies = package.Dependencies.Where(d => d.Type == DependencyType.Dev).ToDictionary(d => d.Name, d => d.Version);
-            Distribution = new PackageDistributionView(
-                urlHelper.AbsoluteUri($"{HttpUtility.UrlEncode(package.Name.ToString())}/{package.Version}.tgz").ToString(),
-                package.Shasum,
-                package.Integrity
-            );
-        }
+        Name = package.Name.ToString();
+        Version = package.Version;
+        Description = package.Description;
+        Main = package.Main;
+        Dependencies = package.Dependencies.Where(d => d.Type == DependencyType.Normal).ToDictionary(d => d.Name, d => d.Version);
+        DevDependencies = package.Dependencies.Where(d => d.Type == DependencyType.Dev).ToDictionary(d => d.Name, d => d.Version);
+        Distribution = new PackageDistributionView(
+            urlHelper.AbsoluteUri($"{HttpUtility.UrlEncode(package.Name.ToString())}/{package.Version}.tgz").ToString(),
+            package.Shasum,
+            package.Integrity
+        );
     }
 }

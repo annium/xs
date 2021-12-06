@@ -8,75 +8,74 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 
-namespace Xs.Commands
+namespace Xs.Commands;
+
+internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfiguration>, ILogSubject
 {
-    internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfiguration>, ILogSubject
+    public override string Id => "link";
+    public override string Description => "Link project <-> package dependencies.";
+    public ILogger Logger { get; }
+    private readonly DiscoverProjectsTask _discoverTask;
+
+    public LinkCommand(
+        DiscoverProjectsTask discoverTask,
+        ILogger<UseCommand> logger
+    )
     {
-        public override string Id => "link";
-        public override string Description => "Link project <-> package dependencies.";
-        public ILogger Logger { get; }
-        private readonly DiscoverProjectsTask _discoverTask;
+        _discoverTask = discoverTask;
+        Logger = logger;
+    }
 
-        public LinkCommand(
-            DiscoverProjectsTask discoverTask,
-            ILogger<UseCommand> logger
-        )
+    public override void Handle(
+        LinkCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
+    {
+        discoverCfg.Roots = new[] { cfg.Source };
+        var sources = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        discoverCfg.Roots = new[] { cfg.Target };
+        var targets = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+
+        this.Log().Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
+
+        foreach (var src in sources)
         {
-            _discoverTask = discoverTask;
-            Logger = logger;
-        }
-
-        public override void Handle(
-            LinkCommandConfiguration cfg,
-            DiscoverConfiguration discoverCfg,
-            CancellationToken ct
-        )
-        {
-            discoverCfg.Roots = new[] { cfg.Source };
-            var sources = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
-            discoverCfg.Roots = new[] { cfg.Target };
-            var targets = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
-
-            this.Log().Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
-
-            foreach (var src in sources)
-            {
-                var externalDependencies = src.Packages
-                    .Select(x =>
-                    {
-                        var nameLower = x.Value.Name.ToLowerInvariant();
-
-                        return (package: x, project: targets.FirstOrDefault(t => t.Name.ToLowerInvariant() == nameLower));
-                    })
-                    .Where(x => x.project != null)
-                    .ToList();
-                if (externalDependencies.Count == 0)
-                    continue;
-
-                foreach (var (package, project) in externalDependencies)
+            var externalDependencies = src.Packages
+                .Select(x =>
                 {
-                    // otherwise - it's external and it's reference is converted to project
-                    this.Log().Trace($"Update {src}: replace {package} with {project}.");
+                    var nameLower = x.Value.Name.ToLowerInvariant();
 
-                    src.Packages.Remove(package);
-                    src.Projects.Add(new Dependency<IProject>(package.Type, project));
-                }
+                    return (package: x, project: targets.FirstOrDefault(t => t.Name.ToLowerInvariant() == nameLower));
+                })
+                .Where(x => x.project != null)
+                .ToList();
+            if (externalDependencies.Count == 0)
+                continue;
 
-                this.Log().Debug($"Updated {src}.");
+            foreach (var (package, project) in externalDependencies)
+            {
+                // otherwise - it's external and it's reference is converted to project
+                this.Log().Trace($"Update {src}: replace {package} with {project}.");
 
-                src.Save();
+                src.Packages.Remove(package);
+                src.Projects.Add(new Dependency<IProject>(package.Type, project));
             }
+
+            this.Log().Debug($"Updated {src}.");
+
+            src.Save();
         }
     }
+}
 
-    internal class LinkCommandConfiguration
-    {
-        [Position(1)]
-        [Help("Source projects root, that will receive links.")]
-        public string Source { get; set; } = string.Empty;
+internal class LinkCommandConfiguration
+{
+    [Position(1)]
+    [Help("Source projects root, that will receive links.")]
+    public string Source { get; set; } = string.Empty;
 
-        [Position(2)]
-        [Help("Target projects root, containing projects' source projects' will be linked to.")]
-        public string Target { get; set; } = string.Empty;
-    }
+    [Position(2)]
+    [Help("Target projects root, containing projects' source projects' will be linked to.")]
+    public string Target { get; set; } = string.Empty;
 }

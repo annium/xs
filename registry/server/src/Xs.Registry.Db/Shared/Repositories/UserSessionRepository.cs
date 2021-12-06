@@ -4,66 +4,65 @@ using Annium.Core.Mapper;
 using LinqToDB;
 using NodaTime;
 
-namespace Xs.Registry.Db.Shared
+namespace Xs.Registry.Db.Shared;
+
+internal class UserSessionRepository : IUserSessionRepository
 {
-    internal class UserSessionRepository : IUserSessionRepository
+    private readonly ISharedContext _context;
+
+    private readonly IMapper _mapper;
+
+    public UserSessionRepository(
+        ISharedContext context,
+        IMapper mapper
+    )
     {
-        private readonly ISharedContext _context;
+        _context = context;
+        _mapper = mapper;
+    }
 
-        private readonly IMapper _mapper;
+    public async Task<UserSession> CreateAsync(UserSession userSession)
+    {
+        var entity = _mapper.Map<Entities.UserSession>(userSession);
 
-        public UserSessionRepository(
-            ISharedContext context,
-            IMapper mapper
-        )
-        {
-            _context = context;
-            _mapper = mapper;
-        }
+        await _context.UserSessions
+            .InsertAsync(() => new Entities.UserSession
+            {
+                UserId = entity.UserId,
+                Token = entity.Token,
+                Expires = entity.Expires,
+            });
 
-        public async Task<UserSession> CreateAsync(UserSession userSession)
-        {
-            var entity = _mapper.Map<Entities.UserSession>(userSession);
+        return _mapper.Map<UserSession>(entity);
+    }
 
-            await _context.UserSessions
-                .InsertAsync(() => new Entities.UserSession
-                {
-                    UserId = entity.UserId,
-                        Token = entity.Token,
-                        Expires = entity.Expires,
-                });
+    public async Task<UserSession> FindByTokenAsync(Guid token)
+    {
+        var entity = await _context.UserSessions.FirstOrDefaultAsync(u => u.Token == token);
 
-            return _mapper.Map<UserSession>(entity);
-        }
+        return _mapper.Map<UserSession>(entity);
+    }
 
-        public async Task<UserSession> FindByTokenAsync(Guid token)
-        {
-            var entity = await _context.UserSessions.FirstOrDefaultAsync(u => u.Token == token);
+    public Task ProlongateAsync(Guid token, Instant expires)
+    {
+        var expiresDate = _mapper.Map<DateTime>(expires);
 
-            return _mapper.Map<UserSession>(entity);
-        }
+        return _context.UserSessions
+            .UpdateAsync(
+                s => s.Token == token,
+                s => new Entities.UserSession { Expires = expiresDate }
+            );
+    }
 
-        public Task ProlongateAsync(Guid token, Instant expires)
-        {
-            var expiresDate = _mapper.Map<DateTime>(expires);
+    public Task DeleteByTokenAsync(Guid token)
+    {
+        return _context.UserSessions.DeleteAsync(s => s.Token == token);
+    }
 
-            return _context.UserSessions
-                .UpdateAsync(
-                    s => s.Token == token,
-                    s => new Entities.UserSession { Expires = expiresDate }
-                );
-        }
+    public Task DeleteExpiredAsync(Instant now)
+    {
+        var nowDate = _mapper.Map<DateTime>(now);
 
-        public Task DeleteByTokenAsync(Guid token)
-        {
-            return _context.UserSessions.DeleteAsync(s => s.Token == token);
-        }
-
-        public Task DeleteExpiredAsync(Instant now)
-        {
-            var nowDate = _mapper.Map<DateTime>(now);
-
-            return _context.UserSessions.DeleteAsync(s => s.Expires < nowDate);
-        }
+        return _context.UserSessions.DeleteAsync(s => s.Expires < nowDate);
     }
 }

@@ -7,37 +7,36 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
-namespace Xs.Cli.Dotnet.Projects
+namespace Xs.Cli.Dotnet.Projects;
+
+internal class TestProject : SpecialProject<TestProject>, ITestableProject
 {
-    internal class TestProject : SpecialProject<TestProject>, ITestableProject
+    public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
+
+    public Task TestAsync(Env env, string filter, CancellationToken ct)
     {
-        public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
+        var configuration = env == Env.Development ? "Debug" : "Release";
 
-        public Task TestAsync(Env env, string filter, CancellationToken ct)
+        var cmd = new List<string>()
         {
-            var configuration = env == Env.Development ? "Debug" : "Release";
+            "dotnet test",
+            $"--configuration {configuration}",
+            $"--no-build {File}",
+        };
 
-            var cmd = new List<string>()
+        if (Packages.Any(d => d.Value.Name == ProjectFactory.TestCoveragePackage))
+            cmd.AddRange(new []
             {
-                "dotnet test",
-                $"--configuration {configuration}",
-                $"--no-build {File}",
-            };
+                "/p:CollectCoverage=true",
+                "/p:CoverletOutputFormat=lcov",
+                "/p:CoverletOutput=./lcov",
+                "--",
+                $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)LoggerConfiguration)!.ToLowerInvariant()}"
+            });
 
-            if (Packages.Any(d => d.Value.Name == ProjectFactory.TestCoveragePackage))
-                cmd.AddRange(new []
-                {
-                    "/p:CollectCoverage=true",
-                    "/p:CoverletOutputFormat=lcov",
-                    "/p:CoverletOutput=./lcov",
-                    "--",
-                    $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)LoggerConfiguration)!.ToLowerInvariant()}"
-                });
+        if (!string.IsNullOrWhiteSpace(filter))
+            cmd.Add($"filter={filter}");
 
-            if (!string.IsNullOrWhiteSpace(filter))
-                cmd.Add($"filter={filter}");
-
-            return RunAsync("test", string.Join(' ', cmd), ct);
-        }
+        return RunAsync("test", string.Join(' ', cmd), ct);
     }
 }

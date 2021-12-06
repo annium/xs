@@ -5,21 +5,20 @@ using Annium.Testing;
 using Xs.Registry.Main.Payloads;
 using Xunit;
 
-namespace Xs.Registry.Main.Tests.Conftrollers
+namespace Xs.Registry.Main.Tests.Conftrollers;
+
+public class UserControllerTest : IntegrationTestBase
 {
-    public class UserControllerTest : IntegrationTestBase
+    [Fact]
+    public async Task CreateUser_BadRequest_ReturnsBadRequest()
     {
-        [Fact]
-        public async Task CreateUser_BadRequest_ReturnsBadRequest()
-        {
-            // arrange
-            var p = new UserRegistrationPayload { Name = "user" };
+        // arrange
+        var p = new UserRegistrationPayload { Name = "user" };
 
-            // act
-            var response = await Main.Put("/user").JsonContent(p).RunAsync();
+        // act
+        var response = await Main.Put("/user").JsonContent(p).RunAsync();
 
-            // assert
-            response.StatusCode.IsEqual(HttpStatusCode.BadRequest);
-        }
+        // assert
+        response.StatusCode.IsEqual(HttpStatusCode.BadRequest);
     }
 }

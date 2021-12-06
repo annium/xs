@@ -1,11 +1,10 @@
 using LinqToDB;
 
-namespace Xs.Registry.Db.Node
-{
-    internal interface INodeContext : IContext
-    {
-        ITable<Entities.Package> NodePackages { get; }
+namespace Xs.Registry.Db.Node;
 
-        ITable<Entities.PackageDependency> NodePackageDependencies { get; }
-    }
+internal interface INodeContext : IContext
+{
+    ITable<Entities.Package> NodePackages { get; }
+
+    ITable<Entities.PackageDependency> NodePackageDependencies { get; }
 }

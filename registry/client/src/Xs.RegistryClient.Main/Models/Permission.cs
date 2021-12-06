@@ -1,13 +1,12 @@
 using System;
 
-namespace Xs.RegistryClient.Main.Models
+namespace Xs.RegistryClient.Main.Models;
+
+[Flags]
+public enum Permission
 {
-    [Flags]
-    public enum Permission
-    {
-        None = 0,
-        Read = 1,
-        Publish = 2,
-        Unpublish = 4,
-    }
+    None = 0,
+    Read = 1,
+    Publish = 2,
+    Unpublish = 4,
 }

@@ -4,70 +4,69 @@ using System.Linq;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
-namespace Xs.Cli.Core.Audit
+namespace Xs.Cli.Core.Audit;
+
+public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where TProject : IProject
 {
-    public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where TProject : IProject
+    public string Code => "useless-deps";
+    public string Description => "Finds useless dependencies in projects. Fix deletes useless deps";
+
+    public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
     {
-        public string Code => "useless-deps";
-        public string Description => "Finds useless dependencies in projects. Fix deletes useless deps";
+        var results = new List<AuditResult>();
 
-        public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
+        // check project dependencies
+        foreach (var dependency in project.Projects.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer).ToArray())
         {
-            var results = new List<AuditResult>();
+            var foundDependencies = FindProjectDependenciesDeep(project, p => p.Projects.Contains(dependency));
+            if (foundDependencies.Length == 0)
+                continue;
 
-            // check project dependencies
-            foreach (var dependency in project.Projects.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer).ToArray())
-            {
-                var foundDependencies = FindProjectDependenciesDeep(project, p => p.Projects.Contains(dependency));
-                if (foundDependencies.Length == 0)
-                    continue;
+            if (fix)
+                project.Projects.Remove(dependency);
 
-                if (fix)
-                    project.Projects.Remove(dependency);
-
-                results.Add(new AuditResult(fix,
-                    $"Useless project {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
-                ));
-            }
-
-            // check package dependencies
-            foreach (var dependency in project.Packages.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer).ToArray())
-            {
-                var foundDependencies = FindProjectDependenciesDeep(project, p => p.Packages.Contains(dependency));
-                if (foundDependencies.Length == 0)
-                    continue;
-
-                if (fix)
-                    project.Packages.Remove(dependency);
-
-                results.Add(new AuditResult(fix,
-                    $"Useless package {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
-                ));
-            }
-
-            if (fix && results.Count > 0)
-                project.Save();
-
-            return results;
+            results.Add(new AuditResult(fix,
+                $"Useless project {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
+            ));
         }
 
-        private IProject[] FindProjectDependenciesDeep(IProject project, Func<IProject, bool> isMatch)
+        // check package dependencies
+        foreach (var dependency in project.Packages.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer).ToArray())
         {
-            if (project.Projects.Count == 0)
-                return Array.Empty<IProject>();
+            var foundDependencies = FindProjectDependenciesDeep(project, p => p.Packages.Contains(dependency));
+            if (foundDependencies.Length == 0)
+                continue;
 
-            var matches = new List<IProject>();
-            foreach (var dependency in project.Projects)
-            {
-                if (isMatch(dependency.Value))
-                    matches.Add(dependency.Value);
+            if (fix)
+                project.Packages.Remove(dependency);
 
-                var nestedMatches = FindProjectDependenciesDeep(dependency.Value, isMatch);
-                if (nestedMatches.Length > 0)
-                    matches.AddRange(nestedMatches);
-            }
-
-            return matches.Distinct().ToArray();
+            results.Add(new AuditResult(fix,
+                $"Useless package {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
+            ));
         }
+
+        if (fix && results.Count > 0)
+            project.Save();
+
+        return results;
+    }
+
+    private IProject[] FindProjectDependenciesDeep(IProject project, Func<IProject, bool> isMatch)
+    {
+        if (project.Projects.Count == 0)
+            return Array.Empty<IProject>();
+
+        var matches = new List<IProject>();
+        foreach (var dependency in project.Projects)
+        {
+            if (isMatch(dependency.Value))
+                matches.Add(dependency.Value);
+
+            var nestedMatches = FindProjectDependenciesDeep(dependency.Value, isMatch);
+            if (nestedMatches.Length > 0)
+                matches.AddRange(nestedMatches);
+        }
+
+        return matches.Distinct().ToArray();
     }
 }

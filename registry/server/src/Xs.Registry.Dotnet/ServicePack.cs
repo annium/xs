@@ -1,13 +1,12 @@
 using Annium.Core.DependencyInjection;
 
-namespace Xs.Registry.Dotnet
+namespace Xs.Registry.Dotnet;
+
+internal class ServicePack : ServicePackBase
 {
-    internal class ServicePack : ServicePackBase
+    public ServicePack()
     {
-        public ServicePack()
-        {
-            Add<BaseServicePack>();
-            Add<Db.BaseServicePack>();
-        }
+        Add<BaseServicePack>();
+        Add<Db.BaseServicePack>();
     }
 }

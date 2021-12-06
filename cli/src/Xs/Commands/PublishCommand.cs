@@ -10,81 +10,80 @@ using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Tools;
 
-namespace Xs.Commands
+namespace Xs.Commands;
+
+internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ILogSubject
 {
-    internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ILogSubject
+    public override string Id => "publish";
+    public override string Description => "Publish packages to registry.";
+    public ILogger Logger { get; }
+    private readonly IConfigurationManager _configurationManager;
+    private readonly DiscoverProjectsTask _discoverTask;
+    private readonly ProjectsRunner _runner;
+
+    public PublishCommand(
+        IConfigurationManager configurationManager,
+        DiscoverProjectsTask discoverTask,
+        ProjectsRunner runner,
+        ILogger<PublishCommand> logger
+    )
     {
-        public override string Id => "publish";
-        public override string Description => "Publish packages to registry.";
-        public ILogger Logger { get; }
-        private readonly IConfigurationManager _configurationManager;
-        private readonly DiscoverProjectsTask _discoverTask;
-        private readonly ProjectsRunner _runner;
-
-        public PublishCommand(
-            IConfigurationManager configurationManager,
-            DiscoverProjectsTask discoverTask,
-            ProjectsRunner runner,
-            ILogger<PublishCommand> logger
-        )
-        {
-            _configurationManager = configurationManager;
-            _discoverTask = discoverTask;
-            _runner = runner;
-            Logger = logger;
-        }
-
-        public override async Task HandleAsync(
-            PublishCommandConfiguration cfg,
-            DiscoverConfiguration discoverCfg,
-            CancellationToken ct
-        )
-        {
-            var configuration = _configurationManager.Load(discoverCfg.Root);
-            if (configuration == null)
-                throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
-
-            var projects = _discoverTask.RunAsync(discoverCfg).Await()
-                .FilterMask(cfg.Mask)
-                .OfType<IPublishableProject>()
-                .ToArray();
-
-            if (projects.Length == 0)
-            {
-                this.Log().Info($"No projects found publish.");
-                return;
-            }
-
-            foreach (var project in projects)
-                if (!configuration.Servers.ContainsKey(project.Type))
-                    throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
-
-            this.Log().Debug($"Publish {projects.Length} projects.");
-            await _runner.RunAsync(
-                projects,
-                (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
-                new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
-                ct
-            );
-        }
+        _configurationManager = configurationManager;
+        _discoverTask = discoverTask;
+        _runner = runner;
+        Logger = logger;
     }
 
-    internal class PublishCommandConfiguration
+    public override async Task HandleAsync(
+        PublishCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
     {
-        [Position(1)]
-        [Help("Projects mask.")]
-        public string Mask { get; set; } = string.Empty;
+        var configuration = _configurationManager.Load(discoverCfg.Root);
+        if (configuration == null)
+            throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
-        [Position(2)]
-        [Help("Version to publish.")]
-        public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
+        var projects = _discoverTask.RunAsync(discoverCfg).Await()
+            .FilterMask(cfg.Mask)
+            .OfType<IPublishableProject>()
+            .ToArray();
 
-        [Option("d")]
-        [Help("Publish dependencies.")]
-        public bool Deep { get; set; }
+        if (projects.Length == 0)
+        {
+            this.Log().Info($"No projects found publish.");
+            return;
+        }
 
-        [Option("p")]
-        [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
-        public int Parallelism { get; set; }
+        foreach (var project in projects)
+            if (!configuration.Servers.ContainsKey(project.Type))
+                throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
+
+        this.Log().Debug($"Publish {projects.Length} projects.");
+        await _runner.RunAsync(
+            projects,
+            (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
+            new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
+            ct
+        );
     }
+}
+
+internal class PublishCommandConfiguration
+{
+    [Position(1)]
+    [Help("Projects mask.")]
+    public string Mask { get; set; } = string.Empty;
+
+    [Position(2)]
+    [Help("Version to publish.")]
+    public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
+
+    [Option("d")]
+    [Help("Publish dependencies.")]
+    public bool Deep { get; set; }
+
+    [Option("p")]
+    [Help("Degree of parallelism. Default - all available tasks are run in parallel")]
+    public int Parallelism { get; set; }
 }

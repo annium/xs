@@ -1,24 +1,23 @@
 using System.Collections.Generic;
 using Xs.Cli.Core.Models;
 
-namespace Xs.Cli.Core.Projects
+namespace Xs.Cli.Core.Projects;
+
+public interface IProject : IReference
 {
-    public interface IProject : IReference
-    {
-        string Description { get; }
-        string Directory { get; }
-        string File { get; }
-        HashSet<Dependency<IProject>> Projects { get; }
-        HashSet<Dependency<Package>> Packages { get; }
+    string Description { get; }
+    string Directory { get; }
+    string File { get; }
+    HashSet<Dependency<IProject>> Projects { get; }
+    HashSet<Dependency<Package>> Packages { get; }
 
-        void SetDirectory(string directory);
+    void SetDirectory(string directory);
 
-        void SetName(string name);
+    void SetName(string name);
 
-        void SetVersion(Version version);
+    void SetVersion(Version version);
 
-        bool IsRelated(string path);
+    bool IsRelated(string path);
 
-        void Save();
-    }
+    void Save();
 }

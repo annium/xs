@@ -6,24 +6,23 @@ using Xs.Cli.Core.Tools;
 using Xs.Cli.Node.Projects;
 using Xs.Cli.Node.Tools;
 
-namespace Xs.Cli.Node
+namespace Xs.Cli.Node;
+
+public class ServicePack : ServicePackBase
 {
-    public class ServicePack : ServicePackBase
+    public override void Register(IServiceContainer container, IServiceProvider provider)
     {
-        public override void Register(IServiceContainer container, IServiceProvider provider)
-        {
-            // projects
-            container.Add<ISpecialProjectFactory, ProjectFactory>().Singleton();
-            container.Add<ISpecialProjectLinker, ProjectLinker>().Singleton();
-            container.Add<ProjectMapper>().AsSelf().Singleton();
-            container.Add<IDependencyManager, DependencyManager>().Singleton();
+        // projects
+        container.Add<ISpecialProjectFactory, ProjectFactory>().Singleton();
+        container.Add<ISpecialProjectLinker, ProjectLinker>().Singleton();
+        container.Add<ProjectMapper>().AsSelf().Singleton();
+        container.Add<IDependencyManager, DependencyManager>().Singleton();
 
-            // tools
-            container.Add<ISpecialConfigurationManager, SpecialConfigurationManager>().Singleton();
+        // tools
+        container.Add<ISpecialConfigurationManager, SpecialConfigurationManager>().Singleton();
 
-            // audit rules
-            container.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
-            container.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
-        }
+        // audit rules
+        container.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
+        container.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
     }
 }

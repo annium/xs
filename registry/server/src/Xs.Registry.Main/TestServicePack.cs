@@ -4,30 +4,29 @@ using Annium.Core.DependencyInjection;
 using Xs.Registry.Db;
 using Xs.Registry.Db.Shared;
 
-namespace Xs.Registry.Main
+namespace Xs.Registry.Main;
+
+public class TestServicePack : ServicePackBase
 {
-    public class TestServicePack : ServicePackBase
+    public TestServicePack()
     {
-        public TestServicePack()
+        Add<BaseServicePack>();
+        Add<TestBaseServicePack>();
+    }
+
+    public override void Configure(IServiceContainer container)
+    {
+        var serversCfg = new[]
         {
-            Add<BaseServicePack>();
-            Add<TestBaseServicePack>();
-        }
+            ("dotnet", "http://localhost:9902"),
+            ("node", "http://localhost:9903")
+        };
 
-        public override void Configure(IServiceContainer container)
-        {
-            var serversCfg = new[]
-            {
-                ("dotnet", "http://localhost:9902"),
-                ("node", "http://localhost:9903")
-            };
+        var servers = new Dictionary<ProjectType, Uri>();
+        foreach (var (type, location) in serversCfg)
+            servers[ProjectType.Register(type)] = new Uri(location);
+        var configuration = new Configuration { Servers = servers };
 
-            var servers = new Dictionary<ProjectType, Uri>();
-            foreach (var (type, location) in serversCfg)
-                servers[ProjectType.Register(type)] = new Uri(location);
-            var configuration = new Configuration { Servers = servers };
-
-            container.Add(configuration).AsSelf().Singleton();
-        }
+        container.Add(configuration).AsSelf().Singleton();
     }
 }

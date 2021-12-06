@@ -1,26 +1,25 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Xs.Registry.Dotnet.Views
+namespace Xs.Registry.Dotnet.Views;
+
+internal class RegistrationLeafView
 {
-    internal class RegistrationLeafView
+    [JsonProperty("@id")]
+    public Uri Id { get; }
+
+    public CatalogEntryView CatalogEntry { get; }
+
+    public Uri PackageContent { get; }
+
+    public RegistrationLeafView(
+        Uri id,
+        CatalogEntryView catalogEntry,
+        Uri packageContent
+    )
     {
-        [JsonProperty("@id")]
-        public Uri Id { get; }
-
-        public CatalogEntryView CatalogEntry { get; }
-
-        public Uri PackageContent { get; }
-
-        public RegistrationLeafView(
-            Uri id,
-            CatalogEntryView catalogEntry,
-            Uri packageContent
-        )
-        {
-            Id = id;
-            CatalogEntry = catalogEntry;
-            PackageContent = packageContent;
-        }
+        Id = id;
+        CatalogEntry = catalogEntry;
+        PackageContent = packageContent;
     }
 }

@@ -7,38 +7,37 @@ using NodaTime;
 using Xs.Registry.Abstract.Packages;
 using Xs.Registry.Node.Models;
 
-namespace Xs.Registry.Node.Payloads
+namespace Xs.Registry.Node.Payloads;
+
+public class PackagePayload : IPayload
 {
-    public class PackagePayload : IPayload
-    {
-        [Required]
-        [StringLength(100, MinimumLength = 2)]
-        public string Name { get; set; }
+    [Required]
+    [StringLength(100, MinimumLength = 2)]
+    public string Name { get; set; }
 
-        public PackageName PackageName => PackageName.Parse(Name);
+    public PackageName PackageName => PackageName.Parse(Name);
 
-        [JsonIgnore]
-        public string Version => DistributionTags?.ContainsKey("latest") ?? false ? DistributionTags["latest"] : "";
+    [JsonIgnore]
+    public string Version => DistributionTags?.ContainsKey("latest") ?? false ? DistributionTags["latest"] : "";
 
-        [Required]
-        [StringLength(1000, MinimumLength = 20)]
-        public string Description { get; set; }
+    [Required]
+    [StringLength(1000, MinimumLength = 20)]
+    public string Description { get; set; }
 
-        [Required]
-        [JsonProperty("dist-tags")]
-        public Dictionary<string, string> DistributionTags { get; set; }
+    [Required]
+    [JsonProperty("dist-tags")]
+    public Dictionary<string, string> DistributionTags { get; set; }
 
-        [Required]
-        public Dictionary<string, PackageVersionPayload> Versions { get; set; }
+    [Required]
+    public Dictionary<string, PackageVersionPayload> Versions { get; set; }
 
-        [Required]
-        [JsonProperty("_attachments")]
-        public Dictionary<string, PackageAttachmentPayload> Attachments { get; set; }
+    [Required]
+    [JsonProperty("_attachments")]
+    public Dictionary<string, PackageAttachmentPayload> Attachments { get; set; }
 
-        public Stream Stream =>
-            new MemoryStream(Convert.FromBase64String(Attachments[$"{Name}-{Version}.tgz"].Data));
+    public Stream Stream =>
+        new MemoryStream(Convert.FromBase64String(Attachments[$"{Name}-{Version}.tgz"].Data));
 
-        [JsonIgnore]
-        public Instant Published { get; set; }
-    }
+    [JsonIgnore]
+    public Instant Published { get; set; }
 }

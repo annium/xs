@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Xs.Registry.Node.Payloads
-{
-    public class PackageDistributionPayload
-    {
-        [Required]
-        public string Shasum { get; set; }
+namespace Xs.Registry.Node.Payloads;
 
-        [Required]
-        public string Integrity { get; set; }
-    }
+public class PackageDistributionPayload
+{
+    [Required]
+    public string Shasum { get; set; }
+
+    [Required]
+    public string Integrity { get; set; }
 }

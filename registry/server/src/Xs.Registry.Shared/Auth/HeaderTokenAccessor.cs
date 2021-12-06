@@ -3,28 +3,27 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Xs.Registry.Shared.Auth
+namespace Xs.Registry.Shared.Auth;
+
+public class HeaderTokenAccessor : ITokenAccessor
 {
-    public class HeaderTokenAccessor : ITokenAccessor
+    private readonly string _header;
+
+    public HeaderTokenAccessor(string header)
     {
-        private readonly string _header;
+        _header = header;
+    }
 
-        public HeaderTokenAccessor(string header)
-        {
-            _header = header;
-        }
+    public ValueTuple<Guid, IActionResult> GetToken(HttpRequest request)
+    {
+        if (!request.Headers.ContainsKey(_header))
+            return Fail(HttpStatusCode.Unauthorized, $"Authorization with '{_header}' header required.");
 
-        public ValueTuple<Guid, IActionResult> GetToken(HttpRequest request)
-        {
-            if (!request.Headers.ContainsKey(_header))
-                return Fail(HttpStatusCode.Unauthorized, $"Authorization with '{_header}' header required.");
+        return Guid.TryParse(request.Headers[_header].ToString(), out var token) ?
+            (token, null) :
+            Fail(HttpStatusCode.Forbidden, "Invalid token passed");
 
-            return Guid.TryParse(request.Headers[_header].ToString(), out var token) ?
-                (token, null) :
-                Fail(HttpStatusCode.Forbidden, "Invalid token passed");
-
-            (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
-                (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
-        }
+        (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
+            (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
     }
 }

@@ -1,12 +1,11 @@
 using Annium.Core.Mapper;
 
-namespace Xs.Registry.Db.Shared.Profiles
+namespace Xs.Registry.Db.Shared.Profiles;
+
+public class ProjectTypeProfile : Profile
 {
-    public class ProjectTypeProfile : Profile
+    public ProjectTypeProfile()
     {
-        public ProjectTypeProfile()
-        {
-            Map<string, ProjectType>(x => ProjectType.Register(x));
-        }
+        Map<string, ProjectType>(x => ProjectType.Register(x));
     }
 }

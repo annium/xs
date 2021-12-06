@@ -1,16 +1,15 @@
 using Xs.Registry.Db.Shared;
 
-namespace Xs.Registry.Node
-{
-    internal static class Constants
-    {
-        public static readonly ProjectType ProjectType;
+namespace Xs.Registry.Node;
 
-        static Constants()
-        {
-            var type = "node";
-            ProjectType.Register(type);
-            ProjectType = ProjectType.Get(type);
-        }
+internal static class Constants
+{
+    public static readonly ProjectType ProjectType;
+
+    static Constants()
+    {
+        var type = "node";
+        ProjectType.Register(type);
+        ProjectType = ProjectType.Get(type);
     }
 }

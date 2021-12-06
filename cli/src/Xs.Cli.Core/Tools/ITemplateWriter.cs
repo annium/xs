@@ -1,17 +1,16 @@
-namespace Xs.Cli.Core.Tools
+namespace Xs.Cli.Core.Tools;
+
+public interface ITemplateWriter
 {
-    public interface ITemplateWriter
-    {
-        void SetRoot(string root);
+    void SetRoot(string root);
 
-        void AddExtensions(params string[] extensions);
+    void AddExtensions(params string[] extensions);
 
-        void LoadResources(string prefix);
+    void LoadResources(string prefix);
 
-        void Write(string resourceName, string fileName, object data);
+    void Write(string resourceName, string fileName, object data);
 
-        void WriteAll(object data);
+    void WriteAll(object data);
 
-        void EnsureAllWritten();
-    }
+    void EnsureAllWritten();
 }

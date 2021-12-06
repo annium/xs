@@ -1,14 +1,13 @@
-namespace Xs.Cli.Dotnet.Commands
-{
-    public class Group : Annium.Extensions.Arguments.Group
-    {
-        public override string Id { get; } = Constants.ProjectType.ToString();
-        public override string Description { get; } = $"{Constants.ProjectType} specific commands.";
+namespace Xs.Cli.Dotnet.Commands;
 
-        public Group()
-        {
-            Add<New.Group>();
-            Add<SlnCommand>();
-        }
+public class Group : Annium.Extensions.Arguments.Group
+{
+    public override string Id { get; } = Constants.ProjectType.ToString();
+    public override string Description { get; } = $"{Constants.ProjectType} specific commands.";
+
+    public Group()
+    {
+        Add<New.Group>();
+        Add<SlnCommand>();
     }
 }

@@ -1,13 +1,12 @@
 using System;
 using Annium.Core.DependencyInjection;
 
-namespace Xs.Registry.Db
+namespace Xs.Registry.Db;
+
+public class TestBaseServicePack : ServicePackBase
 {
-    public class TestBaseServicePack : ServicePackBase
+    public override void Register(IServiceContainer container, IServiceProvider provider)
     {
-        public override void Register(IServiceContainer container, IServiceProvider provider)
-        {
-            container.AddEntityFrameworkSqliteInMemory<Context>();
-        }
+        container.AddEntityFrameworkSqliteInMemory<Context>();
     }
 }

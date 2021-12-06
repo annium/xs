@@ -1,8 +1,7 @@
-namespace Xs.RegistryClient.Main.Models
+namespace Xs.RegistryClient.Main.Models;
+
+public enum PermissionCategory
 {
-    public enum PermissionCategory
-    {
-        Owner,
-        World
-    }
+    Owner,
+    World
 }

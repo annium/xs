@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Xs.Registry.Node.Payloads
+namespace Xs.Registry.Node.Payloads;
+
+public class PackageAttachmentPayload
 {
-    public class PackageAttachmentPayload
-    {
-        [Required]
-        public string Data { get; set; }
-    }
+    [Required]
+    public string Data { get; set; }
 }

@@ -1,8 +1,7 @@
-namespace Xs.Cli.Dotnet.Models
+namespace Xs.Cli.Dotnet.Models;
+
+internal enum OutputType
 {
-    internal enum OutputType
-    {
-        Exe,
-        Library,
-    }
+    Exe,
+    Library,
 }

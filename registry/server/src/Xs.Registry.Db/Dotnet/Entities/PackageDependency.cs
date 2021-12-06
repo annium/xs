@@ -3,21 +3,20 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Xs.Registry.Db.Shared.Entities;
 
-namespace Xs.Registry.Db.Dotnet.Entities
+namespace Xs.Registry.Db.Dotnet.Entities;
+
+[Table("DotnetPackageDependencies")]
+internal class PackageDependency : IPackageDependency
 {
-    [Table("DotnetPackageDependencies")]
-    internal class PackageDependency : IPackageDependency
-    {
-        [Required]
-        public Guid PackageId { get; set; }
+    [Required]
+    public Guid PackageId { get; set; }
 
-        [Required]
-        public string Framework { get; set; }
+    [Required]
+    public string Framework { get; set; }
 
-        [Required]
-        public string Name { get; set; }
+    [Required]
+    public string Name { get; set; }
 
-        [Required]
-        public string Version { get; set; }
-    }
+    [Required]
+    public string Version { get; set; }
 }

@@ -1,8 +1,7 @@
-namespace Xs.Cli.Core.Models
+namespace Xs.Cli.Core.Models;
+
+public enum Env
 {
-    public enum Env
-    {
-        Development,
-        Production
-    }
+    Development,
+    Production
 }

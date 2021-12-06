@@ -2,12 +2,11 @@ using System.Runtime.Serialization;
 using Annium.Core.Runtime.Types;
 using Xs.Cli.Core.Models;
 
-namespace Xs.Cli.Core.Tools
+namespace Xs.Cli.Core.Tools;
+
+public abstract class SpecialConfiguration
 {
-    public abstract class SpecialConfiguration
-    {
-        [ResolutionKey]
-        [DataMember(Order = 0)]
-        public ProjectType Type { get; protected set; } = null!;
-    }
+    [ResolutionKey]
+    [DataMember(Order = 0)]
+    public ProjectType Type { get; protected set; } = null!;
 }

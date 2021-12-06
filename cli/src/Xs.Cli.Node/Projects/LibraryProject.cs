@@ -6,66 +6,65 @@ using System.Threading.Tasks;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
-namespace Xs.Cli.Node.Projects
+namespace Xs.Cli.Node.Projects;
+
+internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProject
 {
-    internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProject
+    public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context)
     {
-        public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context)
+    }
+
+    public async Task<string> PackAsync(Core.Models.Version version, CancellationToken ct)
+    {
+        await InstallAsync(false, ct);
+        await BuildAsync(Env.Production, true, ct);
+
+        var fileName = $"{Name}-{version}.tgz";
+        if (Name.StartsWith('@'))
         {
+            var parts = Name.Substring(1).Split('/');
+            fileName = $"{parts[0]}-{parts[1]}-{version}.tgz";
         }
 
-        public async Task<string> PackAsync(Core.Models.Version version, CancellationToken ct)
+        var file = Path.Combine(Directory, fileName);
+        if (System.IO.File.Exists(file))
+            System.IO.File.Delete(file);
+
+        // for NPM, project dependencies are not swapped with package dependencies when packaged, so need to do that manually
+        var projectDependencies = Projects.ToArray();
+        try
         {
-            await InstallAsync(false, ct);
-            await BuildAsync(Env.Production, true, ct);
+            SetVersion(version);
+            Projects.Clear();
+            foreach (var (type, dependency) in projectDependencies)
+                Packages.Add(new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version)));
 
-            var fileName = $"{Name}-{version}.tgz";
-            if (Name.StartsWith('@'))
+            Save();
+
+            await RunAsync("pack", $"npm pack {Directory}", ct);
+        }
+        finally
+        {
+            foreach (var dependency in projectDependencies)
             {
-                var parts = Name.Substring(1).Split('/');
-                fileName = $"{parts[0]}-{parts[1]}-{version}.tgz";
+                Projects.Add(dependency);
+                Packages.RemoveWhere(d => d.Type == dependency.Type && d.Value.Name == dependency.Value.Name);
             }
 
-            var file = Path.Combine(Directory, fileName);
-            if (System.IO.File.Exists(file))
-                System.IO.File.Delete(file);
-
-            // for NPM, project dependencies are not swapped with package dependencies when packaged, so need to do that manually
-            var projectDependencies = Projects.ToArray();
-            try
-            {
-                SetVersion(version);
-                Projects.Clear();
-                foreach (var (type, dependency) in projectDependencies)
-                    Packages.Add(new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version)));
-
-                Save();
-
-                await RunAsync("pack", $"npm pack {Directory}", ct);
-            }
-            finally
-            {
-                foreach (var dependency in projectDependencies)
-                {
-                    Projects.Add(dependency);
-                    Packages.RemoveWhere(d => d.Type == dependency.Type && d.Value.Name == dependency.Value.Name);
-                }
-
-                Save();
-            }
-
-            return file;
+            Save();
         }
 
-        public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken ct)
-        {
-            var packageFile = await PackAsync(version, ct);
+        return file;
+    }
 
-            // due to NPM limitations, basically allowing single registry per scope, registry here is missing
-            // instead, registry is specified in .npmrc
-            await RunAsync("publish", $"npm publish {packageFile}", ct);
+    public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken ct)
+    {
+        var packageFile = await PackAsync(version, ct);
 
-            System.IO.File.Delete(packageFile);
-        }
+        // due to NPM limitations, basically allowing single registry per scope, registry here is missing
+        // instead, registry is specified in .npmrc
+        await RunAsync("publish", $"npm publish {packageFile}", ct);
+
+        System.IO.File.Delete(packageFile);
     }
 }

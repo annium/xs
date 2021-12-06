@@ -1,11 +1,10 @@
-namespace Xs.Registry.Abstract.Packages
+namespace Xs.Registry.Abstract.Packages;
+
+public enum PackageStatus
 {
-    public enum PackageStatus
-    {
-        Ok,
-        NotFound,
-        Forbidden,
-        Conflict,
-        InternalError,
-    }
+    Ok,
+    NotFound,
+    Forbidden,
+    Conflict,
+    InternalError,
 }

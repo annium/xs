@@ -9,62 +9,61 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization.TypeInspectors;
 
-namespace Xs.Cli.Core.Helpers
+namespace Xs.Cli.Core.Helpers;
+
+public static class Yaml
 {
-    public static class Yaml
+    public static readonly ISerializer Serializer = new SerializerBuilder()
+        .WithNamingConvention(UnderscoredNamingConvention.Instance)
+        .WithTypeInspector(inner => new DataContractTypeInspector(inner))
+        .WithTypeConverter(new ProjectTypeTypeConverter())
+        .WithTypeConverter(new UriTypeConverter())
+        .Build();
+}
+
+internal class DataContractTypeInspector : TypeInspectorSkeleton
+{
+    private readonly ITypeInspector _innerTypeInspector;
+
+    public DataContractTypeInspector(ITypeInspector innerTypeInspector)
     {
-        public static readonly ISerializer Serializer = new SerializerBuilder()
-            .WithNamingConvention(UnderscoredNamingConvention.Instance)
-            .WithTypeInspector(inner => new DataContractTypeInspector(inner))
-            .WithTypeConverter(new ProjectTypeTypeConverter())
-            .WithTypeConverter(new UriTypeConverter())
-            .Build();
+        _innerTypeInspector = innerTypeInspector;
     }
 
-    internal class DataContractTypeInspector : TypeInspectorSkeleton
+    public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
     {
-        private readonly ITypeInspector _innerTypeInspector;
+        var properties = _innerTypeInspector.GetProperties(type, container);
 
-        public DataContractTypeInspector(ITypeInspector innerTypeInspector)
-        {
-            _innerTypeInspector = innerTypeInspector;
-        }
-
-        public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
-        {
-            var properties = _innerTypeInspector.GetProperties(type, container);
-
-            return properties
-                .OrderBy(p => p.GetCustomAttribute<DataMemberAttribute>()?.Order ?? int.MaxValue)
-                .ThenBy(x => x.Name);
-        }
+        return properties
+            .OrderBy(p => p.GetCustomAttribute<DataMemberAttribute>()?.Order ?? int.MaxValue)
+            .ThenBy(x => x.Name);
     }
+}
 
-    internal class UriTypeConverter : IYamlTypeConverter
+internal class UriTypeConverter : IYamlTypeConverter
+{
+    public bool Accepts(Type type) => type == typeof(Uri);
+
+    public object ReadYaml(IParser parser, Type type) =>
+        throw new NotImplementedException();
+
+    public void WriteYaml(IEmitter emitter, object? value, Type type)
     {
-        public bool Accepts(Type type) => type == typeof(Uri);
-
-        public object ReadYaml(IParser parser, Type type) =>
-            throw new NotImplementedException();
-
-        public void WriteYaml(IEmitter emitter, object? value, Type type)
-        {
-            var @event = new Scalar(null, null, ((Uri) value!).ToString(), ScalarStyle.Any, true, false);
-            emitter.Emit(@event);
-        }
+        var @event = new Scalar(null, null, ((Uri) value!).ToString(), ScalarStyle.Any, true, false);
+        emitter.Emit(@event);
     }
+}
 
-    internal class ProjectTypeTypeConverter : IYamlTypeConverter
+internal class ProjectTypeTypeConverter : IYamlTypeConverter
+{
+    public bool Accepts(Type type) => type == typeof(ProjectType);
+
+    public object ReadYaml(IParser parser, Type type) =>
+        throw new NotImplementedException();
+
+    public void WriteYaml(IEmitter emitter, object? value, Type type)
     {
-        public bool Accepts(Type type) => type == typeof(ProjectType);
-
-        public object ReadYaml(IParser parser, Type type) =>
-            throw new NotImplementedException();
-
-        public void WriteYaml(IEmitter emitter, object? value, Type type)
-        {
-            var @event = new Scalar(null, null, ((ProjectType) value!).ToString(), ScalarStyle.Any, true, false);
-            emitter.Emit(@event);
-        }
+        var @event = new Scalar(null, null, ((ProjectType) value!).ToString(), ScalarStyle.Any, true, false);
+        emitter.Emit(@event);
     }
 }

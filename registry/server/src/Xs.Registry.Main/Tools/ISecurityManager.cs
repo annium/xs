@@ -1,7 +1,6 @@
-namespace Xs.Registry.Main.Tools
+namespace Xs.Registry.Main.Tools;
+
+public interface ISecurityManager
 {
-    public interface ISecurityManager
-    {
-        string Hash(string data);
-    }
+    string Hash(string data);
 }

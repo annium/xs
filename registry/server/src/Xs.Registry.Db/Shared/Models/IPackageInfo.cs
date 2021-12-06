@@ -1,15 +1,14 @@
 using NodaTime;
 
-namespace Xs.Registry.Db.Shared
+namespace Xs.Registry.Db.Shared;
+
+public interface IPackageInfo
 {
-    public interface IPackageInfo
-    {
-        string Name { get; }
+    string Name { get; }
 
-        string Version { get; }
+    string Version { get; }
 
-        string Description { get; }
+    string Description { get; }
 
-        Instant Published { get; }
-    }
+    Instant Published { get; }
 }

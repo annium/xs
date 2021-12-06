@@ -1,17 +1,16 @@
 using Xs.Cli.Core.Models;
 
-namespace Xs.Cli.Core
+namespace Xs.Cli.Core;
+
+internal static class Constants
 {
-    internal static class Constants
+    public static readonly ProjectType MockProjectType;
+
+    internal const string MockProjectTypeString = "mock";
+
+    static Constants()
     {
-        public static readonly ProjectType MockProjectType;
-
-        internal const string MockProjectTypeString = "mock";
-
-        static Constants()
-        {
-            ProjectType.Register(MockProjectTypeString);
-            MockProjectType = ProjectType.Get(MockProjectTypeString);
-        }
+        ProjectType.Register(MockProjectTypeString);
+        MockProjectType = ProjectType.Get(MockProjectTypeString);
     }
 }

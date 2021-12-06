@@ -1,9 +1,8 @@
 using LinqToDB.Data;
 
-namespace Xs.Registry.Db
+namespace Xs.Registry.Db;
+
+internal interface IContext
 {
-    internal interface IContext
-    {
-        DataConnection GetDataConnection();
-    }
+    DataConnection GetDataConnection();
 }
