@@ -1,19 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace {{name}}.Controllers
+
+[Route("/")]
+public class IndexController : ControllerBase
 {
-    [Route("/")]
-    public class IndexController : ControllerBase
+    public IndexController()
     {
-        public IndexController()
-        {
 
-        }
+    }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return Ok("Hello World from {{name}}");
-        }
+    [HttpGet]
+    public IActionResult Index()
+    {
+        return Ok("Hello World from {{name}}");
     }
 }

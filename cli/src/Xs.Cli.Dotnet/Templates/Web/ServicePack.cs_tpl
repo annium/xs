@@ -3,22 +3,31 @@ using Annium.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace {{name}}
+
+internal class ServicePack : ServicePackBase
 {
-    internal class ServicePack : ServicePackBase
+    public override void Configure(IServiceContainer container)
     {
-        public override void Configure(IServiceCollection services)
-        {
-            // register configurations
-        }
+        container.AddRuntimeTools(GetType().Assembly, true);
+        container.AddMapper();
+    }
 
-        public override void Register(IServiceCollection services, IServiceProvider provider)
-        {
-            // register and setup services
-        }
+    public override void Register(IServiceContainer` container, IServiceProvider provider)
+    {
+        container.AddTime().WithManagedTime().WithRealTime().SetDefault();
+        container.AddJsonSerializers().SetDefault();
+        container.AddLogging(route =>
+            route.UseConsole()
+        );
 
-        public override void Setup(IServiceProvider provider)
-        {
-            // setup post-configured services
-        }
+        // server
+        container.Collection.AddCors();
+        container.Collection.AddControllers()
+            .AddDefaultJsonOptions();
+    }
+
+    public override void Setup(IServiceProvider provider)
+    {
+        // setup post-configured services
     }
 }
