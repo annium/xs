@@ -1,36 +1,17 @@
-﻿using System;
-using System.IO;
-using Annium.Core.DependencyInjection;
+﻿using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using {{ name }};
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseServiceProviderFactory(new ServiceProviderFactory(b => b.UseServicePack<ServicePack>()));
-builder.WebHost.ConfigureLogging(logging => logging.ConfigureLoggingBridge());
-builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
-builder.WebHost.UseKestrel(server =>
-{
-    server.AddServerHeader = false;
-    server.ListenAnyIP(5000, listen =>
-    {
-        var certFile = Path.GetFullPath(Path.Combine("certs", "cert.pfx"));
-        if (File.Exists(certFile))
-            listen.UseHttps(certFile);
-    });
-});
-
+builder.Host.UseServicePack<ServicePack>();
+builder.Logging.ConfigureLoggingBridge();
+builder.WebHost.UseKestrelDefaults();
 
 var app = builder.Build();
 
 app.UseExceptionMiddleware();
 app.UseRouting();
-app.UseCors(builder => builder
-    .SetIsOriginAllowed(o => true)
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .AllowCredentials()
-    .SetPreflightMaxAge(TimeSpan.FromDays(7)));
+app.UseCorsDefaults();
 app.UseRequestLocalization("en", "ru");
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 
