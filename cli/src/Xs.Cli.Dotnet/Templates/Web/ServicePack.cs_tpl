@@ -16,9 +16,7 @@ internal class ServicePack : ServicePackBase
     {
         container.AddTime().WithManagedTime().WithRealTime().SetDefault();
         container.AddJsonSerializers().SetDefault();
-        container.AddLogging(route =>
-            route.UseConsole()
-        );
+        container.AddLogging();
 
         // server
         container.Collection.AddCors();
@@ -28,6 +26,8 @@ internal class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        // setup post-configured services
+        container.UseLogging(route =>
+            route.UseConsole()
+        );
     }
 }
