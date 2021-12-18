@@ -27,6 +27,11 @@ public class ServicePack : ServicePackBase
         container.AddHttpRequestFactory().SetDefault();
         container.AddMediator();
 
-        container.AddLogging(route => route.UseConsole());
+        container.AddLogging();
+    }
+
+    public override void Setup(IServiceProvider provider)
+    {
+        provider.UseLogging(route => route.UseConsole());
     }
 }

@@ -30,9 +30,7 @@ public class ServicePack : ServicePackBase
             )
             .SetDefault();
         container.AddHttpRequestFactory().SetDefault();
-        container.AddLogging(route => route
-            .For(BuildLogFilter(provider.Resolve<LoggerConfiguration>()))
-            .UseConsole());
+        container.AddLogging();
         container.AddShell();
 
         // projects
@@ -43,6 +41,14 @@ public class ServicePack : ServicePackBase
 
         // tools
         container.Add<ITemplateWriter, TemplateWriter>().Transient();
+    }
+
+    public override void Setup(IServiceProvider provider)
+    {
+        provider.UseLogging(route => route
+            .For(BuildLogFilter(provider.Resolve<LoggerConfiguration>()))
+            .UseConsole()
+        );
     }
 
     private void RegisterTasks(IServiceContainer container)
