@@ -1,0 +1,6 @@
+namespace {{name}}.Pages;
+
+public static class Routes
+{
+    public static readonly string Home = "/";
+}

@@ -1,28 +1,35 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Annium.Net.Http;
-using BlazorStyled;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace {{name}}
-{
-    public class ServicePack : ServicePackBase
-    {
-        public override void Register(IServiceCollection services, IServiceProvider provider)
-        {
-            services.AddRuntimeTools(GetType().Assembly);
-            services.AddMapper();
-            services.AddHttpRequestFactory();
-            services.AddTransient<Func<IHttpRequest>>(sp =>
-            {
-                var factory = sp.Resolve<IHttpRequestFactory>();
-                var env = sp.Resolve<IWebAssemblyHostEnvironment>();
-                var request = factory.New(env.BaseAddress);
+namespace {{name}};
 
-                return () => request.Clone();
-            });
-            services.AddBlazorStyled();
-        }
+public class ServicePack : ServicePackBase
+{
+    public override void Register(IServiceContainer container, IServiceProvider provider)
+    {
+        // core
+        container.AddRuntimeTools(GetType().Assembly, false);
+        container.AddTime().WithRealTime().SetDefault();
+        container.AddLogging();
+        container.AddMapper();
+        container.AddHttpRequestFactory();
+        container.AddJsonSerializers()
+            .Configure(opts => opts.ConfigureForOperations().ConfigureForNodaTime())
+            .SetDefault();
+
+        // web
+        container.AddRouting();
+        container.AddHostHttpRequestFactory();
+        container.AddApiServices();
+        container.AddStorages();
+        container.AddComponentFormStateFactory();
+        container.AddCss();
+        container.Collection.AddAntDesign();
+    }
+
+    public override void Setup(IServiceProvider provider)
+    {
+        provider.UseLogging(route => route.UseConsole((m, msg) => $"{m.Type}#{m.Line} >> {msg}"));
     }
 }
