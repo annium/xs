@@ -1,64 +1,54 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
-using Annium.Extensions.Arguments;
 using Annium.Core.Entrypoint;
+using Annium.Extensions.Arguments;
+using Xs.Cli.Node;
+using Group = Xs.Commands.Group;
 
-namespace Xs;
+await using var entry = Entrypoint.Default
+    .UseServicePack<Xs.ServicePack>()
+    .UseServicePack<Xs.RegistryClient.Main.ServicePack>()
+    .UseServicePack<Xs.RegistryClient.Server.ServicePack>()
+    .UseServicePack<Xs.Cli.Core.ServicePack>()
+    .UseServicePack<Xs.Cli.Dotnet.ServicePack>()
+    .UseServicePack<ServicePack>()
+    .Setup();
 
-public class Program
+var (provider, ct) = entry;
+var verbose = args.Contains("--verbose");
+
+try
 {
-    private static void Run(
-        IServiceProvider provider,
-        string[] args,
-        CancellationToken ct
-    )
-    {
-        var verbose = args.Contains("--verbose");
+    Commander.Run<Group>(provider, args, ct);
+}
+catch (AggregateException exception)
+{
+    LogAggregateException(exception);
+}
+catch (Exception exception)
+{
+    LogException(exception);
+}
 
-        try
-        {
-            Commander.Run<Commands.Group>(provider, args, ct);
-        }
-        catch (AggregateException exception)
-        {
-            LogAggregateException(exception, verbose);
-        }
-        catch (Exception exception)
-        {
-            LogException(exception, verbose);
-        }
-    }
+void LogAggregateException(AggregateException aggregateException)
+{
+    var color = Console.ForegroundColor;
+    Console.ForegroundColor = ConsoleColor.Red;
 
-    private static void LogAggregateException(AggregateException aggregateException, bool verbose)
-    {
-        var color = Console.ForegroundColor;
-        Console.ForegroundColor = ConsoleColor.Red;
-
-        var exceptions = aggregateException.Flatten().InnerExceptions;
-        Console.WriteLine($"Errors ({exceptions.Count}):");
-        foreach (var exception in exceptions)
-            Console.WriteLine(verbose ? exception.ToString() : exception.Message);
-
-        Console.ForegroundColor = color;
-    }
-
-    private static void LogException(Exception exception, bool verbose)
-    {
-        var color = Console.ForegroundColor;
-        Console.ForegroundColor = ConsoleColor.Red;
-
+    var exceptions = aggregateException.Flatten().InnerExceptions;
+    Console.WriteLine($"Errors ({exceptions.Count}):");
+    foreach (var exception in exceptions)
         Console.WriteLine(verbose ? exception.ToString() : exception.Message);
 
-        Console.ForegroundColor = color;
-    }
+    Console.ForegroundColor = color;
+}
 
-    public static int Main(string[] args) => new Entrypoint()
-        .UseServicePack<ServicePack>()
-        .UseServicePack<Xs.RegistryClient.Main.ServicePack>()
-        .UseServicePack<Xs.RegistryClient.Server.ServicePack>()
-        .UseServicePack<Cli.Core.ServicePack>()
-        .UseServicePack<Cli.Dotnet.ServicePack>()
-        .UseServicePack<Cli.Node.ServicePack>()
-        .Run(Run, args);
+void LogException(Exception exception)
+{
+    var color = Console.ForegroundColor;
+    Console.ForegroundColor = ConsoleColor.Red;
+
+    Console.WriteLine(verbose ? exception.ToString() : exception.Message);
+
+    Console.ForegroundColor = color;
 }
