@@ -22,7 +22,7 @@
         <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
         <PackageReference Include="Annium.Serialization.Json" Version="0.1.0" />
-        <PackageReference Include="NodaTime" Version="3.0.9" />
-        <PackageReference Include="Scriban" Version="5.0.0" />
+        <PackageReference Include="NodaTime" Version="3.1.0" />
+        <PackageReference Include="Scriban" Version="5.4.4" />
     </ItemGroup>
 </Project>
