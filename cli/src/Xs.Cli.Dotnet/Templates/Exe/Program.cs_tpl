@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Threading;
 using Annium.Core.Entrypoint;
+using {{name}};
 
 await using var entry = Entrypoint.Default
     .UseServicePack<ServicePack>()
-    .Setup()
-
-var (provider, ct) = entry;
+    .Setup();
 
 Console.WriteLine("Hello from {{name}}");
