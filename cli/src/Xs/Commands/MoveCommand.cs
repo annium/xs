@@ -94,11 +94,11 @@ internal class MoveCommandConfiguration
     [Help("Project name.")]
     public string Filter { get; set; } = string.Empty;
 
-    [Option("name")]
+    [Option("n")]
     [Help("New project name.")]
     public string? Name { get; set; }
 
-    [Option("directory")]
+    [Option("d")]
     [Help("New project parent directory.")]
     public string? Directory { get; set; }
 
