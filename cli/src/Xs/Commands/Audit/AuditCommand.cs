@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Core.Primitives.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
@@ -12,7 +13,7 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Audit;
 
-internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverConfiguration>, ILogSubject
 {
     public override string Id => "";
     public override string Description => "Audit projects.";
@@ -31,7 +32,7 @@ internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfigu
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         AuditCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
@@ -62,10 +63,10 @@ internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfigu
 
         foreach (var project in auditedProjects)
         {
-            var results = project.Audit(projects, usedRules, cfg.Fix, ct);
-            if (results.Length > 0)
+            var results = await project.AuditAsync(projects, usedRules, cfg.Fix, ct);
+            if (results.Count > 0)
             {
-                Console.WriteLine($"{project}: {results.Length} result(s):");
+                Console.WriteLine($"{project}: {results.Count} result(s):");
                 foreach (var result in results)
                     Console.WriteLine($" - {result.Message} (" + (result.IsFixed ? "fixed" : "not fixed") + ")");
             }

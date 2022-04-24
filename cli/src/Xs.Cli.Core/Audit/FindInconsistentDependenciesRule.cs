@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
@@ -10,7 +11,7 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject> w
     public string Code => "deps-consist";
     public string Description => "Finds inconsistent dependencies across projects. Fix uses latest for all projects";
 
-    public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
+    public Task<IReadOnlyCollection<AuditResult>> ExecuteAsync(IProject[] projects, TProject project, bool fix)
     {
         var results = new List<AuditResult>();
 
@@ -35,7 +36,7 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject> w
         if (fix && results.Count > 0)
             project.Save();
 
-        return results;
+        return Task.FromResult<IReadOnlyCollection<AuditResult>>(results);
     }
 
     private IEnumerable<AuditResult> AuditPackage(

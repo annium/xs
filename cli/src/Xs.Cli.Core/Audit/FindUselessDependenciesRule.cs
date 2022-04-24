@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
@@ -11,7 +12,7 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where 
     public string Code => "useless-deps";
     public string Description => "Finds useless dependencies in projects. Fix deletes useless deps";
 
-    public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
+    public Task<IReadOnlyCollection<AuditResult>> ExecuteAsync(IProject[] projects, TProject project, bool fix)
     {
         var results = new List<AuditResult>();
 
@@ -48,7 +49,7 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where 
         if (fix && results.Count > 0)
             project.Save();
 
-        return results;
+        return Task.FromResult<IReadOnlyCollection<AuditResult>>(results);
     }
 
     private IProject[] FindProjectDependenciesDeep(IProject project, Func<IProject, bool> isMatch)

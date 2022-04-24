@@ -43,12 +43,12 @@ internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpeci
         //         _StaticShell = context.Shell;
     }
 
-    public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken ct)
+    public async Task<IReadOnlyCollection<AuditResult>> AuditAsync(IProject[] projects, string[] rules, bool fix, CancellationToken ct)
     {
         var results = new List<AuditResult>();
 
         foreach (var rule in _auditRules.Where(r => rules.Contains(r.Code)))
-            results.AddRange(rule.Execute(projects, this, fix));
+            results.AddRange(await rule.ExecuteAsync(projects, this, fix));
 
         return results.ToArray();
     }
