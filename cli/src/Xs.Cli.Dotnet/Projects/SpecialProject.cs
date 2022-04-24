@@ -32,7 +32,7 @@ internal abstract class SpecialProject<TProject> :
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
-    public SpecialProject(SpecialProjectContext<TProject> context) : base(context)
+    protected SpecialProject(SpecialProjectContext<TProject> context) : base(context)
     {
         TargetFramework = context.TargetFramework;
         OutputType = context.OutputType;

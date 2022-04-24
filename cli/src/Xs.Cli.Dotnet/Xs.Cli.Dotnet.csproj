@@ -19,6 +19,6 @@
         <EmbeddedResource Remove="Templates/.*" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="Templates\WebAssemblyApplication\Pages\Home\HomePage.razor_tpl" />
+        <Content Include="Templates\WebAssemblyApplication\Pages\Home\HomePage.razor_tpl" />
     </ItemGroup>
 </Project>
