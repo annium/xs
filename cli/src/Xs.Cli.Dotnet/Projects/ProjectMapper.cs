@@ -112,7 +112,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         if (project is TestProject)
             newProps.Add(new XElement(El.IsTestProject!, "true"));
 
-        newProps.Add(new XElement(El.Nullable!, "enable"));
+        // newProps.Add(new XElement(El.Nullable!, "enable"));
         // newProps.Add(new XElement(El.PublishReadyToRun, "true"));
         // newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
 
