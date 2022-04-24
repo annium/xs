@@ -6,13 +6,6 @@ public class AuditResult
     public string Message { get; }
 
     internal AuditResult(
-        string message
-    )
-    {
-        Message = message;
-    }
-
-    internal AuditResult(
         bool isFixed,
         string message
     )
