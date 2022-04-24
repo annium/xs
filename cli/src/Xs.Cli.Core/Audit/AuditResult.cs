@@ -5,7 +5,7 @@ public class AuditResult
     public bool IsFixed { get; }
     public string Message { get; }
 
-    internal AuditResult(
+    public AuditResult(
         bool isFixed,
         string message
     )
