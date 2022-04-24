@@ -15,6 +15,9 @@
         <ProjectReference Include="../Xs.Cli.Core/Xs.Cli.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Annium.Core.Runtime.Loader" Version="0.1.0" />
+    </ItemGroup>
+    <ItemGroup>
         <EmbeddedResource Include="Templates/**" />
         <EmbeddedResource Remove="Templates/.*" />
     </ItemGroup>
