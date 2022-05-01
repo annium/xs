@@ -9,6 +9,7 @@
         <LangVersion>10.0</LangVersion>
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Blazor.Ant" Version="0.1.0" />

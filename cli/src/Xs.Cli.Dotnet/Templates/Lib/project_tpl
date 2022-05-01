@@ -9,5 +9,6 @@
         <LangVersion>10.0</LangVersion>
         <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 </Project>
