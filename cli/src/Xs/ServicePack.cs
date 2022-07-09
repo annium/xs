@@ -8,7 +8,7 @@ public class ServicePack : ServicePackBase
 {
     public override void Configure(IServiceContainer container)
     {
-        container.AddRuntimeTools(GetType().Assembly, false);
+        container.AddRuntime(GetType().Assembly);
     }
 
     public override void Register(IServiceContainer container, IServiceProvider provider)

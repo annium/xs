@@ -40,6 +40,5 @@ public class BaseServicePack : ServicePackBase
         LinqToDBForEFTools.Initialize();
         DataConnection.TurnTraceSwitchOn(TraceLevel.Verbose);
         DataConnection.WriteTraceLine = (message, context, lvl) => Console.WriteLine($"{lvl} {context}: {message}");
-        LinqToDB.Common.Configuration.Linq.AllowMultipleQuery = true;
     }
 }
