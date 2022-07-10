@@ -1,12 +1,11 @@
 ﻿using Annium.Architecture.ViewModel;
 using {{ query_namespace }};
 
-namespace {{ request_namespace }}
+namespace {{ request_namespace }};
+
+public class {{ name }}Request : IRequest<{{ name }}Query>
 {
-    public class {{ name }}Request : IRequest<{{ name }}Query>
-    {
-        {{~ for $field in request_fields ~}}
-        public {{ $field.item1 }} {{ $field.item2 }} { get; set; }
-        {{~ end ~}}
-    }
+    {{~ for $field in request_fields ~}}
+    public {{ $field.item1 }} {{ $field.item2 }} { get; set; }
+    {{~ end ~}}
 }

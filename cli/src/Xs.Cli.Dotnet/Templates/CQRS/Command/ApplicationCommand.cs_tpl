@@ -6,31 +6,30 @@ using Annium.Extensions.Validation;
 using Annium.Extensions.Composition;
 {{~ end ~}}
 
-namespace {{ application_command_namespace }}
-{
-    {{~ if request_fields.size > 0 ~}}
-    internal class {{ name }}CommandValidator : Validator<{{ name }}Command>
-    {
-        public {{ name }}CommandValidator(
-        )
-        {
-            {{~ for $field in request_fields ~}}
-            Field(c => c.{{ $field.item2 }});
-            {{~ end ~}}
-        }
-    }
-    {{~ end ~}}
+namespace {{ application_command_namespace }};
 
-    {{~ if compose_fields.size > 0 ~}}
-    internal class {{ name }}CommandComposer : Composer<{{ name }}Command>
+{{~ if request_fields.size > 0 ~}}
+internal class {{ name }}CommandValidator : Validator<{{ name }}Command>
+{
+    public {{ name }}CommandValidator(
+    )
     {
-        public {{ name }}CommandComposer(
-        )
-        {
-            {{~ for $field in compose_fields ~}}
-            Field(c => c.{{ $field.item2 }}).LoadWith(ctx => null);
-            {{~ end ~}}
-        }
+        {{~ for $field in request_fields ~}}
+        Field(c => c.{{ $field.item2 }});
+        {{~ end ~}}
     }
-    {{~ end ~}}
 }
+{{~ end ~}}
+
+{{~ if compose_fields.size > 0 ~}}
+internal class {{ name }}CommandComposer : Composer<{{ name }}Command>
+{
+    public {{ name }}CommandComposer(
+    )
+    {
+        {{~ for $field in compose_fields ~}}
+        Field(c => c.{{ $field.item2 }}).LoadWith(ctx => null);
+        {{~ end ~}}
+    }
+}
+{{~ end ~}}

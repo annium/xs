@@ -1,7 +1,6 @@
-﻿namespace {{ns}}
-{
-    public interface {{name}}
-    {
+﻿namespace {{ns}};
 
-    }
+public interface {{name}}
+{
+
 }

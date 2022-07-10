@@ -1,7 +1,7 @@
 using System;
 using Annium.Core.DependencyInjection;
 
-namespace {{name}}
+namespace {{name}};
 
 internal class ServicePack : ServicePackBase
 {

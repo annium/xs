@@ -1,17 +1,16 @@
 ﻿using Annium.Testing;
 
-namespace {{name}}
-{
-    public class SampleTest
-    {
-        [Fact]
-        public void True_IsTrue()
-        {
-            // arrange
-            var value = true;
+namespace {{name}};
 
-            // assert
-            value.IsTrue();
-        }
+public class SampleTest
+{
+    [Fact]
+    public void True_IsTrue()
+    {
+        // arrange
+        var value = true;
+
+        // assert
+        value.IsTrue();
     }
 }

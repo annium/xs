@@ -1,7 +1,6 @@
-﻿namespace {{ns}}
-{
-    public class {{name}}
-    {
+﻿namespace {{ns}};
 
-    }
+public class {{name}}
+{
+
 }

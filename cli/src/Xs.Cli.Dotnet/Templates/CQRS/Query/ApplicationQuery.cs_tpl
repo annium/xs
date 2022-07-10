@@ -6,31 +6,30 @@ using Annium.Extensions.Validation;
 using Annium.Extensions.Composition;
 {{~ end ~}}
 
-namespace {{ application_query_namespace }}
-{
-    {{~ if request_fields.size > 0 ~}}
-    internal class {{ name }}QueryValidator : Validator<{{ name }}Query>
-    {
-        public {{ name }}QueryValidator(
-        )
-        {
-            {{~ for $field in request_fields ~}}
-            Field(c => c.{{ $field.item2 }});
-            {{~ end ~}}
-        }
-    }
-    {{~ end ~}}
+namespace {{ application_query_namespace }};
 
-    {{~ if compose_fields.size > 0 ~}}
-    internal class {{ name }}QueryComposer : Composer<{{ name }}Query>
+{{~ if request_fields.size > 0 ~}}
+internal class {{ name }}QueryValidator : Validator<{{ name }}Query>
+{
+    public {{ name }}QueryValidator(
+    )
     {
-        public {{ name }}QueryComposer(
-        )
-        {
-            {{~ for $field in compose_fields ~}}
-            Field(c => c.{{ $field.item2 }}).LoadWith(ctx => null);
-            {{~ end ~}}
-        }
+        {{~ for $field in request_fields ~}}
+        Field(c => c.{{ $field.item2 }});
+        {{~ end ~}}
     }
-    {{~ end ~}}
 }
+{{~ end ~}}
+
+{{~ if compose_fields.size > 0 ~}}
+internal class {{ name }}QueryComposer : Composer<{{ name }}Query>
+{
+    public {{ name }}QueryComposer(
+    )
+    {
+        {{~ for $field in compose_fields ~}}
+        Field(c => c.{{ $field.item2 }}).LoadWith(ctx => null);
+        {{~ end ~}}
+    }
+}
+{{~ end ~}}

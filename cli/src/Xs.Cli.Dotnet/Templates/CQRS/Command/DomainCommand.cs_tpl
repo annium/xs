@@ -1,25 +1,24 @@
 ﻿using Annium.Architecture.CQRS.Commands;
 
-namespace {{ domain_command_namespace }}
+namespace {{ domain_command_namespace }};
+
+public class {{ name }}Command : ICommand
 {
-    public class {{ name }}Command : ICommand
+    {{~ for $field in request_fields ~}}
+    public {{ $field.item1 }} {{ $field.item2 }} { get; }
+    {{~ end ~}}
+    {{~ for $field in compose_fields ~}}
+    public {{ $field.item1 }} {{ $field.item2 }} { get; private set; }
+    {{~ end ~}}
+
+    public {{ name }}Command(
+        {{~ for $field in request_fields ~}}
+        {{ $field.item1 }} {{ $field.item2 | lower_first }}{{ if !for.last }},{{ end }}
+        {{~ end ~}}
+    )
     {
         {{~ for $field in request_fields ~}}
-        public {{ $field.item1 }} {{ $field.item2 }} { get; }
+        {{ $field.item2 }} = {{ $field.item2 | lower_first }};
         {{~ end ~}}
-        {{~ for $field in compose_fields ~}}
-        public {{ $field.item1 }} {{ $field.item2 }} { get; private set; }
-        {{~ end ~}}
-
-        public {{ name }}Command(
-            {{~ for $field in request_fields ~}}
-            {{ $field.item1 }} {{ $field.item2 | lower_first }}{{ if !for.last }},{{ end }}
-            {{~ end ~}}
-        )
-        {
-            {{~ for $field in request_fields ~}}
-            {{ $field.item2 }} = {{ $field.item2 | lower_first }};
-            {{~ end ~}}
-        }
     }
 }

@@ -1,25 +1,24 @@
 ﻿using Annium.Architecture.CQRS.Queries;
 
-namespace {{ domain_query_namespace }}
+namespace {{ domain_query_namespace }};
+
+public class {{ name }}Query : IQuery
 {
-    public class {{ name }}Query : IQuery
+    {{~ for $field in request_fields ~}}
+    public {{ $field.item1 }} {{ $field.item2 }} { get; }
+    {{~ end ~}}
+    {{~ for $field in compose_fields ~}}
+    public {{ $field.item1 }} {{ $field.item2 }} { get; private set; }
+    {{~ end ~}}
+
+    public {{ name }}Query(
+        {{~ for $field in request_fields ~}}
+        {{ $field.item1 }} {{ $field.item2 | lower_first }}{{ if !for.last }},{{ end }}
+        {{~ end ~}}
+    )
     {
         {{~ for $field in request_fields ~}}
-        public {{ $field.item1 }} {{ $field.item2 }} { get; }
+        {{ $field.item2 }} = {{ $field.item2 | lower_first }};
         {{~ end ~}}
-        {{~ for $field in compose_fields ~}}
-        public {{ $field.item1 }} {{ $field.item2 }} { get; private set; }
-        {{~ end ~}}
-
-        public {{ name }}Query(
-            {{~ for $field in request_fields ~}}
-            {{ $field.item1 }} {{ $field.item2 | lower_first }}{{ if !for.last }},{{ end }}
-            {{~ end ~}}
-        )
-        {
-            {{~ for $field in request_fields ~}}
-            {{ $field.item2 }} = {{ $field.item2 | lower_first }};
-            {{~ end ~}}
-        }
     }
 }

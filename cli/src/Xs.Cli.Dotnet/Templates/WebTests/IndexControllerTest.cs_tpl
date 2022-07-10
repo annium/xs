@@ -4,22 +4,21 @@ using Annium.AspNetCore.IntegrationTesting;
 using Annium.Net.Http;
 using Annium.Testing;
 
-namespace {{name}}
+namespace {{name}};
+
+public class IndexControllerTest : IntegrationTest
 {
-    public class IndexControllerTest : IntegrationTest
+    protected IRequest http => GetRequest<Startup>(
+        builder => builder.UseServicePack<TestServicePack>()
+    );
+
+    [Fact]
+    public async Task True_IsTrue()
     {
-        protected IRequest http => GetRequest<Startup>(
-            builder => builder.UseServicePack<TestServicePack>()
-        );
+        // act
+        var response = await http.Get("/").RunAsync();
 
-        [Fact]
-        public async Task True_IsTrue()
-        {
-            // act
-            var response = await http.Get("/").RunAsync();
-
-            // assert
-            response.StatusCode.IsEqual(HttpStatusCode.OK);
-        }
+        // assert
+        response.StatusCode.IsEqual(HttpStatusCode.OK);
     }
 }
