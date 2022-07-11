@@ -14,9 +14,9 @@ namespace Xs.Cli.Dotnet.Projects;
 
 internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
 {
-    private static readonly string[] ImplicitPackages = {"Microsoft.AspNetCore.App"};
-    private static readonly string[] BooleanStrings = {"true", "false"};
-    private static readonly string[] DisabledProperties = {El.PublishReadyToRun, El.PublishReadyToRunShowWarnings};
+    private static readonly string[] ImplicitPackages = { "Microsoft.AspNetCore.App" };
+    private static readonly string[] BooleanStrings = { "true", "false" };
+    private static readonly string[] DisabledProperties = { El.PublishReadyToRun, El.PublishReadyToRunShowWarnings };
     private const string LanguageVersion = "10.0";
 
     public RawProject Load(string path, DiscoverConfiguration configuration)
@@ -100,21 +100,24 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         oldProps.AddBeforeSelf(newProps);
         oldProps.Remove();
 
-        newProps.Add(new XElement(El.PackageId!, project.Name));
-        newProps.Add(new XElement(El.PackageVersion!, project.Version));
-        newProps.Add(new XElement(El.Description!, project.Description));
-        newProps.Add(new XElement(El.TargetFramework!, project.TargetFramework));
-        newProps.Add(new XElement(El.OutputType!, project.OutputType));
-        newProps.Add(new XElement(El.DebugType!, "portable"));
-        newProps.Add(new XElement(El.LangVersion!, oldProps.GetElement(El.LangVersion!)?.Value ?? LanguageVersion));
-        newProps.Add(new XElement(El.WarningsAsErrors!, "true"));
-        newProps.Add(new XElement(El.IsPackable!, project is IPublishableProject ? "true" : "false"));
-        if (project is TestProject)
-            newProps.Add(new XElement(El.IsTestProject!, "true"));
+        if (project.Config.AddPreferredAttributes)
+        {
+            newProps.Add(new XElement(El.PackageId, project.Name));
+            newProps.Add(new XElement(El.PackageVersion, project.Version));
+            newProps.Add(new XElement(El.Description, project.Description));
+            newProps.Add(new XElement(El.TargetFramework, project.TargetFramework));
+            newProps.Add(new XElement(El.OutputType, project.OutputType));
+            newProps.Add(new XElement(El.DebugType, "portable"));
+            newProps.Add(new XElement(El.LangVersion, oldProps.GetElement(El.LangVersion!)?.Value ?? LanguageVersion));
+            newProps.Add(new XElement(El.WarningsAsErrors, "true"));
+            newProps.Add(new XElement(El.IsPackable, project is IPublishableProject ? "true" : "false"));
+            if (project is TestProject)
+                newProps.Add(new XElement(El.IsTestProject, "true"));
 
-        newProps.Add(new XElement(El.Nullable!, "enable"));
-        // newProps.Add(new XElement(El.PublishReadyToRun, "true"));
-        // newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
+            newProps.Add(new XElement(El.Nullable, "enable"));
+            // newProps.Add(new XElement(El.PublishReadyToRun, "true"));
+            // newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
+        }
 
         var remainingProps = oldProps.Elements()
             .Where(el => !DisabledProperties.Contains(el.Name.ToString()))
@@ -131,21 +134,21 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         // add package references group
         if (project.Packages.Count > 0)
             newProps.AddAfterSelf(new XElement(
-                El.ItemGroup!,
+                El.ItemGroup,
                 project.Packages.OrderBy(e => e.Value.Name).Select(e => new XElement(
-                    El.PackageReference!,
-                    new XAttribute(El.Include!, e.Value.Name),
-                    new XAttribute(El.Version!, e.Value.Version)
+                    El.PackageReference,
+                    new XAttribute(El.Include, e.Value.Name),
+                    new XAttribute(El.Version, e.Value.Version)
                 ))
             ));
 
         // add project references group
         if (project.Projects.Count > 0)
             newProps.AddAfterSelf(new XElement(
-                El.ItemGroup!,
+                El.ItemGroup,
                 project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
-                    El.ProjectReference!,
-                    new XAttribute(El.Include!, Path.GetRelativePath(dir, e.Value.File).Replace('\\', '/'))
+                    El.ProjectReference,
+                    new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File).Replace('\\', '/').Replace('/', project.Config.DirectorySeparator[0]))
                 ))
             ));
 

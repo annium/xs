@@ -4,7 +4,7 @@ using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Tools;
 
-public abstract class SpecialConfiguration
+public abstract record SpecialConfiguration
 {
     [ResolutionKey]
     [DataMember(Order = 0)]

@@ -17,8 +17,8 @@ namespace Xs.Cli.Node.Projects;
 internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
 {
     public ProjectType Type => Constants.ProjectType;
-    public static readonly string[] TrackedFileExtensions = new[] { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };
-    public static readonly string[] IgnoredFolders = new[] { "build", "dist", ModulesDirectory };
+    public static readonly string[] TrackedFileExtensions = { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };
+    public static readonly string[] IgnoredFolders = { "build", "dist", ModulesDirectory };
     public const string ModulesDirectory = "node_modules";
     public const string ProjectFileName = "package.json";
     public const string LockFileName = "pnpm-lock.yaml";
@@ -77,11 +77,12 @@ internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpe
 
     public IProject CreateProject(
         string directory,
-        DiscoverConfiguration configuration
+        DiscoverConfiguration discoverCfg,
+        SpecialConfiguration? projectCfg
     )
     {
         var file = new FileInfo(Path.Combine(directory, ProjectFileName));
-        var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = _mapper.Load(file.FullName, configuration);
+        var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = _mapper.Load(file.FullName, discoverCfg);
 
         var projectDependencies = projectDeps
             .Select(e => GetProjectDependencyMock(file, e))
@@ -116,6 +117,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpe
                 _loggerConfiguration,
                 _provider.Resolve<ILogger<TProject>>(),
                 _auditRules,
+                projectCfg as Tools.SpecialConfiguration ?? new Tools.SpecialConfiguration(),
                 _mapper
             );
     }

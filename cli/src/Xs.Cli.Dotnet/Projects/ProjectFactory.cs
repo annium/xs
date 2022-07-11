@@ -69,12 +69,13 @@ internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpe
 
     public IProject CreateProject(
         string directory,
-        DiscoverConfiguration configuration
+        DiscoverConfiguration discoverCfg,
+        SpecialConfiguration? projectCfg
     )
     {
         var file = new FileInfo(Directory.GetFiles(directory, ProjectFileMask, SearchOption.TopDirectoryOnly).First());
         var (name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable, isTestProject) =
-            _mapper.Load(file.FullName, configuration);
+            _mapper.Load(file.FullName, discoverCfg);
 
         var projectDependencies = projectDeps
             .Select(e => GetProjectDependencyMock(file, e))
@@ -105,6 +106,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpe
                 targetFramework,
                 outputType,
                 _auditRules,
+                projectCfg as Tools.SpecialConfiguration ?? new Tools.SpecialConfiguration(),
                 _mapper
             );
     }

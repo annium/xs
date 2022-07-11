@@ -1,5 +1,6 @@
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Projects;
 
@@ -13,6 +14,7 @@ public interface ISpecialProjectFactory
 
     IProject CreateProject(
         string directory,
-        DiscoverConfiguration configuration
+        DiscoverConfiguration discoverCfg,
+        SpecialConfiguration? projectCfg
     );
 }

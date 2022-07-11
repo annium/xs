@@ -14,33 +14,37 @@ namespace Xs.Cli.Core.Tasks;
 public class DiscoverProjectsTask : ILogSubject
 {
     public ILogger Logger { get; }
+    private readonly IConfigurationManager _configurationManager;
     private readonly IProjectFactory _projectFactory;
     private readonly IProjectLinker _projectLinker;
     private readonly IShell _shell;
 
     public DiscoverProjectsTask(
+        IConfigurationManager configurationManager,
         IProjectFactory projectFactory,
         IProjectLinker projectLinker,
         IShell shell,
         ILogger<DiscoverProjectsTask> logger
     )
     {
+        _configurationManager = configurationManager;
         _projectFactory = projectFactory;
         _projectLinker = projectLinker;
         _shell = shell;
         Logger = logger;
     }
 
-    public async Task<IReadOnlyCollection<IProject>> RunAsync(DiscoverConfiguration configuration)
+    public async Task<IReadOnlyCollection<IProject>> RunAsync(DiscoverConfiguration discoverCfg)
     {
-        var roots = configuration.Roots;
+        var roots = discoverCfg.Roots;
+        var solutionCfg = _configurationManager.Load(discoverCfg.Root);
 
         this.Log().Debug($"Start discovery of {string.Join(", ", roots)}.");
 
         var candidates = FindProjectCandidates(roots);
         var errors = new List<Exception>();
         var projects = candidates
-            .Select(x => CreateProject(x.Key, x.Value, configuration, errors.Add)!)
+            .Select(x => CreateProject(x.Key, x.Value, discoverCfg, solutionCfg, errors.Add)!)
             .Where(x => x != null!)
             .ToList();
         var directories = projects.Select(x => x.Directory).ToHashSet();
@@ -51,7 +55,8 @@ public class DiscoverProjectsTask : ILogSubject
             CollectProjects(
                 directories,
                 project,
-                configuration,
+                discoverCfg,
+                solutionCfg,
                 x =>
                 {
                     projects.Add(x);
@@ -63,12 +68,12 @@ public class DiscoverProjectsTask : ILogSubject
         var types = projects.Select(p => p.Type).Distinct().ToArray();
 
         var packages = types.ToDictionary(type => type, _ => new HashSet<Package>());
-        LinkProjects(projects, packages, configuration, errors.Add, ThrowIfAnyErrors);
+        LinkProjects(projects, packages, discoverCfg, errors.Add, ThrowIfAnyErrors);
         ThrowIfAnyErrors();
 
         this.Log().Debug($"Discovery finished. Found {projects.Count} projects.");
 
-        if (!configuration.Changed)
+        if (!discoverCfg.Changed)
             return result;
 
         // filter project with changed files only.
@@ -119,7 +124,8 @@ public class DiscoverProjectsTask : ILogSubject
     private void CollectProjects(
         IReadOnlyCollection<string> directories,
         IProject project,
-        DiscoverConfiguration configuration,
+        DiscoverConfiguration discoverCfg,
+        Configuration solutionCfg,
         Action<IProject> addProject,
         Action<Exception> addError
     )
@@ -140,11 +146,11 @@ public class DiscoverProjectsTask : ILogSubject
                 continue;
             }
 
-            var dependency = CreateProject(directory, factory, configuration, addError);
+            var dependency = CreateProject(directory, factory, discoverCfg, solutionCfg, addError);
             if (dependency != null)
             {
                 addProject(dependency);
-                CollectProjects(directories, dependency, configuration, addProject, addError);
+                CollectProjects(directories, dependency, discoverCfg, solutionCfg, addProject, addError);
             }
         }
     }
@@ -152,13 +158,15 @@ public class DiscoverProjectsTask : ILogSubject
     private IProject? CreateProject(
         string directory,
         ISpecialProjectFactory factory,
-        DiscoverConfiguration configuration,
+        DiscoverConfiguration discoverCfg,
+        Configuration solutionCfg,
         Action<Exception> addError
     )
     {
         try
         {
-            var project = factory.CreateProject(directory, configuration);
+            var projectCfg = solutionCfg.Types.SingleOrDefault(x => x.Type == factory.Type);
+            var project = factory.CreateProject(directory, discoverCfg, projectCfg);
             this.Log().Debug($"{project.Type} {project} created at {directory}");
             return project;
         }

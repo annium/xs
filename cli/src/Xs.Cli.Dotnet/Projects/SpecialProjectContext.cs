@@ -6,6 +6,7 @@ using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Dotnet.Models;
+using Xs.Cli.Dotnet.Tools;
 
 namespace Xs.Cli.Dotnet.Projects;
 
@@ -14,6 +15,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
     public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
+    public SpecialConfiguration Config { get; }
     public ProjectMapper Mapper { get; }
 
     public SpecialProjectContext(
@@ -30,6 +32,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
         TargetFramework targetFramework,
         OutputType outputType,
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
+        SpecialConfiguration config, 
         ProjectMapper mapper
     ) : base(
         type,
@@ -47,6 +50,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
         TargetFramework = targetFramework;
         OutputType = outputType;
         AuditRules = auditRules;
+        Config = config;
         Mapper = mapper;
     }
 }

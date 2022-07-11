@@ -5,6 +5,7 @@ using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Projects;
 
@@ -12,6 +13,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
 {
     public IReadOnlyDictionary<string, string> Scripts { get; }
     public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
+    public SpecialConfiguration Config { get; }
     public ProjectMapper Mapper { get; }
 
     public SpecialProjectContext(
@@ -27,6 +29,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
         LoggerConfiguration loggerConfiguration,
         ILogger<TProject> logger,
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
+        SpecialConfiguration config, 
         ProjectMapper mapper
     ) : base(
         type,
@@ -43,6 +46,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
     {
         Scripts = scripts;
         AuditRules = auditRules;
+        Config = config;
         Mapper = mapper;
     }
 }
