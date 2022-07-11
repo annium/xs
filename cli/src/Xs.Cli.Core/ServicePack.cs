@@ -40,6 +40,7 @@ public class ServicePack : ServicePackBase
         RegisterTasks(container);
 
         // tools
+        container.Add<IConfigurationManager, ConfigurationManager>().Singleton();
         container.Add<ITemplateWriter, TemplateWriter>().Transient();
     }
 

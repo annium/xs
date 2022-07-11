@@ -5,7 +5,7 @@ using Annium.Core.Primitives.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
-using Xs.Tools;
+using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 

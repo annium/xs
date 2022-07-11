@@ -11,7 +11,7 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tasks.Dependencies;
-using Xs.Tools;
+using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands;
 

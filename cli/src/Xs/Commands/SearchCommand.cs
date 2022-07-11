@@ -5,8 +5,8 @@ using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
+using Xs.Cli.Core.Tools;
 using Xs.RegistryClient.Main;
-using Xs.Tools;
 
 namespace Xs.Commands;
 

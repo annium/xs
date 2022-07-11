@@ -8,6 +8,7 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
+using Xs.Cli.Core.Tools;
 using Xs.Tools;
 
 namespace Xs.Commands;

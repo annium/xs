@@ -9,9 +9,8 @@ using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
-using Xs.Cli.Core.Tools;
 
-namespace Xs.Tools;
+namespace Xs.Cli.Core.Tools;
 
 internal class ConfigurationManager : IConfigurationManager, ILogSubject
 {
