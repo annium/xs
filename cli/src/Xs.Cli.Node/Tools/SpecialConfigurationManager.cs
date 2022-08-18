@@ -8,12 +8,12 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Tools;
 
-internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
+internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject<SpecialConfigurationManager>
 {
     private const string File = ".npmrc";
     public ProjectType Type => Constants.ProjectType;
     public string[] IgnorePatterns { get; } = new[] { File };
-    public ILogger Logger { get; }
+    public ILogger<SpecialConfigurationManager> Logger { get; }
 
     public SpecialConfigurationManager(
         ILogger<SpecialConfigurationManager> logger

@@ -9,9 +9,9 @@ using NodaTime;
 
 namespace Xs.Tools;
 
-internal class Watcher : ILogSubject
+internal class Watcher : ILogSubject<Watcher>
 {
-    public ILogger Logger { get; }
+    public ILogger<Watcher> Logger { get; }
     private readonly ITimeProvider _timeProvider;
 
     public Watcher(

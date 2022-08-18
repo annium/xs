@@ -5,9 +5,9 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tasks.Dependencies;
 
-public class AddProjectDependencyTask : ILogSubject
+public class AddProjectDependencyTask : ILogSubject<AddProjectDependencyTask>
 {
-    public ILogger Logger { get; }
+    public ILogger<AddProjectDependencyTask> Logger { get; }
 
     public AddProjectDependencyTask(
         ILogger<AddProjectDependencyTask> logger

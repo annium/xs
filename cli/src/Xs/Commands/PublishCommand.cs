@@ -13,11 +13,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ILogSubject<PublishCommand>
 {
     public override string Id => "publish";
     public override string Description => "Publish packages to registry.";
-    public ILogger Logger { get; }
+    public ILogger<PublishCommand> Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;

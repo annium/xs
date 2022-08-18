@@ -10,11 +10,11 @@ using Xs.RegistryClient.Main;
 
 namespace Xs.Commands;
 
-internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ILogSubject<SearchCommand>
 {
     public override string Id => "search";
     public override string Description => "Search for packages in tracked registry.";
-    public ILogger Logger { get; }
+    public ILogger<SearchCommand> Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly MainClientFactory _mainClientFactory;
 

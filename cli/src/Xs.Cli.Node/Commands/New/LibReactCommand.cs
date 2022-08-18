@@ -9,11 +9,11 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ILogSubject
+public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ILogSubject<LibReactCommand>
 {
     public override string Id => "lib.react";
     public override string Description => "Create new library project, using React.";
-    public ILogger Logger { get; }
+    public ILogger<LibReactCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
     public LibReactCommand(

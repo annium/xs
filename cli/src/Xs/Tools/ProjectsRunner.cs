@@ -8,9 +8,9 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Tools;
 
-internal class ProjectsRunner : ILogSubject
+internal class ProjectsRunner : ILogSubject<ProjectsRunner>
 {
-    public ILogger Logger { get; }
+    public ILogger<ProjectsRunner> Logger { get; }
 
     public ProjectsRunner(
         ILogger<ProjectsRunner> logger

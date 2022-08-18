@@ -12,11 +12,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>, ILogSubject<TestCommand>
 {
     public override string Id => "test";
     public override string Description => "Test projects.";
-    public ILogger Logger { get; }
+    public ILogger<TestCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 

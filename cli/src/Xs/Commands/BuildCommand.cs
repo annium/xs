@@ -12,11 +12,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>, ILogSubject<BuildCommand>
 {
     public override string Id => "build";
     public override string Description => "Build projects.";
-    public ILogger Logger { get; }
+    public ILogger<BuildCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 

@@ -14,7 +14,7 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs;
 
-internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfiguration>, ILogSubject<QueryCommand>
 {
     private const string DomainQueryTemplate = "DomainQuery.cs_tpl";
     private const string ApplicationQueryTemplate = "ApplicationQuery.cs_tpl";
@@ -23,7 +23,7 @@ internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfigu
     private const string Queries = "Queries";
     private const string Requests = "Requests";
     private const string Responses = "Responses";
-    public ILogger Logger { get; }
+    public ILogger<QueryCommand> Logger { get; }
     public override string Id => "query";
     public override string Description => "Create query.";
     private readonly DiscoverProjectsTask _discoverTask;

@@ -10,11 +10,11 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>, ILogSubject<DeleteCommand>
 {
     public override string Id => "delete";
     public override string Description => "Delete dependency from projects.";
-    public ILogger Logger { get; }
+    public ILogger<DeleteCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
     private readonly DeleteProjectDependencyTask _deleteProjectDependencyTask;

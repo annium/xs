@@ -11,9 +11,9 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Tasks;
 
-public class DiscoverProjectsTask : ILogSubject
+public class DiscoverProjectsTask : ILogSubject<DiscoverProjectsTask>
 {
-    public ILogger Logger { get; }
+    public ILogger<DiscoverProjectsTask> Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly IProjectFactory _projectFactory;
     private readonly IProjectLinker _projectLinker;

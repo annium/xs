@@ -15,11 +15,11 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands;
 
-internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>, ILogSubject<AddCommand>
 {
     public override string Id => "add";
     public override string Description => "Add dependency to projects.";
-    public ILogger Logger { get; }
+    public ILogger<AddCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IEnumerable<IDependencyManager> _dependencyManagers;
     private readonly IConfigurationManager _configurationManager;

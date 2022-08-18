@@ -12,13 +12,13 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tools;
 
-internal class ConfigurationManager : IConfigurationManager, ILogSubject
+internal class ConfigurationManager : IConfigurationManager, ILogSubject<ConfigurationManager>
 {
     private const string ConfigurationFile = ".xs";
     private const string CredentialsFile = ".xs.credentials";
     private const string IgnoreHeader = "# xs ignore patterns";
     private const string IgnoreFile = ".gitignore";
-    public ILogger Logger { get; }
+    public ILogger<ConfigurationManager> Logger { get; }
     private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> _specialManagers;
     private readonly Func<IConfigurationBuilder> _configurationBuilderFactory;
     private readonly IMapper _mapper;

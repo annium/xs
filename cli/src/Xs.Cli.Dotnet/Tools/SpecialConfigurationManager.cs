@@ -10,12 +10,12 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Tools;
 
-internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
+internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject<SpecialConfigurationManager>
 {
     private const string File = "nuget.config";
     public ProjectType Type => Constants.ProjectType;
     public string[] IgnorePatterns { get; } = new[] { File, "lcov.info" };
-    public ILogger Logger { get; }
+    public ILogger<SpecialConfigurationManager> Logger { get; }
     private readonly string _registryName = "registry";
     private readonly string _defaultName = "nuget";
     private readonly Uri _defaultUri = new(Constants.DefaultServer);

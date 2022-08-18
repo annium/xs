@@ -11,9 +11,9 @@ using Xs.Cli.Core.Helpers;
 
 namespace Xs.Cli.Core.Tools;
 
-internal class TemplateWriter : ITemplateWriter, ILogSubject
+internal class TemplateWriter : ITemplateWriter, ILogSubject<TemplateWriter>
 {
-    public ILogger Logger { get; }
+    public ILogger<TemplateWriter> Logger { get; }
     private const string TemplateExtension = "tpl";
     private string _root = Directory.GetCurrentDirectory();
 

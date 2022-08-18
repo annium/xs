@@ -16,11 +16,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ILogSubject<UnpublishCommand>
 {
     public override string Id => "unpublish";
     public override string Description => "Unpublish package from registry.";
-    public ILogger Logger { get; }
+    public ILogger<UnpublishCommand> Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;

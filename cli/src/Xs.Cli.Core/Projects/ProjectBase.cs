@@ -14,7 +14,7 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Core.Projects;
 
-public abstract class ProjectBase<TProject> : IProject, ILogSubject
+public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
     where TProject : ProjectBase<TProject>
 {
     public ProjectType Type { get; }
@@ -25,7 +25,7 @@ public abstract class ProjectBase<TProject> : IProject, ILogSubject
     public abstract string File { get; }
     public HashSet<Dependency<IProject>> Projects { get; }
     public HashSet<Dependency<Package>> Packages { get; }
-    public ILogger Logger { get; }
+    public ILogger<TProject> Logger { get; }
     protected readonly IShell Shell;
     protected readonly LoggerConfiguration LoggerConfiguration;
     private string _currentDirectory;

@@ -5,9 +5,9 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tasks.Dependencies;
 
-public class DeletePackageDependencyTask : ILogSubject
+public class DeletePackageDependencyTask : ILogSubject<DeletePackageDependencyTask>
 {
-    public ILogger Logger { get; }
+    public ILogger<DeletePackageDependencyTask> Logger { get; }
 
     public DeletePackageDependencyTask(
         ILogger<DeletePackageDependencyTask> logger
@@ -21,7 +21,7 @@ public class DeletePackageDependencyTask : ILogSubject
         this.Log().Debug($"Delete package {package} as {package.Type} dependency from {targets.Length} projects.");
         foreach (var target in targets)
         {
-            if (!target.Packages.Any(p => p.Value == package))
+            if (target.Packages.All(p => p.Value != package))
             {
                 this.Log().Debug($"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}.");
                 continue;

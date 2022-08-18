@@ -12,13 +12,13 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class InterfaceCommand : Command<InterfaceCommandConfiguration, DiscoverConfiguration>, ILogSubject
+public class InterfaceCommand : Command<InterfaceCommandConfiguration, DiscoverConfiguration>, ILogSubject<InterfaceCommand>
 {
     private const string InterfaceTemplate = "Interface.cs_tpl";
 
     public override string Id => "interface";
     public override string Description => "Create new interfaces.";
-    public ILogger Logger { get; }
+    public ILogger<InterfaceCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 

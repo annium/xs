@@ -17,11 +17,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>, ILogSubject<WatchCommand>
 {
     public override string Id => "watch";
     public override string Description => "Watch projects' changes and install/build/test on fly.";
-    public ILogger Logger { get; }
+    public ILogger<WatchCommand> Logger { get; }
     private readonly IProjectFactory _projectFactory;
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;

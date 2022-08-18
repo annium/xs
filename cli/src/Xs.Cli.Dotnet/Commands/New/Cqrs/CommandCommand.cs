@@ -14,7 +14,7 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs;
 
-internal class CommandCommand : Command<CommandCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class CommandCommand : Command<CommandCommandConfiguration, DiscoverConfiguration>, ILogSubject<CommandCommand>
 {
     private const string DomainCommandTemplate = "DomainCommand.cs_tpl";
     private const string ApplicationCommandTemplate = "ApplicationCommand.cs_tpl";
@@ -24,7 +24,7 @@ internal class CommandCommand : Command<CommandCommandConfiguration, DiscoverCon
 
     public override string Id => "command";
     public override string Description => "Create command.";
-    public ILogger Logger { get; }
+    public ILogger<CommandCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 

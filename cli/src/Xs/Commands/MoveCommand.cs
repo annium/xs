@@ -12,11 +12,11 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class MoveCommand : Command<MoveCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class MoveCommand : Command<MoveCommandConfiguration, DiscoverConfiguration>, ILogSubject<MoveCommand>
 {
     public override string Id => "move";
     public override string Description => "Move project to different location.";
-    public ILogger Logger { get; }
+    public ILogger<MoveCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
     public MoveCommand(

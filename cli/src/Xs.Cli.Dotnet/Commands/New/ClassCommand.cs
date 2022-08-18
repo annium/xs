@@ -12,13 +12,13 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class ClassCommand : Command<ClassCommandConfiguration, DiscoverConfiguration>, ILogSubject
+public class ClassCommand : Command<ClassCommandConfiguration, DiscoverConfiguration>, ILogSubject<ClassCommand>
 {
     private const string ClassTemplate = "Class.cs_tpl";
 
     public override string Id => "class";
     public override string Description => "Create new classes.";
-    public ILogger Logger { get; }
+    public ILogger<ClassCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 

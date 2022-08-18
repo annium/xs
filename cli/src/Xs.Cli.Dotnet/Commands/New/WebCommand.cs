@@ -8,11 +8,11 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebCommand : Command<WebCommandConfiguration, DiscoverConfiguration>, ILogSubject
+public class WebCommand : Command<WebCommandConfiguration, DiscoverConfiguration>, ILogSubject<WebCommand>
 {
     public override string Id => "web";
     public override string Description => "Create new web project.";
-    public ILogger Logger { get; }
+    public ILogger<WebCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
     public WebCommand(

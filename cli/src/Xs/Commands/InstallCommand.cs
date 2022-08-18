@@ -12,11 +12,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>, ILogSubject<InstallCommand>
 {
     public override string Id => "install";
     public override string Description => "Install projects' dependencies.";
-    public ILogger Logger { get; }
+    public ILogger<InstallCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 

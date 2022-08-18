@@ -15,11 +15,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>, ILogSubject
+internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>, ILogSubject<UpdateCommand>
 {
     public override string Id => "update";
     public override string Description => "Update dependencies in projects.";
-    public ILogger Logger { get; }
+    public ILogger<UpdateCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IEnumerable<IDependencyManager> _dependencyManagers;
     private readonly IConfigurationManager _configurationManager;
