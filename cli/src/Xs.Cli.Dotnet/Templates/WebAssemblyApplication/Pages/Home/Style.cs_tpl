@@ -4,11 +4,6 @@ namespace {{name}}.Pages.Home;
 
 public class Style : RuleSet
 {
-    public readonly CssRule Text;
-
-    public Style()
-    {
-        Text = Rule.Class()
-            .FontSizeRem(2);
-    }
+    public readonly CssRule Text = Rule.Class()
+        .FontSizeRem(2);
 }
