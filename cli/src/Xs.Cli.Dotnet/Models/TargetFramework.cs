@@ -17,6 +17,7 @@ internal class TargetFramework : Equatable<TargetFramework>
     public static TargetFramework NetCoreApp31 { get; } = new("netcoreapp3.1");
     public static TargetFramework Net5 { get; } = new("net5.0");
     public static TargetFramework Net6 { get; } = new("net6.0");
+    public static TargetFramework Net7 { get; } = new("net7.0");
 
     public static IReadOnlyList<IReadOnlyList<TargetFramework>> SupportedGroups { get; } =
         new List<IReadOnlyList<TargetFramework>>()
@@ -26,6 +27,7 @@ internal class TargetFramework : Equatable<TargetFramework>
             new List<TargetFramework> { NetStandard21, NetCoreApp31 },
             new List<TargetFramework> { NetStandard21, Net5 },
             new List<TargetFramework> { Net6 },
+            new List<TargetFramework> { Net7 },
         };
 
     private readonly string _moniker;

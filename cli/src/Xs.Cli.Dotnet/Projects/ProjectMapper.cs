@@ -17,7 +17,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     private static readonly string[] ImplicitPackages = { "Microsoft.AspNetCore.App" };
     private static readonly string[] BooleanStrings = { "true", "false" };
     private static readonly string[] DisabledProperties = { El.PublishReadyToRun, El.PublishReadyToRunShowWarnings };
-    private const string LanguageVersion = "10.0";
+    private const string LanguageVersion = "11.0";
 
     public RawProject Load(string path, DiscoverConfiguration configuration)
     {
@@ -53,7 +53,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             project.Description = properties.GetElement(El.Description!)?.Value ?? string.Empty;
         }
 
-        project.TargetFramework = properties.GetElement(El.TargetFramework!)?.Value ?? TargetFramework.Net6;
+        project.TargetFramework = properties.GetElement(El.TargetFramework!)?.Value ?? TargetFramework.Net7;
         if (configuration.SkipChecks)
             project.OutputType = properties.GetElement(El.OutputType!)?.Value == "Exe"
                 ? OutputType.Exe
