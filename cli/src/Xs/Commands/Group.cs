@@ -11,6 +11,7 @@ internal class Group : Annium.Extensions.Arguments.Group
         Add<Audit.Group>();
         Add<Ls.Group>();
         Add<Remote.Group>();
+        Add<Sync.Group>();
         Add<Cli.Dotnet.Commands.Group>();
         Add<Cli.Node.Commands.Group>();
 
