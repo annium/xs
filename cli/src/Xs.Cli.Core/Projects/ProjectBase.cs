@@ -139,8 +139,7 @@ public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
 
         var result = await Shell
             .Cmd(command)
-            .Configure(new ProcessStartInfo
-                { WorkingDirectory = Directory })
+            .At(Directory)
             .Pipe((LogLevel) LoggerConfiguration <= LogLevel.Debug)
             .RunAsync(ct);
 

@@ -28,9 +28,7 @@ public class DiscoverChangedFilesTask
 
     private async Task<IReadOnlyCollection<string>> LoadChangesAsync(string root)
     {
-        var result = await _shell.Cmd("git st -s")
-            .Configure(new ProcessStartInfo { WorkingDirectory = root })
-            .RunAsync();
+        var result = await _shell.Cmd("git st -s").At(root).RunAsync();
 
         if (!result.IsSuccess)
             throw new Exception($"Failed to get repo status at {root}");
