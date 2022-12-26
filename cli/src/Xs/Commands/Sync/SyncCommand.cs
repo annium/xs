@@ -97,6 +97,7 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
 
         if (changes.Length > 0)
         {
+            using var _ = ConsoleExt.SetColors(foreground: ConsoleColor.Magenta);
             Line("changes in working directory:");
             foreach (var change in changes)
             {
