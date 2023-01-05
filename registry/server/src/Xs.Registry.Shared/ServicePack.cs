@@ -23,7 +23,7 @@ public class ServicePack : ServicePackBase
             return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
         }).AsSelf().Scoped();
 
-        container.AddJsonSerializers().SetDefault();
+        container.AddSerializers().WithJson(isDefault: true);
         container.AddHttpRequestFactory().SetDefault();
         container.AddMediator();
 

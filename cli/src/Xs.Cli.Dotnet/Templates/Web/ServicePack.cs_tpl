@@ -14,8 +14,9 @@ internal class ServicePack : ServicePackBase
 
     public override void Register(IServiceContainer` container, IServiceProvider provider)
     {
-        container.AddTime().WithManagedTime().WithRealTime().SetDefault();
-        container.AddJsonSerializers().SetDefault();
+        container.AddTime().WithRealTime().SetDefault();
+        container.AddSerializers()
+            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime(), isDefault: true);
         container.AddLogging();
 
         // server

@@ -23,12 +23,8 @@ public class ServicePack : ServicePackBase
     {
         container.AddTime().WithRealTime().SetDefault();
 
-        container.AddJsonSerializers()
-            .Configure(opts => opts
-                .ConfigureForOperations()
-                .ConfigureForNodaTime()
-            )
-            .SetDefault();
+        container.AddSerializers()
+            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime(), isDefault: true);
         container.AddHttpRequestFactory().SetDefault();
         container.AddLogging();
         container.AddShell();
