@@ -1,5 +1,6 @@
 using System;
 using Annium.Core.DependencyInjection;
+using Xs.Commands.Sync;
 using Xs.Tools;
 
 namespace Xs;
@@ -23,6 +24,7 @@ public class ServicePack : ServicePackBase
             .Singleton();
 
         // tools
+        container.Add<SyncConfigurator>().AsSelf().Singleton();
         container.Add<ProjectsRunner>().AsSelf().Singleton();
         container.Add<Watcher>().AsSelf().Singleton();
         container.Add<WebServerFactory>().AsSelf().Singleton();

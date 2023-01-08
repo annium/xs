@@ -19,6 +19,7 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
     private static readonly IReadOnlyCollection<FileStatus> Statuses = Enum.GetValues<FileStatus>().Except(FileStatus.Unaltered.Yield()).ToArray();
     private static readonly IReadOnlyDictionary<FileStatus, string> StatusLabels;
     private string Indent => new(' ', _indentation);
+    private readonly SyncConfigurator _configurator;
     private readonly IShell _shell;
     private int _indentation;
 
@@ -44,9 +45,11 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
     }
 
     public SyncCommand(
+        SyncConfigurator configurator,
         IShell shell
     )
     {
+        _configurator = configurator;
         _shell = shell;
     }
 
@@ -57,26 +60,27 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
     {
         if (cfg.Path == string.Empty)
         {
-            var paths = SyncConfig.Read();
+            var paths = _configurator.Read();
             Line($"sync {paths.Count} project(s)");
 
-            foreach (var path in paths)
-                await SyncRepo(path);
+            foreach (var project in paths)
+                await SyncProject(project);
         }
         else
         {
-            var path = Path.GetFullPath(cfg.Path);
-            await SyncRepo(path);
+            var path = Path.GetFullPath(cfg.Path.TrimEnd('/'));
+            var project = Sync.SyncProject.CreateDefault(path);
+            await SyncProject(project);
         }
     }
 
-    private async Task SyncRepo(string path)
+    private async Task SyncProject(SyncProject project)
     {
-        Line($"sync {path}");
+        Line($"{project.Path}:");
 
         AddIndent();
 
-        using var repo = new Repository(path);
+        using var repo = new Repository(project.Path);
 
         var localBranches = repo.Branches.Where(x => !x.IsRemote).ToArray();
 
@@ -93,7 +97,7 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
             .ToHashSet();
 
         foreach (var remote in repo.Network.Remotes)
-            await SyncRemote(repo, remote, localBranches, touchedPaths);
+            await SyncRemote(project, repo, remote, localBranches, touchedPaths);
 
         if (changes.Length > 0)
         {
@@ -116,17 +120,18 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
     }
 
     private async Task SyncRemote(
+        SyncProject project,
         Repository repo,
         LibGit2Sharp.Remote remote,
         IReadOnlyCollection<Branch> localBranches,
         IReadOnlyCollection<string> touchedPaths
     )
     {
-        Line($"sync {remote.Name}");
+        Line($"{remote.Name}:");
 
         AddIndent();
 
-        Pending($"fetch {remote.Name} - ");
+        Pending("fetch - ");
         await _shell
             .Cmd($"git fetch {remote.Name} -p")
             .At(repo.Info.WorkingDirectory)
@@ -137,13 +142,14 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
         foreach (var localBranch in localBranches)
         {
             var remoteBranch = remoteBranches.SingleOrDefault(x => x.UpstreamBranchCanonicalName == localBranch.CanonicalName);
-            await SyncBranch(repo, remote, localBranch, remoteBranch, touchedPaths);
+            await SyncBranch(project, repo, remote, localBranch, remoteBranch, touchedPaths);
         }
 
         RemoveIndent();
     }
 
     private async Task SyncBranch(
+        SyncProject project,
         Repository repo,
         LibGit2Sharp.Remote remote,
         Branch localBranch,
@@ -151,11 +157,13 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
         IReadOnlyCollection<string> touchedPaths
     )
     {
-        Pending($"sync {localBranch.CanonicalName} -> {remote.Name} - ");
+        Pending($"{localBranch.CanonicalName} - ");
         if (remoteBranch is null)
         {
-            await _shell.Cmd($"git push {remote.Name} {localBranch.CanonicalName}").At(repo.Info.WorkingDirectory).ExecuteAsync();
-            Success("pushed");
+            if (project.Config.Push)
+                await Push(repo, remote, localBranch);
+            else
+                Info("kept local");
             return;
         }
 
@@ -185,27 +193,56 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
         // if push needed
         if (localCommits.Contains(remoteHead))
         {
-            await _shell.Cmd($"git push {remote.Name} {localBranch.CanonicalName}").At(repo.Info.WorkingDirectory).ExecuteAsync();
-            Success("pushed");
+            await Push(repo, remote, localBranch);
             return;
         }
 
         // if pull needed
         if (remoteCommits.Contains(localHead))
         {
-            var diff = repo.Diff.Compare<TreeChanges>(localHead.Tree, remoteHead.Tree);
-            var hasIntersections = diff.SelectMany(x => new[] { x.OldPath, x.Path }).Intersect(touchedPaths).Any();
-            if (hasIntersections)
-            {
-                Warning("skipped - local changes will be affected by pull");
-                return;
-            }
-
-            await _shell.Cmd($"git pull {remote.Name} {localBranch.CanonicalName}").At(repo.Info.WorkingDirectory).ExecuteAsync();
-            Success("pulled");
+            await Pull(repo, remote, localBranch, localHead, remoteHead, touchedPaths);
             return;
         }
 
+        DescribeDivergence(localCommits, remoteCommits);
+    }
+
+    private async Task Pull(
+        Repository repo,
+        LibGit2Sharp.Remote remote,
+        Branch localBranch,
+        Commit localHead,
+        Commit remoteHead,
+        IReadOnlyCollection<string> touchedPaths
+    )
+    {
+        var diff = repo.Diff.Compare<TreeChanges>(localHead.Tree, remoteHead.Tree);
+        var hasIntersections = diff.SelectMany(x => new[] { x.OldPath, x.Path }).Intersect(touchedPaths).Any();
+        if (hasIntersections)
+        {
+            Warning("skipped - local changes will be affected by pull");
+            return;
+        }
+
+        await _shell.Cmd($"git pull {remote.Name} {localBranch.CanonicalName}").At(repo.Info.WorkingDirectory).ExecuteAsync();
+        Success("pulled");
+    }
+
+    private async Task Push(
+        Repository repo,
+        LibGit2Sharp.Remote remote,
+        Branch localBranch
+    )
+    {
+        await _shell.Cmd($"git push {remote.Name} {localBranch.CanonicalName}").At(repo.Info.WorkingDirectory).ExecuteAsync();
+        Success("pushed");
+    }
+
+    private void DescribeDivergence(
+        List<Commit> localCommits,
+        List<Commit> remoteCommits
+    )
+    {
         // branches diverged - find common ancestor commit
         var localIndex = -1;
         var remoteIndex = -1;

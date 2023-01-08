@@ -9,14 +9,22 @@ internal class SyncListCommand : AsyncCommand
 {
     public override string Id => "list";
     public override string Description => "List repositories for sync";
+    private readonly SyncConfigurator _configurator;
+
+    public SyncListCommand(
+        SyncConfigurator configurator
+    )
+    {
+        _configurator = configurator;
+    }
 
     public override Task HandleAsync(
         CancellationToken ct
     )
     {
-        var paths = SyncConfig.Read();
-        foreach (var path in paths)
-            Console.WriteLine(path);
+        var projects = _configurator.Read();
+        foreach (var project in projects)
+            Console.WriteLine(project.ToString());
 
         return Task.CompletedTask;
     }

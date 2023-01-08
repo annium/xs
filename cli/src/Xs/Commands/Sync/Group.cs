@@ -9,7 +9,7 @@ internal class Group : Annium.Extensions.Arguments.Group
     {
         Add<SyncCommand>();
         Add<SyncListCommand>();
-        Add<SyncAddCommand>();
+        Add<SyncSetCommand>();
         Add<SyncRemoveCommand>();
     }
 }

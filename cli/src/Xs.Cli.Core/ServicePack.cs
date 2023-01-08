@@ -8,6 +8,7 @@ using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tasks.Dependencies;
 using Xs.Cli.Core.Tools;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Xs.Cli.Core;
 
@@ -24,7 +25,13 @@ public class ServicePack : ServicePackBase
         container.AddTime().WithRealTime().SetDefault();
 
         container.AddSerializers()
-            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime(), isDefault: true);
+            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime(), isDefault: true)
+            .WithYaml((s, d) =>
+            {
+                s.WithNamingConvention(CamelCaseNamingConvention.Instance);
+                d.WithNamingConvention(CamelCaseNamingConvention.Instance);
+                s.DisableAliases();
+            });
         container.AddHttpRequestFactory().SetDefault();
         container.AddLogging();
         container.AddShell();

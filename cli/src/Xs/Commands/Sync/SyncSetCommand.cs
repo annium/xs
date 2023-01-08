@@ -6,13 +6,13 @@ using Annium.Extensions.Arguments;
 
 namespace Xs.Commands.Sync;
 
-internal class SyncRemoveCommand : AsyncCommand<SyncRemoveCommandConfiguration>
+internal class SyncSetCommand : AsyncCommand<SyncAddCommandConfiguration>
 {
-    public override string Id => "remove";
-    public override string Description => "Remove repository from sync config";
+    public override string Id => "set";
+    public override string Description => "Setup repository in sync config";
     private readonly SyncConfigurator _configurator;
 
-    public SyncRemoveCommand(
+    public SyncSetCommand(
         SyncConfigurator configurator
     )
     {
@@ -20,7 +20,7 @@ internal class SyncRemoveCommand : AsyncCommand<SyncRemoveCommandConfiguration>
     }
 
     public override Task HandleAsync(
-        SyncRemoveCommandConfiguration cfg,
+        SyncAddCommandConfiguration cfg,
         CancellationToken ct
     )
     {
@@ -32,15 +32,28 @@ internal class SyncRemoveCommand : AsyncCommand<SyncRemoveCommandConfiguration>
         if (project is not null)
             projects.Remove(project);
 
+        projects.Add(new SyncProject
+        {
+            Path = path,
+            Config = new SyncProjectConfig
+            {
+                Push = cfg.Push
+            }
+        });
+
         _configurator.Write(projects);
 
         return Task.CompletedTask;
     }
 }
 
-internal class SyncRemoveCommandConfiguration
+internal class SyncAddCommandConfiguration
 {
     [Position(1)]
     [Help("Repository path.")]
     public string Path { get; set; } = string.Empty;
+
+    [Option]
+    [Help("Push local branches.")]
+    public bool Push { get; set; }
 }
