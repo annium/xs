@@ -59,7 +59,7 @@ internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfigura
                 this.Log().Trace($"Update {src}: replace {package} with {project}.");
 
                 src.Packages.Remove(package);
-                src.Projects.Add(new Dependency<IProject>(package.Type, project));
+                src.Projects.Add(new Dependency<IProject>(package.Type, project!));
             }
 
             this.Log().Debug($"Updated {src}.");

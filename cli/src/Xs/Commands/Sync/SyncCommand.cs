@@ -58,18 +58,19 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
         CancellationToken ct
     )
     {
+        var projects = _configurator.Read();
+
         if (cfg.Path == string.Empty)
         {
-            var paths = _configurator.Read();
-            Line($"sync {paths.Count} project(s)");
+            Line($"sync {projects.Count} project(s)");
 
-            foreach (var project in paths)
+            foreach (var project in projects)
                 await SyncProject(project);
         }
         else
         {
             var path = Path.GetFullPath(cfg.Path.TrimEnd('/'));
-            var project = Sync.SyncProject.CreateDefault(path);
+            var project = projects.SingleOrDefault(x => x.Path == path) ?? Sync.SyncProject.CreateDefault(path);
             await SyncProject(project);
         }
     }
