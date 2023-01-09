@@ -144,16 +144,15 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
         IReadOnlyCollection<string> touchedPaths
     )
     {
-        Line($"{remote.Name}:");
+        Pending($"{remote.Name}: ");
 
-        AddIndent();
-
-        Pending("fetch - ");
         await _shell
             .Cmd($"git fetch {remote.Name} -p")
             .At(repo.Info.WorkingDirectory)
             .ExecuteAsync();
-        Success("done");
+        Success("fetched");
+
+        AddIndent();
 
         var remoteBranches = repo.Branches.Where(x => x.IsRemote && x.RemoteName == remote.Name).ToArray();
         foreach (var localBranch in localBranches)
@@ -174,7 +173,7 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
         IReadOnlyCollection<string> touchedPaths
     )
     {
-        Pending($"{localBranch.CanonicalName} - ");
+        Pending($"{localBranch.FriendlyName} - ");
         if (remoteBranch is null)
         {
             if (project.Config.Push)
