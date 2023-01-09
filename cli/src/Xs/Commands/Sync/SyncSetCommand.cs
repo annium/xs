@@ -35,6 +35,7 @@ internal class SyncSetCommand : AsyncCommand<SyncAddCommandConfiguration>
         projects.Add(new SyncProject
         {
             Path = path,
+            Group = cfg.Group,
             Config = new SyncProjectConfig
             {
                 Push = cfg.Push
@@ -50,8 +51,12 @@ internal class SyncSetCommand : AsyncCommand<SyncAddCommandConfiguration>
 internal class SyncAddCommandConfiguration
 {
     [Position(1)]
-    [Help("Repository path.")]
+    [Help("Project repository path.")]
     public string Path { get; set; } = string.Empty;
+
+    [Position(2)]
+    [Help("Project group.")]
+    public string Group { get; set; } = string.Empty;
 
     [Option]
     [Help("Push local branches.")]

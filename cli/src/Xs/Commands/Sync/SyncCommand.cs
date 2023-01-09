@@ -60,16 +60,32 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
     {
         var projects = _configurator.Read();
 
-        if (cfg.Path == string.Empty)
+        if (cfg.PathOrGroup == string.Empty)
         {
             Line($"sync {projects.Count} project(s)");
+
+            foreach (var project in projects)
+                await SyncProject(project);
+
+            return;
+        }
+
+        var groups = projects
+            .GroupBy(x => x.Group)
+            .ToDictionary(x => x.Key);
+
+        if (groups.ContainsKey(cfg.PathOrGroup))
+        {
+            var group = cfg.PathOrGroup;
+            projects = projects.Where(x => x.Group == group).ToList();
+            Line($"sync {projects.Count} {group} project(s)");
 
             foreach (var project in projects)
                 await SyncProject(project);
         }
         else
         {
-            var path = Path.GetFullPath(cfg.Path.TrimEnd('/'));
+            var path = Path.GetFullPath(cfg.PathOrGroup.TrimEnd('/'));
             var project = projects.SingleOrDefault(x => x.Path == path) ?? Sync.SyncProject.CreateDefault(path);
             await SyncProject(project);
         }
@@ -274,8 +290,8 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
 internal class SyncCommandConfiguration
 {
     [Position(1, isRequired: false)]
-    [Help("Repository path.")]
-    public string Path { get; set; } = string.Empty;
+    [Help("Project repository path or group name.")]
+    public string PathOrGroup { get; set; } = string.Empty;
 }
 
 file static class ShellInstanceExtensions
