@@ -150,7 +150,7 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
             .Cmd($"git fetch {remote.Name} -p")
             .At(repo.Info.WorkingDirectory)
             .ExecuteAsync();
-        Success("fetched");
+        Info("fetched");
 
         AddIndent();
 
