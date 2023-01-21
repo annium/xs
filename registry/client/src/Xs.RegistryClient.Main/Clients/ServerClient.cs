@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
-using Xs.RegistryClient.Shared;
+using Xs.RegistryClient.Main.Internal;
 
 namespace Xs.RegistryClient.Server.Clients;
 

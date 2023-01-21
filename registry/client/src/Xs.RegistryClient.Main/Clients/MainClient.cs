@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Annium.Net.Http;
+using Xs.RegistryClient.Main.Internal;
 using Xs.RegistryClient.Main.Models;
-using Xs.RegistryClient.Shared;
 
 namespace Xs.RegistryClient.Main.Clients;
 

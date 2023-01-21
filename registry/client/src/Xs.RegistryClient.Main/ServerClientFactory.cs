@@ -2,7 +2,7 @@ using System;
 using Annium.Core.DependencyInjection;
 using Xs.RegistryClient.Server.Clients;
 
-namespace Xs.RegistryClient.Server;
+namespace Xs.RegistryClient.Main;
 
 public class ServerClientFactory
 {

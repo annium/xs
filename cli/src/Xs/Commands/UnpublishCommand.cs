@@ -11,6 +11,7 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
+using Xs.RegistryClient.Main;
 using Xs.RegistryClient.Server;
 using Xs.RegistryClient.Server.Clients;
 using Xs.Tools;
