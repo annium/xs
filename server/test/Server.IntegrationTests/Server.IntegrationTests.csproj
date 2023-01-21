@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <PackageId>Xs.Registry.Main.Tests</PackageId>
+        <PackageId>Server.IntegrationTests</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
         <Description>Xs.Registry.Main.Tests</Description>
         <TargetFramework>net7.0</TargetFramework>
@@ -13,9 +13,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../../backend/base/Testing/src/Annium.Testing.Assertions/Annium.Testing.Assertions.csproj" />
-        <ProjectReference Include="../../src/Xs.Registry.Main/Xs.Registry.Main.csproj" />
-        <ProjectReference Include="../Xs.Registry.Tests/Xs.Registry.Tests.csproj" />
+        <ProjectReference Include="../../../../backend/base/Testing/src/Annium.Testing.Assertions/Annium.Testing.Assertions.csproj" />
+        <ProjectReference Include="../../src/Server.Host/Server.Host.csproj" />
+        <ProjectReference Include="../Server.IntegrationTestsBase/Server.IntegrationTestsBase.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="3.2.0" />

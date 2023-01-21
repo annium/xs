@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <PackageId>Xs.Registry.Db</PackageId>
+        <PackageId>Server.Db</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry DB project. Encapsulates all DB-related logic. Internally separate per-project contexts.</Description>
         <TargetFramework>net7.0</TargetFramework>
@@ -12,11 +12,11 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../../backend/base/Configuration/src/Annium.Configuration.Yaml/Annium.Configuration.Yaml.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Core/src/Annium.Core.DependencyInjection/Annium.Core.DependencyInjection.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Core/src/Annium.Core.Mapper/Annium.Core.Mapper.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Diagnostics/src/Annium.Diagnostics.Debug/Annium.Diagnostics.Debug.csproj" />
-        <ProjectReference Include="../../../../../backend/third-party/EntityFrameworkCore/src/Annium.EntityFrameworkCore.Extensions/Annium.EntityFrameworkCore.Extensions.csproj" />
+        <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.Yaml/Annium.Configuration.Yaml.csproj" />
+        <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.DependencyInjection/Annium.Core.DependencyInjection.csproj" />
+        <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.Mapper/Annium.Core.Mapper.csproj" />
+        <ProjectReference Include="../../../../backend/base/Diagnostics/src/Annium.Diagnostics.Debug/Annium.Diagnostics.Debug.csproj" />
+        <ProjectReference Include="../../../../backend/third-party/EntityFrameworkCore/src/Annium.EntityFrameworkCore.Extensions/Annium.EntityFrameworkCore.Extensions.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="linq2db.EntityFrameworkCore" Version="7.1.0" />

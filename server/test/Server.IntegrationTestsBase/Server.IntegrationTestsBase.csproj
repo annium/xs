@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <PackageId>Xs.Registry.Tests</PackageId>
+        <PackageId>Server.IntegrationTestsBase</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
         <Description>Xs.Registry.Tests</Description>
         <TargetFramework>net7.0</TargetFramework>
@@ -12,6 +12,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../../backend/third-party/AspNetCore/src/Annium.AspNetCore.IntegrationTesting/Annium.AspNetCore.IntegrationTesting.csproj" />
+        <ProjectReference Include="../../../../backend/third-party/AspNetCore/src/Annium.AspNetCore.IntegrationTesting/Annium.AspNetCore.IntegrationTesting.csproj" />
     </ItemGroup>
 </Project>

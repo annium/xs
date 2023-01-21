@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <PackageId>Xs.Registry.Shared</PackageId>
+        <PackageId>Server.Shared</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
         <Description>XS registry shared project. Contains all shared between main and project servers, except separated DB stuff.</Description>
         <TargetFramework>net7.0</TargetFramework>
@@ -12,13 +12,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../../backend/third-party/AspNetCore/src/Annium.AspNetCore.Extensions/Annium.AspNetCore.Extensions.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Core/src/Annium.Core.DependencyInjection/Annium.Core.DependencyInjection.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Core/src/Annium.Core.Mapper/Annium.Core.Mapper.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Data/src/Annium.Data.Operations.Serialization.Json/Annium.Data.Operations.Serialization.Json.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Diagnostics/src/Annium.Diagnostics.Debug/Annium.Diagnostics.Debug.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Logging/src/Annium.Logging.Console/Annium.Logging.Console.csproj" />
-        <ProjectReference Include="../../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
+        <ProjectReference Include="../../../../backend/third-party/AspNetCore/src/Annium.AspNetCore.Extensions/Annium.AspNetCore.Extensions.csproj" />
+        <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.DependencyInjection/Annium.Core.DependencyInjection.csproj" />
+        <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.Mapper/Annium.Core.Mapper.csproj" />
+        <ProjectReference Include="../../../../backend/base/Data/src/Annium.Data.Operations.Serialization.Json/Annium.Data.Operations.Serialization.Json.csproj" />
+        <ProjectReference Include="../../../../backend/base/Diagnostics/src/Annium.Diagnostics.Debug/Annium.Diagnostics.Debug.csproj" />
+        <ProjectReference Include="../../../../backend/base/Logging/src/Annium.Logging.Console/Annium.Logging.Console.csproj" />
+        <ProjectReference Include="../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
