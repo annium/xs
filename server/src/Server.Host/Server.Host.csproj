@@ -12,7 +12,7 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../Server.Db/Server.Db.csproj" />
+        <ProjectReference Include="../Server.DbOld/Server.DbOld.csproj" />
         <ProjectReference Include="../Server.Shared/Server.Shared.csproj" />
     </ItemGroup>
 </Project>
