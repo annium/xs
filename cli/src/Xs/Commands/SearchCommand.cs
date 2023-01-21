@@ -3,10 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
+using Server.Client;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tools;
-using Xs.RegistryClient.Main;
 
 namespace Xs.Commands;
 

@@ -1,4 +1,4 @@
-namespace Xs.RegistryClient.Main.Models;
+namespace Server.Client.Models;
 
 public class MetaPackagePermission
 {

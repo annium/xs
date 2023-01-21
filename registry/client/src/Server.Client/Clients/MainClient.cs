@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Annium.Net.Http;
-using Xs.RegistryClient.Main.Internal;
-using Xs.RegistryClient.Main.Models;
+using Server.Client.Internal;
+using Server.Client.Models;
 
-namespace Xs.RegistryClient.Main.Clients;
+namespace Server.Client.Clients;
 
 public class MainClient : ClientBase
 {

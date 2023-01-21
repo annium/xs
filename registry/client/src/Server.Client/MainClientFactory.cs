@@ -1,8 +1,8 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Xs.RegistryClient.Main.Clients;
+using Server.Client.Clients;
 
-namespace Xs.RegistryClient.Main;
+namespace Server.Client;
 
 public class MainClientFactory
 {

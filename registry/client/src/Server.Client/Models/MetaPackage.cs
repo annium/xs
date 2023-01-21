@@ -1,7 +1,7 @@
 using System;
 using NodaTime;
 
-namespace Xs.RegistryClient.Main.Models;
+namespace Server.Client.Models;
 
 public class MetaPackage
 {

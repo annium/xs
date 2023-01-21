@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Xs.RegistryClient.Main.Models;
+namespace Server.Client.Models;
 
 public class Registry
 {

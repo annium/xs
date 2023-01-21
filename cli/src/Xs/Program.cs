@@ -7,7 +7,7 @@ using Group = Xs.Commands.Group;
 
 await using var entry = Entrypoint.Default
     .UseServicePack<Xs.ServicePack>()
-    .UseServicePack<Xs.RegistryClient.Main.ServicePack>()
+    .UseServicePack<Server.Client.ServicePack>()
     .UseServicePack<Xs.Cli.Core.ServicePack>()
     .UseServicePack<Xs.Cli.Dotnet.ServicePack>()
     .UseServicePack<ServicePack>()

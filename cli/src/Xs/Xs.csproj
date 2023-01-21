@@ -16,9 +16,9 @@
     <ItemGroup>
         <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.Entrypoint/Annium.Core.Entrypoint.csproj" />
         <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.CommandLine/Annium.Extensions.CommandLine.csproj" />
+        <ProjectReference Include="../../../registry/client/src/Server.Client/Server.Client.csproj" />
         <ProjectReference Include="../Xs.Cli.Dotnet/Xs.Cli.Dotnet.csproj" />
         <ProjectReference Include="../Xs.Cli.Node/Xs.Cli.Node.csproj" />
-        <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Main/Xs.RegistryClient.Main.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="EmbedIO" Version="3.5.2" />

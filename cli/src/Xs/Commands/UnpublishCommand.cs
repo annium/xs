@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 using Annium.Core.Primitives.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
+using Server.Client;
+using Server.Client.Clients;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
-using Xs.RegistryClient.Main;
-using Xs.RegistryClient.Server;
-using Xs.RegistryClient.Server.Clients;
 using Xs.Tools;
 using Version = Xs.Cli.Core.Models.Version;
 

@@ -1,6 +1,6 @@
 using System;
 
-namespace Xs.RegistryClient.Main.Models;
+namespace Server.Client.Models;
 
 [Flags]
 public enum Permission
