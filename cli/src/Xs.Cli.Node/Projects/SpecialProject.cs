@@ -13,8 +13,13 @@ using SysDirectory = System.IO.Directory;
 
 namespace Xs.Cli.Node.Projects;
 
-internal abstract class SpecialProject<TProject> : ProjectBase<TProject>, ISpecialProject, IAuditableProject, ICachingProject, ICleanableProject,
-    IInstallableProject, IBuildableProject where TProject : SpecialProject<TProject>
+internal abstract class SpecialProject<TProject> : ProjectBase<TProject>,
+    ISpecialProject,
+    IAuditableProject,
+    ICachingProject,
+    ICleanableProject,
+    IInstallableProject,
+    IBuildableProject where TProject : SpecialProject<TProject>
 {
     // TODO: rewrite through project options - projects can have different shapes in a moment
     // private static readonly object CacheLocker = new object();

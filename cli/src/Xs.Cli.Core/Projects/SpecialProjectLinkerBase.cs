@@ -32,7 +32,7 @@ public class SpecialProjectLinkerBase
     )
     {
         var type = dep.Type;
-        var(_, name, _) = dep.Value;
+        var (_, name, _) = dep.Value;
         var nameLow = name.ToLowerInvariant();
 
         var package = packages

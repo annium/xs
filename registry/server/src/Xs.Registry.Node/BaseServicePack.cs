@@ -1,7 +1,7 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Xs.Registry.Abstract.Packages;
-using Xs.Registry.Db.Node;
+using Xs.Registry.Db.Node.Models;
 using Xs.Registry.Node.Payloads;
 using Xs.Registry.Node.Storage;
 using Xs.Registry.Shared.Auth;

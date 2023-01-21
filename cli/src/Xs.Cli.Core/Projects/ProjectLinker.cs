@@ -28,7 +28,7 @@ internal class ProjectLinker : IProjectLinker
             ));
 
         var projectsByTypes = projects.GroupBy(p => p.Type).ToDictionary(g => g.Key, g => g.ToArray());
-        foreach (var(type, typeProjects) in projectsByTypes)
+        foreach (var (type, typeProjects) in projectsByTypes)
         {
             var linker = _linkers.FirstOrDefault(l => l.Type == type);
             if (linker is null)
@@ -60,7 +60,7 @@ internal class ProjectLinker : IProjectLinker
     )
     {
         var duplicateProject = projects.FirstOrDefault(p => p != project && p.Name == project.Name);
-        if (duplicateProject != null)
+        if (duplicateProject is not null)
         {
             addError(new InvalidOperationException($"Project {project} name is not unique."));
             return;
@@ -104,7 +104,7 @@ internal class ProjectLinker : IProjectLinker
                     project: p,
                     package: p.Packages.FirstOrDefault(d => d.Value.Name.ToLowerInvariant() == name)?.Value
                 ))
-                .Where(p => p.package! != null!)
+                .Where(p => p.package is not null)
                 .ToArray();
             var variationsString = string.Join(
                 Environment.NewLine,

@@ -12,13 +12,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.AspNetCore.Extensions" Version="0.1.0" />
-        <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
-        <PackageReference Include="Annium.Core.Mapper" Version="0.1.0" />
-        <PackageReference Include="Annium.Data.Operations.Serialization.Json" Version="0.1.0" />
-        <PackageReference Include="Annium.Diagnostics.Debug" Version="0.1.0" />
-        <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
-        <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
+        <ProjectReference Include="../../../../../backend/third-party/AspNetCore/src/Annium.AspNetCore.Extensions/Annium.AspNetCore.Extensions.csproj" />
+        <ProjectReference Include="../../../../../backend/base/Core/src/Annium.Core.DependencyInjection/Annium.Core.DependencyInjection.csproj" />
+        <ProjectReference Include="../../../../../backend/base/Core/src/Annium.Core.Mapper/Annium.Core.Mapper.csproj" />
+        <ProjectReference Include="../../../../../backend/base/Data/src/Annium.Data.Operations.Serialization.Json/Annium.Data.Operations.Serialization.Json.csproj" />
+        <ProjectReference Include="../../../../../backend/base/Diagnostics/src/Annium.Diagnostics.Debug/Annium.Diagnostics.Debug.csproj" />
+        <ProjectReference Include="../../../../../backend/base/Logging/src/Annium.Logging.Console/Annium.Logging.Console.csproj" />
+        <ProjectReference Include="../../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />

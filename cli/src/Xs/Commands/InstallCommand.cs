@@ -48,7 +48,7 @@ internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, Discov
         {
             this.Log().Debug($"Clear {projects.Length} projects cache.");
             await _runner.RunAsync(
-                projects.OfType<ICachingProject>(),
+                projects.OfType<ICachingProject>().ToArray(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
                 new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
                 ct
@@ -57,7 +57,7 @@ internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, Discov
 
         this.Log().Debug($"Install {projects.Length} projects.");
         await _runner.RunAsync(
-            projects.OfType<IInstallableProject>(),
+            projects.OfType<IInstallableProject>().ToArray(),
             (project, tkn) => project.InstallAsync(force, tkn),
             new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
             ct

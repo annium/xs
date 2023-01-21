@@ -41,7 +41,7 @@ internal class AuthorizationApplicationModelProvider<TAuthorizationFilter> : IAp
         var attribute = actionModel.Attributes.OfType<AuthorizeAttribute>().FirstOrDefault();
 
         //if no Authorize attribute - no filter needed
-        if (attribute == null)
+        if (attribute is null)
             return;
 
         actionModel.Filters.Add(_authorizationFilterFactory(attribute.Access));

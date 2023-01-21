@@ -8,6 +8,7 @@ using System.Web;
 using Annium.Net.Http;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Dotnet.Projects;
 
@@ -40,11 +41,11 @@ internal class DependencyManager : IDependencyManager
         var registrationBaseUrl = serverIndex.Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
 
         var registrationUrl = registrationBaseUrl +
-                              (registrationBaseUrl.EndsWith('/') ? string.Empty : "/") +
-                              $"{HttpUtility.UrlEncode(package.Name.ToLowerInvariant())}/index.json";
+            (registrationBaseUrl.EndsWith('/') ? string.Empty : "/") +
+            $"{HttpUtility.UrlEncode(package.Name.ToLowerInvariant())}/index.json";
 
         var index = await LoadIndexAsync(registrationUrl);
-        if (index == null)
+        if (index is null)
             return Array.Empty<Package>();
 
         var registrations = index.Items
@@ -54,17 +55,17 @@ internal class DependencyManager : IDependencyManager
             {
                 try
                 {
-                    if (!Core.Models.Version.TryParse(e.Version, out var version))
+                    if (!Version.TryParse(e.Version, out var version))
                         throw new ArgumentException($"Package {e.Id} version {e.Version} is invalid");
 
                     return (e.Id, Version: version);
                 }
                 catch
                 {
-                    return (e.Id, Version: Core.Models.Version.Empty);
+                    return (e.Id, Version: Version.Empty);
                 }
             })
-            .Where(e => e.Version != Core.Models.Version.Empty)
+            .Where(e => e.Version != Version.Empty)
             .OrderByDescending(e => e.Version)
             .ToArray();
 
@@ -74,13 +75,13 @@ internal class DependencyManager : IDependencyManager
     private async Task<RegistrationIndex?> LoadIndexAsync(string registrationUrl)
     {
         var index = await _httpRequestFactory.New().UseClient(_client).Get(registrationUrl).AsAsync(new RegistrationIndex());
-        index.Items = (await Task.WhenAll(index.Items.Select(async page =>
+        index.Items = await Task.WhenAll(index.Items.Select(async page =>
         {
             if (page.Items.Length > 0)
                 return page;
 
             return await _httpRequestFactory.New().UseClient(_client).Get(page.Id).AsAsync<RegistrationPage>();
-        }))).Where(x => x != null).ToArray();
+        }));
 
         return index;
     }
@@ -92,9 +93,11 @@ internal class DependencyManager : IDependencyManager
 
     private class ServiceIndexResource
     {
-        [JsonPropertyName("@id")] public string Id { get; set; } = string.Empty;
+        [JsonPropertyName("@id")]
+        public string Id { get; set; } = string.Empty;
 
-        [JsonPropertyName("@type")] public string Type { get; set; } = string.Empty;
+        [JsonPropertyName("@type")]
+        public string Type { get; set; } = string.Empty;
     }
 
     private class RegistrationIndex
@@ -104,7 +107,8 @@ internal class DependencyManager : IDependencyManager
 
     private class RegistrationPage
     {
-        [JsonPropertyName("@id")] public string Id { get; set; } = string.Empty;
+        [JsonPropertyName("@id")]
+        public string Id { get; set; } = string.Empty;
 
         public RegistrationLeaf[] Items { get; set; } = Array.Empty<RegistrationLeaf>();
     }

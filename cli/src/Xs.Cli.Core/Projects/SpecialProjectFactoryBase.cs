@@ -3,7 +3,7 @@ using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects;
 
-public class SpecialProjectFactoryBase<TProject> where TProject : class, IProject
+public class SpecialProjectFactoryBase
 {
     protected Dependency<IProject> GetProjectDependencyMock(
         FileInfo location,
@@ -15,7 +15,7 @@ public class SpecialProjectFactoryBase<TProject> where TProject : class, IProjec
         var fileParent = Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {location} has no parent directory");
         var directory = fileParent.FullName;
 
-        var dependency = new ProjectMock<TProject>(
+        var dependency = new ProjectMock(
             location.Name,
             new Version(0, 0, 0, string.Empty),
             string.Empty,

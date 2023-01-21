@@ -29,7 +29,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
         LoggerConfiguration loggerConfiguration,
         ILogger<TProject> logger,
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
-        SpecialConfiguration config, 
+        SpecialConfiguration config,
         ProjectMapper mapper
     ) : base(
         type,

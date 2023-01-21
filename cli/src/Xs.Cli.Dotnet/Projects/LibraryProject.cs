@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Projects;
 using SysFile = System.IO.File;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Dotnet.Projects;
 
@@ -14,7 +15,7 @@ internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProj
     {
     }
 
-    public async Task<string> PackAsync(Core.Models.Version version, CancellationToken ct)
+    public async Task<string> PackAsync(Version version, CancellationToken ct)
     {
         var file = Path.Combine(Directory, $"{Name}.{version}.nupkg");
         if (SysFile.Exists(file))
@@ -34,7 +35,7 @@ internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProj
         return file;
     }
 
-    public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken ct)
+    public async Task PublishAsync(Uri registry, string accessToken, Version version, CancellationToken ct)
     {
         var packageFile = await PackAsync(version, ct);
 
@@ -46,6 +47,6 @@ internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProj
 
         await RunAsync("publish", cmd, ct);
 
-        System.IO.File.Delete(packageFile);
+        SysFile.Delete(packageFile);
     }
 }

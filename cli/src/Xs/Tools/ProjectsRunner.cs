@@ -20,7 +20,7 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
     }
 
     public Task RunAsync<TProject>(
-        IEnumerable<TProject> projects,
+        IReadOnlyCollection<TProject> projects,
         Func<TProject, CancellationToken, Task> handle,
         Config config,
         CancellationToken ct
@@ -104,17 +104,18 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
                         this.Log().Trace($"Finalized run for {project}. Signal.");
 
                         // signal for next iteration
+                        // ReSharper disable once AccessToDisposedClosure
                         gate.Set();
                     }
                 });
 
             // wait for next iteration
             this.Log().Trace("Waiting for a signal.");
-            gate.Wait();
+            gate.Wait(ct);
             gate.Reset();
         }
 
-        this.Log().Trace($"Finished run of {projects.Count()} with {errors.Count} error(s).");
+        this.Log().Trace($"Finished run of {projects.Count} with {errors.Count} error(s).");
 
         if (errors.Count > 0)
             throw new AggregateException(errors);

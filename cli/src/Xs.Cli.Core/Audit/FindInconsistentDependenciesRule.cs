@@ -45,7 +45,7 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject> w
         bool fix
     )
     {
-        var(_, name, version) = package.Value;
+        var (_, name, version) = package.Value;
         var nameLow = name.ToLowerInvariant();
 
         var others = packages.Where(p => p.Name.ToLowerInvariant() == nameLow).ToArray();

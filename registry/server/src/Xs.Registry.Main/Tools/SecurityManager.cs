@@ -14,6 +14,7 @@ internal class SecurityManager : ISecurityManager, IDisposable
     }
 
     #region IDisposable Support
+
     private bool _disposedValue = false;
 
     protected virtual void Dispose(bool disposing)
@@ -33,5 +34,6 @@ internal class SecurityManager : ISecurityManager, IDisposable
     {
         Dispose(true);
     }
+
     #endregion
 }

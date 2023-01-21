@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Annium.Data.Operations;
 using Annium.Extensions.Execution;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
+using Xs.Registry.Db.Shared.Repositories;
+using Xs.Registry.Db.Shared.Tools;
 
 namespace Xs.Registry.Abstract.Packages;
 
@@ -48,7 +50,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         // get metaPackage by (type, name)
         var metaPackage = await _metaPackageRepository.FindByTypeNameAsync(_projectType, name);
 
-        var isNew = metaPackage == null;
+        var isNew = metaPackage is null;
         if (isNew)
             metaPackage = await _metaPackageRepository.CreateAsync(
                 _metaPackageManager.Generate(user, _projectType, payload)
@@ -64,9 +66,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         var republished = await _packageRepository.FindByNameVersionAsync(name, version);
 
         // if present - republish package version, else - publish new package version
-        return republished == null ?
-            await PublishPackageVersionAsync(executor, metaPackage, access, payload) :
-            await RepublishPackageVersionAsync(executor, metaPackage, access, payload);
+        return republished is null ? await PublishPackageVersionAsync(executor, metaPackage, access, payload) : await RepublishPackageVersionAsync(executor, metaPackage, access, payload);
     }
 
     public async Task<IStatusResult<PackageStatus>> UnpublishPackageAsync(User user, string name, string version)
@@ -106,7 +106,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
 
             // and anyway - recount downloads
             executor.With(
-                async() => await _metaPackageRepository.SetDownloadsAsync(
+                async () => await _metaPackageRepository.SetDownloadsAsync(
                     metaPackage.Id,
                     await _packageRepository.CountAllDownloadsAsync(metaPackage.Name)
                 )
@@ -135,7 +135,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
     public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
     {
         var package = await _packageRepository.FindByNameVersionAsync(name, version);
-        if (package == null)
+        if (package is null)
             return Result.Status(PackageStatus.NotFound);
 
         var access = (await _metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(user);
@@ -185,7 +185,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
                 .Error($"Package {payload.Name} {payload.Version} already exists. You need unpublish permission to overwrite it.");
 
         executor.Stage(
-            async() =>
+            async () =>
             {
                 await _packageStorage.DeleteAsync(payload.Name, payload.Version);
                 await _packageRepository.DeleteByNameVersionAsync(payload.Name, payload.Version);
@@ -220,11 +220,11 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         );
 
         executor.Stage(
-            async() => await _metaPackageRepository.SetDownloadsAsync(
+            async () => await _metaPackageRepository.SetDownloadsAsync(
                 metaPackage.Id,
                 await _packageRepository.CountAllDownloadsAsync(pkg.Name)
             ),
-            async() => await _metaPackageRepository.SetDownloadsAsync(
+            async () => await _metaPackageRepository.SetDownloadsAsync(
                 metaPackage.Id,
                 await _packageRepository.CountAllDownloadsAsync(pkg.Name)
             )

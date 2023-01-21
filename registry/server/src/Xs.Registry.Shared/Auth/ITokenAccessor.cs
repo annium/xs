@@ -6,5 +6,5 @@ namespace Xs.Registry.Shared.Auth;
 
 public interface ITokenAccessor
 {
-    ValueTuple<Guid, IActionResult> GetToken(HttpRequest request);
+    ValueTuple<Guid, IActionResult?> GetToken(HttpRequest request);
 }

@@ -1,10 +1,12 @@
 using LinqToDB;
 using Microsoft.EntityFrameworkCore;
+using Xs.Registry.Db.Node;
 using Xs.Registry.Db.Node.Entities;
+using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db;
 
-internal partial class Context : Node.INodeContext
+internal partial class Context : INodeContext
 {
     public DbSet<Package> NodePackagesSet { get; set; }
 
@@ -19,7 +21,7 @@ internal partial class Context : Node.INodeContext
         builder.Entity<Package>()
             .HasAlternateKey(p => new { p.LowerName, p.Version });
         builder.Entity<Package>()
-            .HasOne<Shared.Entities.MetaPackage>().WithMany().IsRequired()
+            .HasOne<MetaPackage>().WithMany().IsRequired()
             .HasForeignKey(p => p.MetaPackageId).OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<PackageDependency>()

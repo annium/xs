@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Repositories;
 
 public interface IPackageRepository<TPackage, TPackageDependency> where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
 {

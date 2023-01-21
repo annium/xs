@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Models;
 
 public class MetaPackageAccess
 {
@@ -20,5 +20,5 @@ public class MetaPackageAccess
 
     public UserMetaPackageAccess ForUser(User user) =>
         // for empty user - assume world access
-        new(user == null ? Guid.Empty : user.Id, OwnerId, Permissions);
+        new(user is null ? Guid.Empty : user.Id, OwnerId, Permissions);
 }

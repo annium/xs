@@ -1,4 +1,4 @@
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
 
 namespace Xs.Registry.Node;
 

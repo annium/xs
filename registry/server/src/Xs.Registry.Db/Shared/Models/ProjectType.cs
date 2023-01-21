@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Models;
 
 public class ProjectType
 {
@@ -16,7 +16,7 @@ public class ProjectType
     }
 
     public static ProjectType Get(string name) => Types.Find(e => e._name == name) ??
-                                                  throw new Exception($"Project type {name} is not registered.");
+        throw new Exception($"Project type {name} is not registered.");
 
     public static IEnumerable<ProjectType> List() => Types.ToArray();
 

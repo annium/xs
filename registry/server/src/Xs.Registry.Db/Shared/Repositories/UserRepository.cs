@@ -2,8 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
+using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Repositories;
 
 internal class UserRepository : IUserRepository
 {
@@ -25,7 +26,7 @@ internal class UserRepository : IUserRepository
         var entity = _mapper.Map<Entities.User>(user);
         entity.Id = Guid.NewGuid();
 
-        using(var db = _context.GetDataConnection())
+        await using (var db = _context.GetDataConnection())
         {
             await db.InsertAsync(entity);
         }

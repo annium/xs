@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Annium.Data.Models;
 
+// ReSharper disable NonReadonlyMemberInGetHashCode
+
 namespace Xs.Cli.Core.Models;
 
 public class Version : Comparable<Version>
@@ -20,9 +22,6 @@ public class Version : Comparable<Version>
     {
         version = Empty;
 
-        if (raw is null)
-            return false;
-
         var parts = raw.Split('.', 3);
         if (parts.Length < 3)
             return false;
@@ -37,9 +36,7 @@ public class Version : Comparable<Version>
 
             // drop scm hash
             var hasHash = parts[2].Contains('+');
-            var suffix = patchParts.Length == 1 || hasHash ?
-                string.Empty :
-                parts[2].Substring(patchParts[0].Length);
+            var suffix = patchParts.Length == 1 || hasHash ? string.Empty : parts[2].Substring(patchParts[0].Length);
 
             version = new Version(major, minor, patch, suffix);
 
@@ -74,12 +71,7 @@ public class Version : Comparable<Version>
 
     public override string ToString() => $"{Major}.{Minor}.{Patch}{Suffix}";
 
-    public override int GetHashCode() => HashCode.Combine(
-        Major,
-        Minor,
-        Patch,
-        Suffix
-    );
+    public override int GetHashCode() => HashCode.Combine(Major, Minor, Patch, Suffix);
 
     protected override IEnumerable<Func<Version, IComparable>> GetComparables()
     {

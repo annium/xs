@@ -6,8 +6,8 @@ namespace Xs.Cli.Core.Models;
 public class Package : Equatable<Package>, IReference
 {
     public ProjectType Type { get; }
-    public string Name { get; set; }
-    public Version Version { get; set; }
+    public string Name { get; }
+    public Version Version { get; }
 
     public Package(
         ProjectType type,
@@ -20,7 +20,7 @@ public class Package : Equatable<Package>, IReference
             throw new ArgumentNullException(nameof(name));
         Name = name;
         Version = version ??
-                  throw new ArgumentNullException(nameof(version));
+            throw new ArgumentNullException(nameof(version));
     }
 
     public void Deconstruct(

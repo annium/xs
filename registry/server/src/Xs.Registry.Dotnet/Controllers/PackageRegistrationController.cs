@@ -4,8 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Db.Dotnet;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Dotnet.Models;
+using Xs.Registry.Db.Shared.Models;
+using Xs.Registry.Db.Shared.Repositories;
 using Xs.Registry.Dotnet.Views;
 using Xs.Registry.Shared.Helpers;
 
@@ -36,7 +37,7 @@ public class PackageRegistrationController : ServerController<User>
         if (packages.Length == 0)
             return NotFound();
 
-        return Ok(new RegistrationIndexView(new [] { GetRegistrationPage(packages) }));
+        return Ok(new RegistrationIndexView(new[] { GetRegistrationPage(packages) }));
     }
 
     [HttpGet("v3/registration/{name}/page.json")]
@@ -55,7 +56,7 @@ public class PackageRegistrationController : ServerController<User>
     {
         var package = await _packageRepository.FindByNameVersionAsync(name, version);
 
-        if (package == null)
+        if (package is null)
             return NotFound();
 
         return Ok(GetRegistrationLeaf(package));
@@ -66,7 +67,7 @@ public class PackageRegistrationController : ServerController<User>
     {
         var package = await _packageRepository.FindByNameVersionAsync(name, version);
 
-        if (package == null)
+        if (package is null)
             return NotFound();
 
         return Ok(GetCatalogEntry(package));

@@ -12,10 +12,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="../../../../../backend/base/Extensions/src/Annium.Extensions.Execution/Annium.Extensions.Execution.csproj" />
         <ProjectReference Include="../Xs.Registry.Db/Xs.Registry.Db.csproj" />
         <ProjectReference Include="../Xs.Registry.Shared/Xs.Registry.Shared.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Annium.Extensions.Execution" Version="0.1.0" />
     </ItemGroup>
 </Project>

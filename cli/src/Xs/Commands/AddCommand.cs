@@ -12,6 +12,7 @@ using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tasks.Dependencies;
 using Xs.Cli.Core.Tools;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
@@ -90,7 +91,7 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
             packages = new[] { await ResolvePackage(discoverCfg, cfg, projectType, name, version) };
 
         // if package already exists: if version exists - check it's same, otherwise - nothing to do.
-        else if (version != Cli.Core.Models.Version.Empty)
+        else if (version != Version.Empty)
             EnsureNoVersionConflict(packages, version);
 
         foreach (var package in packages)
@@ -118,7 +119,7 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
         return targetGroups.Single().Key;
     }
 
-    private void EnsureNoVersionConflict(Package[] packages, Cli.Core.Models.Version version)
+    private void EnsureNoVersionConflict(Package[] packages, Version version)
     {
         if (packages.All(x => x.Version == version))
             return;
@@ -135,13 +136,13 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
         AddCommandConfiguration cfg,
         ProjectType projectType,
         string name,
-        Cli.Core.Models.Version version
+        Version version
     )
     {
-        if (version != Cli.Core.Models.Version.Empty)
+        if (version != Version.Empty)
             return new Package(projectType, name, version);
 
-        var packageStub = new Package(projectType, name, Cli.Core.Models.Version.Empty);
+        var packageStub = new Package(projectType, name, Version.Empty);
 
         // resolve configuration and available version of all dependencies
         var configuration = _configurationManager.Load(discoverCfg.Root);
@@ -149,9 +150,9 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
         var dependencyManager = _dependencyManagers.Single(x => x.Type == packageStub.Type);
 
 
-        var registryUri = configuration?.Servers.FirstOrDefault(s => s.Key == packageStub.Type).Value;
-        var versions = registryUri != null && !registryUri.IsFile
-            ? await dependencyManager.ResolveVersionsAsync(packageStub, registryUri, configuration!.Token)
+        var registryUri = configuration.Servers.GetValueOrDefault(packageStub.Type);
+        var versions = registryUri is not null && !registryUri.IsFile
+            ? await dependencyManager.ResolveVersionsAsync(packageStub, registryUri, configuration.Token)
             : Array.Empty<Package>();
 
         // fallback to default server result
@@ -182,7 +183,7 @@ internal class AddCommandConfiguration
 
     [Position(3, isRequired: false)]
     [Help("Dependency version (for package dependencies, optional).")]
-    public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
+    public Version Version { get; set; } = Version.Empty;
 
     [Option("t")]
     [Help("Dependency type.")]

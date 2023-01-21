@@ -14,7 +14,7 @@ public class PackageName
         var parts = value.Substring(1).Split('/');
         if (parts.Length != 2) Fail();
 
-        var(scope, name) = (parts[0].Trim(), parts[1].Trim());
+        var (scope, name) = (parts[0].Trim(), parts[1].Trim());
         if (scope.Length == 0 || name.Length == 0) Fail();
 
         return new PackageName(scope, name);
@@ -36,9 +36,9 @@ public class PackageName
         Name = name;
     }
 
-    public override string ToString() => Scope == null ? Name : $"@{Scope}/{Name}";
+    public override string ToString() => Scope is null ? Name : $"@{Scope}/{Name}";
 
-    public string ToFileName() => Scope == null ? Name : $"{Scope}-{Name}";
+    public string ToFileName() => Scope is null ? Name : $"{Scope}-{Name}";
 
     public static implicit operator string(PackageName name) => name.ToString();
 }

@@ -1,4 +1,17 @@
+# editors
 .idea/
+.vscode/
+*DotSettings.user
+
+# artifacts
+.DS_Store
+/build/
+/logs*/
+/run/
+configuration/
+keys/
+*.blob
+*.log
 
 # xs ignore patterns
 .xs.ignore

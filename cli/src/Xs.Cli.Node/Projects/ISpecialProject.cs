@@ -4,5 +4,4 @@ namespace Xs.Cli.Node.Projects;
 
 internal interface ISpecialProject : IProject
 {
-
 }

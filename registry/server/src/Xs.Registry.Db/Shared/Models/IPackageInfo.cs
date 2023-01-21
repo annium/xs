@@ -1,6 +1,6 @@
 using NodaTime;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Models;
 
 public interface IPackageInfo
 {

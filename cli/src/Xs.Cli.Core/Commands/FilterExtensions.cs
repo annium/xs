@@ -22,7 +22,7 @@ public static class FilterExtensions
         var comparison = StringComparison.CurrentCultureIgnoreCase;
 
         var exactMatch = list.FirstOrDefault(i => getName(i).Equals(mask, comparison));
-        if (exactMatch != null && !exactMatch.Equals(default(T) !))
+        if (exactMatch is not null && !exactMatch.Equals(default(T) !))
             return new[] { exactMatch };
 
         return list.Where(p => getName(p).Contains(mask, comparison));

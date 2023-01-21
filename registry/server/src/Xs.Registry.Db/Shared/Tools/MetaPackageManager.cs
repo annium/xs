@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Tools;
 
 internal class MetaPackageManager : IMetaPackageManager
 {

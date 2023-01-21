@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using System.Web;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
+using Xs.Registry.Db.Shared.Repositories;
+using Xs.Registry.Db.Shared.Tools;
 using Xs.Registry.Main.Views;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
@@ -39,7 +41,7 @@ public class MetaPackagesController : ServerController<User>
         int count = 50
     )
     {
-        var projectType = type == null ? null : ProjectType.Get(type);
+        var projectType = type is null ? null : ProjectType.Get(type);
         query = HttpUtility.UrlDecode(query);
         if (page < 1)
             return BadRequest("Page must be positive integer");
@@ -58,7 +60,7 @@ public class MetaPackagesController : ServerController<User>
         name = HttpUtility.UrlDecode(name);
         var package = await _metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
 
-        if (package == null)
+        if (package is null)
             return NotFound();
 
         var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
@@ -75,7 +77,7 @@ public class MetaPackagesController : ServerController<User>
         name = HttpUtility.UrlDecode(name);
         var package = await _metaPackageRepository.FindByTypeNameAsync(ProjectType.Get(type), name);
 
-        if (package == null)
+        if (package is null)
             return NotFound();
 
         var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());

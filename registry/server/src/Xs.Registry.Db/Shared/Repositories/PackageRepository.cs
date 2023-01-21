@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
 using LinqToDB.Data;
+using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Repositories;
 
 internal class PackageRepository<TPackage, TPackageDependency, TPackageEntity, TPackageDependencyEntity, TContext> : IPackageRepository<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
@@ -41,7 +42,7 @@ internal class PackageRepository<TPackage, TPackageDependency, TPackageEntity, T
         entity.Id = Guid.NewGuid();
         entity.Dependencies.ForEach(d => d.PackageId = entity.Id);
 
-        using(var db = _context.GetDataConnection())
+        await using (var db = _context.GetDataConnection())
         {
             await db.InsertAsync(entity);
             db.BulkCopy(entity.Dependencies);
@@ -89,7 +90,7 @@ internal class PackageRepository<TPackage, TPackageDependency, TPackageEntity, T
             .Where(p => p.LowerName == name && p.Version == version)
             .FirstOrDefaultAsync();
 
-        if (entity != null)
+        if (entity is not null)
             entity.Dependencies = await _packageDependencies
                 .Where(d => d.PackageId == entity.Id)
                 .ToListAsync();

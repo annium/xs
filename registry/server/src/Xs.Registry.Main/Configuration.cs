@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
 
 namespace Xs.Registry.Main;
 

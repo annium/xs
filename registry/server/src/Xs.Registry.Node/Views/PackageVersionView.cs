@@ -3,7 +3,7 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Xs.Registry.Db.Node;
+using Xs.Registry.Db.Node.Models;
 using Xs.Registry.Shared.Helpers;
 
 namespace Xs.Registry.Node.Views;
@@ -27,14 +27,14 @@ public class PackageVersionView
 
     public PackageVersionView(Package package, IUrlHelper urlHelper)
     {
-        Name = package.Name.ToString();
+        Name = package.Name;
         Version = package.Version;
         Description = package.Description;
         Main = package.Main;
         Dependencies = package.Dependencies.Where(d => d.Type == DependencyType.Normal).ToDictionary(d => d.Name, d => d.Version);
         DevDependencies = package.Dependencies.Where(d => d.Type == DependencyType.Dev).ToDictionary(d => d.Name, d => d.Version);
         Distribution = new PackageDistributionView(
-            urlHelper.AbsoluteUri($"{HttpUtility.UrlEncode(package.Name.ToString())}/{package.Version}.tgz").ToString(),
+            urlHelper.AbsoluteUri($"{HttpUtility.UrlEncode(package.Name)}/{package.Version}.tgz").ToString(),
             package.Shasum,
             package.Integrity
         );

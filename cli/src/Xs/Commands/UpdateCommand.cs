@@ -72,7 +72,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
             .ToDictionary(
                 t => t,
                 t => _dependencyManagers.SingleOrDefault(m => m.Type == t) ??
-                     throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
+                    throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
             );
 
         // resolve configuration and available version of all dependencies
@@ -81,8 +81,8 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
         var updates = (await Task.WhenAll(dependencies.Select(async d =>
         {
             var dependencyManager = dependencyManagers[d.Type];
-            var registryUri = configuration.Servers.FirstOrDefault(s => s.Key == d.Type).Value;
-            var versions = registryUri != null && !registryUri.IsFile ? await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration!.Token) : Array.Empty<Package>();
+            var registryUri = configuration.Servers.GetValueOrDefault(d.Type);
+            var versions = registryUri is not null && !registryUri.IsFile ? await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration.Token) : Array.Empty<Package>();
 
             // fallback to default server result
             if (versions.Length == 0)
@@ -128,7 +128,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
         // install installable updates
         this.Log().Debug($"Clear {updated.Count} projects cache.");
         await _runner.RunAsync(
-            updated.OfType<ICachingProject>(),
+            updated.OfType<ICachingProject>().ToArray(),
             (project, tkn) => project.ClearCacheAsync(tkn),
             new ProjectsRunner.Config(cfg.Parallelism, false),
             ct
@@ -136,7 +136,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
 
         this.Log().Debug($"Install {updated.Count} projects.");
         await _runner.RunAsync(
-            updated.OfType<IInstallableProject>(),
+            updated.OfType<IInstallableProject>().ToArray(),
             (project, tkn) => project.InstallAsync(true, tkn),
             new ProjectsRunner.Config(cfg.Parallelism, false),
             ct

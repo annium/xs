@@ -37,7 +37,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
         var sb = new StringBuilder();
         sb.AppendLine($"@{scope}:registry={configuration.Server}");
         // add all private scopes
-        if (configuration.Special != null)
+        if (configuration.Special is not null)
             foreach (var privateScope in ((SpecialConfiguration) configuration.Special).PrivateScopes.ToHashSet())
                 sb.AppendLine($"@{privateScope}:registry={configuration.Server}");
         sb.AppendLine($"//{configuration.Server.Authority}/:_authToken=\"{configuration.Token}\"");

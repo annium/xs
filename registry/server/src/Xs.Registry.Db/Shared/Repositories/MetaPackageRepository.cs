@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
 using LinqToDB.Data;
+using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Repositories;
 
 internal class MetaPackageRepository : IMetaPackageRepository
 {
@@ -28,7 +29,7 @@ internal class MetaPackageRepository : IMetaPackageRepository
         entity.Id = Guid.NewGuid();
         entity.Permissions.ForEach(p => p.MetaPackageId = entity.Id);
 
-        using(var db = _context.GetDataConnection())
+        await using (var db = _context.GetDataConnection())
         {
             await db.InsertAsync(entity);
             db.BulkCopy(entity.Permissions);
@@ -54,7 +55,7 @@ internal class MetaPackageRepository : IMetaPackageRepository
             .Select(p => new { owner = p.OwnerId, permissions = p.Permissions })
             .FirstOrDefaultAsync();
 
-        if (data == null)
+        if (data is null)
             return null;
 
         return new MetaPackageAccess(data.owner, data.permissions.Select(_mapper.Map<MetaPackagePermission>).ToArray());
@@ -90,19 +91,19 @@ internal class MetaPackageRepository : IMetaPackageRepository
         else if (ownerId != Guid.Empty)
             request = request.Where(
                 o => o.u.Id == ownerId &&
-                     o.p.Category == PermissionCategory.World &&
-                     (o.p.Permission & Permission.Read) == Permission.Read
+                    o.p.Category == PermissionCategory.World &&
+                    (o.p.Permission & Permission.Read) == Permission.Read
             );
 
         // otherwise, if ownerId not specified - generic search with access check
         else
             request = request.Where(
                 o => o.u.Id == userId ||
-                     (o.p.Category == PermissionCategory.World &&
-                      (o.p.Permission & Permission.Read) == Permission.Read)
+                    (o.p.Category == PermissionCategory.World &&
+                        (o.p.Permission & Permission.Read) == Permission.Read)
             );
 
-        if (type != null)
+        if (type is not null)
         {
             var typeString = type.ToString();
             request = request.Where(o => o.m.Type == typeString);

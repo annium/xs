@@ -59,7 +59,7 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
         foreach (var project in preservedProjects)
         {
             var parent = Directory.GetParent(project.Directory)?.FullName ??
-                         throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
+                throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
             if (parent == root)
             {
                 this.Log().Debug($"Add {project} to solution file at root");

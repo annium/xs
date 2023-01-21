@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging;
 using Xs.Registry.Abstract.Packages;
-using Xs.Registry.Db.Dotnet;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Dotnet.Models;
+using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Dotnet.Helpers;
 using Xs.Registry.Dotnet.Payloads;
 using Xs.Registry.Shared.Auth;
@@ -37,9 +38,9 @@ public class PackagePublicationController : ServerController<User>
     [AuthorizeApi]
     public async Task<IActionResult> PublishPackageAsync()
     {
-        using (var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None))
+        await using (var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None))
         {
-            if (packageStream == null)
+            if (packageStream is null)
                 return BadRequest("Use multipart/form-data to upload package.");
 
             var payload = await ReadPackage(packageStream);
@@ -58,7 +59,7 @@ public class PackagePublicationController : ServerController<User>
 
         async Task<PackagePayload> ReadPackage(Stream packageStream)
         {
-            using (var packageReader = new NuGet.Packaging.PackageArchiveReader(packageStream, leaveStreamOpen: true))
+            using (var packageReader = new PackageArchiveReader(packageStream, leaveStreamOpen: true))
             {
                 await packageReader.ValidatePackageEntriesAsync(CancellationToken.None);
 

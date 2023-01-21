@@ -29,9 +29,6 @@ internal class ShowCommand : Command<DiscoverConfiguration>
 
         var configuration = _configurationManager.Load(dir);
 
-        if (configuration == null)
-            Console.WriteLine("Registry is not tracked.");
-        else
-            Console.Write(Yaml.Serializer.Serialize(configuration));
+        Console.Write(Yaml.Serializer.Serialize(configuration));
     }
 }

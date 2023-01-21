@@ -5,7 +5,7 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Core.Projects;
 
-public class ProjectMock<TProject> : IProject where TProject : class, IProject
+public class ProjectMock : IProject
 {
     public ProjectType Type => Constants.MockProjectType;
     public string Name { get; private set; }

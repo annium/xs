@@ -41,13 +41,13 @@ public class Configuration
     public void SetRegistry(Uri registry)
     {
         Registry = registry ??
-                   throw new ArgumentNullException(nameof(registry));
+            throw new ArgumentNullException(nameof(registry));
     }
 
     public void SetToken(string token)
     {
         Token = token ??
-                throw new ArgumentNullException(nameof(token));
+            throw new ArgumentNullException(nameof(token));
     }
 
     public void SetServers(IReadOnlyDictionary<ProjectType, Uri> servers)
@@ -58,6 +58,6 @@ public class Configuration
     public void SetTypes(SpecialConfiguration[] types)
     {
         Types = types ??
-                throw new ArgumentNullException(nameof(types));
+            throw new ArgumentNullException(nameof(types));
     }
 }

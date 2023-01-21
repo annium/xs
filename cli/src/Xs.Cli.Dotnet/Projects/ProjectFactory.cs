@@ -14,7 +14,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
+internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactory
 {
     public const string ProjectFileExtension = ".csproj";
     public const string TestCoveragePackage = "coverlet.msbuild";
@@ -48,8 +48,8 @@ internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpe
         // considered project directory, if in current directory there's single project file
         // and it's only one in all subdirectories
         return Directory.Exists(directory) &&
-               Directory.GetFiles(directory, ProjectFileMask).Length == 1 &&
-               !FileManager.FindDirectory(directory, IsMatch, IgnoredFolders);
+            Directory.GetFiles(directory, ProjectFileMask).Length == 1 &&
+            !FileManager.FindDirectory(directory, IsMatch, IgnoredFolders);
 
         static bool IsMatch(string dir) => Directory.GetFiles(dir, ProjectFileMask).Length > 0;
     }

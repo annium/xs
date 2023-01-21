@@ -1,10 +1,11 @@
 using LinqToDB;
+using Xs.Registry.Db.Dotnet.Entities;
 
 namespace Xs.Registry.Db.Dotnet;
 
 internal interface IDotnetContext : IContext
 {
-    ITable<Entities.Package> DotnetPackages { get; }
+    ITable<Package> DotnetPackages { get; }
 
-    ITable<Entities.PackageDependency> DotnetPackageDependencies { get; }
+    ITable<PackageDependency> DotnetPackageDependencies { get; }
 }

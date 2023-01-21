@@ -26,6 +26,7 @@ internal abstract class SpecialProject<TProject> :
     IBuildableProject
     where TProject : SpecialProject<TProject>
 {
+    // ReSharper disable once StaticMemberInGenericType
     private static readonly object CacheLocker = new();
     public override string File => Path.Combine(Directory, ProjectFileName(Name));
     public TargetFramework TargetFramework { get; }

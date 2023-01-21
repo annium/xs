@@ -1,10 +1,12 @@
 using LinqToDB;
 using Microsoft.EntityFrameworkCore;
+using Xs.Registry.Db.Dotnet;
 using Xs.Registry.Db.Dotnet.Entities;
+using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db;
 
-internal partial class Context : Dotnet.IDotnetContext
+internal partial class Context : IDotnetContext
 {
     public DbSet<Package> DotnetPackagesSet { get; set; }
 
@@ -19,7 +21,7 @@ internal partial class Context : Dotnet.IDotnetContext
         builder.Entity<Package>()
             .HasAlternateKey(p => new { p.LowerName, p.Version });
         builder.Entity<Package>()
-            .HasOne<Shared.Entities.MetaPackage>().WithMany().IsRequired()
+            .HasOne<MetaPackage>().WithMany().IsRequired()
             .HasForeignKey(p => p.MetaPackageId).OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<PackageDependency>()

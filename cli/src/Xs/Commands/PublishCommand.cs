@@ -10,6 +10,7 @@ using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
 using Xs.Tools;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
@@ -42,8 +43,6 @@ internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, Discov
     )
     {
         var configuration = _configurationManager.Load(discoverCfg.Root);
-        if (configuration == null)
-            throw new InvalidOperationException("Registry is not tracked. Track it to publish.");
 
         var projects = _discoverTask.RunAsync(discoverCfg).Await()
             .FilterMask(cfg.Mask)
@@ -78,7 +77,7 @@ internal class PublishCommandConfiguration
 
     [Position(2)]
     [Help("Version to publish.")]
-    public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
+    public Version Version { get; set; } = Version.Empty;
 
     [Option("d")]
     [Help("Publish dependencies.")]

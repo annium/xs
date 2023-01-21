@@ -113,7 +113,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject<TemplateWriter>
                 .OrderByDescending(ext => ext.Length)
                 .FirstOrDefault();
 
-            if (extension == null)
+            if (extension is null)
                 return Path.Combine(name.Split('.'));
 
             return Path.Combine(StripExtension(name, extension).Split('.')) + $".{extension}";

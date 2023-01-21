@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using NodaTime;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Dotnet;
+namespace Xs.Registry.Db.Dotnet.Models;
 
 public class Package : IPackage<PackageDependency>
 {

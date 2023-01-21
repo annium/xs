@@ -28,15 +28,13 @@ public class Startup
             app.UseOpenApi();
             app.UseSwaggerUi3();
         }
+
         app.UseRouting();
         app.UseCors(builder => builder
             .SetIsOriginAllowed(o => true)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

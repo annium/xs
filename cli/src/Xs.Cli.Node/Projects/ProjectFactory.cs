@@ -14,7 +14,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Projects;
 
-internal class ProjectFactory : SpecialProjectFactoryBase<ISpecialProject>, ISpecialProjectFactory
+internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactory
 {
     public ProjectType Type => Constants.ProjectType;
     public static readonly string[] TrackedFileExtensions = { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };

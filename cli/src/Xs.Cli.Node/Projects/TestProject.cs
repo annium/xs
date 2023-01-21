@@ -7,10 +7,10 @@ namespace Xs.Cli.Node.Projects;
 
 internal class TestProject : SpecialProject<TestProject>, ITestableProject
 {
-    public TestProject(SpecialProjectContext<TestProject> context) : base(context) { }
+    public TestProject(SpecialProjectContext<TestProject> context) : base(context)
+    {
+    }
 
     public Task TestAsync(Env env, string filter, CancellationToken ct) =>
-        string.IsNullOrWhiteSpace(filter) ?
-            RunAsync("test", $"pnpm test", ct) :
-            RunAsync("test", $"pnpm test --testNamePattern {filter}", ct);
+        string.IsNullOrWhiteSpace(filter) ? RunAsync("test", $"pnpm test", ct) : RunAsync("test", $"pnpm test --testNamePattern {filter}", ct);
 }

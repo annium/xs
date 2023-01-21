@@ -6,10 +6,12 @@ using System.Web;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Abstract.Packages;
-using Xs.Registry.Db.Dotnet;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Dotnet.Models;
+using Xs.Registry.Db.Shared.Models;
+using Xs.Registry.Db.Shared.Repositories;
 using Xs.Registry.Dotnet.Payloads;
 using Xs.Registry.Shared.Helpers;
+using IPackageStorage = Xs.Registry.Dotnet.Storage.IPackageStorage;
 
 namespace Xs.Registry.Dotnet.Controllers;
 
@@ -19,12 +21,12 @@ public class PackageConsumptionController : ServerController<User>
 
     private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
 
-    private readonly Storage.IPackageStorage _packageStorage;
+    private readonly IPackageStorage _packageStorage;
 
     public PackageConsumptionController(
         IPackageService<Package, PackageDependency, PackagePayload> packageService,
         IPackageRepository<Package, PackageDependency> packageRepository,
-        Storage.IPackageStorage packageStorage,
+        IPackageStorage packageStorage,
         IMediator mediator,
         IServiceProvider sp
     ) : base(mediator, sp)

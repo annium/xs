@@ -3,7 +3,7 @@ using Annium.Net.Http;
 using Xs.RegistryClient.Main.Models;
 using Xs.RegistryClient.Shared;
 
-namespace Xs.RegistryClient.Main;
+namespace Xs.RegistryClient.Main.Clients;
 
 public class MainClient : ClientBase
 {

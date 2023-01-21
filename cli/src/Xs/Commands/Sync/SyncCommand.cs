@@ -280,7 +280,6 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
     private void Line(string message) => Console.WriteLine($"{Indent}{message}");
     private void Info(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Blue);
     private void Success(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Green);
-    private void Error(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Red);
     private void Warning(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Yellow);
     private void AddIndent() => _indentation += 2;
     private void RemoveIndent() => _indentation -= 2;

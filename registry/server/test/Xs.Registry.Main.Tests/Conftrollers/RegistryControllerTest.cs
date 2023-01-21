@@ -4,7 +4,7 @@ using Annium.Net.Http;
 using Annium.Testing;
 using Xunit;
 
-namespace Xs.Registry.Main.Tests.Controllers;
+namespace Xs.Registry.Main.Tests.Conftrollers;
 
 public class RegistryControllerTest : IntegrationTestBase
 {

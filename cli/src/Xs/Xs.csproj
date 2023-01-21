@@ -14,14 +14,14 @@
         <ToolCommandName>xs</ToolCommandName>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.Entrypoint/Annium.Core.Entrypoint.csproj" />
+        <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.CommandLine/Annium.Extensions.CommandLine.csproj" />
         <ProjectReference Include="../Xs.Cli.Dotnet/Xs.Cli.Dotnet.csproj" />
         <ProjectReference Include="../Xs.Cli.Node/Xs.Cli.Node.csproj" />
         <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Main/Xs.RegistryClient.Main.csproj" />
         <ProjectReference Include="../../../registry/client/src/Xs.RegistryClient.Server/Xs.RegistryClient.Server.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.Core.Entrypoint" Version="0.1.0" />
-        <PackageReference Include="Annium.Extensions.CommandLine" Version="0.1.0" />
         <PackageReference Include="EmbedIO" Version="3.5.2" />
         <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
         <PackageReference Include="QuikGraph.Graphviz" Version="2.5.0" />

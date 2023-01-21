@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Xs.Registry.Db.Node.Models;
 using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db.Node.Entities;

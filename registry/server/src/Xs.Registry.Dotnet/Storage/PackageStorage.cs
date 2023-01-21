@@ -20,7 +20,7 @@ internal class PackageStorage : IPackageStorage
     public async Task<bool> ExistsAsync(string name, string version)
     {
         return await _storage.ExistsAsync(GetPackagePath(name, version)) &&
-               await _storage.ExistsAsync(GetNuspecPath(name, version));
+            await _storage.ExistsAsync(GetNuspecPath(name, version));
     }
 
     public async Task SaveAsync(string name, string version, Stream stream)
@@ -29,7 +29,7 @@ internal class PackageStorage : IPackageStorage
             stream.Position = 0;
         await _storage.SaveAsync(GetPackagePath(name, version), stream);
 
-        using(var packageReader = new PackageArchiveReader(stream, leaveStreamOpen : true))
+        using (var packageReader = new PackageArchiveReader(stream, leaveStreamOpen: true))
         {
             var nuspecStream = packageReader.GetNuspec();
             if (nuspecStream.CanSeek)

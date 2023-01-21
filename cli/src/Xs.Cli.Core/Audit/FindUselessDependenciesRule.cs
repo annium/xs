@@ -26,7 +26,7 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where 
                 project.Projects.Remove(dependency);
 
             results.Add(new AuditResult(fix,
-                $"Useless project {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
+                $"Useless project {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e => e.Name))}"
             ));
         }
 
@@ -41,7 +41,7 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where 
                 project.Packages.Remove(dependency);
 
             results.Add(new AuditResult(fix,
-                $"Useless package {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e=>e.Name))}"
+                $"Useless package {dependency} reference, already used by: {string.Join(", ", foundDependencies.Select(e => e.Name))}"
             ));
         }
 

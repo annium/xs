@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Xs.Registry.Abstract.Packages;
-using Xs.Registry.Db.Node;
+using Xs.Registry.Db.Node.Models;
 
 namespace Xs.Registry.Node.Payloads;
 

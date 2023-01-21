@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
 using NodaTime;
+using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Repositories;
 
 internal class UserSessionRepository : IUserSessionRepository
 {

@@ -1,14 +1,15 @@
 using LinqToDB;
+using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db.Shared;
 
 internal interface ISharedContext : IContext
 {
-    ITable<Entities.MetaPackage> MetaPackages { get; }
+    ITable<MetaPackage> MetaPackages { get; }
 
-    ITable<Entities.MetaPackagePermission> MetaPackagePermissions { get; }
+    ITable<MetaPackagePermission> MetaPackagePermissions { get; }
 
-    ITable<Entities.User> Users { get; }
+    ITable<User> Users { get; }
 
-    ITable<Entities.UserSession> UserSessions { get; }
+    ITable<UserSession> UserSessions { get; }
 }

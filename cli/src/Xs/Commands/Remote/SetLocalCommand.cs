@@ -38,7 +38,7 @@ internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverC
         var configuration = _configurationManager.Load(dir);
         configuration.SetRegistry(location);
         configuration.SetToken(string.Empty);
-        configuration.SetServers(ProjectType.List().ToDictionary(type => type, type => location));
+        configuration.SetServers(ProjectType.List().ToDictionary(type => type, _ => location));
 
         var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
 

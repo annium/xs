@@ -32,7 +32,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
         TargetFramework targetFramework,
         OutputType outputType,
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
-        SpecialConfiguration config, 
+        SpecialConfiguration config,
         ProjectMapper mapper
     ) : base(
         type,

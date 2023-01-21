@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Models;
 
 public struct UserMetaPackageAccess
 {

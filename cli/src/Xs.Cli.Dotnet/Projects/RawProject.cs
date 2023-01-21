@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Dotnet.Models;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Dotnet.Projects;
 
 internal class RawProject
 {
     public string Name { get; set; } = string.Empty;
-    public Core.Models.Version Version { get; set; } = Core.Models.Version.Empty;
+    public Version Version { get; set; } = Version.Empty;
     public string Description { get; set; } = string.Empty;
     public TargetFramework TargetFramework { get; set; } = TargetFramework.NetStandard21;
     public OutputType OutputType { get; set; } = OutputType.Library;
@@ -19,7 +20,7 @@ internal class RawProject
 
     public void Deconstruct(
         out string name,
-        out Core.Models.Version version,
+        out Version version,
         out string description,
         out TargetFramework targetFramework,
         out OutputType outputType,

@@ -2,7 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
+using Xs.Registry.Db.Shared.Repositories;
 using Xs.Registry.Main.Payloads;
 using Xs.Registry.Main.Tools;
 using Xs.Registry.Shared.Auth;
@@ -35,7 +36,7 @@ public class UserController : ServerController<User>
 
         var name = registrationModel.Name;
 
-        if (await _userRepository.FindByNameAsync(name) != null)
+        if (await _userRepository.FindByNameAsync(name) is not null)
             return Conflict();
 
         var passwordHash = _securityManager.Hash(registrationModel.Password);

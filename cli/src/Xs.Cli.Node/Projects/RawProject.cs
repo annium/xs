@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Xs.Cli.Core.Models;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Node.Projects;
 
 internal class RawProject
 {
     public string Name { get; set; } = string.Empty;
-    public Core.Models.Version Version { get; set; } = Core.Models.Version.Empty;
+    public Version Version { get; set; } = Version.Empty;
     public string Description { get; set; } = string.Empty;
     public IEnumerable<Dependency<string>> Projects { get; set; } = Array.Empty<Dependency<string>>();
     public IEnumerable<Dependency<Package>> Packages { get; set; } = Array.Empty<Dependency<Package>>();
@@ -16,7 +17,7 @@ internal class RawProject
 
     public void Deconstruct(
         out string name,
-        out Core.Models.Version version,
+        out Version version,
         out string description,
         out IEnumerable<Dependency<string>> projects,
         out IEnumerable<Dependency<Package>> packages,

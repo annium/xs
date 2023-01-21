@@ -44,8 +44,8 @@ public class DiscoverProjectsTask : ILogSubject<DiscoverProjectsTask>
         var candidates = FindProjectCandidates(roots);
         var errors = new List<Exception>();
         var projects = candidates
-            .Select(x => CreateProject(x.Key, x.Value, discoverCfg, solutionCfg, errors.Add)!)
-            .Where(x => x != null!)
+            .Select(x => CreateProject(x.Key, x.Value, discoverCfg, solutionCfg, errors.Add))
+            .OfType<IProject>()
             .ToList();
         var directories = projects.Select(x => x.Directory).ToHashSet();
         var result = projects.OrderBy(e => e.Name).ToArray();
@@ -147,7 +147,7 @@ public class DiscoverProjectsTask : ILogSubject<DiscoverProjectsTask>
             }
 
             var dependency = CreateProject(directory, factory, discoverCfg, solutionCfg, addError);
-            if (dependency != null)
+            if (dependency is not null)
             {
                 addProject(dependency);
                 CollectProjects(directories, dependency, discoverCfg, solutionCfg, addProject, addError);

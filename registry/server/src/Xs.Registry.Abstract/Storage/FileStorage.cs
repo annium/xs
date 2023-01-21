@@ -41,7 +41,7 @@ internal class FileStorage : IStorage
         var path = GetPath(name);
 
         Directory.CreateDirectory(Path.GetDirectoryName(path));
-        using(var fs = File.Open(path, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+        await using (var fs = File.Open(path, FileMode.CreateNew, FileAccess.Write, FileShare.None))
         {
             await stream.CopyToAsync(fs, CopyBufferSize);
         }

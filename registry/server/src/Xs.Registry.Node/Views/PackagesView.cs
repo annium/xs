@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Xs.Registry.Db.Node;
+using Xs.Registry.Db.Node.Models;
 
 namespace Xs.Registry.Node.Views;
 
@@ -24,7 +24,7 @@ public class PackagesView
         packages = packages.OrderByDescending(e => e.Version);
         var latest = packages.First();
 
-        Name = latest.Name.ToString();
+        Name = latest.Name;
         Description = latest.Description;
         DistributionTags = new Dictionary<string, string>() { { "latest", latest.Version } };
         Versions = packages.Select(e => new PackageVersionView(e, urlHelper)).ToDictionary(e => e.Version, e => e);

@@ -34,14 +34,14 @@ internal class ListCommand : Command<ListCommandConfiguration, DiscoverConfigura
         var projects = _discoverTask.RunAsync(discoverCfg).Await()
             .FilterMask(cfg.Mask)
             .FilterType(cfg.Type)
-            .ToList();
+            .ToArray();
 
         foreach (var project in SelectProjects(projects, cfg))
             LogProject(project, cfg.Path, cfg.Attributes);
     }
 
-    private IEnumerable<IProject> SelectProjects(
-        IEnumerable<IProject> projects,
+    private IReadOnlyCollection<IProject> SelectProjects(
+        IReadOnlyCollection<IProject> projects,
         ListCommandConfiguration cfg
     )
     {
@@ -55,7 +55,7 @@ internal class ListCommand : Command<ListCommandConfiguration, DiscoverConfigura
         if (cfg.Testable)
             filtered.AddRange(projects.OfType<ITestableProject>());
 
-        return cfg.Not ? projects.Except(filtered) : filtered;
+        return cfg.Not ? projects.Except(filtered).ToArray() : filtered;
     }
 
     private void LogProject(IProject project, bool writePath, bool writeAttributes)

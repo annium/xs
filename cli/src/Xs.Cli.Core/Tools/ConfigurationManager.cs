@@ -147,16 +147,16 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
 
     public void Delete(string folder, IProject[] projects)
     {
-        Delete(GetConfigurationFile);
-        Delete(GetCredentialsFile);
+        DeleteFile(GetConfigurationFile);
+        DeleteFile(GetCredentialsFile);
 
         foreach (var project in projects)
             if (_specialManagers.ContainsKey(project.Type))
                 _specialManagers[project.Type].Delete(project);
 
-        void Delete(Func<string, string> resolve)
+        void DeleteFile(Func<string, string> resolveFile)
         {
-            var path = resolve(folder);
+            var path = resolveFile(folder);
             if (File.Exists(path)) File.Delete(path);
         }
     }

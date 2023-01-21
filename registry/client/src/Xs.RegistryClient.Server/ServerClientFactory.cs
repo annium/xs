@@ -1,5 +1,6 @@
 using System;
 using Annium.Core.DependencyInjection;
+using Xs.RegistryClient.Server.Clients;
 
 namespace Xs.RegistryClient.Server;
 

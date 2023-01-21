@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Annium.Core.DependencyInjection;
 using Xs.Registry.Db;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
 
 namespace Xs.Registry.Main;
 

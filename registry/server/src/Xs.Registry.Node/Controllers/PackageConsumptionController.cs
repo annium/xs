@@ -6,13 +6,14 @@ using System.Web;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Abstract.Packages;
-using Xs.Registry.Db.Node;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Node.Models;
+using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Node.Models;
 using Xs.Registry.Node.Payloads;
 using Xs.Registry.Node.Views;
 using Xs.Registry.Shared.Auth;
 using Xs.Registry.Shared.Helpers;
+using IPackageStorage = Xs.Registry.Node.Storage.IPackageStorage;
 
 namespace Xs.Registry.Node.Controllers;
 
@@ -20,13 +21,13 @@ public class PackageConsumptionController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
 
-    private readonly Storage.IPackageStorage _packageStorage;
+    private readonly IPackageStorage _packageStorage;
 
     private readonly IUrlHelper _url;
 
     public PackageConsumptionController(
         IPackageService<Package, PackageDependency, PackagePayload> packageService,
-        Storage.IPackageStorage packageStorage,
+        IPackageStorage packageStorage,
         IUrlHelper url,
         IMediator mediator,
         IServiceProvider sp

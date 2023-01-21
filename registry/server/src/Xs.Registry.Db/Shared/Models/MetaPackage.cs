@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using NodaTime;
 
-namespace Xs.Registry.Db.Shared;
+namespace Xs.Registry.Db.Shared.Models;
 
 public class MetaPackage : IPackageInfo
 {

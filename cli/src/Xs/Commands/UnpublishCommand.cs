@@ -12,7 +12,9 @@ using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
 using Xs.RegistryClient.Server;
+using Xs.RegistryClient.Server.Clients;
 using Xs.Tools;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
@@ -48,8 +50,6 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
     )
     {
         var configuration = _configurationManager.Load(discoverCfg.Root);
-        if (configuration == null)
-            throw new InvalidOperationException("Registry is not tracked. Track it to unpublish.");
 
         var projects = _discoverTask.RunAsync(discoverCfg).Await()
             .FilterMask(cfg.Mask)
@@ -65,8 +65,8 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
         var clients = new Dictionary<ProjectType, ServerClient>();
         foreach (var type in projects.Select(p => p.Type).Distinct())
         {
-            if (configuration.Servers.ContainsKey(type))
-                clients[type] = _serverClientFactory.Create(configuration.Servers[type]);
+            if (configuration.Servers.TryGetValue(type, out var registryUri))
+                clients[type] = _serverClientFactory.Create(registryUri);
             else
                 throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
         }
@@ -74,7 +74,7 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
         this.Log().Debug($"Unpublish {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
-            (project, tkn) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
+            (project, _) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
             new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
             ct
         );
@@ -89,7 +89,7 @@ internal class UnpublishCommandConfiguration
 
     [Position(2)]
     [Help("Version to unpublish.")]
-    public Cli.Core.Models.Version Version { get; set; } = Cli.Core.Models.Version.Empty;
+    public Version Version { get; set; } = Version.Empty;
 
     [Option("d")]
     [Help("Unpublish dependencies.")]

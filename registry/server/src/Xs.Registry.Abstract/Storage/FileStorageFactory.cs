@@ -8,7 +8,7 @@ internal class FileStorageFactory : IStorageFactory
 
     public IStorage Create(string root)
     {
-        lock(_storages)
+        lock (_storages)
         {
             if (_storages.ContainsKey(root))
                 return _storages[root];

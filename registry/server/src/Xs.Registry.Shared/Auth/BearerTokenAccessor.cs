@@ -9,7 +9,7 @@ namespace Xs.Registry.Shared.Auth;
 
 public class BearerTokenAccessor : ITokenAccessor
 {
-    public ValueTuple<Guid, IActionResult> GetToken(HttpRequest request)
+    public ValueTuple<Guid, IActionResult?> GetToken(HttpRequest request)
     {
         if (!request.Headers.ContainsKey(HeaderNames.Authorization))
             return Fail(HttpStatusCode.Unauthorized, "Bearer authorization required.");
@@ -18,13 +18,11 @@ public class BearerTokenAccessor : ITokenAccessor
         if (authorization.Length != 2)
             return Fail(HttpStatusCode.Forbidden, "Authorization format is invalid.");
 
-        var(type, tokenString) = (authorization[0], authorization[1]);
+        var (type, tokenString) = (authorization[0], authorization[1]);
         if (type != "Bearer")
             return Fail(HttpStatusCode.Forbidden, "Bearer authorization required.");
 
-        return Guid.TryParse(tokenString, out var token) ?
-            (token, null) :
-            Fail(HttpStatusCode.Forbidden, "Invalid token passed");
+        return Guid.TryParse(tokenString, out var token) ? (token, null) : Fail(HttpStatusCode.Forbidden, "Invalid token passed");
 
         (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
             (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });

@@ -3,7 +3,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
+using Xs.Registry.Db.Shared.Repositories;
 using Xs.Registry.Main.Auth;
 using Xs.Registry.Main.Payloads;
 using Xs.Registry.Main.Tools;
@@ -36,7 +37,7 @@ public class LoginController : ServerController<User>
     public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginPayload loginPayload)
     {
         var (user, result) = await LoginUserInternalAsync(loginPayload);
-        if (result != null)
+        if (result is not null)
             return result;
 
         await _sessionManager.CreateSession(user.Id);
@@ -48,7 +49,7 @@ public class LoginController : ServerController<User>
     public async Task<IActionResult> LoginAppAsync([FromBody] UserLoginPayload loginPayload)
     {
         var (user, result) = await LoginUserInternalAsync(loginPayload);
-        if (result != null)
+        if (result is not null)
             return result;
 
         return Ok(user.ApiToken);
@@ -74,7 +75,7 @@ public class LoginController : ServerController<User>
 
     private async Task<ValueTuple<User, IActionResult>> LoginUserInternalAsync(UserLoginPayload loginPayload)
     {
-        if (loginPayload == null)
+        if (loginPayload is null)
             return (null, BadRequest("Pass login data"));
 
         var name = loginPayload.Name;
@@ -84,7 +85,7 @@ public class LoginController : ServerController<User>
             return (null, BadRequest("Pass login data"));
 
         var user = await _userRepository.FindByNameAsync(name);
-        if (user == null)
+        if (user is null)
             return (null, NotFound("User not found"));
 
         var passwordHash = _securityManager.Hash(password);

@@ -7,7 +7,9 @@ namespace Xs.Registry.Db;
 
 internal partial class Context : DbContext
 {
-    public Context(DbContextOptions<Context> contextOptions) : base(contextOptions) { }
+    public Context(DbContextOptions<Context> contextOptions) : base(contextOptions)
+    {
+    }
 
     public DataConnection GetDataConnection() => this.CreateLinqToDbConnection();
 

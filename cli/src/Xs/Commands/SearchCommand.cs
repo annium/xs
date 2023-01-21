@@ -36,11 +36,6 @@ internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, Discover
     )
     {
         var configuration = _configurationManager.Load(discoverCfg.Root);
-        if (configuration == null)
-        {
-            this.Log().Warn("Track registry first to search within it.");
-            return;
-        }
 
         var client = _mainClientFactory.Create(configuration.Registry);
         var packages = await client.SearchAsync(configuration.Token, cfg.Type.ToString(), cfg.Query);

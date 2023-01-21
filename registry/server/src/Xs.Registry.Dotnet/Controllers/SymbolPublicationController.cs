@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Db.Dotnet;
-using Xs.Registry.Db.Shared;
+using NuGet.Packaging;
+using Xs.Registry.Db.Dotnet.Models;
+using Xs.Registry.Db.Shared.Models;
+using Xs.Registry.Db.Shared.Repositories;
 using Xs.Registry.Dotnet.Helpers;
 using Xs.Registry.Dotnet.Storage;
 using Xs.Registry.Shared.Auth;
@@ -46,17 +48,17 @@ public class SymbolPublicationController : ServerController<User>
     [AuthorizeApi]
     public async Task<IActionResult> PublishSymbolsAsync(CancellationToken ct)
     {
-        using (var symbolsStream = await Request.GetUploadStreamOrNullAsync(ct))
+        await using (var symbolsStream = await Request.GetUploadStreamOrNullAsync(ct))
         {
-            if (symbolsStream == null)
+            if (symbolsStream is null)
                 return BadRequest("Use multipart/form-data to upload symbols.");
 
-            using (var packageReader = new NuGet.Packaging.PackageArchiveReader(symbolsStream, leaveStreamOpen: true))
+            using (var packageReader = new PackageArchiveReader(symbolsStream, leaveStreamOpen: true))
             {
                 await packageReader.ValidatePackageEntriesAsync(ct);
 
                 var files = await GetPdbPathsOrNull(packageReader, ct);
-                if (files == null)
+                if (files is null)
                     return BadRequest("Ensure symbol package is valid.");
 
                 var name = packageReader.NuspecReader.GetId();
@@ -64,7 +66,7 @@ public class SymbolPublicationController : ServerController<User>
 
                 // TODO: when applicable, add permissions usage
 
-                if ((await _packageRepository.FindByNameVersionAsync(name, version)) == null)
+                if ((await _packageRepository.FindByNameVersionAsync(name, version)) is null)
                     return NotFound($"Package {name} {version} doesn't exist.");
 
                 foreach (var file in files)
@@ -79,7 +81,7 @@ public class SymbolPublicationController : ServerController<User>
     }
 
     private async Task<IReadOnlyList<string>> GetPdbPathsOrNull(
-        NuGet.Packaging.PackageArchiveReader reader,
+        PackageArchiveReader reader,
         CancellationToken ct
     )
     {

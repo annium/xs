@@ -48,7 +48,7 @@ internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfigura
 
                     return (package: x, project: targets.FirstOrDefault(t => t.Name.ToLowerInvariant() == nameLower));
                 })
-                .Where(x => x.project != null)
+                .Where(x => x.project is not null)
                 .ToList();
             if (externalDependencies.Count == 0)
                 continue;

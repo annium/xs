@@ -88,6 +88,7 @@ internal class Watcher : ILogSubject<Watcher>
             var task = File.Exists(path) ? handleChange : handleDelete;
             this.Log().Trace($"Enqueue task for {path}");
             tasks.Enqueue((task, path));
+            // ReSharper disable once AccessToDisposedClosure
             gate.Set();
         }
     }

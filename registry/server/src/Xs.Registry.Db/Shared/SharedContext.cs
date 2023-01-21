@@ -1,10 +1,11 @@
 using LinqToDB;
 using Microsoft.EntityFrameworkCore;
+using Xs.Registry.Db.Shared;
 using Xs.Registry.Db.Shared.Entities;
 
 namespace Xs.Registry.Db;
 
-internal partial class Context : Shared.ISharedContext
+internal partial class Context : ISharedContext
 {
     public virtual DbSet<MetaPackage> MetaPackagesSet { get; set; }
 

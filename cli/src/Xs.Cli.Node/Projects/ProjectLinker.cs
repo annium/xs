@@ -17,7 +17,6 @@ internal class ProjectLinker : SpecialProjectLinkerBase, ISpecialProjectLinker
         Action<Exception> addError
     )
     {
-
     }
 
     public void Link(

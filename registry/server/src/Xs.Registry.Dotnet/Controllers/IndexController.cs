@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Dotnet.Views;
 using Xs.Registry.Shared.Helpers;
 

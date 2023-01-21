@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Db.Shared;
+using Xs.Registry.Db.Shared.Models;
 
 namespace Xs.Registry.Main.Auth;
 

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Node.Projects;
 
@@ -14,7 +15,7 @@ internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProj
     {
     }
 
-    public async Task<string> PackAsync(Core.Models.Version version, CancellationToken ct)
+    public async Task<string> PackAsync(Version version, CancellationToken ct)
     {
         await InstallAsync(false, ct);
         await BuildAsync(Env.Production, true, ct);
@@ -57,7 +58,7 @@ internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProj
         return file;
     }
 
-    public async Task PublishAsync(Uri registry, string accessToken, Core.Models.Version version, CancellationToken ct)
+    public async Task PublishAsync(Uri registry, string accessToken, Version version, CancellationToken ct)
     {
         var packageFile = await PackAsync(version, ct);
 

@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Node.Projects;
 
@@ -33,41 +34,44 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(file.FullName), JsonSerializerOptions)!;
 
         project.Name = info.Name ??
-                       throw new InvalidOperationException($"Project {path} is missing name");
+            throw new InvalidOperationException($"Project {path} is missing name");
 
         var rawVersion = info.Version ??
-                         throw new InvalidOperationException($"Project {path} is missing version");
-        if (Core.Models.Version.TryParse(rawVersion, out var version))
+            throw new InvalidOperationException($"Project {path} is missing version");
+        if (Version.TryParse(rawVersion, out var version))
             project.Version = version;
         else
             throw new InvalidOperationException($"Project {path} version {rawVersion} is invalid");
 
         if (configuration.SkipChecks)
-            project.Description = info.Description ?? string.Empty;
+            project.Description = info.Description;
         else
             project.Description = info.Description ??
-                                  throw new InvalidOperationException($"Project {path} is missing description");
+                throw new InvalidOperationException($"Project {path} is missing description");
 
         // is not packable, if is private - when private: true is specified
         project.IsPackable = !info.Private.HasValue || !info.Private.Value;
 
         var projects = new List<Dependency<string>>();
         var packages = new List<Dependency<Package>>();
-        if (info.Dependencies != null)
+        if (info.Dependencies is not null)
         {
             projects.AddRange(GetProjectDependencies(info.Dependencies, DependencyType.Normal));
             packages.AddRange(GetPackageDependencies(info.Dependencies, DependencyType.Normal));
         }
-        if (info.DevDependencies != null)
+
+        if (info.DevDependencies is not null)
         {
             projects.AddRange(GetProjectDependencies(info.DevDependencies, DependencyType.Dev));
             packages.AddRange(GetPackageDependencies(info.DevDependencies, DependencyType.Dev));
         }
-        if (info.PeerDependencies != null)
+
+        if (info.PeerDependencies is not null)
         {
             projects.AddRange(GetProjectDependencies(info.PeerDependencies, DependencyType.Peer));
             packages.AddRange(GetPackageDependencies(info.PeerDependencies, DependencyType.Peer));
         }
+
         project.Projects = projects;
         project.Packages = packages;
 
@@ -150,7 +154,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         if (string.IsNullOrWhiteSpace(rawVersion))
             throw new InvalidOperationException($"Project {project} has empty package dependency {name} version.");
 
-        if (!Core.Models.Version.TryParse(rawVersion, out var version))
+        if (!Version.TryParse(rawVersion, out var version))
             throw new InvalidOperationException($"Project {project} package dependency {name} version {rawVersion} is invalid.");
 
         return new Package(Constants.ProjectType, name, version);

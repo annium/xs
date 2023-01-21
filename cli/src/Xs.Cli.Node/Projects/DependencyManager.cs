@@ -8,6 +8,7 @@ using System.Web;
 using Annium.Net.Http;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
+using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Node.Projects;
 
@@ -34,9 +35,8 @@ internal class DependencyManager : IDependencyManager
     {
         var request = _httpRequestFactory.New(serverUri)
             .UseClient(_client)
-            .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()));
-        if (accessToken != null)
-            request = request.BearerAuthorization(accessToken);
+            .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()))
+            .BearerAuthorization(accessToken);
 
         var index = await request.AsAsync(new Index());
         var registrations = index.Versions.Keys
@@ -44,17 +44,17 @@ internal class DependencyManager : IDependencyManager
             {
                 try
                 {
-                    if (!Core.Models.Version.TryParse(v, out var version))
+                    if (!Version.TryParse(v, out var version))
                         throw new ArgumentException($"Package {package.Name} registered version {v} is invalid");
 
                     return (Id: index.Name, Version: version);
                 }
                 catch
                 {
-                    return (Id: index.Name, Version: Core.Models.Version.Empty);
+                    return (Id: index.Name, Version: Version.Empty);
                 }
             })
-            .Where(e => e.Version != Core.Models.Version.Empty)
+            .Where(e => e.Version != Version.Empty)
             .OrderByDescending(e => e.Version)
             .ToArray();
 

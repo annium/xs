@@ -94,7 +94,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
             Discover();
 
             project = GetProjectByPath(path);
-            if (project != null)
+            if (project is not null)
                 await InstallAsync(project, includeSelf: true);
         }
         else
@@ -115,7 +115,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
     private async Task HandleDelete(string path)
     {
         var project = GetProjectByPath(path);
-        var isProjectFile = project != null;
+        var isProjectFile = project is not null;
 
         if (isProjectFile)
         {
@@ -127,7 +127,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         else
             project = GetProjectByRelatedPath(path);
 
-        if (project == null)
+        if (project is null)
             return;
 
         this.Log().Info($"Deleted {project} related file: {path}");

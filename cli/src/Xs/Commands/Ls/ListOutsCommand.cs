@@ -125,7 +125,7 @@ internal class ListOutsCommand : Command<ListOutsCommandConfiguration, DiscoverC
 
     private void LogProjectWithDependants(
         Dependency<IProject> projectDependency,
-        IEnumerable<IProject> projects,
+        IReadOnlyCollection<IProject> projects,
         string prefix,
         int nest,
         bool isLast

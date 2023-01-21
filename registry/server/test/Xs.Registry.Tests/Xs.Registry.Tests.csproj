@@ -12,6 +12,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.AspNetCore.IntegrationTesting" Version="0.1.0" />
+        <ProjectReference Include="../../../../../backend/third-party/AspNetCore/src/Annium.AspNetCore.IntegrationTesting/Annium.AspNetCore.IntegrationTesting.csproj" />
     </ItemGroup>
 </Project>
