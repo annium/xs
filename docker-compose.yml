@@ -1,0 +1,41 @@
+version: '3.8'
+x-base: &base
+  restart: always
+  logging:
+    driver: json-file
+    options:
+      max-size: 1m
+      max-file: '1'
+services:
+  server:
+    <<: *base
+    build:
+      context: .
+      dockerfile: server/src/Server.Host/app.dockerfile
+    image: id_server
+    container_name: id_server
+    ports:
+      - '9501:5000'
+    volumes:
+      - './run/server/configuration:/app/configuration'
+      - './run/server/keys:/app/keys'
+  db:
+    <<: *base
+    image: registry.annium.com/postgres
+    container_name: id_db
+    ports:
+      - '9591:5432'
+    volumes:
+      - 'db:/var/lib/postgresql/data'
+    env_file: ./run/db/db.env
+  site:
+    <<: *base
+    build:
+      context: .
+      dockerfile: web/src/Site/app.dockerfile
+    image: id_site
+    container_name: id_site
+    ports:
+      - '9500:80'
+volumes:
+  db:
