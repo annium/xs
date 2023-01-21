@@ -12,8 +12,8 @@ services:
     build:
       context: .
       dockerfile: server/src/Server.Host/app.dockerfile
-    image: id_server
-    container_name: id_server
+    image: xs_server
+    container_name: xs_server
     ports:
       - '9501:5000'
     volumes:
@@ -22,19 +22,30 @@ services:
   db:
     <<: *base
     image: registry.annium.com/postgres
-    container_name: id_db
+    container_name: xs_db
     ports:
       - '9591:5432'
     volumes:
       - 'db:/var/lib/postgresql/data'
     env_file: ./run/db/db.env
+  proxy:
+    <<: *base
+    image: nginx
+    container_name: xs_proxy
+    ports:
+      - '9501:9501'
+      - '9502:9502'
+      - '9503:9503'
+    volumes:
+      - ./cfg/docker/proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    env_file: ./run/db/db.env
   site:
     <<: *base
     build:
       context: .
-      dockerfile: web/src/Site/app.dockerfile
-    image: id_site
-    container_name: id_site
+      dockerfile: site/app.dockerfile
+    image: xs_site
+    container_name: xs_site
     ports:
       - '9500:80'
 volumes:
