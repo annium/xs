@@ -2,9 +2,9 @@ using System.IO;
 using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Xs.Registry.Shared.Helpers;
+using Server.Shared.Helpers;
 
-namespace Xs.Registry.Main;
+namespace Server.Host;
 
 internal class Program
 {
@@ -15,7 +15,7 @@ internal class Program
 
     private static IHostBuilder CreateHostBuilder(string[] args)
     {
-        return Host.CreateDefaultBuilder(args)
+        return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
             .UseServiceProviderFactory(new ServiceProviderFactory(b => b.UseServicePack<ServicePack>()))
             .ConfigureWebHostDefaults(builder =>
             {

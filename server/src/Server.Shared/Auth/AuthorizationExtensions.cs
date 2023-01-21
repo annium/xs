@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Xs.Registry.Shared.Auth;
+namespace Server.Shared.Auth;
 
 public static class AuthorizationExtensions
 {

@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Xs.Registry.Shared.Helpers;
+namespace Server.Shared.Helpers;
 
 public static class UrlExtensions
 {

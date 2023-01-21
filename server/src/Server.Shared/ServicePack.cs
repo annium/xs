@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Xs.Registry.Shared;
+namespace Server.Shared;
 
 public class ServicePack : ServicePackBase
 {

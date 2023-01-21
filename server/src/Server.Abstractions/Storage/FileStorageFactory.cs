@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Xs.Registry.Abstract.Storage;
+namespace Server.Abstractions.Storage;
 
 internal class FileStorageFactory : IStorageFactory
 {

@@ -1,17 +1,17 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Xs.Registry.Main.Auth;
-using Xs.Registry.Main.Tools;
-using Xs.Registry.Shared.Auth;
+using Server.Host.Auth;
+using Server.Host.Tools;
+using Server.Shared.Auth;
 
-namespace Xs.Registry.Main;
+namespace Server.Host;
 
 internal class BaseServicePack : ServicePackBase
 {
     public BaseServicePack()
     {
         Add<Shared.ServicePack>();
-        Add<Db.Shared.ServicePack>();
+        Add<Xs.Registry.Db.Shared.ServicePack>();
     }
 
     public override void Configure(IServiceContainer container)

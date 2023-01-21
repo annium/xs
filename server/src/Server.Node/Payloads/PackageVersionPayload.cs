@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace Xs.Registry.Node.Payloads;
+namespace Server.Node.Payloads;
 
 public class PackageVersionPayload
 {

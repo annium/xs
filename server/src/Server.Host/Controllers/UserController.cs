@@ -2,14 +2,14 @@ using System;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Server.Host.Payloads;
+using Server.Host.Tools;
+using Server.Shared.Auth;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
-using Xs.Registry.Main.Payloads;
-using Xs.Registry.Main.Tools;
-using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Main.Controllers;
+namespace Server.Host.Controllers;
 
 [Route("user")]
 public class UserController : ServerController<User>

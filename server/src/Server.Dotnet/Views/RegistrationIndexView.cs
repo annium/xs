@@ -1,4 +1,4 @@
-namespace Xs.Registry.Dotnet.Views;
+namespace Server.Dotnet.Views;
 
 internal class RegistrationIndexView
 {

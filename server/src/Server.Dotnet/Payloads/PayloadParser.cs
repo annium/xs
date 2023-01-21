@@ -1,8 +1,8 @@
 using System;
-using Xs.Registry.Abstract.Packages;
+using Server.Abstractions.Packages;
 using Xs.Registry.Db.Dotnet.Models;
 
-namespace Xs.Registry.Dotnet.Payloads;
+namespace Server.Dotnet.Payloads;
 
 internal class PayloadParser : IPayloadParser<PackagePayload, Package, PackageDependency>
 {

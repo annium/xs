@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
+using Server.Dotnet.Helpers;
+using Server.Dotnet.Storage;
+using Server.Shared.Auth;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Dotnet.Models;
 using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
-using Xs.Registry.Dotnet.Helpers;
-using Xs.Registry.Dotnet.Storage;
-using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Dotnet.Controllers;
+namespace Server.Dotnet.Controllers;
 
 public class SymbolPublicationController : ServerController<User>
 {

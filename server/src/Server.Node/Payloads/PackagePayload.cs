@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Newtonsoft.Json;
 using NodaTime;
-using Xs.Registry.Abstract.Packages;
-using Xs.Registry.Node.Models;
+using Server.Abstractions.Packages;
+using Server.Node.Models;
 
-namespace Xs.Registry.Node.Payloads;
+namespace Server.Node.Payloads;
 
 public class PackagePayload : IPayload
 {

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Xs.Registry.Abstract.Packages;
+namespace Server.Abstractions.Packages;
 
 public interface IPackageStorage
 {

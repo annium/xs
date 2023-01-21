@@ -1,4 +1,4 @@
-namespace Xs.Registry.Abstract.Storage;
+namespace Server.Abstractions.Storage;
 
 public interface IStorageFactory
 {

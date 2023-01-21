@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Xs.Registry.Abstract.Storage;
+namespace Server.Abstractions.Storage;
 
 public interface IStorage
 {

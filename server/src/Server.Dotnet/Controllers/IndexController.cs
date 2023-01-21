@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Server.Dotnet.Views;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Dotnet.Views;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Dotnet.Controllers;
+namespace Server.Dotnet.Controllers;
 
 public class IndexController : ServerController<User>
 {

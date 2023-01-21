@@ -1,7 +1,7 @@
 using Annium.Core.DependencyInjection;
 using Xs.Registry.Db;
 
-namespace Xs.Registry.Node;
+namespace Server.Node;
 
 public class TestServicePack : ServicePackBase
 {

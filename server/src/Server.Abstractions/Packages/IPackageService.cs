@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Annium.Data.Operations;
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Abstract.Packages;
+namespace Server.Abstractions.Packages;
 
 public interface IPackageService<TPackage, TPackageDependency, TPayload> where TPayload : class, IPayload where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
 {

@@ -1,16 +1,16 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Xs.Registry.Abstract.Auth;
-using Xs.Registry.Abstract.Storage;
-using Xs.Registry.Shared.Auth;
+using Server.Abstractions.Auth;
+using Server.Abstractions.Storage;
+using Server.Shared.Auth;
 
-namespace Xs.Registry.Abstract;
+namespace Server.Abstractions;
 
 public class ServicePack : ServicePackBase
 {
     public ServicePack()
     {
-        Add<Db.Shared.ServicePack>();
+        Add<Xs.Registry.Db.Shared.ServicePack>();
         Add<Shared.ServicePack>();
     }
 

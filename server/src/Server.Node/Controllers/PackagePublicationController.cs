@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Abstract.Packages;
+using Server.Abstractions.Packages;
+using Server.Node.Payloads;
+using Server.Shared.Auth;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Node.Models;
 using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Node.Payloads;
-using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Node.Controllers;
+namespace Server.Node.Controllers;
 
 public class PackagePublicationController : ServerController<User>
 {

@@ -1,7 +1,7 @@
 using System;
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Abstract.Packages;
+namespace Server.Abstractions.Packages;
 
 public interface IPayloadParser<TPayload, TPackage, TPackageDependency> where TPayload : IPayload where TPackage : IPackage<TPackageDependency> where TPackageDependency : IPackageDependency
 {

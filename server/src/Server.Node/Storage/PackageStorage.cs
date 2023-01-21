@@ -1,8 +1,8 @@
 using System.IO;
 using System.Threading.Tasks;
-using Xs.Registry.Abstract.Storage;
+using Server.Abstractions.Storage;
 
-namespace Xs.Registry.Node.Storage;
+namespace Server.Node.Storage;
 
 internal class PackageStorage : IPackageStorage
 {

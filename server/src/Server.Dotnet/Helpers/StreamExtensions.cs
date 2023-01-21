@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xs.Registry.Dotnet.Helpers;
+namespace Server.Dotnet.Helpers;
 
 internal static class StreamExtensions
 {

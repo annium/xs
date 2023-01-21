@@ -1,6 +1,6 @@
 using System;
 
-namespace Xs.Registry.Node.Models;
+namespace Server.Node.Models;
 
 public class PackageName
 {

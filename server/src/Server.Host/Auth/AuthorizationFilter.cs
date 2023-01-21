@@ -7,12 +7,12 @@ using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Server.Shared.Auth;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
-using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Main.Auth;
+namespace Server.Host.Auth;
 
 internal class AuthorizationFilter : IAsyncAuthorizationFilter
 {

@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Xs.Registry.Dotnet.Views;
+namespace Server.Dotnet.Views;
 
 internal class RegistrationLeafView
 {

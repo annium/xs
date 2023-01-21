@@ -2,10 +2,10 @@ using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Xs.Registry.Main.Auth;
-using Xs.Registry.Shared.Auth;
+using Server.Host.Auth;
+using Server.Shared.Auth;
 
-namespace Xs.Registry.Main;
+namespace Server.Host;
 
 public class Startup
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NodaTime;
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Main.Views;
+namespace Server.Host.Views;
 
 internal class MetaPackageView
 {

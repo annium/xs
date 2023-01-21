@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Xs.Registry.Dotnet.Helpers;
+namespace Server.Dotnet.Helpers;
 
 internal static class HttpRequestExtensions
 {

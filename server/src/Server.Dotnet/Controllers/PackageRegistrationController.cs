@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Server.Dotnet.Views;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Dotnet.Models;
 using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
-using Xs.Registry.Dotnet.Views;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Dotnet.Controllers;
+namespace Server.Dotnet.Controllers;
 
 public class PackageRegistrationController : ServerController<User>
 {

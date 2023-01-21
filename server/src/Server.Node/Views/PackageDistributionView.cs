@@ -1,4 +1,4 @@
-namespace Xs.Registry.Node.Views;
+namespace Server.Node.Views;
 
 public class PackageDistributionView
 {

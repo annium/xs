@@ -1,10 +1,10 @@
 using System;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Main.Controllers;
+namespace Server.Host.Controllers;
 
 [Route("registry")]
 public class RegistryController : ServerController<User>

@@ -4,7 +4,7 @@ using Annium.Core.DependencyInjection;
 using Xs.Registry.Db;
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Main;
+namespace Server.Host;
 
 public class TestServicePack : ServicePackBase
 {

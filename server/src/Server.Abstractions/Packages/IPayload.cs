@@ -1,7 +1,7 @@
 using System.IO;
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Abstract.Packages;
+namespace Server.Abstractions.Packages;
 
 public interface IPayload : IPackageInfo
 {

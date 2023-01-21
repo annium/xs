@@ -7,7 +7,7 @@ using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
 using Xs.Registry.Db.Shared.Tools;
 
-namespace Xs.Registry.Abstract.Packages;
+namespace Server.Abstractions.Packages;
 
 public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageService<TPackage, TPackageDependency, TPayload> where TPayload : class, IPayload where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
 {

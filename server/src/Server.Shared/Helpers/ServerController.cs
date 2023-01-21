@@ -2,7 +2,7 @@ using System;
 using Annium.AspNetCore.Extensions;
 using Annium.Core.Mediator;
 
-namespace Xs.Registry.Shared.Helpers;
+namespace Server.Shared.Helpers;
 
 public class ServerController<TUser> : ServerController
 {

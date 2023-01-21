@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using System.Web;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Server.Host.Views;
+using Server.Shared.Auth;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
 using Xs.Registry.Db.Shared.Tools;
-using Xs.Registry.Main.Views;
-using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Main.Controllers;
+namespace Server.Host.Controllers;
 
 [Route("packages")]
 public class MetaPackagesController : ServerController<User>

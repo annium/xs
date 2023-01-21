@@ -1,9 +1,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using NuGet.Packaging;
-using Xs.Registry.Abstract.Storage;
+using Server.Abstractions.Storage;
 
-namespace Xs.Registry.Dotnet.Storage;
+namespace Server.Dotnet.Storage;
 
 internal class PackageStorage : IPackageStorage
 {

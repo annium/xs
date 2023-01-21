@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Logging;
 
-namespace Xs.Registry.Shared.Helpers;
+namespace Server.Shared.Helpers;
 
 public static class WebHostBuilderHelper
 {

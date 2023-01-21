@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Xs.Registry.Node;
+namespace Server.Node;
 
 internal class Configuration
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Main;
+namespace Server.Host;
 
 public class Configuration
 {

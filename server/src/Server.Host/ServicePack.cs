@@ -2,14 +2,14 @@ using System.IO;
 using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
 
-namespace Xs.Registry.Main;
+namespace Server.Host;
 
 internal class ServicePack : ServicePackBase
 {
     public ServicePack()
     {
         Add<BaseServicePack>();
-        Add<Db.BaseServicePack>();
+        Add<Xs.Registry.Db.BaseServicePack>();
     }
 
     public override void Configure(IServiceContainer container)

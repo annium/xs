@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using Xs.Registry.Abstract.Packages;
+using Server.Abstractions.Packages;
 using Xs.Registry.Db.Node.Models;
 
-namespace Xs.Registry.Node.Payloads;
+namespace Server.Node.Payloads;
 
 internal class PayloadParser : IPayloadParser<PackagePayload, Package, PackageDependency>
 {

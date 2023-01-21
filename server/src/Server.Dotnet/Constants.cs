@@ -1,6 +1,6 @@
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Dotnet;
+namespace Server.Dotnet;
 
 internal static class Constants
 {

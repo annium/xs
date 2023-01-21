@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Xs.Registry.Node.Payloads;
+namespace Server.Node.Payloads;
 
 public class PackageAttachmentPayload
 {

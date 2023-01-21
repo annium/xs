@@ -1,6 +1,6 @@
 using System;
 
-namespace Xs.Registry.Shared.Auth;
+namespace Server.Shared.Auth;
 
 [Flags]
 public enum Access

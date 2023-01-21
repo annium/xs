@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Xs.Registry.Dotnet.Storage;
+namespace Server.Dotnet.Storage;
 
 internal class SymbolStorage : ISymbolStorage
 {

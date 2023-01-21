@@ -1,4 +1,4 @@
-namespace Xs.Registry.Abstract.Packages;
+namespace Server.Abstractions.Packages;
 
 public enum PackageStatus
 {

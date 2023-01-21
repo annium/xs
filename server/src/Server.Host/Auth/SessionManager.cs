@@ -8,7 +8,7 @@ using NodaTime;
 using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
 
-namespace Xs.Registry.Main.Auth;
+namespace Server.Host.Auth;
 
 internal class SessionManager : ISessionManager
 {

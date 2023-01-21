@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Xs.Registry.Db.Node.Models;
 
-namespace Xs.Registry.Node.Views;
+namespace Server.Node.Views;
 
 public class PackagesView
 {

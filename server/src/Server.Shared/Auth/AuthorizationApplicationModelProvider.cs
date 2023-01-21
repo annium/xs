@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Xs.Registry.Shared.Auth;
+namespace Server.Shared.Auth;
 
 internal class AuthorizationApplicationModelProvider<TAuthorizationFilter> : IApplicationModelProvider
     where TAuthorizationFilter : IAsyncAuthorizationFilter

@@ -8,15 +8,15 @@ using Annium.Core.Mediator;
 using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
-using Xs.Registry.Abstract.Packages;
+using Server.Abstractions.Packages;
+using Server.Dotnet.Helpers;
+using Server.Dotnet.Payloads;
+using Server.Shared.Auth;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Dotnet.Models;
 using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Dotnet.Helpers;
-using Xs.Registry.Dotnet.Payloads;
-using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Dotnet.Controllers;
+namespace Server.Dotnet.Controllers;
 
 public class PackagePublicationController : ServerController<User>
 {

@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using System.Web;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Abstract.Packages;
+using Server.Abstractions.Packages;
+using Server.Dotnet.Payloads;
+using Server.Dotnet.Views;
+using Server.Shared.Auth;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Dotnet.Models;
 using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Dotnet.Payloads;
-using Xs.Registry.Dotnet.Views;
-using Xs.Registry.Shared.Auth;
-using Xs.Registry.Shared.Helpers;
 
-namespace Xs.Registry.Dotnet.Controllers;
+namespace Server.Dotnet.Controllers;
 
 [Route("packages")]
 public class PackagesController : ServerController<User>

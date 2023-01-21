@@ -2,9 +2,9 @@ using System.IO;
 using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Xs.Registry.Shared.Helpers;
+using Server.Shared.Helpers;
 
-namespace Xs.Registry.Node;
+namespace Server.Node;
 
 internal class Program
 {

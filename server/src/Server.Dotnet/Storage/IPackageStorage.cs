@@ -1,9 +1,9 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Xs.Registry.Dotnet.Storage;
+namespace Server.Dotnet.Storage;
 
-public interface IPackageStorage : Abstract.Packages.IPackageStorage
+public interface IPackageStorage : Abstractions.Packages.IPackageStorage
 {
     Task<Stream> GetPackageAsync(string name, string version);
 

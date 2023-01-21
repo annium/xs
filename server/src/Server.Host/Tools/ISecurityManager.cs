@@ -1,4 +1,4 @@
-namespace Xs.Registry.Main.Tools;
+namespace Server.Host.Tools;
 
 public interface ISecurityManager
 {

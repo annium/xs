@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xs.Registry.Db.Shared.Models;
 
-namespace Xs.Registry.Main.Auth;
+namespace Server.Host.Auth;
 
 public interface ISessionManager
 {

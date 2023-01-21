@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using System.Web;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Xs.Registry.Abstract.Packages;
+using Server.Abstractions.Packages;
+using Server.Dotnet.Payloads;
+using Server.Shared.Helpers;
 using Xs.Registry.Db.Dotnet.Models;
 using Xs.Registry.Db.Shared.Models;
 using Xs.Registry.Db.Shared.Repositories;
-using Xs.Registry.Dotnet.Payloads;
-using Xs.Registry.Shared.Helpers;
-using IPackageStorage = Xs.Registry.Dotnet.Storage.IPackageStorage;
+using IPackageStorage = Server.Dotnet.Storage.IPackageStorage;
 
-namespace Xs.Registry.Dotnet.Controllers;
+namespace Server.Dotnet.Controllers;
 
 public class PackageConsumptionController : ServerController<User>
 {

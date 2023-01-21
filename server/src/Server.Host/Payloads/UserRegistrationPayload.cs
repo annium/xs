@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Xs.Registry.Main.Payloads;
+namespace Server.Host.Payloads;
 
 public class UserRegistrationPayload
 {

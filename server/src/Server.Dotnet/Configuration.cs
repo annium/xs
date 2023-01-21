@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Xs.Registry.Dotnet;
+namespace Server.Dotnet;
 
 internal class Configuration
 {
