@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using Server.Abstractions.Packages;
 using Server.Db.Dotnet.Models;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 using Server.Dotnet.Helpers;
 using Server.Dotnet.Payloads;
 using Server.Shared.Auth;

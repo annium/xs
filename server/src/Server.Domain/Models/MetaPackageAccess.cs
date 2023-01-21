@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Server.Db.Shared.Models;
+namespace Server.Domain.Models;
 
 public class MetaPackageAccess
 {
@@ -9,7 +9,7 @@ public class MetaPackageAccess
 
     private IEnumerable<MetaPackagePermission> Permissions { get; }
 
-    internal MetaPackageAccess(
+    public MetaPackageAccess(
         Guid ownerId,
         IEnumerable<MetaPackagePermission> permissions
     )

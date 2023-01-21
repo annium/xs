@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Db.Shared.Tools;
 

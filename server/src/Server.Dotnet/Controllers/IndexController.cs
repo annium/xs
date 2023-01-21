@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 using Server.Dotnet.Views;
 using Server.Shared.Helpers;
 

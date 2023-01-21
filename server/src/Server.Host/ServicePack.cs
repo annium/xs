@@ -9,7 +9,6 @@ internal class ServicePack : ServicePackBase
     public ServicePack()
     {
         Add<BaseServicePack>();
-        Add<Db.ServicePack>();
     }
 
     public override void Configure(IServiceContainer container)

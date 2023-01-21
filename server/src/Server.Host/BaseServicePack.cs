@@ -16,7 +16,8 @@ internal class BaseServicePack : ServicePackBase
 {
     public BaseServicePack()
     {
-        Add<Db.Shared.ServicePack>();
+        Add<Dotnet.ServicePack>();
+        Add<Node.ServicePack>();
     }
 
     public override void Configure(IServiceContainer container)

@@ -1,6 +1,6 @@
 using System;
 
-namespace Server.Db.Shared.Models;
+namespace Server.Domain.Models;
 
 public class User
 {

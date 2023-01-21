@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NodaTime;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Db.Dotnet.Models;
 

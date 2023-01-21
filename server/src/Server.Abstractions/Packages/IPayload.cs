@@ -1,5 +1,5 @@
 using System.IO;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Abstractions.Packages;
 

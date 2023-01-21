@@ -1,4 +1,4 @@
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Db.Node.Models;
 

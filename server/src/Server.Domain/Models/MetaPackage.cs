@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using NodaTime;
 
-namespace Server.Db.Shared.Models;
+namespace Server.Domain.Models;
 
 public class MetaPackage : IPackageInfo
 {
@@ -26,7 +26,7 @@ public class MetaPackage : IPackageInfo
 
     public IEnumerable<MetaPackagePermission> Permissions { get; }
 
-    internal MetaPackage(
+    public MetaPackage(
         ProjectType type,
         string name,
         string version,

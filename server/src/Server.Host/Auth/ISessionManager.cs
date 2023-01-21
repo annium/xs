@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Host.Auth;
 

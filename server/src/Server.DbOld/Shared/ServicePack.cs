@@ -1,9 +1,9 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
-using Server.Db.Shared.Models;
 using Server.Db.Shared.Repositories;
 using Server.Db.Shared.Tools;
+using Server.Domain.Models;
 
 namespace Server.Db.Shared;
 

@@ -6,7 +6,7 @@ using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Packages;
 using Server.Db.Node.Models;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 using Server.Node.Payloads;
 using Server.Shared.Auth;
 using Server.Shared.Helpers;

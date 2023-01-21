@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Annium.Core.DependencyInjection;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Host;
 

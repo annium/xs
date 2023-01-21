@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using NodaTime;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Db.Shared.Repositories;
 

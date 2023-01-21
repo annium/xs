@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Annium.Data.Operations;
-using Server.Db.Shared.Models;
+using Server.Domain.Models;
 
 namespace Server.Abstractions.Packages;
 
