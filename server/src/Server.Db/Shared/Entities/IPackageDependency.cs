@@ -1,6 +1,6 @@
 using System;
 
-namespace Xs.Registry.Db.Shared.Entities;
+namespace Server.Db.Shared.Entities;
 
 public interface IPackageDependency
 {

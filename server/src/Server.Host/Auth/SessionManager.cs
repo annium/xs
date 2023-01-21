@@ -5,8 +5,8 @@ using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
-using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Db.Shared.Repositories;
+using Server.Db.Shared.Models;
+using Server.Db.Shared.Repositories;
 
 namespace Server.Host.Auth;
 

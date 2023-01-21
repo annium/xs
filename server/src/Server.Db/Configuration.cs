@@ -1,4 +1,4 @@
-namespace Xs.Registry.Db;
+namespace Server.Db;
 
 internal class Configuration
 {

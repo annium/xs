@@ -7,10 +7,10 @@ using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Server.Db.Shared.Models;
+using Server.Db.Shared.Repositories;
 using Server.Shared.Auth;
 using Server.Shared.Helpers;
-using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Db.Shared.Repositories;
 
 namespace Server.Host.Auth;
 

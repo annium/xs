@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
 using LinqToDB.Data;
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared.Repositories;
+namespace Server.Db.Shared.Repositories;
 
 internal class PackageRepository<TPackage, TPackageDependency, TPackageEntity, TPackageDependencyEntity, TContext> : IPackageRepository<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
-    where TPackageEntity : class, Entities.IPackage<TPackageDependencyEntity>, new()
-    where TPackageDependencyEntity : class, Entities.IPackageDependency
+    where TPackageEntity : class, Server.Db.Shared.Entities.IPackage<TPackageDependencyEntity>, new()
+    where TPackageDependencyEntity : class, Server.Db.Shared.Entities.IPackageDependency
     where TContext : IContext
 {
     private readonly TContext _context;

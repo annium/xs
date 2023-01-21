@@ -1,6 +1,6 @@
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared.Tools;
+namespace Server.Db.Shared.Tools;
 
 public interface IMetaPackageManager
 {

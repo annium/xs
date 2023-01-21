@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
 using LinqToDB.Data;
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared.Repositories;
+namespace Server.Db.Shared.Repositories;
 
 internal class MetaPackageRepository : IMetaPackageRepository
 {
@@ -25,7 +25,7 @@ internal class MetaPackageRepository : IMetaPackageRepository
 
     public async Task<MetaPackage> CreateAsync(MetaPackage metaPackage)
     {
-        var entity = _mapper.Map<Entities.MetaPackage>(metaPackage);
+        var entity = _mapper.Map<Server.Db.Shared.Entities.MetaPackage>(metaPackage);
         entity.Id = Guid.NewGuid();
         entity.Permissions.ForEach(p => p.MetaPackageId = entity.Id);
 
@@ -159,7 +159,7 @@ internal class MetaPackageRepository : IMetaPackageRepository
 
         return _context.MetaPackages
             .Where(p => p.Id == id)
-            .UpdateAsync(u => new Entities.MetaPackage()
+            .UpdateAsync(u => new Server.Db.Shared.Entities.MetaPackage()
             {
                 Name = packageInfo.Name,
                 Version = packageInfo.Version,
@@ -172,7 +172,7 @@ internal class MetaPackageRepository : IMetaPackageRepository
     {
         return _context.MetaPackages
             .Where(p => p.Id == id)
-            .UpdateAsync(u => new Entities.MetaPackage { Downloads = downloads });
+            .UpdateAsync(u => new Server.Db.Shared.Entities.MetaPackage { Downloads = downloads });
     }
 
     public async Task UpdatePermissionsAsync(Guid id, MetaPackagePermission[] permissions)
@@ -180,7 +180,7 @@ internal class MetaPackageRepository : IMetaPackageRepository
         foreach (var permission in permissions)
             await _context.MetaPackagePermissions
                 .Where(p => p.MetaPackageId == id && p.Category == permission.Category)
-                .UpdateAsync(p => new Entities.MetaPackagePermission { Permission = permission.Permission });
+                .UpdateAsync(p => new Server.Db.Shared.Entities.MetaPackagePermission { Permission = permission.Permission });
     }
 
     public Task DeleteByIdAsync(Guid id)

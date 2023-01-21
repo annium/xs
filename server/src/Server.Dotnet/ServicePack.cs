@@ -7,6 +7,6 @@ internal class ServicePack : ServicePackBase
     public ServicePack()
     {
         Add<BaseServicePack>();
-        Add<Xs.Registry.Db.BaseServicePack>();
+        Add<Db.ServicePack>();
     }
 }

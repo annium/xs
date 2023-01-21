@@ -1,7 +1,7 @@
 using LinqToDB;
-using Xs.Registry.Db.Shared.Entities;
+using Server.Db.Shared.Entities;
 
-namespace Xs.Registry.Db.Shared;
+namespace Server.Db.Shared;
 
 internal interface ISharedContext : IContext
 {

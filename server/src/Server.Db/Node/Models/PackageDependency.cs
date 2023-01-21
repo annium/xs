@@ -1,6 +1,6 @@
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Node.Models;
+namespace Server.Db.Node.Models;
 
 public class PackageDependency : IPackageDependency
 {

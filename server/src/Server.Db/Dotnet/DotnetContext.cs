@@ -1,10 +1,10 @@
 using LinqToDB;
 using Microsoft.EntityFrameworkCore;
-using Xs.Registry.Db.Dotnet;
-using Xs.Registry.Db.Dotnet.Entities;
-using Xs.Registry.Db.Shared.Entities;
+using Server.Db.Dotnet;
+using Server.Db.Dotnet.Entities;
+using Server.Db.Shared.Entities;
 
-namespace Xs.Registry.Db;
+namespace Server.Db;
 
 internal partial class Context : IDotnetContext
 {

@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
 using NodaTime;
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared.Repositories;
+namespace Server.Db.Shared.Repositories;
 
 internal class UserSessionRepository : IUserSessionRepository
 {
@@ -24,10 +24,10 @@ internal class UserSessionRepository : IUserSessionRepository
 
     public async Task<UserSession> CreateAsync(UserSession userSession)
     {
-        var entity = _mapper.Map<Entities.UserSession>(userSession);
+        var entity = _mapper.Map<Server.Db.Shared.Entities.UserSession>(userSession);
 
         await _context.UserSessions
-            .InsertAsync(() => new Entities.UserSession
+            .InsertAsync(() => new Server.Db.Shared.Entities.UserSession
             {
                 UserId = entity.UserId,
                 Token = entity.Token,
@@ -51,7 +51,7 @@ internal class UserSessionRepository : IUserSessionRepository
         return _context.UserSessions
             .UpdateAsync(
                 s => s.Token == token,
-                s => new Entities.UserSession { Expires = expiresDate }
+                s => new Server.Db.Shared.Entities.UserSession { Expires = expiresDate }
             );
     }
 

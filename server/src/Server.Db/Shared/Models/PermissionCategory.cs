@@ -1,4 +1,4 @@
-namespace Xs.Registry.Db.Shared.Models;
+namespace Server.Db.Shared.Models;
 
 public enum PermissionCategory
 {

@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using NodaTime;
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared.Repositories;
+namespace Server.Db.Shared.Repositories;
 
 public interface IUserSessionRepository
 {

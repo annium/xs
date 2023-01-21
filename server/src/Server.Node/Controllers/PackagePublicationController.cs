@@ -5,11 +5,11 @@ using Annium.Core.Mediator;
 using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Packages;
+using Server.Db.Node.Models;
+using Server.Db.Shared.Models;
 using Server.Node.Payloads;
 using Server.Shared.Auth;
 using Server.Shared.Helpers;
-using Xs.Registry.Db.Node.Models;
-using Xs.Registry.Db.Shared.Models;
 
 namespace Server.Node.Controllers;
 

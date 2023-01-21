@@ -1,11 +1,11 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
-using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Db.Shared.Repositories;
-using Xs.Registry.Db.Shared.Tools;
+using Server.Db.Shared.Models;
+using Server.Db.Shared.Repositories;
+using Server.Db.Shared.Tools;
 
-namespace Xs.Registry.Db.Shared;
+namespace Server.Db.Shared;
 
 public class ServicePack : ServicePackBase
 {
@@ -31,9 +31,9 @@ public class ServicePack : ServicePackBase
     {
         p.Map<ProjectType, string>(t => t.ToString());
         p.Map<string, ProjectType>(t => ProjectType.Get(t));
-        p.Map<MetaPackage, Entities.MetaPackage>()
+        p.Map<MetaPackage, Server.Db.Shared.Entities.MetaPackage>()
             .For(e => e.LowerName, e => e.Name.ToLower());
-        p.Map<MetaPackagePermission, Entities.MetaPackagePermission>()
+        p.Map<MetaPackagePermission, Server.Db.Shared.Entities.MetaPackagePermission>()
             .Ignore(e => e.MetaPackageId);
     }
 }

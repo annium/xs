@@ -1,9 +1,9 @@
 using LinqToDB;
 using Microsoft.EntityFrameworkCore;
-using Xs.Registry.Db.Shared;
-using Xs.Registry.Db.Shared.Entities;
+using Server.Db.Shared;
+using Server.Db.Shared.Entities;
 
-namespace Xs.Registry.Db;
+namespace Server.Db;
 
 internal partial class Context : ISharedContext
 {

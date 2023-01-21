@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Xs.Registry.Db.Shared.Entities;
+using Server.Db.Shared.Entities;
 
-namespace Xs.Registry.Db.Dotnet.Entities;
+namespace Server.Db.Dotnet.Entities;
 
 [Table("DotnetPackageDependencies")]
 internal class PackageDependency : IPackageDependency

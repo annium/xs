@@ -1,7 +1,7 @@
 using LinqToDB;
-using Xs.Registry.Db.Dotnet.Entities;
+using Server.Db.Dotnet.Entities;
 
-namespace Xs.Registry.Db.Dotnet;
+namespace Server.Db.Dotnet;
 
 internal interface IDotnetContext : IContext
 {

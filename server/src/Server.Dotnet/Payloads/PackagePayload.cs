@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using NodaTime;
 using Server.Abstractions.Packages;
-using Xs.Registry.Db.Dotnet.Models;
+using Server.Db.Dotnet.Models;
 
 namespace Server.Dotnet.Payloads;
 

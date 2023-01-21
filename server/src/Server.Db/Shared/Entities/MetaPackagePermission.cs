@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared.Entities;
+namespace Server.Db.Shared.Entities;
 
 [Table(nameof(Context.MetaPackagePermissions))]
 internal class MetaPackagePermission

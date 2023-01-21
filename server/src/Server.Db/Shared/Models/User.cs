@@ -1,6 +1,6 @@
 using System;
 
-namespace Xs.Registry.Db.Shared.Models;
+namespace Server.Db.Shared.Models;
 
 public class User
 {

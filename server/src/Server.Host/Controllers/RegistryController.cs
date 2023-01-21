@@ -1,8 +1,8 @@
 using System;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Server.Db.Shared.Models;
 using Server.Shared.Helpers;
-using Xs.Registry.Db.Shared.Models;
 
 namespace Server.Host.Controllers;
 

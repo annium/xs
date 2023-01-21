@@ -1,7 +1,7 @@
 using LinqToDB;
-using Xs.Registry.Db.Node.Entities;
+using Server.Db.Node.Entities;
 
-namespace Xs.Registry.Db.Node;
+namespace Server.Db.Node;
 
 internal interface INodeContext : IContext
 {

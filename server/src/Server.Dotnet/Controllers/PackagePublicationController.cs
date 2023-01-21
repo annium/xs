@@ -9,12 +9,12 @@ using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using Server.Abstractions.Packages;
+using Server.Db.Dotnet.Models;
+using Server.Db.Shared.Models;
 using Server.Dotnet.Helpers;
 using Server.Dotnet.Payloads;
 using Server.Shared.Auth;
 using Server.Shared.Helpers;
-using Xs.Registry.Db.Dotnet.Models;
-using Xs.Registry.Db.Shared.Models;
 
 namespace Server.Dotnet.Controllers;
 

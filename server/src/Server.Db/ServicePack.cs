@@ -8,9 +8,9 @@ using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Xs.Registry.Db;
+namespace Server.Db;
 
-public class BaseServicePack : ServicePackBase
+public class ServicePack : ServicePackBase
 {
     public override void Configure(IServiceContainer container)
     {

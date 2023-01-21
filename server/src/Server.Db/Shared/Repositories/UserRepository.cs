@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
-using Xs.Registry.Db.Shared.Models;
+using Server.Db.Shared.Models;
 
-namespace Xs.Registry.Db.Shared.Repositories;
+namespace Server.Db.Shared.Repositories;
 
 internal class UserRepository : IUserRepository
 {
@@ -23,7 +23,7 @@ internal class UserRepository : IUserRepository
 
     public async Task<User> CreateAsync(User user)
     {
-        var entity = _mapper.Map<Entities.User>(user);
+        var entity = _mapper.Map<Server.Db.Shared.Entities.User>(user);
         entity.Id = Guid.NewGuid();
 
         await using (var db = _context.GetDataConnection())
@@ -59,12 +59,12 @@ internal class UserRepository : IUserRepository
 
     public Task UpdateAsync(User user)
     {
-        var entity = _mapper.Map<Entities.User>(user);
+        var entity = _mapper.Map<Server.Db.Shared.Entities.User>(user);
 
         return _context.Users
             .UpdateAsync(
                 u => u.Id == entity.Id,
-                u => new Entities.User
+                u => new Server.Db.Shared.Entities.User
                 {
                     Name = entity.Name,
                     PasswordHash = entity.PasswordHash,
@@ -78,7 +78,7 @@ internal class UserRepository : IUserRepository
         return _context.Users
             .UpdateAsync(
                 u => u.Id == userId,
-                u => new Entities.User { ApiToken = apiToken, }
+                u => new Server.Db.Shared.Entities.User { ApiToken = apiToken, }
             );
     }
 

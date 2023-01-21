@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Xs.Registry.Db.Shared.Models;
+namespace Server.Db.Shared.Models;
 
 public interface IPackage<TPackageDependency> : IPackageInfo where TPackageDependency : IPackageDependency
 {

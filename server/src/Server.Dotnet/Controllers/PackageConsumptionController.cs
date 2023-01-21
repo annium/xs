@@ -6,11 +6,11 @@ using System.Web;
 using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Packages;
+using Server.Db.Dotnet.Models;
+using Server.Db.Shared.Models;
+using Server.Db.Shared.Repositories;
 using Server.Dotnet.Payloads;
 using Server.Shared.Helpers;
-using Xs.Registry.Db.Dotnet.Models;
-using Xs.Registry.Db.Shared.Models;
-using Xs.Registry.Db.Shared.Repositories;
 using IPackageStorage = Server.Dotnet.Storage.IPackageStorage;
 
 namespace Server.Dotnet.Controllers;

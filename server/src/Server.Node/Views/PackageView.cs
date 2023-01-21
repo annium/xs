@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NodaTime;
-using Xs.Registry.Db.Node.Models;
+using Server.Db.Node.Models;
 
 namespace Server.Node.Views;
 

@@ -1,10 +1,10 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Server.Abstractions.Packages;
+using Server.Db.Node.Models;
 using Server.Node.Payloads;
 using Server.Node.Storage;
 using Server.Shared.Auth;
-using Xs.Registry.Db.Node.Models;
 using IPackageStorage = Server.Abstractions.Packages.IPackageStorage;
 
 namespace Server.Node;
@@ -14,7 +14,7 @@ internal class BaseServicePack : ServicePackBase
     public BaseServicePack()
     {
         Add<Abstractions.ServicePack>();
-        Add<Xs.Registry.Db.Node.ServicePack>();
+        Add<Db.Node.ServicePack>();
     }
 
     public override void Configure(IServiceContainer container)

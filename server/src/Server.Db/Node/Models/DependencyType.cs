@@ -1,4 +1,4 @@
-namespace Xs.Registry.Db.Node.Models;
+namespace Server.Db.Node.Models;
 
 public enum DependencyType
 {

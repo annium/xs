@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Xs.Registry.Db.Shared.Entities;
+namespace Server.Db.Shared.Entities;
 
 [Table(nameof(Context.Users))]
 internal class User

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Xs.Registry.Db.Shared.Entities;
+using Server.Db.Shared.Entities;
 
-namespace Xs.Registry.Db.Node.Entities;
+namespace Server.Db.Node.Entities;
 
 [Table("NodePackages")]
 internal class Package : IPackage<PackageDependency>

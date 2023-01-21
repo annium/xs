@@ -3,7 +3,7 @@ using LinqToDB.Data;
 using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Xs.Registry.Db;
+namespace Server.Db;
 
 internal partial class Context : DbContext
 {

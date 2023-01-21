@@ -10,7 +10,7 @@ public class ServicePack : ServicePackBase
 {
     public ServicePack()
     {
-        Add<Xs.Registry.Db.Shared.ServicePack>();
+        Add<Db.Shared.ServicePack>();
         Add<Shared.ServicePack>();
     }
 

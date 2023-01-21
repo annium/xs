@@ -3,8 +3,8 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Server.Db.Node.Models;
 using Server.Shared.Helpers;
-using Xs.Registry.Db.Node.Models;
 
 namespace Server.Node.Views;
 

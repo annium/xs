@@ -1,7 +1,7 @@
 using System;
 using NodaTime;
 
-namespace Xs.Registry.Db.Shared.Models;
+namespace Server.Db.Shared.Models;
 
 public class UserSession
 {

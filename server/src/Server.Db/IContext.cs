@@ -1,6 +1,6 @@
 using LinqToDB.Data;
 
-namespace Xs.Registry.Db;
+namespace Server.Db;
 
 internal interface IContext
 {

@@ -1,6 +1,6 @@
 using Annium.Core.Mapper;
 
-namespace Xs.Registry.Db.Shared.Models.Profiles;
+namespace Server.Db.Shared.Models.Profiles;
 
 public class ProjectTypeProfile : Profile
 {
