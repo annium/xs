@@ -12,7 +12,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.Execution/Annium.Extensions.Execution.csproj" />
         <ProjectReference Include="../Server.Db/Server.Db.csproj" />
         <ProjectReference Include="../Server.Shared/Server.Shared.csproj" />
     </ItemGroup>

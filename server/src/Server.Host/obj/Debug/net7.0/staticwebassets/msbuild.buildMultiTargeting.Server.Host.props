@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/Server.Host.props" />
-</Project>

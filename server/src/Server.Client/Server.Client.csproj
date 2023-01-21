@@ -12,10 +12,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.DependencyInjection/Annium.Core.DependencyInjection.csproj" />
         <ProjectReference Include="../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="NodaTime" Version="3.1.6" />
     </ItemGroup>
 </Project>

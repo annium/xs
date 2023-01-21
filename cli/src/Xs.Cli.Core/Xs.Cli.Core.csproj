@@ -14,18 +14,14 @@
     <ItemGroup>
         <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.CommandLine/Annium.Configuration.CommandLine.csproj" />
         <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.Yaml/Annium.Configuration.Yaml.csproj" />
-        <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.DependencyInjection/Annium.Core.DependencyInjection.csproj" />
-        <ProjectReference Include="../../../../backend/base/Data/src/Annium.Data.Models/Annium.Data.Models.csproj" />
         <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.Arguments/Annium.Extensions.Arguments.csproj" />
         <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.CommandLine/Annium.Extensions.CommandLine.csproj" />
         <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.Shell/Annium.Extensions.Shell.csproj" />
-        <ProjectReference Include="../../../../backend/base/Logging/src/Annium.Logging.Console/Annium.Logging.Console.csproj" />
         <ProjectReference Include="../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
         <ProjectReference Include="../../../../backend/base/Serialization/src/Annium.Serialization.Json/Annium.Serialization.Json.csproj" />
         <ProjectReference Include="../../../../backend/base/Serialization/src/Annium.Serialization.Yaml/Annium.Serialization.Yaml.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="NodaTime" Version="3.1.6" />
         <PackageReference Include="Scriban" Version="5.5.1" />
     </ItemGroup>
 </Project>
