@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Annium.Core.DependencyInjection;
 using Server.Db.Shared.Models;
 
 namespace Server.Host;
 
-public class Configuration
+public sealed record Configuration
 {
-    public IReadOnlyDictionary<ProjectType, Uri> Servers { get; set; } = new Dictionary<ProjectType, Uri>();
-}
-
-internal class RawConfiguration
-{
-    public Dictionary<string, Uri> Servers { get; } = new();
+    public WebHostConfiguration Host { get; init; } = new();
+    public Dictionary<ProjectType, Uri> Servers { get; set; } = new();
 }

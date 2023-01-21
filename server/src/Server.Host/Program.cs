@@ -1,28 +1,18 @@
-using System.IO;
 using Annium.Core.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Server.Shared.Helpers;
+using Microsoft.AspNetCore.Builder;
+using Server.Host;
 
-namespace Server.Host;
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseServicePack<ServicePack>();
+builder.Logging.ConfigureLoggingBridge();
+builder.WebHost.UseKestrelDefaults();
 
-internal class Program
-{
-    internal static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
+var app = builder.Build();
 
-    private static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-            .UseServiceProviderFactory(new ServiceProviderFactory(b => b.UseServicePack<ServicePack>()))
-            .ConfigureWebHostDefaults(builder =>
-            {
-                builder
-                    .UseContentRoot(Directory.GetCurrentDirectory())
-                    .UseKestrel(WebHostBuilderHelper.ConfigureKestrel(9901))
-                    .UseStartup<Startup>();
-            });
-    }
-}
+app.UseExceptionMiddleware();
+app.UseRouting();
+app.UseCorsDefaults();
+app.UseRequestLocalization("en", "ru");
+app.MapControllers();
+
+await app.RunAsync();

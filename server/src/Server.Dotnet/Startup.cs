@@ -13,7 +13,7 @@ public class Startup
     {
         services.AddControllers();
         services.AddCors();
-        services.AddRegistryAuthorization<AuthorizationFilter>();
+        // services.AddRegistryAuthorization<AuthorizationFilter>();
         services.AddMvc()
             .AddDefaultJsonOptions();
         services.AddOpenApiDocument();

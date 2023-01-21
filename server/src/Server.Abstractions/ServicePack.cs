@@ -11,13 +11,12 @@ public class ServicePack : ServicePackBase
     public ServicePack()
     {
         Add<Db.Shared.ServicePack>();
-        Add<Shared.ServicePack>();
     }
 
     public override void Register(IServiceContainer container, IServiceProvider provider)
     {
         // auth
-        container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp)).AsSelf().Singleton();
+        container.Add<Func<Access, AuthorizationFilter>>(sp => _ => new AuthorizationFilter(sp)).AsSelf().Singleton();
 
         // storage
         container.Add<IStorageFactory, FileStorageFactory>().Singleton();
