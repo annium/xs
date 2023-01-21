@@ -1707,17 +1707,12 @@
         "outputPath": "/Users/alex/Projects/annium/xs/server/src/Server.Abstractions/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/alex/Projects/annium/xs/server/src/Server.Abstractions/NuGet.Config",
           "/Users/alex/Projects/annium/xs/NuGet.Config",
           "/Users/alex/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {},
-          "https://dotnet.pkg.annium.com/v3/index.json": {}
-        },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
@@ -1768,17 +1763,12 @@
         "outputPath": "/Users/alex/Projects/annium/xs/server/src/Server.Db/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/alex/Projects/annium/xs/server/src/Server.Db/NuGet.Config",
           "/Users/alex/Projects/annium/xs/NuGet.Config",
           "/Users/alex/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {},
-          "https://dotnet.pkg.annium.com/v3/index.json": {}
-        },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
@@ -1857,17 +1847,12 @@
         "outputPath": "/Users/alex/Projects/annium/xs/server/src/Server.Dotnet/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/alex/Projects/annium/xs/server/src/Server.Dotnet/NuGet.Config",
           "/Users/alex/Projects/annium/xs/NuGet.Config",
           "/Users/alex/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {},
-          "https://dotnet.pkg.annium.com/v3/index.json": {}
-        },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
@@ -1921,17 +1906,12 @@
         "outputPath": "/Users/alex/Projects/annium/xs/server/src/Server.Shared/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/alex/Projects/annium/xs/server/src/Server.Shared/NuGet.Config",
           "/Users/alex/Projects/annium/xs/NuGet.Config",
           "/Users/alex/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {},
-          "https://dotnet.pkg.annium.com/v3/index.json": {}
-        },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4CQa8OuFPAVzc9KDk5Ags+pR7FvTYTl+pC0cxX+jMBe5dIiwTxu7wNaHq7BfKz7lF6Hp+8k+EIwIMCivI/SCVQ==",
+  "dgSpecHash": "tFu9u7I3qhLUb2zSEe1ihYMsqmUJcB57n4E+JDvK1wLm/wKcTT85eNTwezUMZOBb3Te6aA1cL+5ZQAEWY3CzgA==",
   "success": true,
   "projectFilePath": "/Users/alex/Projects/annium/xs/server/src/Server.Db/Server.Db.csproj",
   "expectedPackageFiles": [

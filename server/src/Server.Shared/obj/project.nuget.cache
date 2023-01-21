@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "P1koBWZIrvJWBaL6ieoTQ7RcErocl8Yr80UKxMVKEbYSf1QLR0zGAOTwe3AGqlnayz8FOrgNfmn2uAC6V9l3GQ==",
+  "dgSpecHash": "D7SrplZKAYy8RGAuSigfxO4x9dUtUFVkjZnQeybsoMfFcpDU2bhF1fsxq0jvn91dgwtIa81rdqCLYWWudrmfMA==",
   "success": true,
   "projectFilePath": "/Users/alex/Projects/annium/xs/server/src/Server.Shared/Server.Shared.csproj",
   "expectedPackageFiles": [

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "qcqbIi+816B5n/BrR6vTfOw1kh2ybGUtn/dsDTiFqtXeIdWNvEt8HzDIqT08pviXukfwzotbRgkZhVlj6DNDeg==",
+  "dgSpecHash": "plO0MWxfSuPq7zVy8AehxYqF2/9lp7KgHOaPnYAeAECZCuxbkhTbWzYDZ21H4w5e+r4Mq1REyYmMFmjeOa8F3A==",
   "success": true,
   "projectFilePath": "/Users/alex/Projects/annium/xs/server/src/Server.Abstractions/Server.Abstractions.csproj",
   "expectedPackageFiles": [
