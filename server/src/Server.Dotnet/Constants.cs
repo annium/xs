@@ -4,12 +4,12 @@ namespace Server.Dotnet;
 
 internal static class Constants
 {
+    public const string Project = "dotnet";
     public static readonly ProjectType ProjectType;
 
     static Constants()
     {
-        var type = "dotnet";
-        ProjectType.Register(type);
-        ProjectType = ProjectType.Get(type);
+        ProjectType.Register(Project);
+        ProjectType = ProjectType.Get(Project);
     }
 }

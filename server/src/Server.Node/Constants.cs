@@ -4,12 +4,12 @@ namespace Server.Node;
 
 internal static class Constants
 {
+    public const string Project = "node";
     public static readonly ProjectType ProjectType;
 
     static Constants()
     {
-        var type = "node";
-        ProjectType.Register(type);
-        ProjectType = ProjectType.Get(type);
+        ProjectType.Register(Project);
+        ProjectType = ProjectType.Get(Project);
     }
 }

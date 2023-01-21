@@ -56,6 +56,8 @@ internal class BaseServicePack : ServicePackBase
         container.AddRegistryAuthorization<AuthorizationFilter>();
         container.Collection.AddCors();
         container.Collection.AddControllers()
+            .AddApplicationPart(typeof(Dotnet.ServicePack).Assembly)
+            .AddApplicationPart(typeof(Node.ServicePack).Assembly)
             .AddDefaultJsonOptions();
     }
 

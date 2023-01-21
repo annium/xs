@@ -2,7 +2,7 @@ using Annium.Core.DependencyInjection;
 
 namespace Server.Node;
 
-internal class ServicePack : ServicePackBase
+public class ServicePack : ServicePackBase
 {
     public ServicePack()
     {
