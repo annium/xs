@@ -16,7 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.Entrypoint/Annium.Core.Entrypoint.csproj" />
         <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.CommandLine/Annium.Extensions.CommandLine.csproj" />
-        <ProjectReference Include="../../../registry/client/src/Server.Client/Server.Client.csproj" />
+        <ProjectReference Include="../../../server/src/Server.Client/Server.Client.csproj" />
         <ProjectReference Include="../Xs.Cli.Dotnet/Xs.Cli.Dotnet.csproj" />
         <ProjectReference Include="../Xs.Cli.Node/Xs.Cli.Node.csproj" />
     </ItemGroup>
