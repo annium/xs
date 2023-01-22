@@ -4,7 +4,7 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Server.Db.Node.Models;
-using Server.Shared.Helpers;
+using Server.Shared.Extensions;
 
 namespace Server.Node.Views;
 

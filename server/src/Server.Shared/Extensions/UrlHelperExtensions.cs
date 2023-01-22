@@ -1,9 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Server.Shared.Helpers;
+namespace Server.Shared.Extensions;
 
-public static class UrlExtensions
+public static class UrlHelperExtensions
 {
     public static Uri AbsoluteUri(this IUrlHelper url, string relativePath)
     {

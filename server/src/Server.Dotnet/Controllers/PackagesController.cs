@@ -11,7 +11,8 @@ using Server.Domain.Models;
 using Server.Dotnet.Payloads;
 using Server.Dotnet.Views;
 using Server.Shared.Auth;
-using Server.Shared.Helpers;
+using Server.Shared.Controllers;
+using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 

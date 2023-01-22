@@ -12,7 +12,8 @@ using Server.Node.Models;
 using Server.Node.Payloads;
 using Server.Node.Views;
 using Server.Shared.Auth;
-using Server.Shared.Helpers;
+using Server.Shared.Controllers;
+using Server.Shared.Extensions;
 using IPackageStorage = Server.Node.Storage.IPackageStorage;
 
 namespace Server.Node.Controllers;

@@ -4,7 +4,8 @@ using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
 using Server.Dotnet.Views;
-using Server.Shared.Helpers;
+using Server.Shared.Controllers;
+using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
