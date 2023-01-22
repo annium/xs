@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Server.Db.Repositories;
 using Server.Domain.Models;
 using Server.Shared.Auth;
+using Server.Shared.Auth.TokenAccessors;
 using Server.Shared.Controllers;
 
 namespace Server.Abstractions.Auth;

@@ -3,7 +3,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Server.Shared.Auth;
+namespace Server.Shared.Auth.TokenAccessors;
 
 public class HeaderTokenAccessor : ITokenAccessor
 {

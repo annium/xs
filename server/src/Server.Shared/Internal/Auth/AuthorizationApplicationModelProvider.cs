@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Server.Shared.Auth;
+using Server.Shared.Auth.Attributes;
 
 namespace Server.Shared.Internal.Auth;
 

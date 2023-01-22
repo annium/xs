@@ -6,6 +6,7 @@ using Server.Main.Services;
 using Server.Main.Tools;
 using Server.Shared;
 using Server.Shared.Auth;
+using Server.Shared.Auth.TokenAccessors;
 
 namespace Server.Main;
 

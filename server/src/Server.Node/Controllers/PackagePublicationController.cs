@@ -7,6 +7,7 @@ using Server.Domain.Models;
 using Server.Node.Models;
 using Server.Node.Payloads;
 using Server.Shared.Auth;
+using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Node.Controllers;

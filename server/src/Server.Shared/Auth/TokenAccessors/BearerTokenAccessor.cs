@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
-namespace Server.Shared.Auth;
+namespace Server.Shared.Auth.TokenAccessors;
 
 public class BearerTokenAccessor : ITokenAccessor
 {
