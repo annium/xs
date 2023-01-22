@@ -13,6 +13,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Server.Dotnet/Server.Dotnet.csproj" />
+        <ProjectReference Include="../Server.Main/Server.Main.csproj" />
         <ProjectReference Include="../Server.Node/Server.Node.csproj" />
     </ItemGroup>
 </Project>
