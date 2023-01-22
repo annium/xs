@@ -5,7 +5,7 @@ using Server.Domain.Enums;
 
 namespace Server.Domain.Models;
 
-public struct UserMetaPackageAccess
+public record struct UserMetaPackageAccess
 {
     public bool IsOwner { get; }
     public bool IsWorld { get; }
@@ -28,7 +28,4 @@ public struct UserMetaPackageAccess
 
     public bool Has(Permission permission) => _permission.HasFlag(permission);
     public override int GetHashCode() => HashCode.Combine(IsOwner, IsWorld, _permission);
-    public override bool Equals(object obj) => GetType() == obj?.GetType() && GetHashCode() == obj.GetHashCode();
-    public static bool operator ==(UserMetaPackageAccess a, UserMetaPackageAccess b) => a.GetHashCode() == b.GetHashCode();
-    public static bool operator !=(UserMetaPackageAccess a, UserMetaPackageAccess b) => !(a == b);
 }

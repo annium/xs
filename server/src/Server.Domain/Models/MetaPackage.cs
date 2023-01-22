@@ -9,15 +9,15 @@ namespace Server.Domain.Models;
 public sealed record MetaPackage : IPackageInfo, IIdEntity<Guid>
 {
     public Guid Id { get; private init; }
-    public ProjectType Type { get; private init; }
-    public string Name { get; private init; }
-    public string Version { get; private init; }
-    public string Description { get; private init; }
+    public ProjectType Type { get; private init; } = default!;
+    public string Name { get; private init; } = string.Empty;
+    public string Version { get; private init; } = string.Empty;
+    public string Description { get; private init; } = string.Empty;
     public Instant Published { get; private init; }
     public int Downloads { get; private init; }
     public Guid OwnerId { get; private init; }
-    public User Owner { get; private init; }
-    public IReadOnlyCollection<MetaPackagePermission> Permissions { get; private init; }
+    public User Owner { get; private init; } = default!;
+    public IReadOnlyCollection<MetaPackagePermission> Permissions { get; private init; } = Array.Empty<MetaPackagePermission>();
 
     public MetaPackage(
         ProjectType type,
