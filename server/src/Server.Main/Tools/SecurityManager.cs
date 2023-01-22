@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Server.Host.Tools;
+namespace Server.Main.Tools;
 
 internal class SecurityManager : ISecurityManager, IDisposable
 {

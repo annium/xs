@@ -12,7 +12,7 @@ using Server.Domain.Models;
 using Server.Shared.Auth;
 using Server.Shared.Helpers;
 
-namespace Server.Host.Auth;
+namespace Server.Main.Auth;
 
 internal class AuthorizationFilter : IAsyncAuthorizationFilter
 {

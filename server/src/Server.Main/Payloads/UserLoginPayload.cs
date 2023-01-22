@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Host.Payloads;
+namespace Server.Main.Payloads;
 
 public class UserLoginPayload
 {

@@ -23,7 +23,7 @@ internal class UserRepository : IUserRepository
 
     public async Task<User> CreateAsync(User user)
     {
-        var entity = _mapper.Map<Server.Db.Shared.Entities.User>(user);
+        var entity = _mapper.Map<Entities.User>(user);
         entity.Id = Guid.NewGuid();
 
         await using (var db = _context.GetDataConnection())
@@ -59,12 +59,12 @@ internal class UserRepository : IUserRepository
 
     public Task UpdateAsync(User user)
     {
-        var entity = _mapper.Map<Server.Db.Shared.Entities.User>(user);
+        var entity = _mapper.Map<Entities.User>(user);
 
         return _context.Users
             .UpdateAsync(
                 u => u.Id == entity.Id,
-                u => new Server.Db.Shared.Entities.User
+                u => new Entities.User
                 {
                     Name = entity.Name,
                     PasswordHash = entity.PasswordHash,
@@ -78,7 +78,7 @@ internal class UserRepository : IUserRepository
         return _context.Users
             .UpdateAsync(
                 u => u.Id == userId,
-                u => new Server.Db.Shared.Entities.User { ApiToken = apiToken, }
+                u => new Entities.User { ApiToken = apiToken, }
             );
     }
 

@@ -9,11 +9,11 @@ using Server.Db.Shared.Repositories;
 using Server.Db.Shared.Tools;
 using Server.Domain.Enums;
 using Server.Domain.Models;
-using Server.Host.Views;
+using Server.Main.Views;
 using Server.Shared.Auth;
 using Server.Shared.Helpers;
 
-namespace Server.Host.Controllers;
+namespace Server.Main.Controllers;
 
 [Route("packages")]
 public class MetaPackagesController : ServerController<User>

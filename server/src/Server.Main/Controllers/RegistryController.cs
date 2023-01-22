@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
 using Server.Shared.Helpers;
 
-namespace Server.Host.Controllers;
+namespace Server.Main.Controllers;
 
 [Route("registry")]
 public class RegistryController : ServerController<User>

@@ -5,10 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Server.Host.Auth;
-using Server.Host.Tools;
-using Server.Shared;
-using Server.Shared.Auth;
 
 namespace Server.Host;
 
@@ -33,7 +29,14 @@ internal class BaseServicePack : ServicePackBase
         container.AddMapper();
         container.AddLogging();
 
-        // helpers
+        // host
+        container.Collection.AddCors();
+        container.Collection.AddControllers()
+            .AddApplicationPart(typeof(Dotnet.ServicePack).Assembly)
+            .AddApplicationPart(typeof(Node.ServicePack).Assembly)
+            .AddDefaultJsonOptions();
+
+        // host helpers
         container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
         container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
         container.Add<IUrlHelper>(p =>
@@ -43,23 +46,6 @@ internal class BaseServicePack : ServicePackBase
 
             return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
         }).AsSelf().Scoped();
-
-
-        // auth
-        container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access)).AsSelf().Singleton();
-        container.Add<ISessionManager, SessionManager>().Scoped();
-        container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
-
-        // tools
-        container.Add<ISecurityManager, SecurityManager>().Singleton();
-
-        // host
-        container.AddRegistryAuthorization<AuthorizationFilter>();
-        container.Collection.AddCors();
-        container.Collection.AddControllers()
-            .AddApplicationPart(typeof(Dotnet.ServicePack).Assembly)
-            .AddApplicationPart(typeof(Node.ServicePack).Assembly)
-            .AddDefaultJsonOptions();
     }
 
     public override void Setup(IServiceProvider provider)

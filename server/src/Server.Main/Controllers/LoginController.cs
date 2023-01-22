@@ -5,13 +5,13 @@ using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Db.Shared.Repositories;
 using Server.Domain.Models;
-using Server.Host.Auth;
-using Server.Host.Payloads;
-using Server.Host.Tools;
+using Server.Main.Auth;
+using Server.Main.Payloads;
+using Server.Main.Tools;
 using Server.Shared.Auth;
 using Server.Shared.Helpers;
 
-namespace Server.Host.Controllers;
+namespace Server.Main.Controllers;
 
 [Route("login")]
 public class LoginController : ServerController<User>

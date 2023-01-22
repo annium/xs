@@ -31,9 +31,9 @@ public class ServicePack : ServicePackBase
     {
         p.Map<ProjectType, string>(t => t.ToString());
         p.Map<string, ProjectType>(t => ProjectType.Get(t));
-        p.Map<MetaPackage, Server.Db.Shared.Entities.MetaPackage>()
+        p.Map<MetaPackage, Entities.MetaPackage>()
             .For(e => e.LowerName, e => e.Name.ToLower());
-        p.Map<MetaPackagePermission, Server.Db.Shared.Entities.MetaPackagePermission>()
+        p.Map<MetaPackagePermission, Entities.MetaPackagePermission>()
             .Ignore(e => e.MetaPackageId);
     }
 }

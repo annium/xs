@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Server.Host.Controllers;
+namespace Server.Main.Controllers;
 
 [Area(Constants.Project)]
 [Route("[area]/[controller]")]

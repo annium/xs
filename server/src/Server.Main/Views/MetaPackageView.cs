@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NodaTime;
 using Server.Domain.Models;
 
-namespace Server.Host.Views;
+namespace Server.Main.Views;
 
 internal class MetaPackageView
 {

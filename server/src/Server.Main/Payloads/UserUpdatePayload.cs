@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Host.Payloads;
+namespace Server.Main.Payloads;
 
-public class UserRegistrationPayload
+public class UserUpdatePayload
 {
     [Required]
     [StringLength(30, MinimumLength = 3)]

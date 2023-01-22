@@ -24,10 +24,10 @@ internal class UserSessionRepository : IUserSessionRepository
 
     public async Task<UserSession> CreateAsync(UserSession userSession)
     {
-        var entity = _mapper.Map<Server.Db.Shared.Entities.UserSession>(userSession);
+        var entity = _mapper.Map<Entities.UserSession>(userSession);
 
         await _context.UserSessions
-            .InsertAsync(() => new Server.Db.Shared.Entities.UserSession
+            .InsertAsync(() => new Entities.UserSession
             {
                 UserId = entity.UserId,
                 Token = entity.Token,
@@ -51,7 +51,7 @@ internal class UserSessionRepository : IUserSessionRepository
         return _context.UserSessions
             .UpdateAsync(
                 s => s.Token == token,
-                s => new Server.Db.Shared.Entities.UserSession { Expires = expiresDate }
+                s => new Entities.UserSession { Expires = expiresDate }
             );
     }
 

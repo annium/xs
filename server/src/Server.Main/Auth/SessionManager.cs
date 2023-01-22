@@ -8,7 +8,7 @@ using NodaTime;
 using Server.Db.Shared.Repositories;
 using Server.Domain.Models;
 
-namespace Server.Host.Auth;
+namespace Server.Main.Auth;
 
 internal class SessionManager : ISessionManager
 {

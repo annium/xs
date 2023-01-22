@@ -1,4 +1,4 @@
-namespace Server.Host.Tools;
+namespace Server.Main.Tools;
 
 public interface ISecurityManager
 {

@@ -13,6 +13,7 @@ internal class ServicePack : ServicePackBase
 
     public override void Configure(IServiceContainer container)
     {
-        container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
+        container.AddConfiguration(new WebHostConfiguration());
+        container.AddConfiguration<Main.Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
     }
 }

@@ -1,4 +1,4 @@
-namespace Server.Host;
+namespace Server.Main;
 
 internal static class Constants
 {

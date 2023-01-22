@@ -21,14 +21,14 @@ public class ServicePack : ServicePackBase
         // repositories
         container.Add<Func<Context, ITable<Package>>>(context => context.NodePackages).AsSelf().Singleton();
         container.Add<Func<Context, ITable<PackageDependency>>>(context => context.NodePackageDependencies).AsSelf().Singleton();
-        container.Add<IPackageRepository<Server.Db.Node.Models.Package, Server.Db.Node.Models.PackageDependency>, PackageRepository<Server.Db.Node.Models.Package, Server.Db.Node.Models.PackageDependency, Package, PackageDependency, Context>>().AsSelf().Scoped();
+        container.Add<IPackageRepository<Models.Package, Models.PackageDependency>, PackageRepository<Models.Package, Models.PackageDependency, Package, PackageDependency, Context>>().AsSelf().Scoped();
     }
 
     private void ConfigureProfile(Profile p)
     {
-        p.Map<Server.Db.Node.Models.Package, Package>()
+        p.Map<Models.Package, Package>()
             .For(e => e.LowerName, e => e.Name.ToLower());
-        p.Map<Server.Db.Node.Models.PackageDependency, PackageDependency>()
+        p.Map<Models.PackageDependency, PackageDependency>()
             .Ignore(e => e.PackageId);
     }
 }

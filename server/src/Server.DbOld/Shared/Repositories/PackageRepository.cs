@@ -11,8 +11,8 @@ namespace Server.Db.Shared.Repositories;
 internal class PackageRepository<TPackage, TPackageDependency, TPackageEntity, TPackageDependencyEntity, TContext> : IPackageRepository<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
-    where TPackageEntity : class, Server.Db.Shared.Entities.IPackage<TPackageDependencyEntity>, new()
-    where TPackageDependencyEntity : class, Server.Db.Shared.Entities.IPackageDependency
+    where TPackageEntity : class, Entities.IPackage<TPackageDependencyEntity>, new()
+    where TPackageDependencyEntity : class, Entities.IPackageDependency
     where TContext : IContext
 {
     private readonly TContext _context;
