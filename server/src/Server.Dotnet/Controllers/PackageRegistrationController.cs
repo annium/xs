@@ -1,10 +1,12 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Server.Db.Repositories;
+using Server.Abstractions.Packages;
 using Server.Domain.Models;
 using Server.Dotnet.Models;
+using Server.Dotnet.Payloads;
 using Server.Dotnet.Views;
 using Server.Shared.Controllers;
 using Server.Shared.Extensions;
@@ -13,25 +15,24 @@ namespace Server.Dotnet.Controllers;
 
 public class PackageRegistrationController : ServerController<User>
 {
-    private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
-
+    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
     private readonly IUrlHelper _url;
 
     public PackageRegistrationController(
-        IPackageRepository<Package, PackageDependency> packageRepository,
+        IPackageService<Package, PackageDependency, PackagePayload> packageService,
         IUrlHelper url
     )
     {
-        _packageRepository = packageRepository;
+        _packageService = packageService;
         _url = url;
     }
 
     [HttpGet("v3/registration/{name}/index.json")]
     public async Task<IActionResult> GetRegistrationIndexAsync(string name, CancellationToken ct)
     {
-        var packages = await _packageRepository.FindAllByNameAsync(name);
+        var packages = await _packageService.FindAllByNameAsync(name);
 
-        if (packages.Length == 0)
+        if (packages.Count == 0)
             return NotFound();
 
         return Ok(new RegistrationIndexView(new[] { GetRegistrationPage(packages) }));
@@ -40,9 +41,9 @@ public class PackageRegistrationController : ServerController<User>
     [HttpGet("v3/registration/{name}/page.json")]
     public async Task<IActionResult> GetRegistrationPageAsync(string name, CancellationToken ct)
     {
-        var packages = await _packageRepository.FindAllByNameAsync(name);
+        var packages = await _packageService.FindAllByNameAsync(name);
 
-        if (packages.Length == 0)
+        if (packages.Count == 0)
             return NotFound();
 
         return Ok(GetRegistrationPage(packages));
@@ -51,7 +52,7 @@ public class PackageRegistrationController : ServerController<User>
     [HttpGet("v3/registration/{name}/{version}/leaf.json")]
     public async Task<IActionResult> GetRegistrationLeafAsync(string name, string version, CancellationToken ct)
     {
-        var package = await _packageRepository.FindByNameVersionAsync(name, version);
+        var package = await _packageService.TryFindByNameVersionAsync(name, version);
 
         if (package is null)
             return NotFound();
@@ -62,7 +63,7 @@ public class PackageRegistrationController : ServerController<User>
     [HttpGet("v3/registration/{name}/{version}/catalog-entry.json")]
     public async Task<IActionResult> GetCatalogEntryAsync(string name, string version, CancellationToken ct)
     {
-        var package = await _packageRepository.FindByNameVersionAsync(name, version);
+        var package = await _packageService.TryFindByNameVersionAsync(name, version);
 
         if (package is null)
             return NotFound();
@@ -70,7 +71,7 @@ public class PackageRegistrationController : ServerController<User>
         return Ok(GetCatalogEntry(package));
     }
 
-    private RegistrationPageView GetRegistrationPage(Package[] packages)
+    private RegistrationPageView GetRegistrationPage(IReadOnlyCollection<Package> packages)
     {
         var id = packages.First().Name.ToLowerInvariant();
         var leafs = packages.Select(GetRegistrationLeaf).ToArray();

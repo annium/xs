@@ -7,7 +7,7 @@ namespace Server.Main.Auth;
 
 public interface ISessionManager
 {
-    ValueTuple<Guid, IActionResult> GetToken();
+    ValueTuple<Guid, IActionResult?> GetToken();
 
     Task CreateSession(Guid userId);
 

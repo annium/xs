@@ -5,7 +5,7 @@ using Server.Node.Models;
 
 namespace Server.Node.Payloads;
 
-internal class PayloadParser : IPayloadParser<PackagePayload, Package, PackageDependency>
+internal class PayloadParser : IPayloadParser<Package, PackageDependency, PackagePayload>
 {
     public Package Parse(Guid metaPackageId, PackagePayload payload)
     {

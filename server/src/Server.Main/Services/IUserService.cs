@@ -2,14 +2,12 @@ using System;
 using System.Threading.Tasks;
 using Server.Domain.Models;
 
-namespace Server.Db.Repositories;
+namespace Server.Main.Services;
 
-internal interface IUserRepository
+public interface IUserService
 {
     Task CreateAsync(User user);
-    Task<User?> TryGetById(Guid id);
     Task<User?> TryFindByNameAsync(string name);
-    Task<User?> TryFindByApiTokenAsync(Guid token);
     Task UpdateAsync(User user);
     Task UpdateApiTokenAsync(Guid userId, Guid apiToken);
     Task DeleteByIdAsync(Guid id);

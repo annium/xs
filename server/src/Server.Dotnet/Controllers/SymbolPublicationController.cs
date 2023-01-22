@@ -5,10 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
-using Server.Db.Repositories;
+using Server.Abstractions.Packages;
 using Server.Domain.Models;
 using Server.Dotnet.Helpers;
 using Server.Dotnet.Models;
+using Server.Dotnet.Payloads;
 using Server.Dotnet.Storage;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
@@ -27,16 +28,15 @@ public class SymbolPublicationController : ServerController<User>
         ".p7s"
     };
 
-    private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
-
+    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
     private readonly ISymbolStorage _symbolStorage;
 
     public SymbolPublicationController(
-        IPackageRepository<Package, PackageDependency> packageRepository,
+        IPackageService<Package, PackageDependency, PackagePayload> packageService,
         ISymbolStorage symbolStorage
     )
     {
-        _packageRepository = packageRepository;
+        _packageService = packageService;
         _symbolStorage = symbolStorage;
     }
 
@@ -62,7 +62,7 @@ public class SymbolPublicationController : ServerController<User>
 
                 // TODO: when applicable, add permissions usage
 
-                if ((await _packageRepository.FindByNameVersionAsync(name, version)) is null)
+                if (await _packageService.TryFindByNameVersionAsync(name, version) is null)
                     return NotFound($"Package {name} {version} doesn't exist.");
 
                 foreach (var file in files)

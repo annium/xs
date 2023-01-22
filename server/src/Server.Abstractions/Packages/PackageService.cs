@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Annium.Data.Operations;
@@ -11,7 +12,10 @@ using Server.Shared.Tools;
 
 namespace Server.Abstractions.Packages;
 
-public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageService<TPackage, TPackageDependency, TPayload> where TPayload : class, IPayload where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
+internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : IPackageService<TPackage, TPackageDependency, TPackagePayload>
+    where TPackagePayload : class, IPayload
+    where TPackage : class, IPackage<TPackageDependency>
+    where TPackageDependency : class, IPackageDependency
 {
     private readonly IMetaPackageRepository _metaPackageRepository;
 
@@ -21,7 +25,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
 
     private readonly IPackageStorage _packageStorage;
 
-    private readonly IPayloadParser<TPayload, TPackage, TPackageDependency> _payloadParser;
+    private readonly IPayloadParser<TPackage, TPackageDependency, TPackagePayload> _payloadParser;
 
     private readonly ProjectType _projectType;
 
@@ -30,7 +34,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         IMetaPackageManager metaPackageManager,
         IPackageRepository<TPackage, TPackageDependency> packageRepository,
         IPackageStorage packageStorage,
-        IPayloadParser<TPayload, TPackage, TPackageDependency> payloadParser,
+        IPayloadParser<TPackage, TPackageDependency, TPackagePayload> payloadParser,
         ProjectType projectType
     )
     {
@@ -42,7 +46,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         _projectType = projectType;
     }
 
-    public async Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPayload payload)
+    public async Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPackagePayload payload)
     {
         var executor = Executor.Staged();
 
@@ -50,7 +54,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         var version = payload.Version;
 
         // get metaPackage by (type, name)
-        var metaPackage = await _metaPackageRepository.FindByTypeNameAsync(_projectType, name);
+        var metaPackage = await _metaPackageRepository.TryFindByTypeNameAsync(_projectType, name);
 
         var isNew = metaPackage is null;
         if (isNew)
@@ -80,7 +84,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
             return Result.Status(PackageStatus.NotFound);
 
         // load metaPackage and check permissions
-        var metaPackage = await _metaPackageRepository.GetByIdAsync(versions[0].MetaPackageId);
+        var metaPackage = await _metaPackageRepository.TryGetByIdAsync(versions[0].MetaPackageId);
         var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
         if (!access.Has(Permission.Unpublish))
             return Result.Status(PackageStatus.Forbidden)
@@ -127,7 +131,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         if (packages.Length == 0)
             return Result.Status(PackageStatus.NotFound, Array.Empty<TPackage>());
 
-        var access = (await _metaPackageRepository.GetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(user);
+        var access = (await _metaPackageRepository.TryGetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(user);
         if (!access.Has(Permission.Read))
             return Result.Status(PackageStatus.Forbidden, Array.Empty<TPackage>())
                 .Error("You need read permission to get this package.");
@@ -141,7 +145,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         if (package is null)
             return Result.Status(PackageStatus.NotFound);
 
-        var access = (await _metaPackageRepository.GetAccessByIdAsync(package.MetaPackageId)).ForUser(user);
+        var access = (await _metaPackageRepository.TryGetAccessByIdAsync(package.MetaPackageId)).ForUser(user);
         if (!access.Has(Permission.Read))
             return Result.Status(PackageStatus.Forbidden)
                 .Error("You need read permission to get this package.");
@@ -160,11 +164,26 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         return Result.Status(PackageStatus.Ok);
     }
 
+    public Task<IReadOnlyCollection<string>> FindAllVersionsByNameAsync(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task<IStatusResult<PackageStatus>> PublishNewPackageAsync(
         IStageExecutor executor,
         MetaPackage metaPackage,
         UserMetaPackageAccess access,
-        TPayload payload
+        TPackagePayload payload
     )
     {
         // commit stage is missing, cause manually called earlier; so just deletion stage
@@ -180,7 +199,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         IStageExecutor executor,
         MetaPackage metaPackage,
         UserMetaPackageAccess access,
-        TPayload payload
+        TPackagePayload payload
     )
     {
         if (!access.Has(Permission.Unpublish))
@@ -203,7 +222,7 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
         IStageExecutor executor,
         MetaPackage metaPackage,
         UserMetaPackageAccess access,
-        TPayload payload
+        TPackagePayload payload
     )
     {
         if (!access.Has(Permission.Publish))

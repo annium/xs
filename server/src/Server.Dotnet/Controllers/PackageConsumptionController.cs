@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Packages;
-using Server.Db.Repositories;
 using Server.Domain.Models;
 using Server.Dotnet.Models;
 using Server.Dotnet.Payloads;
@@ -16,19 +15,14 @@ namespace Server.Dotnet.Controllers;
 public class PackageConsumptionController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
-
-    private readonly IPackageRepository<Package, PackageDependency> _packageRepository;
-
     private readonly IPackageStorage _packageStorage;
 
     public PackageConsumptionController(
         IPackageService<Package, PackageDependency, PackagePayload> packageService,
-        IPackageRepository<Package, PackageDependency> packageRepository,
         IPackageStorage packageStorage
     )
     {
         _packageService = packageService;
-        _packageRepository = packageRepository;
         _packageStorage = packageStorage;
     }
 
@@ -36,9 +30,9 @@ public class PackageConsumptionController : ServerController<User>
     public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken ct)
     {
         name = HttpUtility.UrlDecode(name);
-        var versions = await _packageRepository.FindAllVersionsByNameAsync(name);
+        var versions = await _packageService.FindAllVersionsByNameAsync(name);
 
-        if (versions.Length == 0)
+        if (versions.Count == 0)
             return NotFound();
 
         return Ok(new { versions });

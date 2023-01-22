@@ -1,11 +1,10 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Server.Abstractions.Packages;
+using Server.Abstractions;
 using Server.Node.Models;
 using Server.Node.Payloads;
 using Server.Node.Storage;
 using Server.Shared.Auth;
-using IPackageStorage = Server.Abstractions.Packages.IPackageStorage;
 
 namespace Server.Node;
 
@@ -24,12 +23,6 @@ public class ServicePack : ServicePackBase
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsSelf().Singleton();
 
         // packages
-        container.Add<IPackageService<Package, PackageDependency, PackagePayload>, PackageService<Package, PackageDependency, PackagePayload>>().Scoped();
-        container.Add<IPayloadParser<PackagePayload, Package, PackageDependency>, PayloadParser>().Singleton();
-        container.Add(Constants.ProjectType).AsSelf().Singleton();
-
-        // storage
-        container.Add<IPackageStorage, PackageStorage>().Singleton();
-        container.Add<Storage.IPackageStorage, PackageStorage>().Singleton();
+        container.AddPackageTools<Package, PackageDependency, PackagePayload, PayloadParser, PackageStorage>();
     }
 }

@@ -1,6 +1,6 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Server.Abstractions.Packages;
+using Server.Abstractions;
 using Server.Dotnet.Models;
 using Server.Dotnet.Payloads;
 using Server.Dotnet.Storage;
@@ -24,12 +24,7 @@ public class ServicePack : ServicePackBase
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // packages
-        container.Add<IPackageService<Package, PackageDependency, PackagePayload>, PackageService<Package, PackageDependency, PackagePayload>>().Scoped();
-        container.Add<IPayloadParser<PackagePayload, Package, PackageDependency>, PayloadParser>().Singleton();
-        container.Add(Constants.ProjectType).AsSelf().Singleton();
-
-        // storage
-        container.Add<PackageStorage>().AsInterfaces().Singleton();
+        container.AddPackageTools<Package, PackageDependency, PackagePayload, PayloadParser, PackageStorage>();
         container.Add<ISymbolStorage, SymbolStorage>().Singleton();
     }
 }

@@ -16,11 +16,11 @@ namespace Server.Main.Auth;
 
 internal class AuthorizationFilter : IAsyncAuthorizationFilter
 {
+    private delegate Task<ValueTuple<IActionResult?, User?>> AuthHandler(AuthorizationFilterContext context);
+
     private readonly IServiceProvider _serviceProvider;
-
     private readonly ITimeProvider _timeProvider;
-
-    private readonly Func<AuthorizationFilterContext, Task<ValueTuple<IActionResult, User>>>[] _authHandlers;
+    private readonly IReadOnlyCollection<AuthHandler> _authHandlers;
 
     public AuthorizationFilter(
         IServiceProvider serviceProvider,
@@ -39,10 +39,10 @@ internal class AuthorizationFilter : IAsyncAuthorizationFilter
             context.Result = result;
     }
 
-    private async Task<IActionResult> HandleAuthorizationAsync(AuthorizationFilterContext context)
+    private async Task<IActionResult?> HandleAuthorizationAsync(AuthorizationFilterContext context)
     {
-        IActionResult result = null;
-        User user = null;
+        IActionResult? result = null;
+        User? user = null;
         foreach (var handleAuthAsync in _authHandlers)
         {
             (result, user) = await handleAuthAsync(context);
@@ -57,55 +57,53 @@ internal class AuthorizationFilter : IAsyncAuthorizationFilter
         return result;
     }
 
-    private async Task<ValueTuple<IActionResult, User>> TryApiAuthorizationAsync(AuthorizationFilterContext context)
+    private async Task<ValueTuple<IActionResult?, User?>> TryApiAuthorizationAsync(AuthorizationFilterContext context)
     {
-        using (var scope = _serviceProvider.CreateScope())
-        {
-            var tokenAccessor = scope.ServiceProvider.GetRequiredService<ITokenAccessor>();
-            var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        using var scope = _serviceProvider.CreateScope();
 
-            // try get token
-            var (token, result) = tokenAccessor.GetToken(context.HttpContext.Request);
-            if (result is not null)
-                return (result, null);
+        var tokenAccessor = scope.ServiceProvider.GetRequiredService<ITokenAccessor>();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
 
-            // try to find user
-            var user = await userRepository.FindByApiTokenAsync(token);
+        // try get token
+        var (token, result) = tokenAccessor.GetToken(context.HttpContext.Request);
+        if (result is not null)
+            return (result, null);
 
-            return user is null ? GetForbiddenResult("No user found with this token.") : (null, user);
-        }
+        // try to find user
+        var user = await userRepository.TryFindByApiTokenAsync(token);
+
+        return user is null ? GetForbiddenResult("No user found with this token.") : (null, user);
     }
 
-    private async Task<ValueTuple<IActionResult, User>> TrySessionAuthorizationAsync(AuthorizationFilterContext context)
+    private async Task<ValueTuple<IActionResult?, User?>> TrySessionAuthorizationAsync(AuthorizationFilterContext context)
     {
-        using (var scope = _serviceProvider.CreateScope())
-        {
-            var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-            var userSessionRepository = scope.ServiceProvider.GetRequiredService<IUserSessionRepository>();
-            var sessionManager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
+        using var scope = _serviceProvider.CreateScope();
 
-            // try get token
-            var (token, result) = sessionManager.GetToken();
-            if (result is not null)
-                return (result, null);
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var userSessionRepository = scope.ServiceProvider.GetRequiredService<IUserSessionRepository>();
+        var sessionManager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
 
-            // try to find user session
-            var session = await userSessionRepository.FindByTokenAsync(token);
-            if (session is null)
-                return GetForbiddenResult("Authorization failed. No identity found");
+        // try get token
+        var (token, result) = sessionManager.GetToken();
+        if (result is not null)
+            return (result, null);
 
-            // if token expired - failure
-            if (session.Expires < _timeProvider.Now)
-                return GetForbiddenResult("Authorization expired. Please login again");
+        // try to find user session
+        var session = await userSessionRepository.TryFindByTokenAsync(token);
+        if (session is null)
+            return GetForbiddenResult("Authorization failed. No identity found");
 
-            // refresh session
-            await sessionManager.RefreshSession(session);
+        // if token expired - failure
+        if (session.Expires < _timeProvider.Now)
+            return GetForbiddenResult("Authorization expired. Please login again");
 
-            return (null, await userRepository.GetById(session.UserId));
-        }
+        // refresh session
+        await sessionManager.RefreshSession(session);
+
+        return (null, await userRepository.TryGetById(session.UserId));
     }
 
-    private IEnumerable<Func<AuthorizationFilterContext, Task<ValueTuple<IActionResult, User>>>> GetAuthHandlers(Access access)
+    private IEnumerable<AuthHandler> GetAuthHandlers(Access access)
     {
         if (access.HasFlag(Access.Api))
             yield return TryApiAuthorizationAsync;
@@ -113,6 +111,6 @@ internal class AuthorizationFilter : IAsyncAuthorizationFilter
             yield return TrySessionAuthorizationAsync;
     }
 
-    private ValueTuple<IActionResult, User> GetForbiddenResult(string error) =>
+    private ValueTuple<IActionResult?, User?> GetForbiddenResult(string error) =>
         (new ObjectResult(error) { StatusCode = (int) HttpStatusCode.Forbidden }, null);
 }

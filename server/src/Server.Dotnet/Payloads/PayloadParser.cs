@@ -4,7 +4,7 @@ using Server.Dotnet.Models;
 
 namespace Server.Dotnet.Payloads;
 
-internal class PayloadParser : IPayloadParser<PackagePayload, Package, PackageDependency>
+internal class PayloadParser : IPayloadParser<Package, PackageDependency, PackagePayload>
 {
     public Package Parse(Guid metaPackageId, PackagePayload payload)
     {

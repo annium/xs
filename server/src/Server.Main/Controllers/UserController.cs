@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Server.Db.Repositories;
 using Server.Domain.Models;
 using Server.Main.Payloads;
+using Server.Main.Services;
 using Server.Main.Tools;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
@@ -13,15 +13,15 @@ namespace Server.Main.Controllers;
 [Route("user")]
 public class UserController : ServerController<User>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUserService _userService;
     private readonly ISecurityManager _securityManager;
 
     public UserController(
-        IUserRepository userRepository,
+        IUserService userService,
         ISecurityManager securityManager
     )
     {
-        _userRepository = userRepository;
+        _userService = userService;
         _securityManager = securityManager;
     }
 
@@ -33,14 +33,14 @@ public class UserController : ServerController<User>
 
         var name = registrationModel.Name;
 
-        if (await _userRepository.FindByNameAsync(name) is not null)
+        if (await _userService.TryFindByNameAsync(name) is not null)
             return Conflict();
 
         var passwordHash = _securityManager.Hash(registrationModel.Password);
 
         var user = new User(name, passwordHash, Guid.NewGuid());
 
-        await _userRepository.CreateAsync(user);
+        await _userService.CreateAsync(user);
 
         return NoContent();
     }
@@ -58,7 +58,7 @@ public class UserController : ServerController<User>
         user.PasswordHash = _securityManager.Hash(updateModel.Password);
         user.ApiToken = Guid.NewGuid();
 
-        await _userRepository.UpdateAsync(user);
+        await _userService.UpdateAsync(user);
 
         return NoContent();
     }
@@ -71,7 +71,7 @@ public class UserController : ServerController<User>
 
         var apiToken = Guid.NewGuid();
 
-        await _userRepository.UpdateApiTokenAsync(user.Id, apiToken);
+        await _userService.UpdateApiTokenAsync(user.Id, apiToken);
 
         return NoContent();
     }
@@ -82,7 +82,7 @@ public class UserController : ServerController<User>
     {
         var user = GetUser();
 
-        await _userRepository.DeleteByIdAsync(user.Id);
+        await _userService.DeleteByIdAsync(user.Id);
 
         return NoContent();
     }

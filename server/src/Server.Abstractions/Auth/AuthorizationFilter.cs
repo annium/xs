@@ -51,7 +51,7 @@ public class AuthorizationFilter : IAsyncAuthorizationFilter
             return result;
 
         // try to find user
-        var user = await userRepository.FindByApiTokenAsync(token);
+        var user = await userRepository.TryFindByApiTokenAsync(token);
         if (user is null)
             return GetForbiddenResult("No user found with this token.");
 

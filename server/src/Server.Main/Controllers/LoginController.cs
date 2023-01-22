@@ -2,10 +2,10 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Server.Db.Repositories;
 using Server.Domain.Models;
 using Server.Main.Auth;
 using Server.Main.Payloads;
+using Server.Main.Services;
 using Server.Main.Tools;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
@@ -15,17 +15,17 @@ namespace Server.Main.Controllers;
 [Route("login")]
 public class LoginController : ServerController<User>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUserService _userService;
     private readonly ISecurityManager _securityManager;
     private readonly ISessionManager _sessionManager;
 
     public LoginController(
-        IUserRepository userRepository,
+        IUserService userService,
         ISecurityManager securityManager,
         ISessionManager sessionManager
     )
     {
-        _userRepository = userRepository;
+        _userService = userService;
         _securityManager = securityManager;
         _sessionManager = sessionManager;
     }
@@ -81,7 +81,7 @@ public class LoginController : ServerController<User>
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
             return (null, BadRequest("Pass login data"));
 
-        var user = await _userRepository.FindByNameAsync(name);
+        var user = await _userService.TryFindByNameAsync(name);
         if (user is null)
             return (null, NotFound("User not found"));
 

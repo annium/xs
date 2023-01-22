@@ -5,11 +5,11 @@ using Server.Domain.Models;
 
 namespace Server.Db.Repositories;
 
-public interface IUserSessionRepository
+internal interface IUserSessionRepository
 {
     Task<UserSession> CreateAsync(UserSession userSession);
 
-    Task<UserSession> FindByTokenAsync(Guid token);
+    Task<UserSession?> TryFindByTokenAsync(Guid token);
 
     Task ProlongateAsync(Guid token, Instant expires);
 

@@ -35,9 +35,9 @@ internal class SessionManager : ISessionManager
         _userSessionRepository = userSessionRepository;
     }
 
-    public (Guid, IActionResult) GetToken()
+    public (Guid, IActionResult?) GetToken()
     {
-        var cookies = _httpContextAccessor.HttpContext.Request.Cookies;
+        var cookies = HttpContext.Request.Cookies;
 
         if (!cookies.ContainsKey(AuthCookieName))
             return Fail(HttpStatusCode.Unauthorized, "Authorization required.");
@@ -88,17 +88,17 @@ internal class SessionManager : ISessionManager
         await _userSessionRepository.DeleteByTokenAsync(token);
 
         // delete cookie
-        _httpContextAccessor.HttpContext.Response.Cookies.Delete(AuthCookieName);
+        HttpContext.Response.Cookies.Delete(AuthCookieName);
     }
 
     private void SetCookie(Guid token, Instant expires)
     {
-        _httpContextAccessor.HttpContext.Response.Cookies.Append(
+        HttpContext.Response.Cookies.Append(
             AuthCookieName,
             token.ToString(),
             new CookieOptions()
             {
-                Domain = _httpContextAccessor.HttpContext.Request.Host.Host,
+                Domain = HttpContext.Request.Host.Host,
                 Path = "/",
                 Expires = expires.ToDateTimeOffset(),
                 Secure = false,
@@ -107,4 +107,6 @@ internal class SessionManager : ISessionManager
             }
         );
     }
+
+    private HttpContext HttpContext => _httpContextAccessor.HttpContext ?? throw new InvalidOperationException($"{nameof(HttpContext)} is empty");
 }

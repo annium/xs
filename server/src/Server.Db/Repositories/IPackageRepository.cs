@@ -4,7 +4,7 @@ using Server.Domain.Interfaces;
 
 namespace Server.Db.Repositories;
 
-public interface IPackageRepository<TPackage, TPackageDependency> where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
+internal interface IPackageRepository<TPackage, TPackageDependency> where TPackage : class, IPackage<TPackageDependency> where TPackageDependency : class, IPackageDependency
 {
     Task<TPackage> CreateAsync(TPackage package);
 
