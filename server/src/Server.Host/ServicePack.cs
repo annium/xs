@@ -1,6 +1,7 @@
 using System.IO;
 using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
+using Annium.linq2db.PostgreSql;
 using Server.Main;
 
 namespace Server.Host;
@@ -16,5 +17,6 @@ internal class ServicePack : ServicePackBase
     {
         container.AddConfiguration(new WebHostConfiguration());
         container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
+        container.AddConfiguration<PostgreSqlConfiguration>(x => x.AddYamlFile(Path.Combine("configuration", "db.yml")));
     }
 }
