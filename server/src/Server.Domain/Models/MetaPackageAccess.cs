@@ -6,12 +6,11 @@ namespace Server.Domain.Models;
 public sealed record MetaPackageAccess
 {
     private Guid OwnerId { get; }
-
-    private IEnumerable<MetaPackagePermission> Permissions { get; }
+    private IReadOnlyCollection<MetaPackagePermission> Permissions { get; }
 
     public MetaPackageAccess(
         Guid ownerId,
-        IEnumerable<MetaPackagePermission> permissions
+        IReadOnlyCollection<MetaPackagePermission> permissions
     )
     {
         OwnerId = ownerId;

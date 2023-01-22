@@ -13,5 +13,6 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../../../../backend/base/Core/src/Annium.Core.Mapper/Annium.Core.Mapper.csproj" />
+        <ProjectReference Include="../../../../backend/base/Data/src/Annium.Data.Models/Annium.Data.Models.csproj" />
     </ItemGroup>
 </Project>

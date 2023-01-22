@@ -54,9 +54,7 @@ public class UserController : ServerController<User>
 
         var user = GetUser();
 
-        user.Name = updateModel.Name;
-        user.PasswordHash = _securityManager.Hash(updateModel.Password);
-        user.ApiToken = Guid.NewGuid();
+        user.Update(updateModel.Name, _securityManager.Hash(updateModel.Password), Guid.NewGuid());
 
         await _userService.UpdateAsync(user);
 

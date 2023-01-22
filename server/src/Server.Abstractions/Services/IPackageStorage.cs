@@ -4,6 +4,7 @@ using Server.Domain.Interfaces;
 
 namespace Server.Abstractions.Services;
 
+// ReSharper disable once UnusedTypeParameter
 public interface IPackageStorage<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
