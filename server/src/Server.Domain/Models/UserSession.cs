@@ -8,6 +8,7 @@ public sealed record UserSession : IIdEntity<Guid>
 {
     public Guid Id { get; private init; }
     public Guid UserId { get; private init; }
+    public User User { get; private init; } = default!;
     public Guid Token { get; private init; }
     public Instant Expires { get; private init; }
 

@@ -13,5 +13,6 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Server.Domain/Server.Domain.csproj" />
+        <ProjectReference Include="../../../../backend/third-party/linq2db/src/Annium.linq2db.PostgreSql/Annium.linq2db.PostgreSql.csproj" />
     </ItemGroup>
 </Project>

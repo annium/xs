@@ -11,10 +11,7 @@ internal class MetaPackageManager : IMetaPackageManager
     public MetaPackage Generate(User user, ProjectType type, IPackageInfo package)
     {
         var permissions = new List<MetaPackagePermission>();
-        permissions.Add(new MetaPackagePermission(PermissionCategory.Owner, Permission.Read | Permission.Publish));
-        permissions.Add(new MetaPackagePermission(PermissionCategory.World, Permission.None));
-
-        return new MetaPackage(
+        var metapackage = new MetaPackage(
             type,
             package.Name,
             package.Version,
@@ -25,6 +22,11 @@ internal class MetaPackageManager : IMetaPackageManager
             user,
             permissions
         );
+
+        permissions.Add(new MetaPackagePermission(metapackage.Id, PermissionCategory.Owner, Permission.Read | Permission.Publish));
+        permissions.Add(new MetaPackagePermission(metapackage.Id, PermissionCategory.World, Permission.None));
+
+        return metapackage;
     }
 
     public MetaPackageAccess GetAccess(MetaPackage metaPackage) =>
