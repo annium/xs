@@ -1,16 +1,11 @@
 using System;
-using Annium.AspNetCore.Extensions;
-using Annium.Core.Mediator;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Shared.Controllers;
 
-public class ServerController<TUser> : ServerController
+public class ServerController<TUser> : ControllerBase
 {
     public const string UserProperty = "serverUser";
-
-    protected ServerController(IMediator mediator, IServiceProvider sp) : base(mediator, sp)
-    {
-    }
 
     protected TUser GetUser()
     {

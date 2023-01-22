@@ -13,8 +13,10 @@ public class BearerTokenAccessor : ITokenAccessor
     {
         if (!request.Headers.ContainsKey(HeaderNames.Authorization))
             return Fail(HttpStatusCode.Unauthorized, "Bearer authorization required.");
+
         var authorization = request.Headers[HeaderNames.Authorization]
             .ToString().Split(' ').Select(e => e.Trim()).ToArray();
+
         if (authorization.Length != 2)
             return Fail(HttpStatusCode.Forbidden, "Authorization format is invalid.");
 
@@ -23,8 +25,8 @@ public class BearerTokenAccessor : ITokenAccessor
             return Fail(HttpStatusCode.Forbidden, "Bearer authorization required.");
 
         return Guid.TryParse(tokenString, out var token) ? (token, null) : Fail(HttpStatusCode.Forbidden, "Invalid token passed");
-
-        (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
-            (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
     }
+
+    private (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
+        (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
 }

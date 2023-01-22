@@ -2,7 +2,7 @@ using System;
 
 namespace Server.Shared.Auth;
 
-[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 public class AuthorizeAttribute : Attribute
 {
     public Access Access { get; }

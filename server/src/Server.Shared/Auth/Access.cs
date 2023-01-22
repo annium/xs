@@ -6,6 +6,5 @@ namespace Server.Shared.Auth;
 public enum Access
 {
     Api = 1,
-
     Session = 2,
 }
