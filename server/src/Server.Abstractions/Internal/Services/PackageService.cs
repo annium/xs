@@ -4,13 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Annium.Data.Operations;
 using Annium.Extensions.Execution;
+using Server.Abstractions.Domain;
+using Server.Abstractions.Services;
 using Server.Db.Repositories;
 using Server.Domain.Enums;
 using Server.Domain.Interfaces;
 using Server.Domain.Models;
 using Server.Shared.Tools;
 
-namespace Server.Abstractions.Packages;
+namespace Server.Abstractions.Internal.Services;
 
 internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : IPackageService<TPackage, TPackageDependency, TPackagePayload>
     where TPackagePayload : class, IPayload

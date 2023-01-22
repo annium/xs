@@ -1,4 +1,4 @@
-namespace Server.Abstractions.Packages;
+namespace Server.Abstractions.Domain;
 
 public enum PackageStatus
 {

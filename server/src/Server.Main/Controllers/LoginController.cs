@@ -7,7 +7,6 @@ using Server.Main.Auth;
 using Server.Main.Payloads;
 using Server.Main.Services;
 using Server.Main.Tools;
-using Server.Shared.Auth;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 

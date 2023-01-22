@@ -1,8 +1,9 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Server.Abstractions.Services;
 
-namespace Server.Abstractions.Storage;
+namespace Server.Abstractions.Internal.Services;
 
 internal class FileStorage : IStorage
 {
@@ -40,17 +41,15 @@ internal class FileStorage : IStorage
     {
         var path = GetPath(name);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(path));
-        await using (var fs = File.Open(path, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-        {
-            await stream.CopyToAsync(fs, CopyBufferSize);
-        }
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await using var fs = File.Open(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+        await stream.CopyToAsync(fs, CopyBufferSize);
     }
 
     public Task DeleteAsync(string name)
     {
         var path = GetPath(name);
-        var dir = Path.GetDirectoryName(path);
+        var dir = Path.GetDirectoryName(path)!;
 
         File.Delete(path);
 
@@ -65,7 +64,7 @@ internal class FileStorage : IStorage
             Directory.Delete(dir);
 
             // go up
-            dir = Path.GetDirectoryName(dir);
+            dir = Path.GetDirectoryName(dir)!;
         }
 
         return Task.CompletedTask;

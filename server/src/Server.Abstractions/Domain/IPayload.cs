@@ -1,7 +1,7 @@
 using System.IO;
 using Server.Domain.Interfaces;
 
-namespace Server.Abstractions.Packages;
+namespace Server.Abstractions.Domain;
 
 public interface IPayload : IPackageInfo
 {

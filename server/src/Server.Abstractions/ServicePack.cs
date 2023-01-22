@@ -1,7 +1,8 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Server.Abstractions.Auth;
-using Server.Abstractions.Storage;
+using Server.Abstractions.Internal.Auth;
+using Server.Abstractions.Internal.Services;
+using Server.Abstractions.Services;
 using Server.Shared.Auth;
 
 namespace Server.Abstractions;

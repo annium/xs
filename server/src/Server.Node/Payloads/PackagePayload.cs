@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Newtonsoft.Json;
 using NodaTime;
-using Server.Abstractions.Packages;
+using Server.Abstractions.Domain;
 using Server.Node.Models;
 
 namespace Server.Node.Payloads;

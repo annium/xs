@@ -4,7 +4,6 @@ using Server.Abstractions;
 using Server.Dotnet.Models;
 using Server.Dotnet.Payloads;
 using Server.Dotnet.Storage;
-using Server.Shared.Auth;
 using Server.Shared.Auth.TokenAccessors;
 
 namespace Server.Dotnet;

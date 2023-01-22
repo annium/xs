@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Data.Operations;
+using Server.Abstractions.Domain;
 using Server.Domain.Interfaces;
 using Server.Domain.Models;
 
-namespace Server.Abstractions.Packages;
+namespace Server.Abstractions.Services;
 
 public interface IPackageService<TPackage, TPackageDependency, TPackagePayload>
     where TPackage : class, IPackage<TPackageDependency>

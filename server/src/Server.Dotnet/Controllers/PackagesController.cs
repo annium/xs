@@ -3,12 +3,12 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
-using Server.Abstractions.Packages;
+using Server.Abstractions.Domain;
+using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Models;
 using Server.Dotnet.Payloads;
 using Server.Dotnet.Views;
-using Server.Shared.Auth;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
