@@ -1,6 +1,6 @@
 using System;
 
-namespace Server.Domain.Models;
+namespace Server.Domain.Enums;
 
 [Flags]
 public enum Permission

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Server.Domain.Models;
+using Server.Domain.Enums;
 
 namespace Server.Db.Shared.Entities;
 

@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Server.Domain.Models;
+using Server.Domain.Interfaces;
 
 namespace Server.Db.Shared.Repositories;
 

@@ -1,4 +1,4 @@
-namespace Server.Domain.Models;
+namespace Server.Domain.Interfaces;
 
 public interface IPackageDependency
 {

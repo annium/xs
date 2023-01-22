@@ -1,5 +1,5 @@
 using System.IO;
-using Server.Domain.Models;
+using Server.Domain.Interfaces;
 
 namespace Server.Abstractions.Packages;
 

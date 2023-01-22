@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Annium.Core.Mapper;
 using LinqToDB;
 using LinqToDB.Data;
-using Server.Domain.Models;
+using Server.Domain.Interfaces;
 
 namespace Server.Db.Shared.Repositories;
 

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Server.Domain.Models;
+namespace Server.Domain.Interfaces;
 
 public interface IPackage<TPackageDependency> : IPackageInfo where TPackageDependency : IPackageDependency
 {

@@ -1,3 +1,5 @@
+using Server.Domain.Enums;
+
 namespace Server.Domain.Models;
 
 public class MetaPackagePermission

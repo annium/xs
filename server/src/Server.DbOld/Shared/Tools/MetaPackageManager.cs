@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Server.Domain.Enums;
+using Server.Domain.Interfaces;
 using Server.Domain.Models;
 
 namespace Server.Db.Shared.Tools;

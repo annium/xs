@@ -7,6 +7,7 @@ using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Db.Shared.Repositories;
 using Server.Db.Shared.Tools;
+using Server.Domain.Enums;
 using Server.Domain.Models;
 using Server.Host.Views;
 using Server.Shared.Auth;

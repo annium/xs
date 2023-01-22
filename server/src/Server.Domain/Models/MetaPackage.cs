@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NodaTime;
+using Server.Domain.Interfaces;
 
 namespace Server.Domain.Models;
 
