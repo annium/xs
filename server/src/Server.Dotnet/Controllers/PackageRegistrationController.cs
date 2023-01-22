@@ -2,8 +2,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Server.Db.Dotnet.Models;
-using Server.Db.Shared.Repositories;
 using Server.Domain.Models;
 using Server.Dotnet.Views;
 using Server.Shared.Controllers;

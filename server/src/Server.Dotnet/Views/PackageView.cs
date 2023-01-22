@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using NodaTime;
-using Server.Db.Dotnet.Models;
 
 namespace Server.Dotnet.Views;
 

@@ -5,7 +5,6 @@ using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
-using Server.Db.Shared.Repositories;
 using Server.Domain.Models;
 
 namespace Server.Main.Auth;

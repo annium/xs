@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Server.Db.Shared.Repositories;
 using Server.Domain.Models;
 using Server.Main.Payloads;
 using Server.Main.Tools;
