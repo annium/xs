@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
-using Server.Node.Models;
+using Server.Node.Domain;
 using Server.Node.Payloads;
 using Server.Node.Views;
 using Server.Shared.Auth.Attributes;

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Server.Abstractions.Services;
-using Server.Node.Models;
+using Server.Node.Domain;
 
 namespace Server.Node.Storage;
 

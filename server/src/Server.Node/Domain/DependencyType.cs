@@ -1,4 +1,4 @@
-namespace Server.Node.Models;
+namespace Server.Node.Domain;
 
 public enum DependencyType
 {

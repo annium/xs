@@ -3,7 +3,7 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Server.Node.Models;
+using Server.Node.Domain;
 using Server.Shared.Extensions;
 
 namespace Server.Node.Views;

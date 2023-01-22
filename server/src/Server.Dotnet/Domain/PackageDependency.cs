@@ -1,6 +1,6 @@
 using Server.Domain.Interfaces;
 
-namespace Server.Dotnet.Models;
+namespace Server.Dotnet.Domain;
 
 public class PackageDependency : IPackageDependency
 {

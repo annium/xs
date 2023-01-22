@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using NodaTime;
 using Server.Abstractions.Domain;
 using Server.Domain.Models;
-using Server.Dotnet.Models;
+using Server.Dotnet.Domain;
 
 namespace Server.Dotnet.Payloads;
 

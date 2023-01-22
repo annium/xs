@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NodaTime;
 using Server.Domain.Interfaces;
 
-namespace Server.Dotnet.Models;
+namespace Server.Dotnet.Domain;
 
 public class Package : IPackage<PackageDependency>
 {

@@ -1,7 +1,7 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Server.Abstractions;
-using Server.Node.Models;
+using Server.Node.Domain;
 using Server.Node.Payloads;
 using Server.Node.Storage;
 using Server.Shared.Auth.TokenAccessors;

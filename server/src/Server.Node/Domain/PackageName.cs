@@ -1,6 +1,6 @@
 using System;
 
-namespace Server.Node.Models;
+namespace Server.Node.Domain;
 
 public class PackageName
 {

@@ -1,6 +1,6 @@
 using System;
 using Server.Abstractions.Services;
-using Server.Dotnet.Models;
+using Server.Dotnet.Domain;
 
 namespace Server.Dotnet.Payloads;
 

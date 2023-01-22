@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Server.Abstractions.Services;
-using Server.Node.Models;
+using Server.Node.Domain;
 
 namespace Server.Node.Payloads;
 

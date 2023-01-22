@@ -1,6 +1,6 @@
 using Server.Domain.Interfaces;
 
-namespace Server.Node.Models;
+namespace Server.Node.Domain;
 
 public class PackageDependency : IPackageDependency
 {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Server.Node.Models;
+using Server.Node.Domain;
 
 namespace Server.Node.Views;
 
