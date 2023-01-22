@@ -12,7 +12,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.Yaml/Annium.Configuration.Yaml.csproj" />
         <ProjectReference Include="../Server.Dotnet/Server.Dotnet.csproj" />
         <ProjectReference Include="../Server.Main/Server.Main.csproj" />
         <ProjectReference Include="../Server.Node/Server.Node.csproj" />

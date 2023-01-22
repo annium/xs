@@ -12,7 +12,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../Server.Domain/Server.Domain.csproj" />
+        <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.Yaml/Annium.Configuration.Yaml.csproj" />
         <ProjectReference Include="../../../../backend/third-party/linq2db/src/Annium.linq2db.PostgreSql/Annium.linq2db.PostgreSql.csproj" />
+        <ProjectReference Include="../Server.Domain/Server.Domain.csproj" />
+        <ProjectReference Include="../../../../tools/xdb/src/Xdb.Core/Xdb.Core.csproj" />
     </ItemGroup>
 </Project>
