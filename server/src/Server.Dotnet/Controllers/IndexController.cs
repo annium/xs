@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
 using Server.Dotnet.Views;
@@ -14,10 +12,8 @@ public class IndexController : ServerController<User>
     private readonly IUrlHelper _url;
 
     public IndexController(
-        IUrlHelper url,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        IUrlHelper url
+    )
     {
         _url = url;
     }

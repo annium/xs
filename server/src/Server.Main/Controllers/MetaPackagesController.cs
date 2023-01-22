@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
-using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Db.Shared.Repositories;
 using Server.Db.Shared.Tools;
@@ -12,7 +11,6 @@ using Server.Domain.Models;
 using Server.Main.Views;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
-using Server.Shared.Extensions;
 
 namespace Server.Main.Controllers;
 
@@ -24,10 +22,8 @@ public class MetaPackagesController : ServerController<User>
 
     public MetaPackagesController(
         IMetaPackageManager metaPackageManager,
-        IMetaPackageRepository metaPackageRepository,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        IMetaPackageRepository metaPackageRepository
+    )
     {
         _metaPackageManager = metaPackageManager;
         _metaPackageRepository = metaPackageRepository;

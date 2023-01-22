@@ -1,9 +1,7 @@
-using System;
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
-using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Packages;
 using Server.Db.Node.Models;
@@ -13,7 +11,6 @@ using Server.Node.Payloads;
 using Server.Node.Views;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
-using Server.Shared.Extensions;
 using IPackageStorage = Server.Node.Storage.IPackageStorage;
 
 namespace Server.Node.Controllers;
@@ -29,10 +26,8 @@ public class PackageConsumptionController : ServerController<User>
     public PackageConsumptionController(
         IPackageService<Package, PackageDependency, PackagePayload> packageService,
         IPackageStorage packageStorage,
-        IUrlHelper url,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        IUrlHelper url
+    )
     {
         _packageService = packageService;
         _packageStorage = packageStorage;

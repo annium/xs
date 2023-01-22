@@ -1,9 +1,7 @@
-using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
-using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Packages;
 using Server.Db.Dotnet.Models;
@@ -12,7 +10,6 @@ using Server.Dotnet.Payloads;
 using Server.Dotnet.Views;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
-using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
@@ -22,10 +19,8 @@ public class PackagesController : ServerController<User>
     private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
 
     public PackagesController(
-        IPackageService<Package, PackageDependency, PackagePayload> packageService,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        IPackageService<Package, PackageDependency, PackagePayload> packageService
+    )
     {
         _packageService = packageService;
     }

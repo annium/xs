@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using Server.Db.Dotnet.Models;
@@ -14,7 +12,6 @@ using Server.Dotnet.Helpers;
 using Server.Dotnet.Storage;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
-using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
@@ -36,10 +33,8 @@ public class SymbolPublicationController : ServerController<User>
 
     public SymbolPublicationController(
         IPackageRepository<Package, PackageDependency> packageRepository,
-        ISymbolStorage symbolStorage,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        ISymbolStorage symbolStorage
+    )
     {
         _packageRepository = packageRepository;
         _symbolStorage = symbolStorage;

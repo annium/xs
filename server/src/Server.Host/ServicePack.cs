@@ -1,6 +1,7 @@
 using System.IO;
 using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
+using Server.Main;
 
 namespace Server.Host;
 
@@ -14,6 +15,6 @@ internal class ServicePack : ServicePackBase
     public override void Configure(IServiceContainer container)
     {
         container.AddConfiguration(new WebHostConfiguration());
-        container.AddConfiguration<Main.Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
+        container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
     }
 }

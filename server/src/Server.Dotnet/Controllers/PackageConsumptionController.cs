@@ -1,9 +1,7 @@
-using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Packages;
 using Server.Db.Dotnet.Models;
@@ -11,7 +9,6 @@ using Server.Db.Shared.Repositories;
 using Server.Domain.Models;
 using Server.Dotnet.Payloads;
 using Server.Shared.Controllers;
-using Server.Shared.Extensions;
 using IPackageStorage = Server.Dotnet.Storage.IPackageStorage;
 
 namespace Server.Dotnet.Controllers;
@@ -27,10 +24,8 @@ public class PackageConsumptionController : ServerController<User>
     public PackageConsumptionController(
         IPackageService<Package, PackageDependency, PackagePayload> packageService,
         IPackageRepository<Package, PackageDependency> packageRepository,
-        IPackageStorage packageStorage,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        IPackageStorage packageStorage
+    )
     {
         _packageService = packageService;
         _packageRepository = packageRepository;

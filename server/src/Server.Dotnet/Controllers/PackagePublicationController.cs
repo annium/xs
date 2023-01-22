@@ -1,10 +1,8 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Core.Mediator;
 using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
@@ -15,7 +13,6 @@ using Server.Dotnet.Helpers;
 using Server.Dotnet.Payloads;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
-using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
@@ -26,10 +23,8 @@ public class PackagePublicationController : ServerController<User>
 
     public PackagePublicationController(
         ITimeProvider timeProvider,
-        IPackageService<Package, PackageDependency, PackagePayload> packageService,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        IPackageService<Package, PackageDependency, PackagePayload> packageService
+    )
     {
         _timeProvider = timeProvider;
         _packageService = packageService;

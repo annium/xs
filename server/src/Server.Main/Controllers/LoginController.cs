@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Annium.Core.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Server.Db.Shared.Repositories;
 using Server.Domain.Models;
@@ -10,7 +9,6 @@ using Server.Main.Payloads;
 using Server.Main.Tools;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;
-using Server.Shared.Extensions;
 
 namespace Server.Main.Controllers;
 
@@ -24,10 +22,8 @@ public class LoginController : ServerController<User>
     public LoginController(
         IUserRepository userRepository,
         ISecurityManager securityManager,
-        ISessionManager sessionManager,
-        IMediator mediator,
-        IServiceProvider sp
-    ) : base(mediator, sp)
+        ISessionManager sessionManager
+    )
     {
         _userRepository = userRepository;
         _securityManager = securityManager;
