@@ -22,7 +22,6 @@ internal class FileStorage : IStorage
     public Task<bool> ExistsAsync(string name)
     {
         var path = GetPath(name);
-
         var result = File.Exists(path);
 
         return Task.FromResult(result);
@@ -31,7 +30,6 @@ internal class FileStorage : IStorage
     public Task<Stream> GetAsync(string name)
     {
         var path = GetPath(name);
-
         var content = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         return Task.FromResult<Stream>(content);
@@ -40,8 +38,8 @@ internal class FileStorage : IStorage
     public async Task SaveAsync(string name, Stream stream)
     {
         var path = GetPath(name);
-
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+
         await using var fs = File.Open(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         await stream.CopyToAsync(fs, CopyBufferSize);
     }

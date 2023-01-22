@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,12 +32,12 @@ public class PackageConsumptionController : ServerController<User>
     public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken ct)
     {
         name = HttpUtility.UrlDecode(name);
-        var versions = await _packageService.FindAllVersionsByNameAsync(name);
+        var versions = await _packageService.FindAllByNameAsync(name);
 
         if (versions.Count == 0)
             return NotFound();
 
-        return Ok(new { versions });
+        return Ok(new { versions = versions.Select(x => x.Version).ToArray() });
     }
 
     [HttpGet("v3/package/{name}/{version}/{name2}.{version2}.nupkg")]

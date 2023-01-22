@@ -20,15 +20,10 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
     where TPackageDependency : class, IPackageDependency
 {
     private readonly IMetaPackageRepository _metaPackageRepository;
-
     private readonly IMetaPackageManager _metaPackageManager;
-
     private readonly IPackageRepository<TPackage, TPackageDependency> _packageRepository;
-
     private readonly IPackageStorage _packageStorage;
-
     private readonly IPayloadParser<TPackage, TPackageDependency, TPackagePayload> _payloadParser;
-
     private readonly ProjectType _projectType;
 
     public PackageService(
@@ -46,6 +41,30 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         _packageStorage = packageStorage;
         _payloadParser = payloadParser;
         _projectType = projectType;
+    }
+
+    public async Task<IStatusResult<PackageStatus, TPackage[]>> GetPackagesAsync(User user, string name)
+    {
+        var packages = await _packageRepository.FindAllByNameAsync(name);
+        if (packages.Length == 0)
+            return Result.Status(PackageStatus.NotFound, Array.Empty<TPackage>());
+
+        var access = (await _metaPackageRepository.TryGetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(user);
+        if (!access.Has(Permission.Read))
+            return Result.Status(PackageStatus.Forbidden, Array.Empty<TPackage>())
+                .Error("You need read permission to get this package.");
+
+        return Result.Status(PackageStatus.Ok, packages);
+    }
+
+    public Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPackagePayload payload)
@@ -127,20 +146,6 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         return Result.Status(PackageStatus.Ok);
     }
 
-    public async Task<IStatusResult<PackageStatus, TPackage[]>> GetPackagesAsync(User user, string name)
-    {
-        var packages = await _packageRepository.FindAllByNameAsync(name);
-        if (packages.Length == 0)
-            return Result.Status(PackageStatus.NotFound, Array.Empty<TPackage>());
-
-        var access = (await _metaPackageRepository.TryGetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(user);
-        if (!access.Has(Permission.Read))
-            return Result.Status(PackageStatus.Forbidden, Array.Empty<TPackage>())
-                .Error("You need read permission to get this package.");
-
-        return Result.Status(PackageStatus.Ok, packages);
-    }
-
     public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
     {
         var package = await _packageRepository.FindByNameVersionAsync(name, version);
@@ -164,21 +169,6 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         }
 
         return Result.Status(PackageStatus.Ok);
-    }
-
-    public Task<IReadOnlyCollection<string>> FindAllVersionsByNameAsync(string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
-    {
-        throw new NotImplementedException();
     }
 
     private async Task<IStatusResult<PackageStatus>> PublishNewPackageAsync(
