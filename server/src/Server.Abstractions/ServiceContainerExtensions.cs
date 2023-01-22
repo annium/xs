@@ -13,7 +13,7 @@ public static class ServiceContainerExtensions
         where TPackageDependency : class, IPackageDependency
         where TPackagePayload : class, IPayload
         where TPayloadParser : IPayloadParser<TPackage, TPackageDependency, TPackagePayload>
-        where TPackageStorage : IPackageStorage
+        where TPackageStorage : IPackageStorage<TPackage, TPackageDependency>
     {
         container.Add<IPackageService<TPackage, TPackageDependency, TPackagePayload>, PackageService<TPackage, TPackageDependency, TPackagePayload>>().Scoped();
         container.Add<IPayloadParser<TPackage, TPackageDependency, TPackagePayload>, TPayloadParser>().Singleton();

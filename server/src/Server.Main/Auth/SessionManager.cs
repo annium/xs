@@ -51,12 +51,11 @@ internal class SessionManager : ISessionManager
     public async Task CreateSession(Guid userId)
     {
         // cleanup sessions
-        var now = _timeProvider.Now;
-        await _userSessionRepository.DeleteExpiredAsync(now);
+        await _userSessionRepository.DeleteExpiredAsync();
 
         // create new one
         var token = Guid.NewGuid();
-        var expires = now + Duration.FromDays(1);
+        var expires = _timeProvider.Now + Duration.FromDays(1);
         await _userSessionRepository.CreateAsync(new UserSession(token, userId, expires));
 
         // set cookie
@@ -74,7 +73,7 @@ internal class SessionManager : ISessionManager
         var expires = now + _lifeTime;
 
         // prolongate session
-        await _userSessionRepository.ProlongateAsync(session.Token, expires);
+        await _userSessionRepository.ExtendAsync(session.Token, expires);
 
         // set cookie
         SetCookie(session.Token, expires);

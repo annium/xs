@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Annium.Core.Primitives.Collections.Generic;
 using Annium.Data.Operations;
 using Annium.Extensions.Execution;
 using Server.Abstractions.Domain;
@@ -15,24 +16,22 @@ using Server.Shared.Tools;
 namespace Server.Abstractions.Internal.Services;
 
 internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : IPackageService<TPackage, TPackageDependency, TPackagePayload>
-    where TPackagePayload : class, IPayload
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
+    where TPackagePayload : class, IPayload
 {
     private readonly IMetaPackageRepository _metaPackageRepository;
     private readonly IMetaPackageManager _metaPackageManager;
     private readonly IPackageRepository<TPackage, TPackageDependency> _packageRepository;
-    private readonly IPackageStorage _packageStorage;
+    private readonly IPackageStorage<TPackage, TPackageDependency> _packageStorage;
     private readonly IPayloadParser<TPackage, TPackageDependency, TPackagePayload> _payloadParser;
-    private readonly ProjectType _projectType;
 
     public PackageService(
         IMetaPackageRepository metaPackageRepository,
         IMetaPackageManager metaPackageManager,
         IPackageRepository<TPackage, TPackageDependency> packageRepository,
-        IPackageStorage packageStorage,
-        IPayloadParser<TPackage, TPackageDependency, TPackagePayload> payloadParser,
-        ProjectType projectType
+        IPackageStorage<TPackage, TPackageDependency> packageStorage,
+        IPayloadParser<TPackage, TPackageDependency, TPackagePayload> payloadParser
     )
     {
         _metaPackageRepository = metaPackageRepository;
@@ -40,18 +39,17 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         _packageRepository = packageRepository;
         _packageStorage = packageStorage;
         _payloadParser = payloadParser;
-        _projectType = projectType;
     }
 
-    public async Task<IStatusResult<PackageStatus, TPackage[]>> GetPackagesAsync(User user, string name)
+    public async Task<IStatusResult<PackageStatus, IReadOnlyCollection<TPackage>>> GetPackagesAsync(User user, string name)
     {
         var packages = await _packageRepository.FindAllByNameAsync(name);
-        if (packages.Length == 0)
-            return Result.Status(PackageStatus.NotFound, Array.Empty<TPackage>());
+        if (packages.Count == 0)
+            return Result.Status(PackageStatus.NotFound, packages);
 
-        var access = (await _metaPackageRepository.TryGetAccessByIdAsync(packages[0].MetaPackageId)).ForUser(user);
-        if (!access.Has(Permission.Read))
-            return Result.Status(PackageStatus.Forbidden, Array.Empty<TPackage>())
+        var access = await _metaPackageRepository.TryGetAccessByIdAsync(packages.ElementAt(0).MetaPackageId);
+        if (access is null || !access.ForUser(user).Has(Permission.Read))
+            return Result.Status(PackageStatus.Forbidden, packages)
                 .Error("You need read permission to get this package.");
 
         return Result.Status(PackageStatus.Ok, packages);
@@ -75,37 +73,43 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         var version = payload.Version;
 
         // get metaPackage by (type, name)
-        var metaPackage = await _metaPackageRepository.TryFindByTypeNameAsync(_projectType, name);
+        var metaPackage = await _metaPackageRepository.TryFindByTypeNameAsync(payload.ProjectType, name);
 
-        var isNew = metaPackage is null;
-        if (isNew)
+        if (metaPackage is null)
         {
-            metaPackage = _metaPackageManager.Generate(user, _projectType, payload);
+            metaPackage = _metaPackageManager.Generate(user, payload.ProjectType, payload);
             await _metaPackageRepository.CreateAsync(metaPackage);
-        }
 
-        var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
+            var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
 
-        // if new - publish new package
-        if (isNew)
             return await PublishNewPackageAsync(executor, metaPackage, access, payload);
+        }
+        else
+        {
+            // check version presence
+            var republished = await _packageRepository.TryFindByNameVersionAsync(name, version);
 
-        // check version presence
-        var republished = await _packageRepository.FindByNameVersionAsync(name, version);
+            var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
 
-        // if present - republish package version, else - publish new package version
-        return republished is null ? await PublishPackageVersionAsync(executor, metaPackage, access, payload) : await RepublishPackageVersionAsync(executor, metaPackage, access, payload);
+            // if present - republish package version, else - publish new package version
+            return republished is null
+                ? await PublishPackageVersionAsync(executor, metaPackage, access, payload)
+                : await RepublishPackageVersionAsync(executor, metaPackage, access, payload);
+        }
     }
 
     public async Task<IStatusResult<PackageStatus>> UnpublishPackageAsync(User user, string name, string version)
     {
         // get available versions
         var versions = await _packageRepository.FindAllByNameAsync(name);
-        if (!versions.Any(p => p.Version == version))
+        if (versions.None(x => x.Version == version))
             return Result.Status(PackageStatus.NotFound);
 
         // load metaPackage and check permissions
-        var metaPackage = await _metaPackageRepository.TryGetByIdAsync(versions[0].MetaPackageId);
+        var metaPackage = await _metaPackageRepository.TryGetByIdAsync(versions.ElementAt(0).MetaPackageId);
+        if (metaPackage is null)
+            return Result.Status(PackageStatus.NotFound);
+
         var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
         if (!access.Has(Permission.Unpublish))
             return Result.Status(PackageStatus.Forbidden)
@@ -120,13 +124,13 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         executor.With(() => _packageRepository.DeleteByNameVersionAsync(name, version));
 
         // if it was last package - delete metaPackage
-        if (versions.Length == 1)
+        if (versions.Count == 1)
             executor.With(() => _metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
         // else - update metaPackage
         else
         {
             // get latest version of all left except deleted (note - they are sorted from repository)
-            var latest = versions.FirstOrDefault(p => p.Version != version);
+            var latest = versions.First(p => p.Version != version);
 
             // if latest changed - need to update metaPackage
             if (latest.Version != metaPackage.Version)
@@ -148,25 +152,25 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
 
     public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
     {
-        var package = await _packageRepository.FindByNameVersionAsync(name, version);
+        var package = await _packageRepository.TryFindByNameVersionAsync(name, version);
         if (package is null)
             return Result.Status(PackageStatus.NotFound);
 
-        var access = (await _metaPackageRepository.TryGetAccessByIdAsync(package.MetaPackageId)).ForUser(user);
-        if (!access.Has(Permission.Read))
+        var access = await _metaPackageRepository.TryGetAccessByIdAsync(package.MetaPackageId);
+        if (access is null || !access.ForUser(user).Has(Permission.Read))
             return Result.Status(PackageStatus.Forbidden)
                 .Error("You need read permission to get this package.");
 
-        if (!(await _packageStorage.ExistsAsync(name, version)))
+        if (!await _packageStorage.ExistsAsync(name, version))
             return Result.Status(PackageStatus.InternalError)
                 .Error("Package file missing");
 
-        if (countDownload)
-        {
-            await _packageRepository.IncrementDownloadsAsync(package.Id);
-            var total = await _packageRepository.CountAllDownloadsAsync(package.Name);
-            await _metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
-        }
+        if (!countDownload)
+            return Result.Status(PackageStatus.Ok);
+
+        await _packageRepository.IncrementDownloadsAsync(package.Id);
+        var total = await _packageRepository.CountAllDownloadsAsync(package.Name);
+        await _metaPackageRepository.SetDownloadsAsync(package.MetaPackageId, total);
 
         return Result.Status(PackageStatus.Ok);
     }
@@ -244,7 +248,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
             )
         );
 
-        if (pkg.Version.CompareTo(metaPackage.Version) >= 0)
+        if (string.Compare(pkg.Version, metaPackage.Version, StringComparison.Ordinal) >= 0)
             executor.Stage(
                 () => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, payload),
                 () => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, metaPackage)

@@ -19,6 +19,5 @@ public sealed record MetaPackageAccess
     }
 
     public UserMetaPackageAccess ForUser(User user) =>
-        // for empty user - assume world access
-        new(user is null ? Guid.Empty : user.Id, OwnerId, Permissions);
+        new(user.Id, OwnerId, Permissions);
 }

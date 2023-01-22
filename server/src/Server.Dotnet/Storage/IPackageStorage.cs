@@ -1,11 +1,12 @@
 using System.IO;
 using System.Threading.Tasks;
+using Server.Abstractions.Services;
+using Server.Dotnet.Models;
 
 namespace Server.Dotnet.Storage;
 
-public interface IPackageStorage : Abstractions.Services.IPackageStorage
+public interface IPackageStorage : IPackageStorage<Package, PackageDependency>
 {
     Task<Stream> GetPackageAsync(string name, string version);
-
     Task<Stream> GetNuspecAsync(string name, string version);
 }

@@ -1,13 +1,18 @@
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using NodaTime;
 using Server.Abstractions.Domain;
+using Server.Domain.Models;
 using Server.Dotnet.Models;
 
 namespace Server.Dotnet.Payloads;
 
 public class PackagePayload : IPayload
 {
+    [JsonIgnore]
+    public ProjectType ProjectType => Constants.ProjectType;
+
     public string Name { get; }
 
     public string Version { get; }
