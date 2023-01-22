@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Server.Domain.Models;
 
-public class ProjectType
+public sealed record ProjectType
 {
     private static readonly List<ProjectType> Types = new();
 

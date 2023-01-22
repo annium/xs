@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Server.Domain.Models;
 
-public class MetaPackageAccess
+public sealed record MetaPackageAccess
 {
     private Guid OwnerId { get; }
 

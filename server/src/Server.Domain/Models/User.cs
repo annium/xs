@@ -2,7 +2,7 @@ using System;
 
 namespace Server.Domain.Models;
 
-public class User
+public sealed record User
 {
     public Guid Id { get; }
 

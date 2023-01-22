@@ -2,7 +2,7 @@ using Server.Domain.Enums;
 
 namespace Server.Domain.Models;
 
-public class MetaPackagePermission
+public sealed record MetaPackagePermission
 {
     public PermissionCategory Category { get; }
 

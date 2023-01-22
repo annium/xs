@@ -3,7 +3,7 @@ using NodaTime;
 
 namespace Server.Domain.Models;
 
-public class UserSession
+public sealed record UserSession
 {
     public Guid Token { get; }
 

@@ -5,7 +5,7 @@ using Server.Domain.Interfaces;
 
 namespace Server.Domain.Models;
 
-public class MetaPackage : IPackageInfo
+public sealed record MetaPackage : IPackageInfo
 {
     public Guid Id { get; }
 
