@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Server.Domain.Interfaces;
 
-public interface IPackage<TPackageDependency> : IPackageInfo where TPackageDependency : IPackageDependency
+public interface IPackage<TPackageDependency> : IPackageInfo
+    where TPackageDependency : IPackageDependency
 {
     Guid Id { get; }
 
