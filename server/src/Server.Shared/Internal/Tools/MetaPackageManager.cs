@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using Server.Domain.Enums;
 using Server.Domain.Interfaces;
 using Server.Domain.Models;
+using Server.Shared.Tools;
 
-namespace Server.Db.Shared.Tools;
+namespace Server.Shared.Internal.Tools;
 
 internal class MetaPackageManager : IMetaPackageManager
 {

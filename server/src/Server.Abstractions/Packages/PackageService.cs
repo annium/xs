@@ -1,10 +1,13 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Annium.Data.Operations;
 using Annium.Extensions.Execution;
+using Server.Db.Repositories;
 using Server.Domain.Enums;
 using Server.Domain.Interfaces;
 using Server.Domain.Models;
+using Server.Shared.Tools;
 
 namespace Server.Abstractions.Packages;
 
@@ -51,9 +54,10 @@ public class PackageService<TPackage, TPackageDependency, TPayload> : IPackageSe
 
         var isNew = metaPackage is null;
         if (isNew)
-            metaPackage = await _metaPackageRepository.CreateAsync(
-                _metaPackageManager.Generate(user, _projectType, payload)
-            );
+        {
+            metaPackage = _metaPackageManager.Generate(user, _projectType, payload);
+            await _metaPackageRepository.CreateAsync(metaPackage);
+        }
 
         var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
 

@@ -1,6 +1,7 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Server.Abstractions.Packages;
+using Server.Node.Models;
 using Server.Node.Payloads;
 using Server.Node.Storage;
 using Server.Shared.Auth;

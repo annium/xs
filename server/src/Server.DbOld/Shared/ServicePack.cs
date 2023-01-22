@@ -2,7 +2,6 @@ using System;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
 using Server.Db.Shared.Repositories;
-using Server.Db.Shared.Tools;
 using Server.Domain.Models;
 
 namespace Server.Db.Shared;
@@ -22,9 +21,6 @@ public class ServicePack : ServicePackBase
         container.Add<IMetaPackageRepository, MetaPackageRepository>().Scoped();
         container.Add<IUserRepository, UserRepository>().Scoped();
         container.Add<IUserSessionRepository, UserSessionRepository>().Scoped();
-
-        // tools
-        container.Add<IMetaPackageManager, MetaPackageManager>().Scoped();
     }
 
     private void ConfigureProfile(Profile p)

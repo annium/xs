@@ -1,10 +1,10 @@
 using System;
 using Annium.Core.DependencyInjection;
 using Server.Abstractions.Packages;
+using Server.Dotnet.Models;
 using Server.Dotnet.Payloads;
 using Server.Dotnet.Storage;
 using Server.Shared.Auth;
-using IPackageStorage = Server.Abstractions.Packages.IPackageStorage;
 
 namespace Server.Dotnet;
 
@@ -29,8 +29,7 @@ public class ServicePack : ServicePackBase
         container.Add(Constants.ProjectType).AsSelf().Singleton();
 
         // storage
-        container.Add<IPackageStorage, PackageStorage>().Singleton();
-        container.Add<Storage.IPackageStorage, PackageStorage>().Singleton();
+        container.Add<PackageStorage>().AsInterfaces().Singleton();
         container.Add<ISymbolStorage, SymbolStorage>().Singleton();
     }
 }

@@ -9,6 +9,7 @@ using NuGet.Packaging;
 using Server.Abstractions.Packages;
 using Server.Domain.Models;
 using Server.Dotnet.Helpers;
+using Server.Dotnet.Models;
 using Server.Dotnet.Payloads;
 using Server.Shared.Auth;
 using Server.Shared.Controllers;

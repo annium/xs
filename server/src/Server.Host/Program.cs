@@ -1,3 +1,4 @@
+using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Server.Host;
 

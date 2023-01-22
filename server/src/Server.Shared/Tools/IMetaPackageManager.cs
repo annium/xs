@@ -1,7 +1,7 @@
 using Server.Domain.Interfaces;
 using Server.Domain.Models;
 
-namespace Server.Db.Shared.Tools;
+namespace Server.Shared.Tools;
 
 public interface IMetaPackageManager
 {

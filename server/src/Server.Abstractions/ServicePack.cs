@@ -8,11 +8,6 @@ namespace Server.Abstractions;
 
 public class ServicePack : ServicePackBase
 {
-    public ServicePack()
-    {
-        Add<Db.Shared.ServicePack>();
-    }
-
     public override void Register(IServiceContainer container, IServiceProvider provider)
     {
         // auth
