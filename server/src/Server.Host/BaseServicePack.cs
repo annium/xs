@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Server.Host;
 
@@ -39,6 +41,7 @@ internal class BaseServicePack : ServicePackBase
             .AddApplicationPart(typeof(Dotnet.ServicePack).Assembly)
             .AddApplicationPart(typeof(Node.ServicePack).Assembly)
             .AddDefaultJsonOptions();
+        container.Collection.AddSwaggerGen(SetupSwagger);
 
         // host helpers
         container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
@@ -50,6 +53,11 @@ internal class BaseServicePack : ServicePackBase
 
             return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
         }).AsSelf().Scoped();
+    }
+
+    private void SetupSwagger(SwaggerGenOptions options)
+    {
+        options.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "Package server", });
     }
 
     public override void Setup(IServiceProvider provider)

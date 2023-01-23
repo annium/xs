@@ -16,4 +16,7 @@
         <ProjectReference Include="../Server.Main/Server.Main.csproj" />
         <ProjectReference Include="../Server.Node/Server.Node.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    </ItemGroup>
 </Project>

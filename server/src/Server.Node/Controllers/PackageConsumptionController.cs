@@ -7,6 +7,7 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
+using Server.Node.Internal;
 using Server.Node.Services;
 using Server.Node.Views.Requests;
 using Server.Node.Views.Responses;
@@ -15,6 +16,8 @@ using Server.Shared.Controllers;
 
 namespace Server.Node.Controllers;
 
+[Area(Constants.Project)]
+[Route("[area]")]
 public class PackageConsumptionController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;

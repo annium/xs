@@ -7,6 +7,7 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
+using Server.Node.Internal;
 using Server.Node.Views.Requests;
 using Server.Node.Views.Responses;
 using Server.Shared.Auth.Attributes;
@@ -14,7 +15,8 @@ using Server.Shared.Controllers;
 
 namespace Server.Node.Controllers;
 
-[Route("packages")]
+[Area(Constants.Project)]
+[Route("[area]/packages")]
 public class PackagesController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;

@@ -6,12 +6,15 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
+using Server.Node.Internal;
 using Server.Node.Views.Requests;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Node.Controllers;
 
+[Area(Constants.Project)]
+[Route("[area]")]
 public class PackagePublicationController : ServerController<User>
 {
     private readonly ITimeProvider _timeProvider;
