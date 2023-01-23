@@ -1,6 +1,6 @@
 using Server.Domain.Models;
 
-namespace Server.Node;
+namespace Server.Node.Internal;
 
 internal static class Constants
 {

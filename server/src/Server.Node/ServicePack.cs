@@ -1,10 +1,13 @@
 using System;
 using Annium.Core.DependencyInjection;
+using Annium.linq2db.PostgreSql;
 using Server.Abstractions;
 using Server.Node.Domain;
+using Server.Node.Internal;
 using Server.Node.Internal.Services;
 using Server.Node.Views.Requests;
 using Server.Shared.Auth.TokenAccessors;
+using Xdb.Core.Migrations;
 
 namespace Server.Node;
 
@@ -24,5 +27,12 @@ public class ServicePack : ServicePackBase
 
         // packages
         container.AddPackageTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();
+    }
+
+    public override void Setup(IServiceProvider provider)
+    {
+        Migrator.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
+            .WithScriptsFromAssembly(GetType().Assembly)
+            .Execute();
     }
 }
