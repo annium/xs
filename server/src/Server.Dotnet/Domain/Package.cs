@@ -1,38 +1,37 @@
 using System;
 using System.Collections.Generic;
+using Annium.Data.Models;
 using NodaTime;
 using Server.Domain.Interfaces;
+using Server.Domain.Models;
 
 namespace Server.Dotnet.Domain;
 
-public class Package : IPackage<PackageDependency>
+public sealed record Package : IPackage<PackageDependency>, IIdEntity<Guid>
 {
-    public Guid Id { get; }
-
-    public Guid MetaPackageId { get; }
-
-    public string Name { get; }
-
-    public string Version { get; }
-
-    public string Description { get; }
-
-    public Instant Published { get; }
-
-    public int Downloads { get; }
-
-    public IEnumerable<PackageDependency> Dependencies { get; }
+    public Guid Id { get; private init; }
+    public Guid MetaPackageId { get; private init; }
+    public MetaPackage MetaPackage { get; private init; } = default!;
+    public string Name { get; private init; } = string.Empty;
+    public string Version { get; private init; } = string.Empty;
+    public string Description { get; private init; } = string.Empty;
+    public Instant Published { get; private init; }
+    public int Downloads { get; private init; }
+    public IReadOnlyCollection<PackageDependency> Dependencies { get; private init; } = Array.Empty<PackageDependency>();
 
     public Package(
-        Guid metaPackageId,
+        Guid id,
+        MetaPackage metaPackage,
         string name,
         string version,
         string description,
         Instant published,
-        IEnumerable<PackageDependency> dependencies
+        IReadOnlyCollection<PackageDependency> dependencies
     )
     {
-        MetaPackageId = metaPackageId;
+        Id = id;
+        MetaPackageId = metaPackage.Id;
+        MetaPackage = metaPackage;
         Name = name;
         Version = version;
         Description = description;
@@ -40,18 +39,7 @@ public class Package : IPackage<PackageDependency>
         Dependencies = dependencies;
     }
 
-    internal Package(
-        Guid id,
-        Guid metaPackageId,
-        string name,
-        string version,
-        string description,
-        Instant published,
-        int downloads,
-        IEnumerable<PackageDependency> dependencies
-    ) : this(metaPackageId, name, version, description, published, dependencies)
+    internal Package()
     {
-        Id = id;
-        Downloads = downloads;
     }
 }

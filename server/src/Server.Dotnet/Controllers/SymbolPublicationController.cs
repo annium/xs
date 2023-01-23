@@ -8,9 +8,9 @@ using NuGet.Packaging;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
-using Server.Dotnet.Helpers;
-using Server.Dotnet.Payloads;
-using Server.Dotnet.Storage;
+using Server.Dotnet.Internal.Extensions;
+using Server.Dotnet.Services;
+using Server.Dotnet.Views.Requests;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
@@ -28,11 +28,11 @@ public class SymbolPublicationController : ServerController<User>
         ".p7s"
     };
 
-    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
     private readonly ISymbolStorage _symbolStorage;
 
     public SymbolPublicationController(
-        IPackageService<Package, PackageDependency, PackagePayload> packageService,
+        IPackageService<Package, PackageDependency, PackageRequest> packageService,
         ISymbolStorage symbolStorage
     )
     {

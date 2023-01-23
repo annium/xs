@@ -7,8 +7,10 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
-using Server.Node.Payloads;
+using Server.Node.Internal.Services;
 using Server.Node.Views;
+using Server.Node.Views.Requests;
+using Server.Node.Views.Responses;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
@@ -17,10 +19,10 @@ namespace Server.Node.Controllers;
 [Route("packages")]
 public class PackagesController : ServerController<User>
 {
-    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackagePackageRequest> _packageService;
 
     public PackagesController(
-        IPackageService<Package, PackageDependency, PackagePayload> packageService
+        IPackageService<Package, PackageDependency, PackagePackageRequest> packageService
     )
     {
         _packageService = packageService;
@@ -37,7 +39,7 @@ public class PackagesController : ServerController<User>
             case PackageStatus.Forbidden:
                 return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
             case PackageStatus.Ok:
-                return Ok(result.Data.Select(p => new PackageView(p)).ToArray());
+                return Ok(result.Data.Select(p => new PackageResponse(p)).ToArray());
             default:
                 return NotFound();
         }

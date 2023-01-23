@@ -2,8 +2,8 @@ using System;
 using Annium.Core.DependencyInjection;
 using Server.Abstractions;
 using Server.Node.Domain;
-using Server.Node.Payloads;
-using Server.Node.Storage;
+using Server.Node.Internal.Services;
+using Server.Node.Views.Requests;
 using Server.Shared.Auth.TokenAccessors;
 
 namespace Server.Node;
@@ -23,6 +23,6 @@ public class ServicePack : ServicePackBase
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsSelf().Singleton();
 
         // packages
-        container.AddPackageTools<Package, PackageDependency, PackagePayload, PayloadParser, PackageStorage>();
+        container.AddPackageTools<Package, PackageDependency, PackagePackageRequest, PackageRequestParser, PackageStorage>();
     }
 }

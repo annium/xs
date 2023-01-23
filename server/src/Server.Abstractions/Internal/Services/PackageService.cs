@@ -15,30 +15,30 @@ using Server.Shared.Tools;
 
 namespace Server.Abstractions.Internal.Services;
 
-internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : IPackageService<TPackage, TPackageDependency, TPackagePayload>
+internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : IPackageService<TPackage, TPackageDependency, TPackageRequest>
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
-    where TPackagePayload : class, IPayload
+    where TPackageRequest : class, IPackageRequest
 {
     private readonly IMetaPackageRepository _metaPackageRepository;
     private readonly IMetaPackageManager _metaPackageManager;
     private readonly IPackageRepository<TPackage, TPackageDependency> _packageRepository;
     private readonly IPackageStorage<TPackage, TPackageDependency> _packageStorage;
-    private readonly IPayloadParser<TPackage, TPackageDependency, TPackagePayload> _payloadParser;
+    private readonly IPackageRequestParser<TPackage, TPackageDependency, TPackageRequest> _packageRequestParser;
 
     public PackageService(
         IMetaPackageRepository metaPackageRepository,
         IMetaPackageManager metaPackageManager,
         IPackageRepository<TPackage, TPackageDependency> packageRepository,
         IPackageStorage<TPackage, TPackageDependency> packageStorage,
-        IPayloadParser<TPackage, TPackageDependency, TPackagePayload> payloadParser
+        IPackageRequestParser<TPackage, TPackageDependency, TPackageRequest> packageRequestParser
     )
     {
         _metaPackageRepository = metaPackageRepository;
         _metaPackageManager = metaPackageManager;
         _packageRepository = packageRepository;
         _packageStorage = packageStorage;
-        _payloadParser = payloadParser;
+        _packageRequestParser = packageRequestParser;
     }
 
     public async Task<IStatusResult<PackageStatus, IReadOnlyCollection<TPackage>>> GetPackagesAsync(User user, string name)
@@ -65,24 +65,24 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         throw new NotImplementedException();
     }
 
-    public async Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPackagePayload payload)
+    public async Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPackageRequest request)
     {
         var executor = Executor.Staged();
 
-        var name = payload.Name;
-        var version = payload.Version;
+        var name = request.Name;
+        var version = request.Version;
 
         // get metaPackage by (type, name)
-        var metaPackage = await _metaPackageRepository.TryFindByTypeNameAsync(payload.ProjectType, name);
+        var metaPackage = await _metaPackageRepository.TryFindByTypeNameAsync(request.ProjectType, name);
 
         if (metaPackage is null)
         {
-            metaPackage = _metaPackageManager.Generate(user, payload.ProjectType, payload);
+            metaPackage = _metaPackageManager.Generate(user, request.ProjectType, request);
             await _metaPackageRepository.CreateAsync(metaPackage);
 
             var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
 
-            return await PublishNewPackageAsync(executor, metaPackage, access, payload);
+            return await PublishNewPackageAsync(executor, metaPackage, access, request);
         }
         else
         {
@@ -93,8 +93,8 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
 
             // if present - republish package version, else - publish new package version
             return republished is null
-                ? await PublishPackageVersionAsync(executor, metaPackage, access, payload)
-                : await RepublishPackageVersionAsync(executor, metaPackage, access, payload);
+                ? await PublishPackageVersionAsync(executor, metaPackage, access, request)
+                : await RepublishPackageVersionAsync(executor, metaPackage, access, request);
         }
     }
 
@@ -150,7 +150,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         return Result.Status(PackageStatus.Ok);
     }
 
-    public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User user, string name, string version, bool countDownload)
+    public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User? user, string name, string version, bool countDownload)
     {
         var package = await _packageRepository.TryFindByNameVersionAsync(name, version);
         if (package is null)
@@ -179,7 +179,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
         IStageExecutor executor,
         MetaPackage metaPackage,
         UserMetaPackageAccess access,
-        TPackagePayload payload
+        TPackageRequest request
     )
     {
         // commit stage is missing, cause manually called earlier; so just deletion stage
@@ -188,47 +188,47 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
             () => _metaPackageRepository.DeleteByIdAsync(metaPackage.Id)
         );
 
-        return await PublishPackageVersionAsync(executor, metaPackage, access, payload);
+        return await PublishPackageVersionAsync(executor, metaPackage, access, request);
     }
 
     private async Task<IStatusResult<PackageStatus>> RepublishPackageVersionAsync(
         IStageExecutor executor,
         MetaPackage metaPackage,
         UserMetaPackageAccess access,
-        TPackagePayload payload
+        TPackageRequest request
     )
     {
         if (!access.Has(Permission.Unpublish))
             return Result.Status(PackageStatus.Conflict)
-                .Error($"Package {payload.Name} {payload.Version} already exists. You need unpublish permission to overwrite it.");
+                .Error($"Package {request.Name} {request.Version} already exists. You need unpublish permission to overwrite it.");
 
         executor.Stage(
             async () =>
             {
-                await _packageStorage.DeleteAsync(payload.Name, payload.Version);
-                await _packageRepository.DeleteByNameVersionAsync(payload.Name, payload.Version);
+                await _packageStorage.DeleteAsync(request.Name, request.Version);
+                await _packageRepository.DeleteByNameVersionAsync(request.Name, request.Version);
             },
             () => { }
         );
 
-        return await PublishPackageVersionAsync(executor, metaPackage, access, payload);
+        return await PublishPackageVersionAsync(executor, metaPackage, access, request);
     }
 
     private async Task<IStatusResult<PackageStatus>> PublishPackageVersionAsync(
         IStageExecutor executor,
         MetaPackage metaPackage,
         UserMetaPackageAccess access,
-        TPackagePayload payload
+        TPackageRequest request
     )
     {
         if (!access.Has(Permission.Publish))
             return Result.Status(PackageStatus.Forbidden)
-                .Error($"You need publish permission to publish package {payload.Name} {payload.Version}.");
+                .Error($"You need publish permission to publish package {request.Name} {request.Version}.");
 
-        var pkg = _payloadParser.Parse(metaPackage.Id, payload);
+        var pkg = _packageRequestParser.Parse(metaPackage, request);
 
         executor.Stage(
-            () => _packageStorage.SaveAsync(pkg.Name, pkg.Version, payload.Stream),
+            () => _packageStorage.SaveAsync(pkg.Name, pkg.Version, request.Stream),
             () => _packageStorage.DeleteAsync(pkg.Name, pkg.Version)
         );
 
@@ -250,7 +250,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackagePayload> : I
 
         if (string.Compare(pkg.Version, metaPackage.Version, StringComparison.Ordinal) >= 0)
             executor.Stage(
-                () => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, payload),
+                () => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, request),
                 () => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, metaPackage)
             );
 

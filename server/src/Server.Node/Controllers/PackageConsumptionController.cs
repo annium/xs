@@ -7,24 +7,26 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
-using Server.Node.Payloads;
+using Server.Node.Internal.Services;
+using Server.Node.Services;
 using Server.Node.Views;
+using Server.Node.Views.Requests;
+using Server.Node.Views.Responses;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
-using IPackageStorage = Server.Node.Storage.IPackageStorage;
 
 namespace Server.Node.Controllers;
 
 public class PackageConsumptionController : ServerController<User>
 {
-    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackagePackageRequest> _packageService;
 
     private readonly IPackageStorage _packageStorage;
 
     private readonly IUrlHelper _url;
 
     public PackageConsumptionController(
-        IPackageService<Package, PackageDependency, PackagePayload> packageService,
+        IPackageService<Package, PackageDependency, PackagePackageRequest> packageService,
         IPackageStorage packageStorage,
         IUrlHelper url
     )
@@ -47,7 +49,7 @@ public class PackageConsumptionController : ServerController<User>
             case PackageStatus.Forbidden:
                 return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
             case PackageStatus.Ok:
-                return Ok(new PackagesView(result.Data, _url));
+                return Ok(new PackagesResponse(result.Data, _url));
             default:
                 return NotFound();
         }

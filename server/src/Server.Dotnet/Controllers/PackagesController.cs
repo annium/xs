@@ -7,8 +7,8 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
-using Server.Dotnet.Payloads;
-using Server.Dotnet.Views;
+using Server.Dotnet.Views.Requests;
+using Server.Dotnet.Views.Responses;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
@@ -17,10 +17,10 @@ namespace Server.Dotnet.Controllers;
 [Route("packages")]
 public class PackagesController : ServerController<User>
 {
-    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
     public PackagesController(
-        IPackageService<Package, PackageDependency, PackagePayload> packageService
+        IPackageService<Package, PackageDependency, PackageRequest> packageService
     )
     {
         _packageService = packageService;
@@ -32,17 +32,28 @@ public class PackagesController : ServerController<User>
     {
         name = HttpUtility.UrlDecode(name);
         var result = await _packageService.GetPackagesAsync(GetUser(), name);
-        switch (result.Status)
+
+        return result.Status switch
         {
-            case PackageStatus.NotFound:
-                return NotFound();
-            case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-            case PackageStatus.Ok:
-                return Ok(result.Data.Select(p => new PackageView(p)).ToArray());
-            default:
-                return NotFound();
-        }
+            PackageStatus.NotFound => NotFound(),
+            PackageStatus.Forbidden => new ObjectResult(result)
+            {
+                StatusCode = (int) HttpStatusCode.Forbidden
+            },
+            PackageStatus.Ok => Ok(result.Data
+                .Select(p => new PackageResponse(
+                    p.Id,
+                    p.Name,
+                    p.Version,
+                    p.Description,
+                    p.Published,
+                    p.Downloads,
+                    p.Dependencies
+                ))
+                .ToArray()
+            ),
+            _ => NotFound()
+        };
     }
 
     [HttpDelete("{name}/{version}")]

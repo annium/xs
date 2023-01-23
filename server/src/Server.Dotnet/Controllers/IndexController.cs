@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
-using Server.Dotnet.Views;
+using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
 using Server.Shared.Extensions;
 
@@ -9,30 +10,32 @@ namespace Server.Dotnet.Controllers;
 
 public class IndexController : ServerController<User>
 {
-    private readonly IUrlHelper _url;
+    private readonly IUrlHelper _urlHelper;
 
     public IndexController(
-        IUrlHelper url
+        IUrlHelper urlHelper
     )
     {
-        _url = url;
+        _urlHelper = urlHelper;
     }
 
     [HttpGet("v3/index.json")]
     public IActionResult GetIndexAsync()
     {
-        var resources = new List<ServiceIndexResourceView>();
+        var resources = new List<ServiceIndexResourceResponse>();
 
-        resources.Add(new ServiceIndexResourceView { Type = "PackagePublish/2.0.0", Uri = _url.AbsoluteUri("api/v2/package") });
-        resources.Add(new ServiceIndexResourceView { Type = "SymbolPackagePublish/4.9.0", Uri = _url.AbsoluteUri("api/v2/symbol") });
-        resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl", Uri = _url.AbsoluteUri("v3/registration") });
-        resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.0.0-beta", Uri = _url.AbsoluteUri("v3/registration") });
-        resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.0.0-rc", Uri = _url.AbsoluteUri("v3/registration") });
-        resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.4.0", Uri = _url.AbsoluteUri("v3/registration") });
-        resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/3.6.0", Uri = _url.AbsoluteUri("v3/registration") });
-        resources.Add(new ServiceIndexResourceView { Type = "RegistrationsBaseUrl/Versioned", Uri = _url.AbsoluteUri("v3/registration") });
-        resources.Add(new ServiceIndexResourceView { Type = "PackageBaseAddress", Uri = _url.AbsoluteUri("v3/package") });
+        resources.Add(new ServiceIndexResourceResponse(Uri("api/v2/package"), "PackagePublish/2.0.0"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("api/v2/symbol"), "SymbolPackagePublish/4.9.0"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("v3/registration"), "RegistrationsBaseUrl"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("v3/registration"), "RegistrationsBaseUrl/3.0.0-beta"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("v3/registration"), "RegistrationsBaseUrl/3.0.0-rc"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("v3/registration"), "RegistrationsBaseUrl/3.4.0"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("v3/registration"), "RegistrationsBaseUrl/3.6.0"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("v3/registration"), "RegistrationsBaseUrl/Versioned"));
+        resources.Add(new ServiceIndexResourceResponse(Uri("v3/package"), "PackageBaseAddress"));
 
         return Ok(new { version = "3.0.0", resources });
+
+        Uri Uri(string relative) => _urlHelper.AbsoluteUri(relative);
     }
 }

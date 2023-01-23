@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
-using Server.Dotnet.Payloads;
-using Server.Dotnet.Views;
+using Server.Dotnet.Views.Requests;
+using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
 using Server.Shared.Extensions;
 
@@ -15,11 +15,11 @@ namespace Server.Dotnet.Controllers;
 
 public class PackageRegistrationController : ServerController<User>
 {
-    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
     private readonly IUrlHelper _url;
 
     public PackageRegistrationController(
-        IPackageService<Package, PackageDependency, PackagePayload> packageService,
+        IPackageService<Package, PackageDependency, PackageRequest> packageService,
         IUrlHelper url
     )
     {
@@ -35,7 +35,7 @@ public class PackageRegistrationController : ServerController<User>
         if (packages.Count == 0)
             return NotFound();
 
-        return Ok(new RegistrationIndexView(new[] { GetRegistrationPage(packages) }));
+        return Ok(new RegistrationIndexResponse(new[] { GetRegistrationPage(packages) }));
     }
 
     [HttpGet("v3/registration/{name}/page.json")]
@@ -71,34 +71,34 @@ public class PackageRegistrationController : ServerController<User>
         return Ok(GetCatalogEntry(package));
     }
 
-    private RegistrationPageView GetRegistrationPage(IReadOnlyCollection<Package> packages)
+    private RegistrationPageResponse GetRegistrationPage(IReadOnlyCollection<Package> packages)
     {
         var id = packages.First().Name.ToLowerInvariant();
         var leafs = packages.Select(GetRegistrationLeaf).ToArray();
         var lower = packages.Min(e => e.Version);
         var upper = packages.Max(e => e.Version);
 
-        return new RegistrationPageView(_url.AbsoluteUri($"v3/registration/{id}/page.json"), leafs, lower, upper);
+        return new RegistrationPageResponse(_url.AbsoluteUri($"v3/registration/{id}/page.json"), leafs, lower, upper);
     }
 
-    private RegistrationLeafView GetRegistrationLeaf(Package package)
+    private RegistrationLeafResponse GetRegistrationLeaf(Package package)
     {
         var id = package.Name.ToLowerInvariant();
         var version = package.Version;
 
-        return new RegistrationLeafView(
+        return new RegistrationLeafResponse(
             _url.AbsoluteUri($"v3/registration/{id}/{version}/leaf.json"),
             GetCatalogEntry(package),
             _url.AbsoluteUri($"v3/package/{id}/{version}/{id}.{version}.nupkg")
         );
     }
 
-    private CatalogEntryView GetCatalogEntry(Package package)
+    private CatalogEntryResponse GetCatalogEntry(Package package)
     {
         var id = package.Name.ToLowerInvariant();
         var name = package.Name;
         var version = package.Version;
 
-        return new CatalogEntryView(_url.AbsoluteUri($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
+        return new CatalogEntryResponse(_url.AbsoluteUri($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
     }
 }

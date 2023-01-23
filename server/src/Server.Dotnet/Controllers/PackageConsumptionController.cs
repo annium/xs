@@ -8,19 +8,19 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
-using Server.Dotnet.Payloads;
+using Server.Dotnet.Services;
+using Server.Dotnet.Views.Requests;
 using Server.Shared.Controllers;
-using IPackageStorage = Server.Dotnet.Storage.IPackageStorage;
 
 namespace Server.Dotnet.Controllers;
 
 public class PackageConsumptionController : ServerController<User>
 {
-    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
     private readonly IPackageStorage _packageStorage;
 
     public PackageConsumptionController(
-        IPackageService<Package, PackageDependency, PackagePayload> packageService,
+        IPackageService<Package, PackageDependency, PackageRequest> packageService,
         IPackageStorage packageStorage
     )
     {

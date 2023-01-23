@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,8 +11,8 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
-using Server.Dotnet.Helpers;
-using Server.Dotnet.Payloads;
+using Server.Dotnet.Internal.Extensions;
+using Server.Dotnet.Views.Requests;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
@@ -20,11 +21,11 @@ namespace Server.Dotnet.Controllers;
 public class PackagePublicationController : ServerController<User>
 {
     private readonly ITimeProvider _timeProvider;
-    private readonly IPackageService<Package, PackageDependency, PackagePayload> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
     public PackagePublicationController(
         ITimeProvider timeProvider,
-        IPackageService<Package, PackageDependency, PackagePayload> packageService
+        IPackageService<Package, PackageDependency, PackageRequest> packageService
     )
     {
         _timeProvider = timeProvider;
@@ -35,50 +36,52 @@ public class PackagePublicationController : ServerController<User>
     [AuthorizeApi]
     public async Task<IActionResult> PublishPackageAsync()
     {
-        await using (var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None))
+        await using var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None);
+
+        if (packageStream is null)
+            return BadRequest("Use multipart/form-data to upload package.");
+
+        var payload = await ReadPackageFromStream(packageStream);
+
+        var result = await _packageService.PublishPackageAsync(GetUser(), payload);
+        switch (result.Status)
         {
-            if (packageStream is null)
-                return BadRequest("Use multipart/form-data to upload package.");
-
-            var payload = await ReadPackage(packageStream);
-
-            var result = await _packageService.PublishPackageAsync(GetUser(), payload);
-            switch (result.Status)
-            {
-                case PackageStatus.Forbidden:
-                    return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-                case PackageStatus.Conflict:
-                    return Conflict(result);
-                default:
-                    return NoContent();
-            }
+            case PackageStatus.Forbidden:
+                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+            case PackageStatus.Conflict:
+                return Conflict(result);
+            default:
+                return NoContent();
         }
+    }
 
-        async Task<PackagePayload> ReadPackage(Stream packageStream)
-        {
-            using (var packageReader = new PackageArchiveReader(packageStream, leaveStreamOpen: true))
+    private async Task<PackageRequest> ReadPackageFromStream(Stream packageStream)
+    {
+        using var packageReader = new PackageArchiveReader(packageStream, leaveStreamOpen: true);
+
+        await packageReader.ValidatePackageEntriesAsync(CancellationToken.None);
+
+        var packageId = Guid.NewGuid();
+        var nuspec = packageReader.NuspecReader;
+        var dependencies = nuspec.GetDependencyGroups()
+            .SelectMany(dependencyGroup =>
             {
-                await packageReader.ValidatePackageEntriesAsync(CancellationToken.None);
+                var framework = dependencyGroup.TargetFramework.GetShortFolderName()!;
 
-                var nuspec = packageReader.NuspecReader;
-                var dependencies = nuspec.GetDependencyGroups()
-                    .SelectMany(g =>
-                    {
-                        var framework = g.TargetFramework.GetShortFolderName();
-                        return g.Packages.Select(d => new PackageDependency(framework, d.Id, d.VersionRange.ToNormalizedString()));
-                    })
-                    .ToArray();
+                return dependencyGroup.Packages
+                    .Select(dependency => new PackageDependency(packageId, framework, dependency.Id, dependency.VersionRange.ToNormalizedString()));
+            })
+            .ToArray();
 
-                return new PackagePayload(
-                    nuspec.GetId(),
-                    nuspec.GetVersion().ToNormalizedString(),
-                    nuspec.GetDescription(),
-                    _timeProvider.Now,
-                    dependencies,
-                    packageStream,
-                    packageReader.GetNuspec()
-                );
-            }
-        }
+        return new PackageRequest(
+            packageId,
+            nuspec.GetId(),
+            nuspec.GetVersion().ToNormalizedString(),
+            nuspec.GetDescription(),
+            _timeProvider.Now,
+            dependencies,
+            packageStream,
+            packageReader.GetNuspec()
+        );
     }
 }

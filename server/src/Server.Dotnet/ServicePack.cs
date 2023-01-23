@@ -2,8 +2,9 @@ using System;
 using Annium.Core.DependencyInjection;
 using Server.Abstractions;
 using Server.Dotnet.Domain;
-using Server.Dotnet.Payloads;
-using Server.Dotnet.Storage;
+using Server.Dotnet.Internal.Services;
+using Server.Dotnet.Services;
+using Server.Dotnet.Views.Requests;
 using Server.Shared.Auth.TokenAccessors;
 
 namespace Server.Dotnet;
@@ -24,7 +25,7 @@ public class ServicePack : ServicePackBase
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // packages
-        container.AddPackageTools<Package, PackageDependency, PackagePayload, PayloadParser, PackageStorage>();
+        container.AddPackageTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();
         container.Add<ISymbolStorage, SymbolStorage>().Singleton();
     }
 }

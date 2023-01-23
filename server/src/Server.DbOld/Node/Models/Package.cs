@@ -27,7 +27,7 @@ public class Package : IPackage<PackageDependency>
 
     public string Integrity { get; }
 
-    public IEnumerable<PackageDependency> Dependencies { get; }
+    public IReadOnlyCollection<PackageDependency> Dependencies { get; }
 
     public Package(
         Guid metaPackageId,
@@ -38,7 +38,7 @@ public class Package : IPackage<PackageDependency>
         string main,
         string shasum,
         string integrity,
-        IEnumerable<PackageDependency> dependencies
+        IReadOnlyCollection<PackageDependency> dependencies
     )
     {
         MetaPackageId = metaPackageId;
@@ -63,7 +63,7 @@ public class Package : IPackage<PackageDependency>
         string main,
         string shasum,
         string integrity,
-        IEnumerable<PackageDependency> dependencies
+        IReadOnlyCollection<PackageDependency> dependencies
     ) : this(metaPackageId, name, version, description, published, main, shasum, integrity, dependencies)
     {
         Id = id;
