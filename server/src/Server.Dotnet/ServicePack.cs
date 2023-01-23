@@ -24,8 +24,8 @@ public class ServicePack : ServicePackBase
         // TODO: setup with index
 
         // auth
-        container.Add<ITokenAccessor>(new HeaderTokenAccessor("X-NuGet-ApiKey")).AsInterfaces().Singleton();
-        container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
+        container.Add(new HeaderTokenAccessor("X-NuGet-ApiKey")).AsInterfaces().Singleton();
+        container.Add(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // packages
         container.AddPackageTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();

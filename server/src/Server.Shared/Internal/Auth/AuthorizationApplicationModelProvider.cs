@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using Annium.Core.DependencyInjection;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Server.Shared.Auth;
 
 namespace Server.Shared.Internal.Auth;
 

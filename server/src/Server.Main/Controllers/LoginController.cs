@@ -1,10 +1,10 @@
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Main.Internal;
 using Server.Main.Services;
 using Server.Main.Views.Requests;
+using Server.Shared.Auth;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;
 

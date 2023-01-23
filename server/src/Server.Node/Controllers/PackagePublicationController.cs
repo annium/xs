@@ -1,13 +1,13 @@
 using System.Net;
 using System.Threading.Tasks;
 using Annium.Core.Primitives;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Node.Domain;
 using Server.Node.Internal;
 using Server.Node.Views.Requests;
+using Server.Shared.Auth;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;
 

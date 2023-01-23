@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using Server.Abstractions.Services;
@@ -11,6 +10,7 @@ using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Internal.Extensions;
 using Server.Dotnet.Views.Requests;
+using Server.Shared.Auth;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;
 

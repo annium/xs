@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
 using Server.Shared.Auth.TokenAccessors;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;
@@ -32,10 +32,10 @@ public class AuthorizationFilter : IAsyncAuthorizationFilter
 
     private async Task<IActionResult?> HandleAuthorizationAsync(AuthorizationFilterContext context)
     {
-        using var scope = _serviceProvider.CreateScope();
+        await using var scope = _serviceProvider.CreateAsyncScope();
 
-        var tokenAccessors = scope.ServiceProvider.GetRequiredService<IEnumerable<ITokenAccessor>>();
-        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var tokenAccessors = scope.ServiceProvider.Resolve<IEnumerable<ITokenAccessor>>();
+        var userRepository = scope.ServiceProvider.Resolve<IUserRepository>();
 
         // try get token
         Guid token = default(Guid);

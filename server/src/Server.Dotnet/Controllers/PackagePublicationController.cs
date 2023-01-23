@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Core.Primitives;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using Server.Abstractions.Domain;
@@ -14,6 +13,7 @@ using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Internal.Extensions;
 using Server.Dotnet.Views.Requests;
+using Server.Shared.Auth;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;
 
