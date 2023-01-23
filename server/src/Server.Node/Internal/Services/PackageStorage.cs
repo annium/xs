@@ -9,15 +9,12 @@ internal class PackageStorage : IPackageStorage
 {
     private readonly IStorage _storage;
 
-    private readonly Configuration _configuration;
-
     public PackageStorage(
         IStorageFactory storageFactory,
         Configuration configuration
     )
     {
         _storage = storageFactory.Create(configuration.PackagesFolder);
-        _configuration = configuration;
     }
 
     public Task<bool> ExistsAsync(string name, string version)

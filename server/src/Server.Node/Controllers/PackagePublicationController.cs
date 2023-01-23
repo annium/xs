@@ -6,7 +6,6 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
-using Server.Node.Internal.Services;
 using Server.Node.Views.Requests;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
@@ -16,11 +15,11 @@ namespace Server.Node.Controllers;
 public class PackagePublicationController : ServerController<User>
 {
     private readonly ITimeProvider _timeProvider;
-    private readonly IPackageService<Package, PackageDependency, PackagePackageRequest> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
     public PackagePublicationController(
         ITimeProvider timeProvider,
-        IPackageService<Package, PackageDependency, PackagePackageRequest> packageService
+        IPackageService<Package, PackageDependency, PackageRequest> packageService
     )
     {
         _timeProvider = timeProvider;
@@ -29,25 +28,23 @@ public class PackagePublicationController : ServerController<User>
 
     [HttpPut("{package}")]
     [AuthorizeApi]
-    public async Task<IActionResult> PublishPackageAsync(string package, [FromBody] PackagePackageRequest? payload)
+    public async Task<IActionResult> PublishPackageAsync(string package, [FromBody] PackageRequest? request)
     {
-        if (payload is null)
+        if (request is null)
             return BadRequest("Empty data");
 
         if (!ModelState.IsValid)
             return BadRequest("Incorrect data");
 
-        payload.Published = _timeProvider.Now;
+        request.Published = _timeProvider.Now;
 
-        var result = await _packageService.PublishPackageAsync(GetUser(), payload);
-        switch (result.Status)
+        var result = await _packageService.PublishPackageAsync(GetUser(), request);
+
+        return result.Status switch
         {
-            case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-            case PackageStatus.Conflict:
-                return Conflict(result);
-            default:
-                return NoContent();
-        }
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            PackageStatus.Conflict  => Conflict(result),
+            _                       => NoContent()
+        };
     }
 }

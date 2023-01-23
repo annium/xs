@@ -7,9 +7,7 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
-using Server.Node.Internal.Services;
 using Server.Node.Services;
-using Server.Node.Views;
 using Server.Node.Views.Requests;
 using Server.Node.Views.Responses;
 using Server.Shared.Auth.Attributes;
@@ -19,14 +17,14 @@ namespace Server.Node.Controllers;
 
 public class PackageConsumptionController : ServerController<User>
 {
-    private readonly IPackageService<Package, PackageDependency, PackagePackageRequest> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
     private readonly IPackageStorage _packageStorage;
 
     private readonly IUrlHelper _url;
 
     public PackageConsumptionController(
-        IPackageService<Package, PackageDependency, PackagePackageRequest> packageService,
+        IPackageService<Package, PackageDependency, PackageRequest> packageService,
         IPackageStorage packageStorage,
         IUrlHelper url
     )
@@ -42,17 +40,14 @@ public class PackageConsumptionController : ServerController<User>
     {
         var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
         var result = await _packageService.GetPackagesAsync(GetUser(), packageName);
-        switch (result.Status)
+
+        return result.Status switch
         {
-            case PackageStatus.NotFound:
-                return NotFound();
-            case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-            case PackageStatus.Ok:
-                return Ok(new PackagesResponse(result.Data, _url));
-            default:
-                return NotFound();
-        }
+            PackageStatus.NotFound  => NotFound(),
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            PackageStatus.Ok        => Ok(new PackagesResponse(result.Data, _url)),
+            _                       => NotFound()
+        };
     }
 
     [HttpGet("{name}/{version}.tgz")]
@@ -61,18 +56,15 @@ public class PackageConsumptionController : ServerController<User>
     {
         var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
         var result = await _packageService.ProcessDownloadAsync(GetUser(), packageName, version, true);
-        switch (result.Status)
+
+        return result.Status switch
         {
-            case PackageStatus.NotFound:
-                return NotFound();
-            case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-            case PackageStatus.InternalError:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
-        }
-
-        var content = await _packageStorage.GetAsync(packageName, version);
-
-        return File(content, MediaTypeNames.Application.Octet);
+            PackageStatus.NotFound      => NotFound(),
+            PackageStatus.Forbidden     => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            PackageStatus.InternalError => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError },
+            PackageStatus.Ok            => File(await _packageStorage.GetAsync(packageName, version), MediaTypeNames.Application.Octet),
+            PackageStatus.Conflict      => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError },
+            _                           => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError }
+        };
     }
 }

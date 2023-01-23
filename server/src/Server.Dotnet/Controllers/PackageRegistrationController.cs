@@ -75,8 +75,8 @@ public class PackageRegistrationController : ServerController<User>
     {
         var id = packages.First().Name.ToLowerInvariant();
         var leafs = packages.Select(GetRegistrationLeaf).ToArray();
-        var lower = packages.Min(e => e.Version);
-        var upper = packages.Max(e => e.Version);
+        var lower = packages.Min(e => e.Version)!;
+        var upper = packages.Max(e => e.Version)!;
 
         return new RegistrationPageResponse(_url.AbsoluteUri($"v3/registration/{id}/page.json"), leafs, lower, upper);
     }

@@ -1,28 +1,23 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Server.Node.Domain;
 using Server.Shared.Extensions;
 
 namespace Server.Node.Views.Responses;
 
-public class PackageVersionResponse
+public sealed record PackageVersionResponse
 {
     public string Name { get; }
-
     public string Version { get; }
-
     public string Description { get; }
-
     public string Main { get; }
-
     public IReadOnlyDictionary<string, string> Dependencies { get; }
-
     public IReadOnlyDictionary<string, string> DevDependencies { get; }
 
-    [JsonProperty("dist")]
+    [JsonPropertyName("dist")]
     public PackageDistributionResponse Distribution { get; }
 
     public PackageVersionResponse(Package package, IUrlHelper urlHelper)

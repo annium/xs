@@ -5,7 +5,7 @@ using Server.Node.Domain;
 
 namespace Server.Node.Views.Responses;
 
-internal class PackageResponse
+internal sealed record PackageResponse
 {
     public Guid Id { get; }
 
@@ -25,7 +25,7 @@ internal class PackageResponse
 
     public string Integrity { get; }
 
-    public IEnumerable<PackageDependency> Dependencies { get; }
+    public IReadOnlyCollection<PackageDependency> Dependencies { get; }
 
     internal PackageResponse(Package package)
     {

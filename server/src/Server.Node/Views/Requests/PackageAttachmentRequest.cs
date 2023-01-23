@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Node.Views.Requests;
 
-public class PackageAttachmentRequest
+public sealed record PackageAttachmentRequest
 {
     [Required]
-    public string Data { get; set; }
+    public string Data { get; init; } = string.Empty;
 }

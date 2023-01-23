@@ -23,6 +23,6 @@ public class ServicePack : ServicePackBase
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsSelf().Singleton();
 
         // packages
-        container.AddPackageTools<Package, PackageDependency, PackagePackageRequest, PackageRequestParser, PackageStorage>();
+        container.AddPackageTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();
     }
 }

@@ -1,36 +1,30 @@
 using System;
 using System.Collections.Generic;
+using Annium.Data.Models;
 using NodaTime;
 using Server.Domain.Interfaces;
+using Server.Domain.Models;
 
 namespace Server.Node.Domain;
 
-public class Package : IPackage<PackageDependency>
+public class Package : IPackage<PackageDependency>, IIdEntity<Guid>
 {
-    public Guid Id { get; }
-
-    public Guid MetaPackageId { get; }
-
-    public string Name { get; }
-
-    public string Version { get; }
-
-    public string Description { get; }
-
-    public Instant Published { get; }
-
-    public int Downloads { get; }
-
-    public string Main { get; }
-
-    public string Shasum { get; }
-
-    public string Integrity { get; }
-
-    public IReadOnlyCollection<PackageDependency> Dependencies { get; }
+    public Guid Id { get; private init; }
+    public Guid MetaPackageId { get; private init; }
+    public MetaPackage MetaPackage { get; private init; } = default!;
+    public string Name { get; private init; } = string.Empty;
+    public string Version { get; private init; } = string.Empty;
+    public string Description { get; private init; } = string.Empty;
+    public Instant Published { get; private init; }
+    public int Downloads { get; private init; }
+    public string Main { get; private init; } = string.Empty;
+    public string Shasum { get; private init; } = string.Empty;
+    public string Integrity { get; private init; } = string.Empty;
+    public IReadOnlyCollection<PackageDependency> Dependencies { get; private init; } = Array.Empty<PackageDependency>();
 
     public Package(
-        Guid metaPackageId,
+        Guid id,
+        MetaPackage metaPackage,
         string name,
         string version,
         string description,
@@ -41,7 +35,8 @@ public class Package : IPackage<PackageDependency>
         IReadOnlyCollection<PackageDependency> dependencies
     )
     {
-        MetaPackageId = metaPackageId;
+        Id = id;
+        MetaPackageId = metaPackage.Id;
         Name = name;
         Version = version;
         Description = description;
@@ -53,20 +48,7 @@ public class Package : IPackage<PackageDependency>
     }
 
     internal Package(
-        Guid id,
-        Guid metaPackageId,
-        string name,
-        string version,
-        string description,
-        Instant published,
-        int downloads,
-        string main,
-        string shasum,
-        string integrity,
-        IReadOnlyCollection<PackageDependency> dependencies
-    ) : this(metaPackageId, name, version, description, published, main, shasum, integrity, dependencies)
+    )
     {
-        Id = id;
-        Downloads = downloads;
     }
 }

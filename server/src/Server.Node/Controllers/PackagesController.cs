@@ -7,8 +7,6 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Node.Domain;
-using Server.Node.Internal.Services;
-using Server.Node.Views;
 using Server.Node.Views.Requests;
 using Server.Node.Views.Responses;
 using Server.Shared.Auth.Attributes;
@@ -19,10 +17,10 @@ namespace Server.Node.Controllers;
 [Route("packages")]
 public class PackagesController : ServerController<User>
 {
-    private readonly IPackageService<Package, PackageDependency, PackagePackageRequest> _packageService;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
     public PackagesController(
-        IPackageService<Package, PackageDependency, PackagePackageRequest> packageService
+        IPackageService<Package, PackageDependency, PackageRequest> packageService
     )
     {
         _packageService = packageService;
@@ -34,15 +32,13 @@ public class PackagesController : ServerController<User>
     {
         name = HttpUtility.UrlDecode(name);
         var result = await _packageService.GetPackagesAsync(GetUser(), name);
-        switch (result.Status)
+
+        return result.Status switch
         {
-            case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-            case PackageStatus.Ok:
-                return Ok(result.Data.Select(p => new PackageResponse(p)).ToArray());
-            default:
-                return NotFound();
-        }
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            PackageStatus.Ok        => Ok(result.Data.Select(p => new PackageResponse(p)).ToArray()),
+            _                       => NotFound()
+        };
     }
 
     [HttpDelete("{name}/{version}")]
@@ -51,14 +47,12 @@ public class PackagesController : ServerController<User>
     {
         name = HttpUtility.UrlDecode(name);
         var result = await _packageService.UnpublishPackageAsync(GetUser(), name, version);
-        switch (result.Status)
+
+        return result.Status switch
         {
-            case PackageStatus.NotFound:
-                return NotFound();
-            case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
-            default:
-                return NoContent();
-        }
+            PackageStatus.NotFound  => NotFound(),
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            _                       => NoContent()
+        };
     }
 }

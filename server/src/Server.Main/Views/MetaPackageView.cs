@@ -25,7 +25,7 @@ internal class MetaPackageView
 
     public string Owner { get; }
 
-    public IEnumerable<MetaPackagePermission> Permissions { get; }
+    public IReadOnlyCollection<MetaPackagePermission> Permissions { get; }
 
     internal MetaPackageView(MetaPackage metaPackage)
     {

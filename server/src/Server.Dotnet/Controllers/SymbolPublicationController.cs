@@ -9,7 +9,6 @@ using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
 using Server.Dotnet.Internal.Extensions;
-using Server.Dotnet.Services;
 using Server.Dotnet.Views.Requests;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
@@ -29,63 +28,54 @@ public class SymbolPublicationController : ServerController<User>
     };
 
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
-    private readonly ISymbolStorage _symbolStorage;
 
     public SymbolPublicationController(
-        IPackageService<Package, PackageDependency, PackageRequest> packageService,
-        ISymbolStorage symbolStorage
+        IPackageService<Package, PackageDependency, PackageRequest> packageService
     )
     {
         _packageService = packageService;
-        _symbolStorage = symbolStorage;
     }
 
     [HttpPut("api/v2/symbol")]
     [AuthorizeApi]
     public async Task<IActionResult> PublishSymbolsAsync(CancellationToken ct)
     {
-        await using (var symbolsStream = await Request.GetUploadStreamOrNullAsync(ct))
+        await using var symbolsStream = await Request.GetUploadStreamOrNullAsync(ct);
+
+        if (symbolsStream is null)
+            return BadRequest("Use multipart/form-data to upload symbols.");
+
+        using var packageReader = new PackageArchiveReader(symbolsStream, leaveStreamOpen: true);
+        await packageReader.ValidatePackageEntriesAsync(ct);
+
+        var files = GetPdbPathsOrNull(await packageReader.GetFilesAsync(ct));
+        if (files is null)
+            return BadRequest("Ensure symbol package is valid.");
+
+        var name = packageReader.NuspecReader.GetId();
+        var version = packageReader.NuspecReader.GetVersion().ToNormalizedString();
+
+        // TODO: when applicable, add permissions usage
+
+        if (await _packageService.TryFindByNameVersionAsync(name, version) is null)
+            return NotFound($"Package {name} {version} doesn't exist.");
+
+        foreach (var file in files)
         {
-            if (symbolsStream is null)
-                return BadRequest("Use multipart/form-data to upload symbols.");
-
-            using (var packageReader = new PackageArchiveReader(symbolsStream, leaveStreamOpen: true))
-            {
-                await packageReader.ValidatePackageEntriesAsync(ct);
-
-                var files = await GetPdbPathsOrNull(packageReader, ct);
-                if (files is null)
-                    return BadRequest("Ensure symbol package is valid.");
-
-                var name = packageReader.NuspecReader.GetId();
-                var version = packageReader.NuspecReader.GetVersion().ToNormalizedString();
-
-                // TODO: when applicable, add permissions usage
-
-                if (await _packageService.TryFindByNameVersionAsync(name, version) is null)
-                    return NotFound($"Package {name} {version} doesn't exist.");
-
-                foreach (var file in files)
-                {
-                    var stream = packageReader.GetStream(file);
-                    // TODO: write symbol's content to disk. Need consuming flow to understand how to do this
-                }
-            }
-
-            return NoContent();
+            var _ = packageReader.GetStream(file);
+            // TODO: write symbol's content to disk. Need consuming flow to understand how to do this
         }
+
+        return NoContent();
     }
 
-    private async Task<IReadOnlyList<string>> GetPdbPathsOrNull(
-        PackageArchiveReader reader,
-        CancellationToken ct
-    )
+    private IReadOnlyCollection<string>? GetPdbPathsOrNull(IEnumerable<string> files)
     {
-        var files = (await reader.GetFilesAsync(ct)).ToList();
+        var filesArray = files.ToArray();
 
-        return files.All(IsValidFile) ? files.Where(e => Path.GetExtension(e) == ".pdb").ToList() : null;
+        return filesArray.All(IsValidFile) ? filesArray.Where(e => Path.GetExtension(e) == ".pdb").ToArray() : null;
 
-        bool IsValidFile(string path) =>
+        static bool IsValidFile(string path) =>
             !string.IsNullOrEmpty(Path.GetFileName(path)) &&
             !string.IsNullOrEmpty(Path.GetExtension(path)) &&
             ValidExtensions.Contains(Path.GetExtension(path));

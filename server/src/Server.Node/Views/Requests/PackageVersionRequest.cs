@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Server.Node.Views.Requests;
 
-public class PackageVersionRequest
+public sealed record PackageVersionRequest
 {
     [Required]
     [StringLength(100, MinimumLength = 3)]
-    public string Main { get; set; }
+    public string Main { get; set; } = string.Empty;
 
     public Dictionary<string, string> Dependencies { get; set; } = new();
 
     public Dictionary<string, string> DevDependencies { get; set; } = new();
 
     [Required]
-    [JsonProperty("dist")]
-    public PackageDistributionRequest Distribution { get; set; }
+    [JsonPropertyName("dist")]
+    public PackageDistributionRequest Distribution { get; set; } = new();
 }

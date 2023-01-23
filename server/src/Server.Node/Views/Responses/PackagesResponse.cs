@@ -1,27 +1,25 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Server.Node.Domain;
 
 namespace Server.Node.Views.Responses;
 
-public class PackagesResponse
+public sealed record PackagesResponse
 {
     public string Name { get; }
-
     public string Description { get; }
 
-    [JsonProperty("dist-tags")]
+    [JsonPropertyName("dist-tags")]
     public IReadOnlyDictionary<string, string> DistributionTags { get; }
 
     public IReadOnlyDictionary<string, PackageVersionResponse> Versions { get; }
-
     public IReadOnlyDictionary<string, string> Time { get; }
 
-    public PackagesResponse(IEnumerable<Package> packages, IUrlHelper urlHelper)
+    public PackagesResponse(IReadOnlyCollection<Package> packages, IUrlHelper urlHelper)
     {
-        packages = packages.OrderByDescending(e => e.Version);
+        packages = packages.OrderByDescending(e => e.Version).ToArray();
         var latest = packages.First();
 
         Name = latest.Name;

@@ -41,9 +41,9 @@ public class PackagePublicationController : ServerController<User>
         if (packageStream is null)
             return BadRequest("Use multipart/form-data to upload package.");
 
-        var payload = await ReadPackageFromStream(packageStream);
+        var request = await ReadPackageFromStream(packageStream);
 
-        var result = await _packageService.PublishPackageAsync(GetUser(), payload);
+        var result = await _packageService.PublishPackageAsync(GetUser(), request);
         switch (result.Status)
         {
             case PackageStatus.Forbidden:

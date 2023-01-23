@@ -23,22 +23,21 @@ public class PackageName
             throw new ArgumentException($"'{value}' is not a valid package name.");
     }
 
-    public string Scope { get; }
-
-    public string Name { get; }
+    private readonly string? _scope;
+    private readonly string _name;
 
     private PackageName(
-        string scope,
+        string? scope,
         string name
     )
     {
-        Scope = scope;
-        Name = name;
+        _scope = scope;
+        _name = name;
     }
 
-    public override string ToString() => Scope is null ? Name : $"@{Scope}/{Name}";
+    public override string ToString() => _scope is null ? _name : $"@{_scope}/{_name}";
 
-    public string ToFileName() => Scope is null ? Name : $"{Scope}-{Name}";
+    public string ToFileName() => _scope is null ? _name : $"{_scope}-{_name}";
 
     public static implicit operator string(PackageName name) => name.ToString();
 }
