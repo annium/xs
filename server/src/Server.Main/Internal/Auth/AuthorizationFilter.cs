@@ -9,11 +9,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Server.Db.Repositories;
 using Server.Domain.Models;
+using Server.Main.Services;
 using Server.Shared.Auth;
 using Server.Shared.Auth.TokenAccessors;
 using Server.Shared.Controllers;
 
-namespace Server.Main.Auth;
+namespace Server.Main.Internal.Auth;
 
 internal class AuthorizationFilter : IAsyncAuthorizationFilter
 {
@@ -82,7 +83,7 @@ internal class AuthorizationFilter : IAsyncAuthorizationFilter
 
         var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
         var userSessionRepository = scope.ServiceProvider.GetRequiredService<IUserSessionRepository>();
-        var sessionManager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
+        var sessionManager = scope.ServiceProvider.GetRequiredService<IUserSessionService>();
 
         // try get token
         var (token, result) = sessionManager.GetToken();

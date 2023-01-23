@@ -1,6 +1,6 @@
 namespace Server.Main.Tools;
 
-public interface ISecurityManager
+public interface ISecurityService
 {
     string Hash(string data);
 }

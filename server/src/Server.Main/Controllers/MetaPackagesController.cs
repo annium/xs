@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Enums;
 using Server.Domain.Models;
 using Server.Main.Services;
-using Server.Main.Views;
+using Server.Main.Views.Responses;
 using Server.Shared.Auth;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
@@ -33,9 +33,9 @@ public class MetaPackagesController : ServerController<User>
     [HttpGet("search")]
     [Authorize(Access.Api | Access.Session)]
     public async Task<IActionResult> FindPackagesAsync(
-        Guid ownerId = default(Guid),
-        string type = null,
-        string query = null,
+        Guid ownerId = default,
+        string? type = null,
+        string? query = null,
         int page = 1,
         int count = 50
     )
@@ -49,7 +49,7 @@ public class MetaPackagesController : ServerController<User>
 
         var packages = await _metaPackageService.FindAllAsync(GetUser().Id, ownerId, projectType, query, page, count);
 
-        return Ok(packages.Select(p => new MetaPackageView(p)).ToArray());
+        return Ok(packages.Select(p => new MetaPackageResponse(p)).ToArray());
     }
 
     [HttpGet("{type}/{name}")]
@@ -63,10 +63,9 @@ public class MetaPackagesController : ServerController<User>
             return NotFound();
 
         var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
-        if (!access.Has(Permission.Read))
-            return new ObjectResult("You need read permission to get this package.") { StatusCode = (int) HttpStatusCode.Forbidden };
-
-        return Ok(new MetaPackageView(package));
+        return access.Has(Permission.Read)
+            ? Ok(new MetaPackageResponse(package))
+            : new ObjectResult("You need read permission to get this package.") { StatusCode = (int) HttpStatusCode.Forbidden };
     }
 
     [HttpPost("{type}/{name}/permissions")]

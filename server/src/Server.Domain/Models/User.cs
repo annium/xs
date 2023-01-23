@@ -27,12 +27,12 @@ public sealed record User : IIdEntity<Guid>
     }
 
     public void Update(
-        string name,
+        string login,
         string passwordHash,
         Guid apiToken
     )
     {
-        Login = name;
+        Login = login;
         PasswordHash = passwordHash;
         ApiToken = apiToken;
     }

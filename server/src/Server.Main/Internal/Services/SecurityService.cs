@@ -1,0 +1,27 @@
+using System;
+using System.Security.Cryptography;
+using System.Text;
+using Annium.Core.Primitives;
+
+namespace Server.Main.Tools;
+
+internal class SecurityService : ISecurityService, IDisposable
+{
+    private readonly DisposableBox _disposable = Disposable.Box();
+    private readonly HashAlgorithm _hashAlgorithm;
+
+    public SecurityService()
+    {
+        _disposable += _hashAlgorithm = SHA512.Create();
+    }
+
+    public string Hash(string data)
+    {
+        return Convert.ToBase64String(_hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(data)));
+    }
+
+    public void Dispose()
+    {
+        _disposable.Dispose();
+    }
+}

@@ -7,24 +7,20 @@ using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 using Server.Db.Repositories;
 using Server.Domain.Models;
+using Server.Main.Services;
 
-namespace Server.Main.Auth;
+namespace Server.Main.Internal.Services;
 
-internal class SessionManager : ISessionManager
+internal class UserUserSessionService : IUserSessionService
 {
     private const string AuthCookieName = "AccessToken";
-
     private readonly Duration _lifeTime = Duration.FromDays(1);
-
     private readonly Duration _expirationBuffer = Duration.FromHours(12);
-
-
     private readonly ITimeProvider _timeProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
-
     private readonly IUserSessionRepository _userSessionRepository;
 
-    public SessionManager(
+    public UserUserSessionService(
         ITimeProvider timeProvider,
         IHttpContextAccessor httpContextAccessor,
         IUserSessionRepository userSessionRepository

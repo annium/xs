@@ -16,7 +16,7 @@ internal class MetaPackageService : IMetaPackageService
         _repository = repository;
     }
 
-    public Task<IReadOnlyCollection<MetaPackage>> FindAllAsync(Guid userId, Guid ownerId, ProjectType type, string query, int page, int count) =>
+    public Task<IReadOnlyCollection<MetaPackage>> FindAllAsync(Guid userId, Guid ownerId, ProjectType? type, string? query, int page, int count) =>
         _repository.FindAllAsync(userId, ownerId, type, query, page, count);
 
     public Task<MetaPackage?> TryFindByTypeNameAsync(ProjectType type, string name) =>

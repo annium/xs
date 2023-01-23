@@ -18,8 +18,6 @@ public sealed record ProjectType
     public static ProjectType Get(string name) => Types.Find(e => e._name == name) ??
         throw new Exception($"Project type {name} is not registered.");
 
-    public static IReadOnlyCollection<ProjectType> List() => Types.ToArray();
-
     private readonly string _name;
 
     private ProjectType(string name)

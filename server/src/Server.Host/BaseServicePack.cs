@@ -12,6 +12,7 @@ internal class BaseServicePack : ServicePackBase
 {
     public BaseServicePack()
     {
+        Add<Main.ServicePack>();
         Add<Dotnet.ServicePack>();
         Add<Node.ServicePack>();
     }
@@ -32,6 +33,7 @@ internal class BaseServicePack : ServicePackBase
         // host
         container.Collection.AddCors();
         container.Collection.AddControllers()
+            .AddApplicationPart(typeof(Main.ServicePack).Assembly)
             .AddApplicationPart(typeof(Dotnet.ServicePack).Assembly)
             .AddApplicationPart(typeof(Node.ServicePack).Assembly)
             .AddDefaultJsonOptions();

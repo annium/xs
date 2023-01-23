@@ -3,10 +3,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
-using Server.Main.Auth;
-using Server.Main.Payloads;
 using Server.Main.Services;
 using Server.Main.Tools;
+using Server.Main.Views.Requests;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
@@ -16,40 +15,40 @@ namespace Server.Main.Controllers;
 public class LoginController : ServerController<User>
 {
     private readonly IUserService _userService;
-    private readonly ISecurityManager _securityManager;
-    private readonly ISessionManager _sessionManager;
+    private readonly ISecurityService _securityService;
+    private readonly IUserSessionService _userSessionService;
 
     public LoginController(
         IUserService userService,
-        ISecurityManager securityManager,
-        ISessionManager sessionManager
+        ISecurityService securityService,
+        IUserSessionService userSessionService
     )
     {
         _userService = userService;
-        _securityManager = securityManager;
-        _sessionManager = sessionManager;
+        _securityService = securityService;
+        _userSessionService = userSessionService;
     }
 
     [HttpPost]
-    public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginPayload loginPayload)
+    public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginRequest? loginRequest)
     {
-        var (user, result) = await LoginUserInternalAsync(loginPayload);
+        var (user, result) = await LoginUserInternalAsync(loginRequest);
         if (result is not null)
             return result;
 
-        await _sessionManager.CreateSession(user.Id);
+        await _userSessionService.CreateSession(user!.Id);
 
         return NoContent();
     }
 
     [HttpPost("app")]
-    public async Task<IActionResult> LoginAppAsync([FromBody] UserLoginPayload loginPayload)
+    public async Task<IActionResult> LoginAppAsync([FromBody] UserLoginRequest? loginRequest)
     {
-        var (user, result) = await LoginUserInternalAsync(loginPayload);
+        var (user, result) = await LoginUserInternalAsync(loginRequest);
         if (result is not null)
             return result;
 
-        return Ok(user.ApiToken);
+        return Ok(user!.ApiToken);
     }
 
     [HttpGet]
@@ -58,25 +57,25 @@ public class LoginController : ServerController<User>
     {
         var user = GetUser();
 
-        return Ok(new { Id = user.Id, Name = user.Login, ApiToken = user.ApiToken });
+        return Ok(new { user.Id, Name = user.Login, user.ApiToken });
     }
 
     [HttpDelete]
     [AuthorizeSession]
     public async Task<IActionResult> LogoutAsync()
     {
-        await _sessionManager.DeleteCurrentSession();
+        await _userSessionService.DeleteCurrentSession();
 
         return NoContent();
     }
 
-    private async Task<ValueTuple<User, IActionResult>> LoginUserInternalAsync(UserLoginPayload loginPayload)
+    private async Task<ValueTuple<User?, IActionResult?>> LoginUserInternalAsync(UserLoginRequest? loginRequest)
     {
-        if (loginPayload is null)
+        if (loginRequest is null)
             return (null, BadRequest("Pass login data"));
 
-        var name = loginPayload.Name;
-        var password = loginPayload.Password;
+        var name = loginRequest.Login;
+        var password = loginRequest.Password;
 
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
             return (null, BadRequest("Pass login data"));
@@ -85,7 +84,7 @@ public class LoginController : ServerController<User>
         if (user is null)
             return (null, NotFound("User not found"));
 
-        var passwordHash = _securityManager.Hash(password);
+        var passwordHash = _securityService.Hash(password);
         if (user.PasswordHash != passwordHash)
             return (null, new ObjectResult("Invalid password") { StatusCode = (int) HttpStatusCode.Forbidden });
 

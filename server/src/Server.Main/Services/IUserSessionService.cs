@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
 
-namespace Server.Main.Auth;
+namespace Server.Main.Services;
 
-public interface ISessionManager
+public interface IUserSessionService
 {
     ValueTuple<Guid, IActionResult?> GetToken();
 

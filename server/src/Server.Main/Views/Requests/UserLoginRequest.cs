@@ -1,15 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Main.Payloads;
+namespace Server.Main.Views.Requests;
 
-public class UserUpdatePayload
+public sealed record UserLoginRequest
 {
     [Required]
     [StringLength(30, MinimumLength = 3)]
-    public string Name { get; set; }
+    public string Login { get; init; } = string.Empty;
 
     [Required]
     [StringLength(30, MinimumLength = 8)]
     [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public string Password { get; init; } = string.Empty;
 }

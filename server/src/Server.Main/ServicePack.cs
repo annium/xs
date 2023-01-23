@@ -1,6 +1,6 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Server.Main.Auth;
+using Server.Main.Internal.Auth;
 using Server.Main.Internal.Services;
 using Server.Main.Services;
 using Server.Main.Tools;
@@ -17,7 +17,7 @@ public class ServicePack : ServicePackBase
         // auth
         container.AddRegistryAuthorization<AuthorizationFilter>();
         container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access)).AsSelf().Singleton();
-        container.Add<ISessionManager, SessionManager>().Scoped();
+        container.Add<IUserSessionService, UserUserSessionService>().Scoped();
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // services
@@ -25,6 +25,6 @@ public class ServicePack : ServicePackBase
         container.Add<IUserService, UserService>().Singleton();
 
         // tools
-        container.Add<ISecurityManager, SecurityManager>().Singleton();
+        container.Add<ISecurityService, SecurityService>().Singleton();
     }
 }
