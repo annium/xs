@@ -35,7 +35,8 @@ internal class DataContractTypeInspector : TypeInspectorSkeleton
         var properties = _innerTypeInspector.GetProperties(type, container);
 
         return properties
-            .OrderBy(p => p.GetCustomAttribute<DataMemberAttribute>().Order)
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+            .OrderBy(p => p.GetCustomAttribute<DataMemberAttribute>()?.Order ?? int.MaxValue)
             .ThenBy(x => x.Name);
     }
 }
