@@ -14,4 +14,7 @@
     <ItemGroup>
         <ProjectReference Include="../Server.Abstractions/Server.Abstractions.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Scripts/**/*.sql" />
+    </ItemGroup>
 </Project>

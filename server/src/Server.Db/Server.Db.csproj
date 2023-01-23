@@ -17,4 +17,7 @@
         <ProjectReference Include="../Server.Domain/Server.Domain.csproj" />
         <ProjectReference Include="../../../../tools/xdb/src/Xdb.Core/Xdb.Core.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Scripts/**/*.sql" />
+    </ItemGroup>
 </Project>

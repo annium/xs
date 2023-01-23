@@ -12,6 +12,8 @@ internal class BaseServicePack : ServicePackBase
 {
     public BaseServicePack()
     {
+        Add<Abstractions.ServicePack>();
+        Add<Db.ServicePack>();
         Add<Main.ServicePack>();
         Add<Dotnet.ServicePack>();
         Add<Node.ServicePack>();

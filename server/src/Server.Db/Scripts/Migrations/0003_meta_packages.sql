@@ -8,6 +8,6 @@ create table main.meta_packages (
 	downloads int not null,
 	owner_id uuid not null,
 	constraint pk_meta_packages primary key (id),
-	constraint fk_meta_packages_apps_app_id foreign key (app_id) references main.apps(id) on delete restrict
+	constraint fk_meta_packages_users_owner_id foreign key (owner_id) references main.users(id) on delete restrict
 );
 create unique index ix_meta_packages_type_name_version on main.meta_packages using btree (type, name, version);

@@ -12,6 +12,11 @@ namespace Server.Main;
 
 public class ServicePack : ServicePackBase
 {
+    public ServicePack()
+    {
+        Add<Shared.ServicePack>();
+    }
+
     public override void Register(IServiceContainer container, IServiceProvider provider)
     {
         // auth
