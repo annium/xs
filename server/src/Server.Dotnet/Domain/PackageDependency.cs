@@ -1,12 +1,10 @@
 using System;
-using Annium.Data.Models;
 using Server.Domain.Interfaces;
 
 namespace Server.Dotnet.Domain;
 
-public class PackageDependency : IPackageDependency, IIdEntity<Guid>
+public class PackageDependency : IPackageDependency
 {
-    public Guid Id { get; private init; }
     public Guid PackageId { get; private init; }
     public string Framework { get; private init; } = string.Empty;
     public string Name { get; private init; } = string.Empty;
@@ -19,7 +17,6 @@ public class PackageDependency : IPackageDependency, IIdEntity<Guid>
         string version
     )
     {
-        Id = Guid.NewGuid();
         PackageId = packageId;
         Framework = framework;
         Name = name;

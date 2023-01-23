@@ -1,6 +1,6 @@
 using Server.Domain.Models;
 
-namespace Server.Dotnet;
+namespace Server.Dotnet.Internal;
 
 internal static class Constants
 {
