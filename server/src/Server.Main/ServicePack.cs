@@ -21,7 +21,7 @@ public class ServicePack : ServicePackBase
         // auth
         container.AddRegistryAuthorization<AuthorizationFilter>();
         container.Add<Func<Access, AuthorizationFilter>>(sp => access => new AuthorizationFilter(sp, access)).AsSelf().Singleton();
-        container.Add<IUserSessionService, UserUserSessionService>().Scoped();
+        container.Add<IUserSessionService, UserSessionService>().Scoped();
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // services

@@ -11,7 +11,7 @@ using Server.Main.Services;
 
 namespace Server.Main.Internal.Services;
 
-internal class UserUserSessionService : IUserSessionService
+internal class UserSessionService : IUserSessionService
 {
     private const string AuthCookieName = "AccessToken";
     private readonly Duration _lifeTime = Duration.FromDays(1);
@@ -20,7 +20,7 @@ internal class UserUserSessionService : IUserSessionService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserSessionRepository _userSessionRepository;
 
-    public UserUserSessionService(
+    public UserSessionService(
         ITimeProvider timeProvider,
         IHttpContextAccessor httpContextAccessor,
         IUserSessionRepository userSessionRepository
@@ -52,7 +52,7 @@ internal class UserUserSessionService : IUserSessionService
         // create new one
         var token = Guid.NewGuid();
         var expires = _timeProvider.Now + Duration.FromDays(1);
-        await _userSessionRepository.CreateAsync(new UserSession(token, userId, expires));
+        await _userSessionRepository.CreateAsync(new UserSession(userId, token, expires));
 
         // set cookie
         SetCookie(token, expires);
