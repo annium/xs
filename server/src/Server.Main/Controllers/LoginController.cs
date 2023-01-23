@@ -1,12 +1,12 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
 using Server.Main.Internal;
 using Server.Main.Services;
 using Server.Main.Views.Requests;
-using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Main.Controllers;
@@ -53,7 +53,7 @@ public class LoginController : ServerController<User>
     }
 
     [HttpGet]
-    [AuthorizeSession]
+    [Authorize]
     public IActionResult Info()
     {
         var user = GetUser();
@@ -62,7 +62,7 @@ public class LoginController : ServerController<User>
     }
 
     [HttpDelete]
-    [AuthorizeSession]
+    [Authorize]
     public async Task<IActionResult> LogoutAsync()
     {
         await _userSessionService.DeleteCurrentSession();

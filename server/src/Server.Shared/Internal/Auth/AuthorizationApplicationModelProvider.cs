@@ -1,24 +1,21 @@
 using System;
 using System.Linq;
+using Annium.Core.DependencyInjection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Server.Shared.Auth;
-using Server.Shared.Auth.Attributes;
 
 namespace Server.Shared.Internal.Auth;
 
-internal class AuthorizationApplicationModelProvider<TAuthorizationFilter> : IApplicationModelProvider
-    where TAuthorizationFilter : IAsyncAuthorizationFilter
+internal class AuthorizationApplicationModelProvider : IApplicationModelProvider
 {
     public int Order => -990;
-
-    private readonly Func<Access, TAuthorizationFilter> _authorizationFilterFactory;
+    private readonly IServiceProvider _sp;
 
     public AuthorizationApplicationModelProvider(
-        Func<Access, TAuthorizationFilter> authorizationFilterFactory
+        IServiceProvider sp
     )
     {
-        _authorizationFilterFactory = authorizationFilterFactory;
+        _sp = sp;
     }
 
     public void OnProvidersExecuted(ApplicationModelProviderContext context)
@@ -46,6 +43,6 @@ internal class AuthorizationApplicationModelProvider<TAuthorizationFilter> : IAp
         if (attribute is null)
             return;
 
-        actionModel.Filters.Add(_authorizationFilterFactory(attribute.Access));
+        actionModel.Filters.Add(_sp.Resolve<AuthorizationFilter>());
     }
 }

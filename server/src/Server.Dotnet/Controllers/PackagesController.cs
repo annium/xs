@@ -2,6 +2,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
@@ -10,7 +11,6 @@ using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Requests;
 using Server.Dotnet.Views.Responses;
-using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Dotnet.Controllers;
@@ -29,7 +29,7 @@ public class PackagesController : ServerController<User>
     }
 
     [HttpGet("{name}")]
-    [AuthorizeApi]
+    [Authorize]
     public async Task<IActionResult> GetPackagesAsync(string name)
     {
         name = HttpUtility.UrlDecode(name);
@@ -59,7 +59,7 @@ public class PackagesController : ServerController<User>
     }
 
     [HttpDelete("{name}/{version}")]
-    [AuthorizeApi]
+    [Authorize]
     public async Task<IActionResult> DeletePackageAsync(string name, string version)
     {
         name = HttpUtility.UrlDecode(name);

@@ -1,7 +1,7 @@
-registry: https://api.pkg.annium.com/
+registry: http://docker:9901/
 servers:
-  dotnet: https://dotnet.pkg.annium.com/
-  node: https://node.pkg.annium.com/
+  dotnet: http://localhost:9902/
+  node: http://localhost:9903/
 types:
 - type: node
   private_scopes:

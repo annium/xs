@@ -1,4 +1,4 @@
-namespace Server.Db.Internal;
+namespace Server.Shared.Internal;
 
 internal static class Constants
 {

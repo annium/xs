@@ -6,8 +6,8 @@ using Annium.linq2db.Extensions.Extensions;
 using LinqToDB;
 using LinqToDB.Data;
 using Server.Abstractions.Db.Repositories;
-using Server.Db.Internal.Repositories;
 using Server.Domain.Interfaces;
+using Server.Shared.Internal.Repositories;
 
 namespace Server.Abstractions.Internal.Db.Repositories;
 

@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Annium.linq2db.Extensions.Extensions;
 using LinqToDB;
 using LinqToDB.Data;
-using Server.Db.Repositories;
 using Server.Domain.Enums;
 using Server.Domain.Interfaces;
 using Server.Domain.Models;
+using Server.Shared.Repositories;
 
-namespace Server.Db.Internal.Repositories;
+namespace Server.Shared.Internal.Repositories;
 
 internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageRepository
 {

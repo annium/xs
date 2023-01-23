@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Annium.linq2db.Extensions.Extensions;
 using LinqToDB;
-using Server.Db.Repositories;
 using Server.Domain.Models;
+using Server.Shared.Repositories;
 
-namespace Server.Db.Internal.Repositories;
+namespace Server.Shared.Internal.Repositories;
 
 internal class UserRepository : RepositoryBase<Connection>, IUserRepository
 {

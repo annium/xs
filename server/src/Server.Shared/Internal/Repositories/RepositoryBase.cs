@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using LinqToDB.Data;
 
-namespace Server.Db.Internal.Repositories;
+namespace Server.Shared.Internal.Repositories;
 
 internal abstract class RepositoryBase<TConnection> : IAsyncDisposable
     where TConnection : DataConnection

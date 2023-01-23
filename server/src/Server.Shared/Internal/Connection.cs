@@ -4,7 +4,7 @@ using LinqToDB;
 using LinqToDB.Data;
 using Server.Domain.Models;
 
-namespace Server.Db.Internal;
+namespace Server.Shared.Internal;
 
 internal class Connection : DataConnection, ILogSubject<Connection>
 {

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Server.Domain.Models;
 
-namespace Server.Db.Repositories;
+namespace Server.Shared.Repositories;
 
 internal interface IUserRepository
 {

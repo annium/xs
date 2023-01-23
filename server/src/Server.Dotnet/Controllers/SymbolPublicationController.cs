@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using Server.Abstractions.Services;
@@ -11,7 +12,6 @@ using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Internal.Extensions;
 using Server.Dotnet.Views.Requests;
-using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Dotnet.Controllers;
@@ -40,7 +40,7 @@ public class SymbolPublicationController : ServerController<User>
     }
 
     [HttpPut("api/v2/symbol")]
-    [AuthorizeApi]
+    [Authorize]
     public async Task<IActionResult> PublishSymbolsAsync(CancellationToken ct)
     {
         await using var symbolsStream = await Request.GetUploadStreamOrNullAsync(ct);

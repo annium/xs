@@ -13,11 +13,14 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../../../../backend/third-party/AspNetCore/src/Annium.AspNetCore.Extensions/Annium.AspNetCore.Extensions.csproj" />
+        <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.Yaml/Annium.Configuration.Yaml.csproj" />
         <ProjectReference Include="../../../../backend/base/Infrastructure/src/Annium.Infrastructure.Hosting/Annium.Infrastructure.Hosting.csproj" />
+        <ProjectReference Include="../../../../backend/third-party/linq2db/src/Annium.linq2db.PostgreSql/Annium.linq2db.PostgreSql.csproj" />
         <ProjectReference Include="../../../../backend/base/Logging/src/Annium.Logging.Console/Annium.Logging.Console.csproj" />
         <ProjectReference Include="../../../../backend/base/Logging/src/Annium.Logging.Microsoft/Annium.Logging.Microsoft.csproj" />
         <ProjectReference Include="../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
         <ProjectReference Include="../Server.Domain/Server.Domain.csproj" />
+        <ProjectReference Include="../../../../tools/xdb/src/Xdb.Core/Xdb.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
@@ -26,5 +29,8 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
         <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.1" />
         <PackageReference Include="NSwag.AspNetCore" Version="13.18.2" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Scripts/**/*.sql" />
     </ItemGroup>
 </Project>

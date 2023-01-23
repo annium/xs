@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using NodaTime;
 using Server.Domain.Models;
 
-namespace Server.Db.Repositories;
+namespace Server.Shared.Repositories;
 
 internal interface IUserSessionRepository
 {

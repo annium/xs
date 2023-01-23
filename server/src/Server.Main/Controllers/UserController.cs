@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
 using Server.Main.Internal;
 using Server.Main.Services;
 using Server.Main.Views.Requests;
-using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Main.Controllers;
@@ -47,7 +47,7 @@ public class UserController : ServerController<User>
     }
 
     [HttpPost]
-    [AuthorizeSession]
+    [Authorize]
     public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdateRequest updateModel)
     {
         if (!ModelState.IsValid)
@@ -63,7 +63,7 @@ public class UserController : ServerController<User>
     }
 
     [HttpPost("token")]
-    [AuthorizeSession]
+    [Authorize]
     public async Task<IActionResult> UpdateUserApiTokenAsync()
     {
         var user = GetUser();
@@ -76,7 +76,7 @@ public class UserController : ServerController<User>
     }
 
     [HttpDelete]
-    [AuthorizeSession]
+    [Authorize]
     public async Task<IActionResult> DeleteUserAsync()
     {
         var user = GetUser();

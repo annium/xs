@@ -5,10 +5,10 @@ using Annium.Core.Primitives;
 using Annium.linq2db.Extensions.Extensions;
 using LinqToDB;
 using NodaTime;
-using Server.Db.Repositories;
 using Server.Domain.Models;
+using Server.Shared.Repositories;
 
-namespace Server.Db.Internal.Repositories;
+namespace Server.Shared.Internal.Repositories;
 
 internal class UserSessionRepository : RepositoryBase<Connection>, IUserSessionRepository
 {

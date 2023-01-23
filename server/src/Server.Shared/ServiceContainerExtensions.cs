@@ -1,16 +1,14 @@
 using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Server.Shared.Internal.Auth;
 
 namespace Server.Shared;
 
 public static class ServiceContainerExtensions
 {
-    public static IServiceContainer AddRegistryAuthorization<TAuthorizationFilter>(this IServiceContainer container)
-        where TAuthorizationFilter : IAsyncAuthorizationFilter
+    public static IServiceContainer AddAuthorization(this IServiceContainer container)
     {
-        container.Add<IApplicationModelProvider, AuthorizationApplicationModelProvider<TAuthorizationFilter>>().Singleton();
+        container.Add<IApplicationModelProvider, AuthorizationApplicationModelProvider>().Singleton();
 
         return container;
     }

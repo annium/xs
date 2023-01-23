@@ -2,14 +2,13 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Enums;
 using Server.Domain.Models;
 using Server.Main.Internal;
 using Server.Main.Services;
 using Server.Main.Views.Responses;
-using Server.Shared.Auth;
-using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 using Server.Shared.Tools;
 
@@ -32,7 +31,7 @@ public class MetaPackagesController : ServerController<User>
     }
 
     [HttpGet("search")]
-    [Authorize(Access.Api | Access.Session)]
+    [Authorize]
     public async Task<IActionResult> FindPackagesAsync(
         string? type = null,
         string? query = null,
@@ -53,7 +52,7 @@ public class MetaPackagesController : ServerController<User>
     }
 
     [HttpGet("{type}/{name}")]
-    [AuthorizeSession]
+    [Authorize]
     public async Task<IActionResult> GetPackageAsync(string type, string name)
     {
         name = HttpUtility.UrlDecode(name);
@@ -69,7 +68,7 @@ public class MetaPackagesController : ServerController<User>
     }
 
     [HttpPost("{type}/{name}/permissions")]
-    [AuthorizeSession]
+    [Authorize]
     public async Task<IActionResult> UpdatePackagePermissionsAsync(string type, string name, [FromBody] MetaPackagePermission[] permissions)
     {
         name = HttpUtility.UrlDecode(name);

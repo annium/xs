@@ -5,9 +5,9 @@ using Annium.Core.Primitives;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
-using Server.Db.Repositories;
 using Server.Domain.Models;
 using Server.Main.Services;
+using Server.Shared.Repositories;
 
 namespace Server.Main.Internal.Services;
 

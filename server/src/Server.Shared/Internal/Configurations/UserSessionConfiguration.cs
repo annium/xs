@@ -3,7 +3,7 @@ using Annium.linq2db.Extensions.Configuration;
 using LinqToDB.Mapping;
 using Server.Domain.Models;
 
-namespace Server.Db.Internal.Configurations;
+namespace Server.Shared.Internal.Configurations;
 
 internal class UserSessionConfiguration : IdEntityConfiguration<UserSession, Guid>
 {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Server.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Server.Host;
@@ -14,8 +15,8 @@ internal class BaseServicePack : ServicePackBase
 {
     public BaseServicePack()
     {
+        Add<Shared.ServicePack>();
         Add<Abstractions.ServicePack>();
-        Add<Db.ServicePack>();
         Add<Main.ServicePack>();
         Add<Dotnet.ServicePack>();
         Add<Node.ServicePack>();
@@ -44,6 +45,7 @@ internal class BaseServicePack : ServicePackBase
         container.Collection.AddSwaggerGen(SetupSwagger);
 
         // host helpers
+        container.AddAuthorization();
         container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
         container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
         container.Add<IUrlHelper>(p =>

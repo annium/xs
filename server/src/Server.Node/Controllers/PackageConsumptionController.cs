@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
@@ -11,7 +12,6 @@ using Server.Node.Internal;
 using Server.Node.Services;
 using Server.Node.Views.Requests;
 using Server.Node.Views.Responses;
-using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Node.Controllers;
@@ -38,7 +38,7 @@ public class PackageConsumptionController : ServerController<User>
     }
 
     [HttpGet("{name}")]
-    [AuthorizeApi]
+    [Authorize]
     public async Task<IActionResult> GetPackageAsync([FromRoute] string name)
     {
         var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));
@@ -54,7 +54,7 @@ public class PackageConsumptionController : ServerController<User>
     }
 
     [HttpGet("{name}/{version}.tgz")]
-    [AuthorizeApi]
+    [Authorize]
     public async Task<IActionResult> DownloadPackageAsync([FromRoute] string name, [FromRoute] string version)
     {
         var packageName = PackageName.Parse(HttpUtility.UrlDecode(name));

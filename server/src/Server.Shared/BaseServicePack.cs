@@ -1,14 +1,19 @@
 using System;
 using Annium.Core.DependencyInjection;
-using Server.Db.Internal;
+using Server.Shared.Internal;
+using Server.Shared.Internal.Tools;
+using Server.Shared.Tools;
 
-namespace Server.Db;
+namespace Server.Shared;
 
 internal class BaseServicePack : ServicePackBase
 {
     public override void Register(IServiceContainer container, IServiceProvider provider)
     {
         container.AddPostgreSql<Connection>();
+
+        // tools
+        container.Add<IMetaPackageManager, MetaPackageManager>().Scoped();
 
         // repositories
         container.AddAll(GetType().Assembly)
