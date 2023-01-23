@@ -9,9 +9,9 @@ namespace Server.Db.Internal;
 internal class Connection : DataConnection, ILogSubject<Connection>
 {
     public ILogger<Connection> Logger { get; }
-    public ITable<MetaPackage> MetaPackages { get; set; } = null!;
-    public ITable<User> Users { get; set; } = null!;
-    public ITable<UserSession> UserSessions { get; set; } = null!;
+    public ITable<MetaPackage> MetaPackages { get; set; }
+    public ITable<User> Users { get; set; }
+    public ITable<UserSession> UserSessions { get; set; }
 
     public Connection(
         Config<Connection> config,

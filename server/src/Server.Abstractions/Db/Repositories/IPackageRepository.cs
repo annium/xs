@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Server.Domain.Interfaces;
 
-namespace Server.Db.Repositories;
+namespace Server.Abstractions.Db.Repositories;
 
 internal interface IPackageRepository<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
