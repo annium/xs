@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
 using Server.Main.Internal;
@@ -21,6 +22,11 @@ public class RegistryController : ServerController<User>
     [HttpGet]
     public IActionResult GetRegistries()
     {
-        return Ok(_configuration);
+        var response = new
+        {
+            servers = _configuration.Servers.ToDictionary(x => x.Key.ToString(), x => x.Value)
+        };
+
+        return Ok(response);
     }
 }

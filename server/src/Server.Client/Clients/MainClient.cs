@@ -16,11 +16,11 @@ public class MainClient : ClientBase
         _httpRequestFactory = httpRequestFactory;
     }
 
-    public Task<string> LoginAsync(string name, string password)
+    public Task<string> LoginAsync(string login, string password)
     {
         return _httpRequestFactory.New(Uri)
             .Post("login/app")
-            .JsonContent(new { name, password })
+            .JsonContent(new { login, password })
             .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.StatusText}).")
             .AsAsync<string>();
     }
