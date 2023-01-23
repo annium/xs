@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
+using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Requests;
 using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
@@ -13,6 +14,8 @@ using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
+[Area(Constants.Project)]
+[Route("[area]")]
 public class PackageRegistrationController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;

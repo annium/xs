@@ -7,6 +7,7 @@ using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
+using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Requests;
 using Server.Dotnet.Views.Responses;
 using Server.Shared.Auth.Attributes;
@@ -14,7 +15,8 @@ using Server.Shared.Controllers;
 
 namespace Server.Dotnet.Controllers;
 
-[Route("packages")]
+[Area(Constants.Project)]
+[Route("[area]/packages")]
 public class PackagesController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;

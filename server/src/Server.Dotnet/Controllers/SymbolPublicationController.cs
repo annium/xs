@@ -8,6 +8,7 @@ using NuGet.Packaging;
 using Server.Abstractions.Services;
 using Server.Domain.Models;
 using Server.Dotnet.Domain;
+using Server.Dotnet.Internal;
 using Server.Dotnet.Internal.Extensions;
 using Server.Dotnet.Views.Requests;
 using Server.Shared.Auth.Attributes;
@@ -15,6 +16,8 @@ using Server.Shared.Controllers;
 
 namespace Server.Dotnet.Controllers;
 
+[Area(Constants.Project)]
+[Route("[area]")]
 public class SymbolPublicationController : ServerController<User>
 {
     private static readonly HashSet<string> ValidExtensions = new()

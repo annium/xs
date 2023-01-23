@@ -1,4 +1,4 @@
-namespace Server.Main.Tools;
+namespace Server.Main.Services;
 
 public interface ISecurityService
 {

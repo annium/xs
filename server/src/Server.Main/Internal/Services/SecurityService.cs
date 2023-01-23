@@ -2,8 +2,9 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using Annium.Core.Primitives;
+using Server.Main.Services;
 
-namespace Server.Main.Tools;
+namespace Server.Main.Internal.Services;
 
 internal class SecurityService : ISecurityService, IDisposable
 {

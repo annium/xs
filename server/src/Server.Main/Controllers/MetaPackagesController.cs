@@ -5,6 +5,7 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Enums;
 using Server.Domain.Models;
+using Server.Main.Internal;
 using Server.Main.Services;
 using Server.Main.Views.Responses;
 using Server.Shared.Auth;
@@ -14,7 +15,8 @@ using Server.Shared.Tools;
 
 namespace Server.Main.Controllers;
 
-[Route("packages")]
+[Area(Constants.Project)]
+[Route("[area]/packages")]
 public class MetaPackagesController : ServerController<User>
 {
     private readonly IMetaPackageService _metaPackageService;

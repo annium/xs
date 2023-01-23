@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
+using Server.Main.Internal;
 using Server.Shared.Controllers;
 
 namespace Server.Main.Controllers;
 
-[Route("registry")]
+[Area(Constants.Project)]
+[Route("[area]/registry")]
 public class RegistryController : ServerController<User>
 {
     private readonly Configuration _configuration;

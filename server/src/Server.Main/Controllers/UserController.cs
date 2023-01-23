@@ -2,15 +2,16 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
+using Server.Main.Internal;
 using Server.Main.Services;
-using Server.Main.Tools;
 using Server.Main.Views.Requests;
 using Server.Shared.Auth.Attributes;
 using Server.Shared.Controllers;
 
 namespace Server.Main.Controllers;
 
-[Route("user")]
+[Area(Constants.Project)]
+[Route("[area]/user")]
 public class UserController : ServerController<User>
 {
     private readonly IUserService _userService;

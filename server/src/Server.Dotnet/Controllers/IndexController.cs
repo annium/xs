@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Server.Domain.Models;
+using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
 using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
+[Area(Constants.Project)]
+[Route("[area]")]
 public class IndexController : ServerController<User>
 {
     private readonly IUrlHelper _urlHelper;

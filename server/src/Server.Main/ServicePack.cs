@@ -3,7 +3,6 @@ using Annium.Core.DependencyInjection;
 using Server.Main.Internal.Auth;
 using Server.Main.Internal.Services;
 using Server.Main.Services;
-using Server.Main.Tools;
 using Server.Shared;
 using Server.Shared.Auth;
 using Server.Shared.Auth.TokenAccessors;
