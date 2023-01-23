@@ -5,7 +5,7 @@ using Annium.Core.Primitives;
 using Annium.linq2db.Extensions.Extensions;
 using LinqToDB;
 using NodaTime;
-using Server.Domain.Models;
+using Server.Shared.Domain.Models;
 using Server.Shared.Repositories;
 
 namespace Server.Shared.Internal.Repositories;

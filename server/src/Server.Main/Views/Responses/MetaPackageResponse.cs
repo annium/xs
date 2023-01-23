@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NodaTime;
-using Server.Domain.Models;
+using Server.Shared.Domain.Models;
 
 namespace Server.Main.Views.Responses;
 

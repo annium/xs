@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Annium.linq2db.Extensions.Extensions;
 using LinqToDB;
 using LinqToDB.Data;
-using Server.Domain.Enums;
-using Server.Domain.Interfaces;
-using Server.Domain.Models;
+using Server.Shared.Domain.Enums;
+using Server.Shared.Domain.Interfaces;
+using Server.Shared.Domain.Models;
 using Server.Shared.Repositories;
 
 namespace Server.Shared.Internal.Repositories;

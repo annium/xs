@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using Server.Abstractions.Services;
-using Server.Domain.Models;
 using Server.Node.Domain;
 using Server.Node.Views.Requests;
+using Server.Shared.Domain.Models;
 
 namespace Server.Node.Internal.Services;
 

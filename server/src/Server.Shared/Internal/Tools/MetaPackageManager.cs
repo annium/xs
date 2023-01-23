@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Server.Domain.Enums;
-using Server.Domain.Interfaces;
-using Server.Domain.Models;
+using Server.Shared.Domain.Enums;
+using Server.Shared.Domain.Interfaces;
+using Server.Shared.Domain.Models;
 using Server.Shared.Tools;
 
 namespace Server.Shared.Internal.Tools;

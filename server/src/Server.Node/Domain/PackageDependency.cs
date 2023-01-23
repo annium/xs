@@ -1,5 +1,5 @@
 using System;
-using Server.Domain.Interfaces;
+using Server.Shared.Domain.Interfaces;
 
 namespace Server.Node.Domain;
 

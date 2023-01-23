@@ -1,4 +1,4 @@
-using Server.Domain.Models;
+using Server.Shared.Domain.Models;
 
 namespace Server.Dotnet.Internal;
 

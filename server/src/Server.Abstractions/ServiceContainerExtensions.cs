@@ -5,7 +5,7 @@ using Server.Abstractions.Internal.Db;
 using Server.Abstractions.Internal.Db.Repositories;
 using Server.Abstractions.Internal.Services;
 using Server.Abstractions.Services;
-using Server.Domain.Interfaces;
+using Server.Shared.Domain.Interfaces;
 
 namespace Server.Abstractions;
 

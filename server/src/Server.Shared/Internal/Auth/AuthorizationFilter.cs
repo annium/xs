@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using Server.Domain.Models;
 using Server.Shared.Auth.TokenAccessors;
 using Server.Shared.Controllers;
+using Server.Shared.Domain.Models;
 using Server.Shared.Repositories;
 
 namespace Server.Shared.Internal.Auth;

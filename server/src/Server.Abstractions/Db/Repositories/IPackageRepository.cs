@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Server.Domain.Interfaces;
+using Server.Shared.Domain.Interfaces;
 
 namespace Server.Abstractions.Db.Repositories;
 

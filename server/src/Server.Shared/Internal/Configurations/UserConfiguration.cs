@@ -1,7 +1,7 @@
 using System;
 using Annium.linq2db.Extensions.Configuration;
 using LinqToDB.Mapping;
-using Server.Domain.Models;
+using Server.Shared.Domain.Models;
 
 namespace Server.Shared.Internal.Configurations;
 

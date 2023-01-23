@@ -6,12 +6,12 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
-using Server.Domain.Models;
 using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Services;
 using Server.Dotnet.Views.Requests;
 using Server.Shared.Controllers;
+using Server.Shared.Domain.Models;
 
 namespace Server.Dotnet.Controllers;
 

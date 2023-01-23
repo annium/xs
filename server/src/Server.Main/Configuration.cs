@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Server.Domain.Models;
+using Server.Shared.Domain.Models;
 
 namespace Server.Main;
 

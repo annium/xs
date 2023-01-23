@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using Annium.Data.Models;
 using NodaTime;
-using Server.Domain.Interfaces;
-using Server.Domain.Models;
+using Server.Shared.Domain.Interfaces;
+using Server.Shared.Domain.Models;
 
 namespace Server.Dotnet.Domain;
 

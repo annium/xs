@@ -4,9 +4,9 @@ using System.IO;
 using System.Text.Json.Serialization;
 using NodaTime;
 using Server.Abstractions.Domain;
-using Server.Domain.Models;
 using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
+using Server.Shared.Domain.Models;
 
 namespace Server.Dotnet.Views.Requests;
 

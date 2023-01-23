@@ -1,8 +1,8 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Server.Domain.Models;
 using Server.Main.Internal;
 using Server.Shared.Controllers;
+using Server.Shared.Domain.Models;
 
 namespace Server.Main.Controllers;
 

@@ -19,7 +19,6 @@
         <ProjectReference Include="../../../../backend/base/Logging/src/Annium.Logging.Console/Annium.Logging.Console.csproj" />
         <ProjectReference Include="../../../../backend/base/Logging/src/Annium.Logging.Microsoft/Annium.Logging.Microsoft.csproj" />
         <ProjectReference Include="../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
-        <ProjectReference Include="../Server.Domain/Server.Domain.csproj" />
         <ProjectReference Include="../../../../tools/xdb/src/Xdb.Core/Xdb.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
@@ -32,5 +31,8 @@
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Scripts/**/*.sql" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Domain" />
     </ItemGroup>
 </Project>

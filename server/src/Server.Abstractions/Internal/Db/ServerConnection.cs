@@ -2,7 +2,7 @@ using Annium.linq2db.Extensions.Models;
 using Annium.Logging.Abstractions;
 using LinqToDB;
 using LinqToDB.Data;
-using Server.Domain.Interfaces;
+using Server.Shared.Domain.Interfaces;
 
 namespace Server.Abstractions.Internal.Db;
 

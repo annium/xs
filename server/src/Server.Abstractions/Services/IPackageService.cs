@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Data.Operations;
 using Server.Abstractions.Domain;
-using Server.Domain.Interfaces;
-using Server.Domain.Models;
+using Server.Shared.Domain.Interfaces;
+using Server.Shared.Domain.Models;
 
 namespace Server.Abstractions.Services;
 

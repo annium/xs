@@ -1,8 +1,8 @@
 using System;
 using Server.Abstractions.Services;
-using Server.Domain.Models;
 using Server.Dotnet.Domain;
 using Server.Dotnet.Views.Requests;
+using Server.Shared.Domain.Models;
 
 namespace Server.Dotnet.Internal.Services;
 

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Server.Domain.Models;
 using Server.Main.Services;
+using Server.Shared.Domain.Models;
 using Server.Shared.Repositories;
 
 namespace Server.Main.Internal.Services;

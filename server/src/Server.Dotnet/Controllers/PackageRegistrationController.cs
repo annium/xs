@@ -4,12 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Services;
-using Server.Domain.Models;
 using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Requests;
 using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
+using Server.Shared.Domain.Models;
 using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;

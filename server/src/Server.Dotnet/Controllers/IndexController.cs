@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Server.Domain.Models;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
+using Server.Shared.Domain.Models;
 using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;

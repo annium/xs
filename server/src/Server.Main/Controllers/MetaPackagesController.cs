@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Domain.Enums;
-using Server.Domain.Models;
 using Server.Main.Internal;
 using Server.Main.Services;
 using Server.Main.Views.Responses;
 using Server.Shared.Controllers;
+using Server.Shared.Domain.Enums;
+using Server.Shared.Domain.Models;
 using Server.Shared.Tools;
 
 namespace Server.Main.Controllers;

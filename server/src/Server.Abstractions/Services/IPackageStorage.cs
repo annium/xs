@@ -1,6 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
-using Server.Domain.Interfaces;
+using Server.Shared.Domain.Interfaces;
 
 namespace Server.Abstractions.Services;
 
