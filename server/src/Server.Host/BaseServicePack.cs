@@ -1,19 +1,22 @@
 using System;
+using System.IO;
+using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
+using Annium.linq2db.PostgreSql;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Server.Shared;
+using Server.Main;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Server.Host;
 
-internal class BaseServicePack : ServicePackBase
+internal class ServicePack : ServicePackBase
 {
-    public BaseServicePack()
+    public ServicePack()
     {
         Add<Shared.ServicePack>();
         Add<Abstractions.ServicePack>();
@@ -25,6 +28,9 @@ internal class BaseServicePack : ServicePackBase
     public override void Configure(IServiceContainer container)
     {
         container.AddRuntime(GetType().Assembly);
+        container.AddConfiguration(new WebHostConfiguration());
+        container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
+        container.AddConfiguration<PostgreSqlConfiguration>(x => x.AddYamlFile(Path.Combine("configuration", "db.yml")));
     }
 
     public override void Register(IServiceContainer container, IServiceProvider provider)
@@ -45,7 +51,6 @@ internal class BaseServicePack : ServicePackBase
         container.Collection.AddSwaggerGen(SetupSwagger);
 
         // host helpers
-        container.AddAuthorization();
         container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
         container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
         container.Add<IUrlHelper>(p =>

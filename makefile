@@ -19,7 +19,7 @@ deconfigure:
 
 db-drop:
 	docker-compose rm -vfs db
-	docker volume rm -f id_db
+	docker volume rm -f xs_db
 	docker-compose up -d db
 
 link:
