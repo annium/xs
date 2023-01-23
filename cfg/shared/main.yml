@@ -1,3 +1,3 @@
 servers:
-  dotnet: http://localhost:9902
-  node: http://localhost:9903
+  dotnet: http://docker:9902
+  node: http://docker:9903
