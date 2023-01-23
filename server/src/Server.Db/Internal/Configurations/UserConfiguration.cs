@@ -11,7 +11,7 @@ internal class UserConfiguration : IdEntityConfiguration<User, Guid>
     {
         builder.HasSchemaName(Constants.Schema).HasTableName("users");
         base.Configure(builder);
-        builder.Property(x => x.Name).IsColumn();
+        builder.Property(x => x.Login).IsColumn();
         builder.Property(x => x.PasswordHash).IsColumn();
         builder.Property(x => x.ApiToken).IsColumn();
     }

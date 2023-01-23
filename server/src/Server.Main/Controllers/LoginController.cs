@@ -58,7 +58,7 @@ public class LoginController : ServerController<User>
     {
         var user = GetUser();
 
-        return Ok(new { Id = user.Id, Name = user.Name, ApiToken = user.ApiToken });
+        return Ok(new { Id = user.Id, Name = user.Login, ApiToken = user.ApiToken });
     }
 
     [HttpDelete]

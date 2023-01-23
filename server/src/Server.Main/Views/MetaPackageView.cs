@@ -37,7 +37,7 @@ internal class MetaPackageView
         Published = metaPackage.Published;
         Downloads = metaPackage.Downloads;
         OwnerId = metaPackage.OwnerId;
-        Owner = metaPackage.Owner.Name;
+        Owner = metaPackage.Owner.Login;
         Permissions = metaPackage.Permissions;
     }
 }

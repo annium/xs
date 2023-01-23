@@ -31,14 +31,14 @@ public class UserController : ServerController<User>
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var name = registrationModel.Name;
+        var login = registrationModel.Login;
 
-        if (await _userService.TryFindByNameAsync(name) is not null)
+        if (await _userService.TryFindByNameAsync(login) is not null)
             return Conflict();
 
         var passwordHash = _securityManager.Hash(registrationModel.Password);
 
-        var user = new User(name, passwordHash, Guid.NewGuid());
+        var user = new User(login, passwordHash, Guid.NewGuid());
 
         await _userService.CreateAsync(user);
 
