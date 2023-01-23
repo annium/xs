@@ -15,7 +15,7 @@ public record struct UserMetaPackageAccess
     internal UserMetaPackageAccess(
         Guid userId,
         Guid ownerId,
-        IEnumerable<MetaPackagePermission> permissions
+        IReadOnlyCollection<MetaPackagePermission> permissions
     )
     {
         var category = ownerId == userId ? PermissionCategory.Owner : PermissionCategory.World;
