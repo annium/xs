@@ -12,7 +12,6 @@ internal class ServerConnection<TPackage, TPackageDependency> : DataConnection, 
 {
     public ILogger<ServerConnection<TPackage, TPackageDependency>> Logger { get; }
     public ITable<TPackage> Packages { get; }
-    public ITable<TPackageDependency> PackageDependencies { get; }
 
     public ServerConnection(
         Config<ServerConnection<TPackage, TPackageDependency>> config,
@@ -21,6 +20,5 @@ internal class ServerConnection<TPackage, TPackageDependency> : DataConnection, 
     {
         Logger = logger;
         Packages = this.GetTable<TPackage>();
-        PackageDependencies = this.GetTable<TPackageDependency>();
     }
 }

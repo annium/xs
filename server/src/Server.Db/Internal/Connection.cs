@@ -10,6 +10,7 @@ internal class Connection : DataConnection, ILogSubject<Connection>
 {
     public ILogger<Connection> Logger { get; }
     public ITable<MetaPackage> MetaPackages { get; set; }
+    public ITable<MetaPackagePermission> MetaPackagePermissions { get; set; }
     public ITable<User> Users { get; set; }
     public ITable<UserSession> UserSessions { get; set; }
 
@@ -20,6 +21,7 @@ internal class Connection : DataConnection, ILogSubject<Connection>
     {
         Logger = logger;
         MetaPackages = this.GetTable<MetaPackage>();
+        MetaPackagePermissions = this.GetTable<MetaPackagePermission>();
         Users = this.GetTable<User>();
         UserSessions = this.GetTable<UserSession>();
     }

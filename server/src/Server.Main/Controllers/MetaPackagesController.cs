@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -33,7 +32,6 @@ public class MetaPackagesController : ServerController<User>
     [HttpGet("search")]
     [Authorize(Access.Api | Access.Session)]
     public async Task<IActionResult> FindPackagesAsync(
-        Guid ownerId = default,
         string? type = null,
         string? query = null,
         int page = 1,
@@ -47,7 +45,7 @@ public class MetaPackagesController : ServerController<User>
         if (count < 1)
             return BadRequest("Count must be positive integer");
 
-        var packages = await _metaPackageService.FindAllAsync(GetUser().Id, ownerId, projectType, query, page, count);
+        var packages = await _metaPackageService.FindAllAsync(GetUser().Id, projectType, query, page, count);
 
         return Ok(packages.Select(p => new MetaPackageResponse(p)).ToArray());
     }

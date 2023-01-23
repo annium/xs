@@ -19,7 +19,7 @@ internal class UserService : IUserService
         _repository.CreateAsync(user);
 
     public Task<User?> TryFindByNameAsync(string name) =>
-        _repository.TryFindByNameAsync(name);
+        _repository.TryFindByLoginAsync(name);
 
     public Task UpdateAsync(User user) =>
         _repository.UpdateAsync(user);

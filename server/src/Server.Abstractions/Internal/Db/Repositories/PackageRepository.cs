@@ -1,42 +1,71 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Annium.linq2db.Extensions.Extensions;
+using LinqToDB;
+using LinqToDB.Data;
 using Server.Abstractions.Db.Repositories;
+using Server.Db.Internal.Repositories;
 using Server.Domain.Interfaces;
 
 namespace Server.Abstractions.Internal.Db.Repositories;
 
-internal class PackageRepository<TPackage, TPackageDependency> : IPackageRepository<TPackage, TPackageDependency>
+internal class PackageRepository<TPackage, TPackageDependency> :
+    RepositoryBase<ServerConnection<TPackage, TPackageDependency>>,
+    IPackageRepository<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
+
 {
-    public Task CreateAsync(TPackage package)
+    public PackageRepository(
+        ServerConnection<TPackage, TPackageDependency> db
+    ) : base(db)
     {
-        throw new NotImplementedException();
     }
 
-    public Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
+    public async Task CreateAsync(TPackage package)
     {
-        throw new NotImplementedException();
+        await Db.Packages.InsertAsync(package);
+        await Db.BulkCopyAsync(package.Dependencies);
     }
 
-    public Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
+    public async Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
     {
-        throw new NotImplementedException();
+        var entities = await Db.Packages
+            .Where(x => x.Name == name)
+            .LoadWith(x => x.Dependencies)
+            .OrderByDescending(p => p.Version)
+            .ToArrayAsync();
+
+        return entities;
     }
 
-    public Task<int> CountAllDownloadsAsync(string name)
+    public async Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
     {
-        throw new NotImplementedException();
+        var entity = await Db.Packages
+            .Where(x => x.Name == name && x.Version == version)
+            .LoadWith(x => x.Dependencies)
+            .FirstOrDefaultAsync();
+
+        return entity;
     }
 
-    public Task IncrementDownloadsAsync(Guid id)
+    public async Task<int> CountAllDownloadsAsync(string name)
     {
-        throw new NotImplementedException();
+        return await Db.Packages.Where(x => x.Name == name).SumAsync(p => p.Downloads);
     }
 
-    public Task DeleteByNameVersionAsync(string name, string version)
+    public async Task IncrementDownloadsAsync(Guid id)
     {
-        throw new NotImplementedException();
+        await Db.Packages
+            .Where(x => x.Id == id)
+            .Set(x => x.Downloads, x => x.Downloads + 1)
+            .UpdateAsync();
+    }
+
+    public async Task DeleteByNameVersionAsync(string name, string version)
+    {
+        await Db.Packages.DeleteAsync(x => x.Name == name && x.Version == version);
     }
 }
