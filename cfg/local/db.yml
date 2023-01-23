@@ -1,4 +1,4 @@
-host: localhost
+host: docker
 port: 9991
 database: db
 user: dbuser

@@ -19,7 +19,7 @@ services:
       - './run/server/keys:/app/keys'
   db:
     <<: *base
-    image: registry.annium.com/postgres
+    image: registry.annium.com/postgres:15
     container_name: xs_db
     ports:
       - '9991:5432'
