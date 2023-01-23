@@ -11,7 +11,6 @@ public class ServicePack : ServicePackBase
     public override void Register(IServiceContainer container, IServiceProvider provider)
     {
         // auth
-        container.Add<IUserSessionService, UserSessionService>().Scoped();
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // services

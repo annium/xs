@@ -12,7 +12,6 @@ internal class Connection : DataConnection, ILogSubject<Connection>
     public ITable<MetaPackage> MetaPackages { get; set; }
     public ITable<MetaPackagePermission> MetaPackagePermissions { get; set; }
     public ITable<User> Users { get; set; }
-    public ITable<UserSession> UserSessions { get; set; }
 
     public Connection(
         Config<Connection> config,
@@ -23,6 +22,5 @@ internal class Connection : DataConnection, ILogSubject<Connection>
         MetaPackages = this.GetTable<MetaPackage>();
         MetaPackagePermissions = this.GetTable<MetaPackagePermission>();
         Users = this.GetTable<User>();
-        UserSessions = this.GetTable<UserSession>();
     }
 }
