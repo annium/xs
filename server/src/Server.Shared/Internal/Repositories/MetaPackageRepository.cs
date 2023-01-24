@@ -47,7 +47,10 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
             request = request.Where(x => x.Type == type);
 
         if (!string.IsNullOrWhiteSpace(query))
-            request = request.Where(x => x.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase));
+        {
+            var upperQuery = query.ToUpperInvariant();
+            request = request.Where(x => x.Name.ToUpper().Contains(upperQuery));
+        }
 
         var entities = await request
             .LoadWith(x => x.Owner)
