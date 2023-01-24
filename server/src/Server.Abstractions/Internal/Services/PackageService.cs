@@ -56,14 +56,14 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
         return Result.Status(PackageStatus.Ok, packages);
     }
 
-    public Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
+    public async Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
     {
-        throw new NotImplementedException();
+        return await _packageRepository.FindAllByNameAsync(name);
     }
 
-    public Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
+    public async Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
     {
-        throw new NotImplementedException();
+        return await _packageRepository.TryFindByNameVersionAsync(name, version);
     }
 
     public async Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPackageRequest request)
