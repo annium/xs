@@ -17,6 +17,9 @@ deconfigure:
 	$(call clean,/configuration/ /keys/)
 
 
+run:
+	cd server/src/Server.Host && dotnet run
+
 db-drop:
 	docker-compose rm -vfs db
 	docker volume rm -f xs_db
