@@ -16,7 +16,7 @@ services:
     container_name: xs_server
     volumes:
       - './run/server/configuration:/app/configuration'
-      - './run/server/keys:/app/keys'
+      - './run/server/data:/app/data'
   db:
     <<: *base
     image: registry.annium.com/postgres:15
