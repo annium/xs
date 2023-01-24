@@ -2,7 +2,6 @@ namespace Server.Client.Models;
 
 public class MetaPackagePermission
 {
-    public PermissionCategory Category { get; set; }
-
-    public Permission Permission { get; set; }
+    public PermissionCategory Category { get; init; }
+    public Permission Permission { get; init; }
 }

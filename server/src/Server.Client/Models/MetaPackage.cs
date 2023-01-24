@@ -5,23 +5,14 @@ namespace Server.Client.Models;
 
 public class MetaPackage
 {
-    public Guid Id { get; set; }
-
-    public string Type { get; set; } = string.Empty;
-
-    public string Name { get; set; } = string.Empty;
-
-    public string Version { get; set; } = string.Empty;
-
-    public string Description { get; set; } = string.Empty;
-
-    public Instant Published { get; set; }
-
-    public int Downloads { get; set; }
-
-    public Guid OwnerId { get; set; }
-
-    public string Owner { get; set; } = string.Empty;
-
-    public MetaPackagePermission[] Permissions { get; set; } = Array.Empty<MetaPackagePermission>();
+    public Guid Id { get; init; }
+    public string Type { get; init; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
+    public string Version { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+    public Instant Published { get; init; }
+    public int Downloads { get; init; }
+    public Guid OwnerId { get; init; }
+    public string Owner { get; init; } = string.Empty;
+    public MetaPackagePermission[] Permissions { get; init; } = Array.Empty<MetaPackagePermission>();
 }

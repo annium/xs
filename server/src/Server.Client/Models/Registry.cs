@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Server.Client.Models;
 
-public class Registry
+public sealed record Registry
 {
-    public Dictionary<string, Uri> Servers { get; set; } = new();
+    public Dictionary<string, Uri> Servers { get; init; } = new();
 }
