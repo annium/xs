@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Services;
@@ -31,7 +30,7 @@ public class PackageRegistrationController : ServerController<User>
     }
 
     [HttpGet("v3/registration/{name}/index.json")]
-    public async Task<IActionResult> GetRegistrationIndexAsync(string name, CancellationToken ct)
+    public async Task<IActionResult> GetRegistrationIndexAsync(string name)
     {
         var packages = await _packageService.FindAllByNameAsync(name);
 
@@ -42,7 +41,7 @@ public class PackageRegistrationController : ServerController<User>
     }
 
     [HttpGet("v3/registration/{name}/page.json")]
-    public async Task<IActionResult> GetRegistrationPageAsync(string name, CancellationToken ct)
+    public async Task<IActionResult> GetRegistrationPageAsync(string name)
     {
         var packages = await _packageService.FindAllByNameAsync(name);
 
@@ -53,7 +52,7 @@ public class PackageRegistrationController : ServerController<User>
     }
 
     [HttpGet("v3/registration/{name}/{version}/leaf.json")]
-    public async Task<IActionResult> GetRegistrationLeafAsync(string name, string version, CancellationToken ct)
+    public async Task<IActionResult> GetRegistrationLeafAsync(string name, string version)
     {
         var package = await _packageService.TryFindByNameVersionAsync(name, version);
 
@@ -64,7 +63,7 @@ public class PackageRegistrationController : ServerController<User>
     }
 
     [HttpGet("v3/registration/{name}/{version}/catalog-entry.json")]
-    public async Task<IActionResult> GetCatalogEntryAsync(string name, string version, CancellationToken ct)
+    public async Task<IActionResult> GetCatalogEntryAsync(string name, string version)
     {
         var package = await _packageService.TryFindByNameVersionAsync(name, version);
 

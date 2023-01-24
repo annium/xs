@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +31,7 @@ public class PackageConsumptionController : ServerController<User>
     }
 
     [HttpGet("v3/package/{name}/index.json")]
-    public async Task<IActionResult> GetVersionsAsync(string name, CancellationToken ct)
+    public async Task<IActionResult> GetVersionsAsync(string name)
     {
         name = HttpUtility.UrlDecode(name);
         var versions = await _packageService.FindAllByNameAsync(name);
@@ -44,7 +43,7 @@ public class PackageConsumptionController : ServerController<User>
     }
 
     [HttpGet("v3/package/{name}/{version}/{name2}.{version2}.nupkg")]
-    public async Task<IActionResult> DownloadPackageAsync(string name, string version, CancellationToken ct)
+    public async Task<IActionResult> DownloadPackageAsync(string name, string version)
     {
         name = HttpUtility.UrlDecode(name);
         var result = await _packageService.ProcessDownloadAsync(null, name, version, true);
@@ -64,7 +63,7 @@ public class PackageConsumptionController : ServerController<User>
     }
 
     [HttpGet("v3/package/{name}/{version}/{name2}.nuspec")]
-    public async Task<IActionResult> DownloadNuspecAsync(string name, string version, CancellationToken ct)
+    public async Task<IActionResult> DownloadNuspecAsync(string name, string version)
     {
         name = HttpUtility.UrlDecode(name);
         var result = await _packageService.ProcessDownloadAsync(null, name, version, false);
