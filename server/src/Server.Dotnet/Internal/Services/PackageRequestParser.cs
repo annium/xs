@@ -1,4 +1,3 @@
-using System;
 using Server.Abstractions.Services;
 using Server.Dotnet.Domain;
 using Server.Dotnet.Views.Requests;
@@ -11,7 +10,7 @@ internal class PackageRequestParser : IPackageRequestParser<Package, PackageDepe
     public Package Parse(MetaPackage metaPackage, PackageRequest request)
     {
         return new Package(
-            Guid.NewGuid(), 
+            request.Id, 
             metaPackage,
             request.Name,
             request.Version,
