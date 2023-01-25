@@ -3,4 +3,5 @@
 /obj/
 
 # packages
+data/
 *.nupkg
