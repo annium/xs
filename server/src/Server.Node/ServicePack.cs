@@ -26,7 +26,7 @@ public class ServicePack : ServicePackBase
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsSelf().Singleton();
 
         // packages
-        container.AddPackageTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();
+        container.AddTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();
     }
 
     public override void Setup(IServiceProvider provider)

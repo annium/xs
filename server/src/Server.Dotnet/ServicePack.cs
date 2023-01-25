@@ -28,7 +28,7 @@ public class ServicePack : ServicePackBase
         container.Add(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // packages
-        container.AddPackageTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();
+        container.AddTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>();
         container.Add<ISymbolStorage, SymbolStorage>().Singleton();
     }
 

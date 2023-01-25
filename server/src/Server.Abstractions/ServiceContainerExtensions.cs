@@ -11,7 +11,7 @@ namespace Server.Abstractions;
 
 public static class ServiceContainerExtensions
 {
-    public static IServiceContainer AddPackageTools<TPackage, TPackageDependency, TPackageRequest, TPackageRequestParser, TPackageStorage>(this IServiceContainer container)
+    public static IServiceContainer AddTools<TPackage, TPackageDependency, TPackageRequest, TPackageRequestParser, TPackageStorage>(this IServiceContainer container)
         where TPackage : class, IPackage<TPackageDependency>
         where TPackageDependency : class, IPackageDependency
         where TPackageRequest : class, IPackageRequest
