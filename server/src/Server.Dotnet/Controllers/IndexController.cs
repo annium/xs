@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
+using Server.Abstractions.Tools;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;
-using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
@@ -13,13 +14,13 @@ namespace Server.Dotnet.Controllers;
 [Route("[area]")]
 public class IndexController : ServerController<User>
 {
-    private readonly IUrlHelper _urlHelper;
+    private readonly IUrlTool _urlTool;
 
     public IndexController(
-        IUrlHelper urlHelper
+        IIndex<ProjectType, IUrlTool> urlTools
     )
     {
-        _urlHelper = urlHelper;
+        _urlTool = urlTools[Constants.ProjectType];
     }
 
     [HttpGet("v3/index.json")]
@@ -39,6 +40,6 @@ public class IndexController : ServerController<User>
 
         return Ok(new { version = "3.0.0", resources });
 
-        Uri Uri(string relative) => _urlHelper.AbsoluteUri(relative);
+        Uri Uri(string relative) => _urlTool.AbsoluteUrl(relative);
     }
 }

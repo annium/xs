@@ -2,9 +2,11 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
+using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Domain;
 using Server.Abstractions.Services;
+using Server.Abstractions.Tools;
 using Server.Node.Domain;
 using Server.Node.Internal;
 using Server.Node.Services;
@@ -21,20 +23,18 @@ namespace Server.Node.Controllers;
 public class PackageConsumptionController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
-
     private readonly IPackageStorage _packageStorage;
-
-    private readonly IUrlHelper _url;
+    private readonly IUrlTool _urlTool;
 
     public PackageConsumptionController(
         IPackageService<Package, PackageDependency, PackageRequest> packageService,
         IPackageStorage packageStorage,
-        IUrlHelper url
+        IIndex<ProjectType, IUrlTool> urlTools
     )
     {
         _packageService = packageService;
         _packageStorage = packageStorage;
-        _url = url;
+        _urlTool = urlTools[Constants.ProjectType];
     }
 
     [HttpGet("{name}")]
@@ -48,7 +48,7 @@ public class PackageConsumptionController : ServerController<User>
         {
             PackageStatus.NotFound  => NotFound(),
             PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
-            PackageStatus.Ok        => Ok(new PackagesResponse(result.Data, _url)),
+            PackageStatus.Ok        => Ok(new PackagesResponse(result.Data, _urlTool)),
             _                       => NotFound()
         };
     }

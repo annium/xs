@@ -4,12 +4,10 @@ using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
 using Annium.linq2db.PostgreSql;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Server.Main;
+using Server.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Server.Host;
@@ -53,13 +51,6 @@ internal class ServicePack : ServicePackBase
         // host helpers
         container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
         container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
-        container.Add<IUrlHelper>(p =>
-        {
-            var actionContext = p.GetRequiredService<IActionContextAccessor>().ActionContext ??
-                throw new InvalidOperationException($"Resolved null {nameof(ActionContext)}");
-
-            return p.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(actionContext);
-        }).AsSelf().Scoped();
     }
 
     private void SetupSwagger(SwaggerGenOptions options)

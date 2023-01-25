@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Services;
+using Server.Abstractions.Tools;
 using Server.Dotnet.Domain;
 using Server.Dotnet.Internal;
 using Server.Dotnet.Views.Requests;
 using Server.Dotnet.Views.Responses;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;
-using Server.Shared.Extensions;
 
 namespace Server.Dotnet.Controllers;
 
@@ -18,15 +19,15 @@ namespace Server.Dotnet.Controllers;
 public class PackageRegistrationController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
-    private readonly IUrlHelper _url;
+    private readonly IUrlTool _urlTool;
 
     public PackageRegistrationController(
         IPackageService<Package, PackageDependency, PackageRequest> packageService,
-        IUrlHelper url
+        IIndex<ProjectType, IUrlTool> urlTools
     )
     {
         _packageService = packageService;
-        _url = url;
+        _urlTool = urlTools[Constants.ProjectType];
     }
 
     [HttpGet("v3/registration/{name}/index.json")]
@@ -80,7 +81,7 @@ public class PackageRegistrationController : ServerController<User>
         var lower = packages.Min(e => e.Version)!;
         var upper = packages.Max(e => e.Version)!;
 
-        return new RegistrationPageResponse(_url.AbsoluteUri($"v3/registration/{id}/page.json"), leafs, lower, upper);
+        return new RegistrationPageResponse(_urlTool.AbsoluteUrl($"v3/registration/{id}/page.json"), leafs, lower, upper);
     }
 
     private RegistrationLeafResponse GetRegistrationLeaf(Package package)
@@ -89,9 +90,9 @@ public class PackageRegistrationController : ServerController<User>
         var version = package.Version;
 
         return new RegistrationLeafResponse(
-            _url.AbsoluteUri($"v3/registration/{id}/{version}/leaf.json"),
+            _urlTool.AbsoluteUrl($"v3/registration/{id}/{version}/leaf.json"),
             GetCatalogEntry(package),
-            _url.AbsoluteUri($"v3/package/{id}/{version}/{id}.{version}.nupkg")
+            _urlTool.AbsoluteUrl($"v3/package/{id}/{version}/{id}.{version}.nupkg")
         );
     }
 
@@ -101,6 +102,6 @@ public class PackageRegistrationController : ServerController<User>
         var name = package.Name;
         var version = package.Version;
 
-        return new CatalogEntryResponse(_url.AbsoluteUri($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
+        return new CatalogEntryResponse(_urlTool.AbsoluteUrl($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
     }
 }
