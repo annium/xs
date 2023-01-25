@@ -18,7 +18,7 @@ deconfigure:
 
 
 run:
-	cd server/src/Server.Host && dotnet run
+	cd server/src/Server.Host && ./bin/Debug/net7.0/Server.Host
 
 db-drop:
 	docker-compose rm -vfs db
