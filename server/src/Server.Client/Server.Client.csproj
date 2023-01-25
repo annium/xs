@@ -12,6 +12,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
+        <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
     </ItemGroup>
 </Project>

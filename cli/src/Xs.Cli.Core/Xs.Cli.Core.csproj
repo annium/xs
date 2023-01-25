@@ -12,16 +12,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.CommandLine/Annium.Configuration.CommandLine.csproj" />
-        <ProjectReference Include="../../../../backend/base/Configuration/src/Annium.Configuration.Yaml/Annium.Configuration.Yaml.csproj" />
-        <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.Arguments/Annium.Extensions.Arguments.csproj" />
-        <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.CommandLine/Annium.Extensions.CommandLine.csproj" />
-        <ProjectReference Include="../../../../backend/base/Extensions/src/Annium.Extensions.Shell/Annium.Extensions.Shell.csproj" />
-        <ProjectReference Include="../../../../backend/base/Net/src/Annium.Net.Http/Annium.Net.Http.csproj" />
-        <ProjectReference Include="../../../../backend/base/Serialization/src/Annium.Serialization.Json/Annium.Serialization.Json.csproj" />
-        <ProjectReference Include="../../../../backend/base/Serialization/src/Annium.Serialization.Yaml/Annium.Serialization.Yaml.csproj" />
-    </ItemGroup>
-    <ItemGroup>
+        <PackageReference Include="Annium.Configuration.CommandLine" Version="0.1.0" />
+        <PackageReference Include="Annium.Configuration.Yaml" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.CommandLine" Version="0.1.0" />
+        <PackageReference Include="Annium.Extensions.Shell" Version="0.1.0" />
+        <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
+        <PackageReference Include="Annium.Serialization.Json" Version="0.1.0" />
+        <PackageReference Include="Annium.Serialization.Yaml" Version="0.1.0" />
         <PackageReference Include="Scriban" Version="5.5.1" />
     </ItemGroup>
 </Project>
