@@ -19,7 +19,6 @@ app.UseSwaggerUI(options =>
 app.UseExceptionMiddleware();
 app.UseRouting();
 app.UseCorsDefaults();
-app.UseRequestLocalization("en", "ru");
 app.MapControllers();
 
 await app.RunAsync();
