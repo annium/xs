@@ -20,6 +20,11 @@ deconfigure:
 run:
 	cd server/src/Server.Host && ./bin/Debug/net7.0/Server.Host
 
+publish: publish-server
+
+publish-server:
+	$(call publish,server,.,server/src/Server.Host/app.dockerfile)
+
 db-drop:
 	docker-compose rm -vfs db
 	docker volume rm -f xs_db
