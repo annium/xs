@@ -22,21 +22,21 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
     where TPackageRequest : class, IPackageRequest
 {
     private readonly IMetaPackageRepository _metaPackageRepository;
-    private readonly IMetaPackageManager _metaPackageManager;
+    private readonly IMetaPackageTool _metaPackageTool;
     private readonly IPackageRepository<TPackage, TPackageDependency> _packageRepository;
     private readonly IPackageStorage<TPackage, TPackageDependency> _packageStorage;
     private readonly IPackageRequestParser<TPackage, TPackageDependency, TPackageRequest> _packageRequestParser;
 
     public PackageService(
         IMetaPackageRepository metaPackageRepository,
-        IMetaPackageManager metaPackageManager,
+        IMetaPackageTool metaPackageTool,
         IPackageRepository<TPackage, TPackageDependency> packageRepository,
         IPackageStorage<TPackage, TPackageDependency> packageStorage,
         IPackageRequestParser<TPackage, TPackageDependency, TPackageRequest> packageRequestParser
     )
     {
         _metaPackageRepository = metaPackageRepository;
-        _metaPackageManager = metaPackageManager;
+        _metaPackageTool = metaPackageTool;
         _packageRepository = packageRepository;
         _packageStorage = packageStorage;
         _packageRequestParser = packageRequestParser;
@@ -78,10 +78,10 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
 
         if (metaPackage is null)
         {
-            metaPackage = _metaPackageManager.Generate(user, request.ProjectType, request);
+            metaPackage = _metaPackageTool.Generate(user, request.ProjectType, request);
             await _metaPackageRepository.CreateAsync(metaPackage);
 
-            var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
+            var access = _metaPackageTool.GetAccess(metaPackage).ForUser(user);
 
             return await PublishNewPackageAsync(executor, metaPackage, access, request);
         }
@@ -90,7 +90,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
             // check version presence
             var republished = await _packageRepository.TryFindByNameVersionAsync(name, version);
 
-            var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
+            var access = _metaPackageTool.GetAccess(metaPackage).ForUser(user);
 
             // if present - republish package version, else - publish new package version
             return republished is null
@@ -111,7 +111,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
         if (metaPackage is null)
             return Result.Status(PackageStatus.NotFound);
 
-        var access = _metaPackageManager.GetAccess(metaPackage).ForUser(user);
+        var access = _metaPackageTool.GetAccess(metaPackage).ForUser(user);
         if (!access.Has(Permission.Unpublish))
             return Result.Status(PackageStatus.Forbidden)
                 .Error("You need unpublish permission to unpublish this package.");

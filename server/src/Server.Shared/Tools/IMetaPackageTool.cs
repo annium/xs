@@ -3,7 +3,7 @@ using Server.Shared.Domain.Models;
 
 namespace Server.Shared.Tools;
 
-public interface IMetaPackageManager
+public interface IMetaPackageTool
 {
     MetaPackage Generate(User user, ProjectType type, IPackageInfo package);
     MetaPackageAccess GetAccess(MetaPackage metaPackage);

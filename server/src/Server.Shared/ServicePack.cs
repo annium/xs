@@ -21,7 +21,7 @@ public class ServicePack : ServicePackBase
         container.Add<AuthorizationFilter>().AsSelf().Singleton();
 
         // tools
-        container.Add<IMetaPackageManager, MetaPackageManager>().Scoped();
+        container.Add<IMetaPackageTool, MetaPackageTool>().Singleton();
 
         // repositories
         container.AddAll(GetType().Assembly)

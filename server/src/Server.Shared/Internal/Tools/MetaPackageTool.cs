@@ -6,7 +6,7 @@ using Server.Shared.Tools;
 
 namespace Server.Shared.Internal.Tools;
 
-internal class MetaPackageManager : IMetaPackageManager
+internal class MetaPackageTool : IMetaPackageTool
 {
     public MetaPackage Generate(User user, ProjectType type, IPackageInfo package)
     {

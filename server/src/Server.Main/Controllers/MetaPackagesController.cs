@@ -19,15 +19,15 @@ namespace Server.Main.Controllers;
 public class MetaPackagesController : ServerController<User>
 {
     private readonly IMetaPackageService _metaPackageService;
-    private readonly IMetaPackageManager _metaPackageManager;
+    private readonly IMetaPackageTool _metaPackageTool;
 
     public MetaPackagesController(
         IMetaPackageService metaPackageService,
-        IMetaPackageManager metaPackageManager
+        IMetaPackageTool metaPackageTool
     )
     {
         _metaPackageService = metaPackageService;
-        _metaPackageManager = metaPackageManager;
+        _metaPackageTool = metaPackageTool;
     }
 
     [HttpGet("search")]
@@ -61,7 +61,7 @@ public class MetaPackagesController : ServerController<User>
         if (package is null)
             return NotFound();
 
-        var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
+        var access = _metaPackageTool.GetAccess(package).ForUser(GetUser());
         return access.Has(Permission.Read)
             ? Ok(new MetaPackageResponse(package))
             : new ObjectResult("You need read permission to get this package.") { StatusCode = (int) HttpStatusCode.Forbidden };
@@ -77,7 +77,7 @@ public class MetaPackagesController : ServerController<User>
         if (package is null)
             return NotFound();
 
-        var access = _metaPackageManager.GetAccess(package).ForUser(GetUser());
+        var access = _metaPackageTool.GetAccess(package).ForUser(GetUser());
         if (!access.IsOwner)
             return new ObjectResult("You need to be owner to update package permissions.") { StatusCode = (int) HttpStatusCode.Forbidden };
 
