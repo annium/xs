@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace {{name}}.Controllers
+namespace {{name}}.Controllers;
 
 [Route("/")]
 public class IndexController : ControllerBase

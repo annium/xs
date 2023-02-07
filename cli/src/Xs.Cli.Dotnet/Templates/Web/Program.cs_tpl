@@ -13,6 +13,6 @@ app.UseExceptionMiddleware();
 app.UseRouting();
 app.UseCorsDefaults();
 app.UseRequestLocalization("en", "ru");
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+app.MapControllers();
 
 await app.RunAsync();

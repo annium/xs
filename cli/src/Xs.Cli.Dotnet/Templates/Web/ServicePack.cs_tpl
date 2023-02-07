@@ -12,7 +12,7 @@ internal class ServicePack : ServicePackBase
         container.AddMapper();
     }
 
-    public override void Register(IServiceContainer` container, IServiceProvider provider)
+    public override void Register(IServiceContainer container, IServiceProvider provider)
     {
         container.AddTime().WithRealTime().SetDefault();
         container.AddSerializers()
@@ -28,7 +28,7 @@ internal class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        container.UseLogging(route =>
+        provider.UseLogging(route =>
             route.UseConsole()
         );
     }
