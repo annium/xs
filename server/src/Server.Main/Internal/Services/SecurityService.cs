@@ -1,7 +1,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using Annium.Core.Primitives;
+using Annium;
 using Server.Main.Services;
 
 namespace Server.Main.Internal.Services;

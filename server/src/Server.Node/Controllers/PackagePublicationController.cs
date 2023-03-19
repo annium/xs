@@ -1,6 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
-using Annium.Core.Primitives;
+using Annium;
 using Microsoft.AspNetCore.Mvc;
 using Server.Abstractions.Domain;
 using Server.Abstractions.Services;

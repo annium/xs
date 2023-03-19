@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Core.Primitives.Collections.Generic;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
+using Annium.Linq;
 using LibGit2Sharp;
 using ConsoleExt = Annium.Extensions.CommandLine.Cli;
 
