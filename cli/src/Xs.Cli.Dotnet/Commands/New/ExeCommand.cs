@@ -8,10 +8,10 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration>, ILogSubject<ExeCommand>
+public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<ExeCommand>
 {
-    public override string Id => "exe";
-    public override string Description => "Create new exe project.";
+    public static string Id => "exe";
+    public static string Description => "Create new exe project.";
     public ILogger<ExeCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 

@@ -1,10 +1,12 @@
+using Annium.Extensions.Arguments;
+
 namespace Xs.Commands.Audit;
 
-internal class Group : Annium.Extensions.Arguments.Group
+internal class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
 {
-    public override string Id => "audit";
+    public static string Id => "audit";
 
-    public override string Description => "Audit projects.";
+    public static string Description => "Audit projects.";
 
     public Group()
     {

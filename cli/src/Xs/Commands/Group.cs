@@ -1,9 +1,11 @@
+using Annium.Extensions.Arguments;
+
 namespace Xs.Commands;
 
-internal class Group : Annium.Extensions.Arguments.Group
+internal class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
 {
-    public override string Id => "xs";
-    public override string Description => "xs toolkit";
+    public static string Id => "xs";
+    public static string Description => "xs toolkit";
 
     public Group()
     {

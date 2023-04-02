@@ -8,10 +8,10 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ILogSubject<WebAssemblyLibCommand>
+public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebAssemblyLibCommand>
 {
-    public override string Id => "wasm.lib";
-    public override string Description => "Create new WebAssembly Library project.";
+    public static string Id => "wasm.lib";
+    public static string Description => "Create new WebAssembly Library project.";
     public ILogger<WebAssemblyLibCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 

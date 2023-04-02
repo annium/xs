@@ -12,10 +12,10 @@ using ConsoleExt = Annium.Extensions.CommandLine.Cli;
 
 namespace Xs.Commands.Sync;
 
-internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>
+internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDescriptor
 {
-    public override string Id => "";
-    public override string Description => "Execute repositories sync";
+    public static string Id => "";
+    public static string Description => "Execute repositories sync";
     private static readonly IReadOnlyCollection<FileStatus> Statuses = Enum.GetValues<FileStatus>().Except(FileStatus.Unaltered.Yield()).ToArray();
     private static readonly IReadOnlyDictionary<FileStatus, string> StatusLabels;
     private string Indent => new(' ', _indentation);

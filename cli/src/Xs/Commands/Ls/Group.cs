@@ -1,9 +1,11 @@
+using Annium.Extensions.Arguments;
+
 namespace Xs.Commands.Ls;
 
-internal class Group : Annium.Extensions.Arguments.Group
+internal class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
 {
-    public override string Id => "ls";
-    public override string Description => "List projects and their dependencies.";
+    public static string Id => "ls";
+    public static string Description => "List projects and their dependencies.";
 
     public Group()
     {

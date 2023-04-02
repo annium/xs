@@ -12,10 +12,10 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Ls;
 
-internal class ListOutsCommand : Command<ListOutsCommandConfiguration, DiscoverConfiguration>
+internal class ListOutsCommand : Command<ListOutsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
-    public override string Id => "outs";
-    public override string Description => "List projects and their project dependents.";
+    public static string Id => "outs";
+    public static string Description => "List projects and their project dependents.";
     private readonly DiscoverProjectsTask _discoverTask;
 
     public ListOutsCommand(

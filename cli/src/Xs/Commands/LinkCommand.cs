@@ -10,10 +10,10 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfiguration>, ILogSubject<LinkCommand>
+internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LinkCommand>
 {
-    public override string Id => "link";
-    public override string Description => "Link project <-> package dependencies.";
+    public static string Id => "link";
+    public static string Description => "Link project <-> package dependencies.";
     public ILogger<LinkCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 

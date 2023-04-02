@@ -9,10 +9,10 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration>, ILogSubject<LibCommand>
+public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibCommand>
 {
-    public override string Id => "lib";
-    public override string Description => "Create new library project.";
+    public static string Id => "lib";
+    public static string Description => "Create new library project.";
     public ILogger<LibCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 

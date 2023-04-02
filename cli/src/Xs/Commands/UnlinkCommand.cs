@@ -9,10 +9,10 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class UnlinkCommand : Command<UnlinkCommandConfiguration, DiscoverConfiguration>, ILogSubject<UnlinkCommand>
+internal class UnlinkCommand : Command<UnlinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UnlinkCommand>
 {
-    public override string Id => "unlink";
-    public override string Description => "Unlink project <-> package dependencies.";
+    public static string Id => "unlink";
+    public static string Description => "Unlink project <-> package dependencies.";
     public ILogger<UnlinkCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 

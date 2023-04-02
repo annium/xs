@@ -8,10 +8,10 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>, ILogSubject<LibTestsCommand>
+public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibTestsCommand>
 {
-    public override string Id => "lib.tests";
-    public override string Description => "Create new library tests project.";
+    public static string Id => "lib.tests";
+    public static string Description => "Create new library tests project.";
     public ILogger<LibTestsCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 

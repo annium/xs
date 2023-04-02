@@ -1,9 +1,11 @@
+using Annium.Extensions.Arguments;
+
 namespace Xs.Cli.Node.Commands;
 
-public class Group : Annium.Extensions.Arguments.Group
+public class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
 {
-    public override string Id { get; } = Constants.ProjectType.ToString();
-    public override string Description { get; } = $"{Constants.ProjectType} specific commands.";
+    public static string Id { get; } = Constants.ProjectType.ToString();
+    public static string Description { get; } = $"{Constants.ProjectType} specific commands.";
 
     public Group()
     {

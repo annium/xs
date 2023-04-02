@@ -1,11 +1,13 @@
+using Annium.Extensions.Arguments;
+
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class Group : Annium.Extensions.Arguments.Group
+public class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
 {
     internal const string TemplatesDir = "Templates";
     internal const string ProjectTemplate = "project_tpl";
-    public override string Id => "new";
-    public override string Description { get; } = $"Create new {Constants.ProjectType} project.";
+    public static string Id => "new";
+    public static string Description { get; } = $"Create new {Constants.ProjectType} project.";
 
     public Group()
     {

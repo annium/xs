@@ -8,10 +8,10 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>, ILogSubject<WebTestsCommand>
+public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebTestsCommand>
 {
-    public override string Id => "web.tests";
-    public override string Description => "Create new web tests project.";
+    public static string Id => "web.tests";
+    public static string Description => "Create new web tests project.";
     public ILogger<WebTestsCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 

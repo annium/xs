@@ -18,10 +18,10 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ILogSubject<UnpublishCommand>
+internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UnpublishCommand>
 {
-    public override string Id => "unpublish";
-    public override string Description => "Unpublish package from registry.";
+    public static string Id => "unpublish";
+    public static string Description => "Unpublish package from registry.";
     public ILogger<UnpublishCommand> Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly DiscoverProjectsTask _discoverTask;

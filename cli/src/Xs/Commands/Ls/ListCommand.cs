@@ -12,10 +12,10 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Ls;
 
-internal class ListCommand : Command<ListCommandConfiguration, DiscoverConfiguration>
+internal class ListCommand : Command<ListCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
-    public override string Id => "";
-    public override string Description => "List projects.";
+    public static string Id => "";
+    public static string Description => "List projects.";
     private readonly DiscoverProjectsTask _discoverTask;
 
     public ListCommand(

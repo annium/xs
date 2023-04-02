@@ -14,10 +14,10 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ILogSubject<PublishCommand>
+internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<PublishCommand>
 {
-    public override string Id => "publish";
-    public override string Description => "Publish packages to registry.";
+    public static string Id => "publish";
+    public static string Description => "Publish packages to registry.";
     public ILogger<PublishCommand> Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly DiscoverProjectsTask _discoverTask;

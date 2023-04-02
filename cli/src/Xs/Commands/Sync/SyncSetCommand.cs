@@ -6,10 +6,10 @@ using Annium.Extensions.Arguments;
 
 namespace Xs.Commands.Sync;
 
-internal class SyncSetCommand : AsyncCommand<SyncAddCommandConfiguration>
+internal class SyncSetCommand : AsyncCommand<SyncAddCommandConfiguration>, ICommandDescriptor
 {
-    public override string Id => "set";
-    public override string Description => "Setup repository in sync config";
+    public static string Id => "set";
+    public static string Description => "Setup repository in sync config";
     private readonly SyncConfigurator _configurator;
 
     public SyncSetCommand(

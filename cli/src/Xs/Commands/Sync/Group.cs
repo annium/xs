@@ -1,9 +1,11 @@
+using Annium.Extensions.Arguments;
+
 namespace Xs.Commands.Sync;
 
-internal class Group : Annium.Extensions.Arguments.Group
+internal class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
 {
-    public override string Id => "sync";
-    public override string Description => "Sync repositories.";
+    public static string Id => "sync";
+    public static string Description => "Sync repositories.";
 
     public Group()
     {

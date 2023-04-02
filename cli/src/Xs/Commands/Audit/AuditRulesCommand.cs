@@ -7,10 +7,10 @@ using Xs.Cli.Core.Audit;
 
 namespace Xs.Commands.Audit;
 
-internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>
+internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>, ICommandDescriptor
 {
-    public override string Id => "rules";
-    public override string Description => "List audit rules.";
+    public static string Id => "rules";
+    public static string Description => "List audit rules.";
     private readonly IAuditRule[] _rules;
 
     public AuditRulesCommand(

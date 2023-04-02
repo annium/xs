@@ -1,9 +1,11 @@
+using Annium.Extensions.Arguments;
+
 namespace Xs.Commands.Remote;
 
-internal class Group : Annium.Extensions.Arguments.Group
+internal class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
 {
-    public override string Id => "remote";
-    public override string Description => "Manage tracked registries.";
+    public static string Id => "remote";
+    public static string Description => "Manage tracked registries.";
 
     public Group()
     {

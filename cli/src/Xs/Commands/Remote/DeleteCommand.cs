@@ -9,10 +9,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class DeleteCommand : Command<DiscoverConfiguration>
+internal class DeleteCommand : Command<DiscoverConfiguration>, ICommandDescriptor
 {
-    public override string Id => "delete";
-    public override string Description => "Stop tracking registry.";
+    public static string Id => "delete";
+    public static string Description => "Stop tracking registry.";
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IConfigurationManager _configurationManager;
 

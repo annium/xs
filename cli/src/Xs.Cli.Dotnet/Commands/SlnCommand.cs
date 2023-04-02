@@ -14,12 +14,12 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands;
 
-public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfiguration>, ILogSubject<SlnCommand>
+public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<SlnCommand>
 {
     private const string SlnExtension = ".sln";
 
-    public override string Id => "sln";
-    public override string Description => "Create sln file from project.";
+    public static string Id => "sln";
+    public static string Description => "Create sln file from project.";
     public ILogger<SlnCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IShell _shell;

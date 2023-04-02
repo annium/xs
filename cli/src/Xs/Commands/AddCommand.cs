@@ -16,10 +16,10 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>, ILogSubject<AddCommand>
+internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AddCommand>
 {
-    public override string Id => "add";
-    public override string Description => "Add dependency to projects.";
+    public static string Id => "add";
+    public static string Description => "Add dependency to projects.";
     public ILogger<AddCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IEnumerable<IDependencyManager> _dependencyManagers;

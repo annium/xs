@@ -5,10 +5,10 @@ using Annium.Extensions.Arguments;
 
 namespace Xs.Commands.Sync;
 
-internal class SyncListCommand : AsyncCommand
+internal class SyncListCommand : AsyncCommand, ICommandDescriptor
 {
-    public override string Id => "list";
-    public override string Description => "List repositories for sync";
+    public static string Id => "list";
+    public static string Description => "List repositories for sync";
     private readonly SyncConfigurator _configurator;
 
     public SyncListCommand(

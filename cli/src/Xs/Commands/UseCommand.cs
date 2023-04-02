@@ -10,10 +10,10 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfiguration>, ILogSubject<UseCommand>
+internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UseCommand>
 {
-    public override string Id => "use";
-    public override string Description => "Set dependency in projects to specific version.";
+    public static string Id => "use";
+    public static string Description => "Set dependency in projects to specific version.";
     public ILogger<UseCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly AddPackageDependencyTask _addPackageDependencyTask;

@@ -9,10 +9,10 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>, ILogSubject<AppReactCommand>
+public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AppReactCommand>
 {
-    public override string Id => "app.react";
-    public override string Description => "Create new app project, using React.";
+    public static string Id => "app.react";
+    public static string Description => "Create new app project, using React.";
     public ILogger<AppReactCommand> Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 

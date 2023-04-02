@@ -12,10 +12,10 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Audit;
 
-internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>, ILogSubject<AuditCommand>
+internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AuditCommand>
 {
-    public override string Id => "";
-    public override string Description => "Audit projects.";
+    public static string Id => "";
+    public static string Description => "Audit projects.";
     public ILogger<AuditCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IAuditRule[] _rules;

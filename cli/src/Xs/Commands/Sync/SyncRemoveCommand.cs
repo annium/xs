@@ -6,10 +6,10 @@ using Annium.Extensions.Arguments;
 
 namespace Xs.Commands.Sync;
 
-internal class SyncRemoveCommand : AsyncCommand<SyncRemoveCommandConfiguration>
+internal class SyncRemoveCommand : AsyncCommand<SyncRemoveCommandConfiguration>, ICommandDescriptor
 {
-    public override string Id => "remove";
-    public override string Description => "Remove repository from sync config";
+    public static string Id => "remove";
+    public static string Description => "Remove repository from sync config";
     private readonly SyncConfigurator _configurator;
 
     public SyncRemoveCommand(

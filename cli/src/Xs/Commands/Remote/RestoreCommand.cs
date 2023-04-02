@@ -12,10 +12,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class RestoreCommand : AsyncCommand<RestoreCommandConfiguration, DiscoverConfiguration>
+internal class RestoreCommand : AsyncCommand<RestoreCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
-    public override string Id => "restore";
-    public override string Description => "Restore tracked registry information.";
+    public static string Id => "restore";
+    public static string Description => "Restore tracked registry information.";
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IConfigurationManager _configurationManager;
     private readonly MainClientFactory _mainClientFactory;

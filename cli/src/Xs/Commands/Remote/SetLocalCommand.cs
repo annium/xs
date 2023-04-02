@@ -10,10 +10,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverConfiguration>
+internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
-    public override string Id => "set-local";
-    public override string Description => "Set local registry.";
+    public static string Id => "set-local";
+    public static string Description => "Set local registry.";
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IConfigurationManager _configurationManager;
 

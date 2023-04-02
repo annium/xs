@@ -12,10 +12,10 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>, ILogSubject<CleanCommand>
+internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<CleanCommand>
 {
-    public override string Id => "clean";
-    public override string Description => "Clean projects.";
+    public static string Id => "clean";
+    public static string Description => "Clean projects.";
     public ILogger<CleanCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;

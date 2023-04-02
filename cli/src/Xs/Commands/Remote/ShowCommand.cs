@@ -7,10 +7,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class ShowCommand : Command<DiscoverConfiguration>
+internal class ShowCommand : Command<DiscoverConfiguration>, ICommandDescriptor
 {
-    public override string Id => "show";
-    public override string Description => "Show information about tracked registry.";
+    public static string Id => "show";
+    public static string Description => "Show information about tracked registry.";
     private readonly IConfigurationManager _configurationManager;
 
     public ShowCommand(

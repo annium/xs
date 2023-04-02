@@ -12,10 +12,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfiguration>
+internal class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
-    public override string Id => "set";
-    public override string Description => "Start tracking registry.";
+    public static string Id => "set";
+    public static string Description => "Start tracking registry.";
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IConfigurationManager _configurationManager;
     private readonly MainClientFactory _mainClientFactory;

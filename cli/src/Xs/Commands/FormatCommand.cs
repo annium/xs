@@ -9,10 +9,10 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class FormatCommand : Command<FormatCommandConfiguration, DiscoverConfiguration>, ILogSubject<FormatCommand>
+internal class FormatCommand : Command<FormatCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<FormatCommand>
 {
-    public override string Id => "format";
-    public override string Description => "Format projects.";
+    public static string Id => "format";
+    public static string Description => "Format projects.";
     public ILogger<FormatCommand> Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
