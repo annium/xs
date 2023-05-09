@@ -25,6 +25,12 @@ publish: publish-server
 publish-server:
 	$(call publish,server,.,server/src/Server.Host/app.dockerfile)
 
+publish-local: publish-server-local
+
+publish-server-local:
+	$(shell,find .. -type f -name nuget.config | xargs rm)
+	$(call publish,server,..,xs/server/src/Server.Host/app.local.dockerfile)
+
 db-drop:
 	docker-compose rm -vfs db
 	docker volume rm -f xs_db
