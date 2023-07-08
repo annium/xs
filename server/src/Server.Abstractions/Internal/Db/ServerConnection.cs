@@ -1,4 +1,3 @@
-using Annium.linq2db.Extensions.Models;
 using Annium.Logging.Abstractions;
 using LinqToDB;
 using LinqToDB.Data;
@@ -14,7 +13,7 @@ internal class ServerConnection<TPackage, TPackageDependency> : DataConnection, 
     public ITable<TPackage> Packages { get; }
 
     public ServerConnection(
-        Config<ServerConnection<TPackage, TPackageDependency>> config,
+        DataOptions<ServerConnection<TPackage, TPackageDependency>> config,
         ILogger<ServerConnection<TPackage, TPackageDependency>> logger
     ) : base(config.Options)
     {
