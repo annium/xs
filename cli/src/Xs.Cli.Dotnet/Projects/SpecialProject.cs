@@ -31,7 +31,7 @@ internal abstract class SpecialProject<TProject> :
     public override string File => Path.Combine(Directory, ProjectFileName(Name));
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
-    public SpecialConfiguration Config { get; set; }
+    public SpecialConfiguration Config { get; }
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
