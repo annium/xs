@@ -126,32 +126,16 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             .ToList();
         newProps.Add(remainingProps);
 
-        // remove project references group
-        info.GetElements(El.ItemGroup).Where(e => e.GetElements(El.ProjectReference).Any()).Remove();
-
-        // remove package references group
-        info.GetElements(El.ItemGroup).Where(e => e.GetElements(El.PackageReference).Any()).Remove();
-
         // add package references group
         if (project.Packages.Count > 0)
-            newProps.AddAfterSelf(new XElement(
-                El.ItemGroup,
-                project.Packages.OrderBy(e => e.Value.Name).Select(e => new XElement(
-                    El.PackageReference,
-                    new XAttribute(El.Include, e.Value.Name),
-                    new XAttribute(El.Version, e.Value.Version)
-                ))
-            ));
+            newProps.AddAfterSelf(SavePackages(info, project.Packages));
 
         // add project references group
         if (project.Projects.Count > 0)
-            newProps.AddAfterSelf(new XElement(
-                El.ItemGroup,
-                project.Projects.OrderBy(e => e.Value.Name).Select(e => new XElement(
-                    El.ProjectReference,
-                    new XAttribute(El.Include, Path.GetRelativePath(dir, e.Value.File).Replace('\\', '/').Replace('/', project.Config.DirectorySeparator[0]))
-                ))
-            ));
+            newProps.AddAfterSelf(SaveProjects(info, dir, project.Config.DirectorySeparator[0], project.Projects));
+
+        // remove empty item groups
+        info.GetElements(El.ItemGroup).Where(x => !x.HasElements).Remove();
 
         var xws = new XmlWriterSettings
         {
@@ -166,7 +150,78 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         info.Save(xw);
     }
 
-    private void ValidateProperties(string path, XElement properties)
+    private XElement SaveProjects(XElement info, string dir, char separator, IReadOnlyCollection<Dependency<IProject>> projects)
+    {
+        // collect target refs
+        var refs = projects
+            .Select(x => NormalizePath(Path.GetRelativePath(dir, x.Value.File)))
+            .ToDictionary(x => x,
+                x => new XElement(
+                    El.ProjectReference,
+                    new XAttribute(El.Include, x)
+                )
+            );
+
+        // collect existing package references
+        var existingRefs = info.GetElements(El.ItemGroup)
+            .SelectMany(x => x.GetElements(El.ProjectReference))
+            .Select(x =>
+            {
+                var include = x.Attribute(El.Include)?.Value!;
+                var path = Path.GetRelativePath(dir, Path.GetFullPath(include, dir));
+
+                return (Path: path, Value: x);
+            })
+            .ToDictionary(x => x.Path, x => x.Value);
+
+        return MergeReferences(refs, existingRefs);
+
+        string NormalizePath(string path) => path.Replace('\\', '/').Replace('/', separator);
+    }
+
+    private XElement SavePackages(XElement info, IReadOnlyCollection<Dependency<Package>> packages)
+    {
+        // collect target refs
+        var refs = packages
+            .OrderBy(x => x.Value.Name)
+            .ToDictionary(x => x.Value.Name,
+                x => new XElement(
+                    El.PackageReference,
+                    new XAttribute(El.Include, x.Value.Name),
+                    new XAttribute(El.Version, x.Value.Version)
+                )
+            );
+
+        // collect existing package references
+        var existingRefs = info.GetElements(El.ItemGroup)
+            .SelectMany(x => x.GetElements(El.PackageReference))
+            .Select(x => (Name: x.Attribute(El.Include)?.Value, Value: x))
+            .ToDictionary(x => x.Name!, x => x.Value);
+
+        return MergeReferences(refs, existingRefs);
+    }
+
+    private static XElement MergeReferences(Dictionary<string, XElement> refs, IReadOnlyDictionary<string, XElement> existingRefs)
+    {
+        var group = new XElement(El.ItemGroup);
+
+        // remove existing refs from their parents
+        foreach (var existingRef in existingRefs)
+            existingRef.Value.Remove();
+
+        // replace refs with existing refs (thus preserving attributes and inner structure)
+        foreach (var (include, existingRef) in existingRefs)
+            if (refs.ContainsKey(include))
+                refs[include] = existingRef;
+
+        var sortedRefs = refs.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase).ToArray();
+        foreach (var pair in sortedRefs)
+            group.Add(pair.Value);
+
+        return group;
+    }
+
+    private static void ValidateProperties(string path, XElement properties)
     {
         if (properties.GetElement(El.PackageId) is null)
             throw new InvalidOperationException($"Project {path} has no {El.PackageId} defined.");
@@ -226,7 +281,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         }
     }
 
-    private string ReadProjectDependency(
+    private static string ReadProjectDependency(
         string project,
         FileInfo file,
         XElement reference
@@ -244,7 +299,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         return path;
     }
 
-    private Package ReadPackageDependency(
+    private static Package ReadPackageDependency(
         string project,
         XElement reference,
         DiscoverConfiguration configuration
