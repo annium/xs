@@ -70,8 +70,16 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             .ToArray();
 
         project.Packages = GetReferenceElements(El.PackageReference)
-            .Select(reference => ReadPackageDependency(project.Name, reference, configuration))
-            .Select(package => new Dependency<Package>(DependencyType.Normal, package))
+            .Select(reference =>
+            {
+                var package = ReadPackageDependency(project.Name, reference, configuration);
+                var dependencyType = reference.GetElements(El.PrivateAssets).Any() ||
+                    reference.Attribute(El.PrivateAssets) is not null
+                        ? DependencyType.Dev
+                        : DependencyType.Normal;
+
+                return new Dependency<Package>(dependencyType, package);
+            })
             .ToArray();
 
         project.IsPackable = properties.GetElement(El.IsPackable) is { } &&
@@ -341,6 +349,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         public const string ItemGroup = "ItemGroup";
         public const string PackageReference = "PackageReference";
         public const string ProjectReference = "ProjectReference";
+        public const string PrivateAssets = "PrivateAssets";
         public const string Include = "Include";
         public const string Version = "Version";
     }
