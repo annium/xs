@@ -44,7 +44,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
         if (directory is null)
         {
             this.Log().Trace($"Configuration missing in {folder}. Returning default");
-            return Configuration.Empty();
+            return Configuration.Empty;
         }
 
         this.Log().Trace($"Loaded configuration from {directory}");

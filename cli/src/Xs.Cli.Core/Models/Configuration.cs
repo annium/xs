@@ -1,42 +1,31 @@
 using System;
 using System.Collections.Generic;
+using Annium;
 using Xs.Cli.Core.Tools;
+
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace Xs.Cli.Core.Models;
 
-public class Configuration
+public sealed record Configuration(
+    string Directory,
+    Uri Registry,
+    string Token,
+    IReadOnlyDictionary<ProjectType, Uri> Servers,
+    SpecialConfiguration[] Types
+)
 {
-    public static Configuration Empty()
-    {
-        return new(
-            string.Empty,
-            new Uri("http://localhost"),
-            string.Empty,
-            new Dictionary<ProjectType, Uri>(),
-            Array.Empty<SpecialConfiguration>()
-        );
-    }
+    public static Configuration Empty { get; } = new(
+        string.Empty,
+        new Uri("http://localhost"),
+        string.Empty,
+        new Dictionary<ProjectType, Uri>(),
+        Array.Empty<SpecialConfiguration>()
+    );
 
-    public string Directory { get; }
-    public Uri Registry { get; private set; }
-    public string Token { get; private set; }
-    public IReadOnlyDictionary<ProjectType, Uri> Servers { get; private set; }
-    public SpecialConfiguration[] Types { get; private set; }
-
-    public Configuration(
-        string directory,
-        Uri registry,
-        string token,
-        IReadOnlyDictionary<ProjectType, Uri> servers,
-        SpecialConfiguration[] types
-    )
-    {
-        Directory = directory;
-        Registry = registry;
-        Token = token;
-        Servers = servers;
-        Types = types;
-    }
+    public Uri Registry { get; private set; } = Registry;
+    public string Token { get; private set; } = Token;
+    public IReadOnlyDictionary<ProjectType, Uri> Servers { get; private set; } = Servers;
 
     public void SetRegistry(Uri registry)
     {
@@ -55,9 +44,8 @@ public class Configuration
         Servers = servers;
     }
 
-    public void SetTypes(SpecialConfiguration[] types)
+    public override int GetHashCode()
     {
-        Types = types ??
-            throw new ArgumentNullException(nameof(types));
+        return HashCode.Combine(Directory, Registry, Token, HashCodeSeq.Combine(Servers), HashCodeSeq.Combine(Types));
     }
 }
