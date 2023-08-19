@@ -1,7 +1,7 @@
 $dir = Join-Path (Get-Item $PSScriptRoot).Parent.FullName src Xs
 
 Write-Output "Compile."
-dotnet pack $dir --configuration release --output .
+dotnet pack $dir --configuration release --output . -p:DefineConstants=\"LOG_CORE\;LOG_DEBUG\;LOG_TRACE\"
 
 if ( (dotnet tool list -g | Select-Object -skip 2 | Measure-Object).Count -eq 1 ) {
     Write-Output "Uninstall."

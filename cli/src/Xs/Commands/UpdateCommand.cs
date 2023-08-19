@@ -46,10 +46,8 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
         CancellationToken ct
     )
     {
-        var projects = _discoverTask.RunAsync(discoverCfg).Await()
-            .FilterMask(cfg.Mask)
-            .FilterType(cfg.Type)
-            .ToArray();
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).ToArray();
         if (projects.Length == 0)
         {
             this.Log().Info("No projects found to update.");

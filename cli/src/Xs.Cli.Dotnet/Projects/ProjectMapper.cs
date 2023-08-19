@@ -182,7 +182,22 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             })
             .ToDictionary(x => x.Path, x => x.Value);
 
-        return MergeReferences(refs, existingRefs);
+        var group = new XElement(El.ItemGroup);
+
+        // remove existing refs from their parents
+        foreach (var existingRef in existingRefs)
+            existingRef.Value.Remove();
+
+        // replace refs with existing refs (thus preserving attributes and inner structure)
+        foreach (var (include, existingRef) in existingRefs)
+            if (refs.ContainsKey(include))
+                refs[include] = existingRef;
+
+        var sortedRefs = refs.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase).ToArray();
+        foreach (var pair in sortedRefs)
+            group.Add(pair.Value);
+
+        return group;
 
         string NormalizePath(string path) => path.Replace('\\', '/').Replace('/', separator);
     }
@@ -206,11 +221,6 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             .Select(x => (Name: x.Attribute(El.Include)?.Value, Value: x))
             .ToDictionary(x => x.Name!, x => x.Value);
 
-        return MergeReferences(refs, existingRefs);
-    }
-
-    private static XElement MergeReferences(Dictionary<string, XElement> refs, IReadOnlyDictionary<string, XElement> existingRefs)
-    {
         var group = new XElement(El.ItemGroup);
 
         // remove existing refs from their parents
@@ -219,8 +229,13 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
 
         // replace refs with existing refs (thus preserving attributes and inner structure)
         foreach (var (include, existingRef) in existingRefs)
-            if (refs.ContainsKey(include))
+            if (refs.TryGetValue(include, out var newRef))
+            {
                 refs[include] = existingRef;
+                var newVersion = newRef.Attribute(El.Version);
+                if (newVersion is not null)
+                    existingRef.SetAttributeValue(El.Version, newVersion.Value);
+            }
 
         var sortedRefs = refs.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase).ToArray();
         foreach (var pair in sortedRefs)

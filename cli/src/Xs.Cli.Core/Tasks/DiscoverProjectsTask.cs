@@ -41,7 +41,7 @@ public class DiscoverProjectsTask : ILogSubject<DiscoverProjectsTask>
 
         this.Log().Debug($"Start discovery of {string.Join(", ", roots)}.");
 
-        var candidates = FindProjectCandidates(roots);
+         var candidates = FindProjectCandidates(roots);
         var errors = new List<Exception>();
         var projects = candidates
             .Select(x => CreateProject(x.Key, x.Value, discoverCfg, solutionCfg, errors.Add))
