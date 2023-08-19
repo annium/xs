@@ -20,6 +20,6 @@
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
         <PackageReference Include="Annium.Serialization.Json" Version="0.1.0" />
         <PackageReference Include="Annium.Serialization.Yaml" Version="0.1.0" />
-        <PackageReference Include="Scriban" Version="5.5.2" />
+        <PackageReference Include="Scriban" Version="5.7.0" />
     </ItemGroup>
 </Project>
