@@ -1,9 +1,8 @@
 using System;
-using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models;
 
-public class Package : Equatable<Package>, IReference
+public sealed record Package : IReference
 {
     public ProjectType Type { get; }
     public string Name { get; }

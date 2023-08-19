@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Annium.Data.Models;
 
 namespace Xs.Cli.Dotnet.Models;
 
-internal class TargetFramework : Equatable<TargetFramework>
+internal class TargetFramework
 {
     private static readonly IDictionary<string, TargetFramework> Values = new Dictionary<string, TargetFramework>();
 

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models;
 
-public class ProjectType : Equatable<ProjectType>
+public sealed class ProjectType
 {
     private static readonly List<ProjectType> Types = new();
 
@@ -29,15 +28,18 @@ public class ProjectType : Equatable<ProjectType>
         _name = name;
     }
 
+    public override string ToString() => _name;
+
+
     public override bool Equals(object? obj)
     {
         if (obj is string str)
             return _name == str;
 
-        return base.Equals(obj);
+        return this == obj;
     }
 
-    public override string ToString() => _name;
-
     public override int GetHashCode() => _name.GetHashCode();
+
+    public static implicit operator string(ProjectType value) => value._name;
 }

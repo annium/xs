@@ -1,9 +1,8 @@
 using System;
-using Annium.Data.Models;
 
 namespace Xs.Cli.Core.Models;
 
-public class Dependency<T> : Equatable<Dependency<T>>
+public sealed record Dependency<T>
 {
     public DependencyType Type { get; }
     public T Value { get; }
