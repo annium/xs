@@ -45,7 +45,7 @@ public class PackagePublicationController : ServerController<User>
 
         return result.Status switch
         {
-            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
             PackageStatus.Conflict  => Conflict(result),
             _                       => NoContent()
         };

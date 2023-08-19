@@ -23,5 +23,5 @@ public class HeaderTokenAccessor : ITokenAccessor
     }
 
     private (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>
-        (Guid.Empty, new ObjectResult(message) { StatusCode = (int) statusCode });
+        (Guid.Empty, new ObjectResult(message) { StatusCode = (int)statusCode });
 }

@@ -10,7 +10,7 @@ internal class PackageRequestParser : IPackageRequestParser<Package, PackageDepe
     public Package Parse(MetaPackage metaPackage, PackageRequest request)
     {
         return new Package(
-            request.Id, 
+            request.Id,
             metaPackage,
             request.Name,
             request.Version,

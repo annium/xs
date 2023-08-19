@@ -33,7 +33,7 @@ internal class TestProject : SpecialProject<TestProject>, ITestableProject
                 "/p:CoverletOutputFormat=lcov",
                 "/p:CoverletOutput=./lcov",
                 "--",
-                $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel) LoggerConfiguration)!.ToLowerInvariant()}"
+                $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)LoggerConfiguration)!.ToLowerInvariant()}"
             });
 
         if (!string.IsNullOrWhiteSpace(filter))

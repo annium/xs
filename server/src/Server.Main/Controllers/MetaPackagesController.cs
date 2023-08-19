@@ -64,7 +64,7 @@ public class MetaPackagesController : ServerController<User>
         var access = _metaPackageTool.GetAccess(package).ForUser(GetUser());
         return access.Has(Permission.Read)
             ? Ok(new MetaPackageResponse(package))
-            : new ObjectResult("You need read permission to get this package.") { StatusCode = (int) HttpStatusCode.Forbidden };
+            : new ObjectResult("You need read permission to get this package.") { StatusCode = (int)HttpStatusCode.Forbidden };
     }
 
     [HttpPost("{type}/{name}/permissions")]
@@ -79,7 +79,7 @@ public class MetaPackagesController : ServerController<User>
 
         var access = _metaPackageTool.GetAccess(package).ForUser(GetUser());
         if (!access.IsOwner)
-            return new ObjectResult("You need to be owner to update package permissions.") { StatusCode = (int) HttpStatusCode.Forbidden };
+            return new ObjectResult("You need to be owner to update package permissions.") { StatusCode = (int)HttpStatusCode.Forbidden };
 
         await _metaPackageService.UpdatePermissionsAsync(package.Id, permissions);
 

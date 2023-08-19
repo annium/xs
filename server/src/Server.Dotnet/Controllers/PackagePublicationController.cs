@@ -50,7 +50,7 @@ public class PackagePublicationController : ServerController<User>
         switch (result.Status)
         {
             case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+                return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden };
             case PackageStatus.Conflict:
                 return Conflict(result);
             default:

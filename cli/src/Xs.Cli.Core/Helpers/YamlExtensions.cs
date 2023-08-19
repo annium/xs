@@ -50,7 +50,7 @@ internal class UriTypeConverter : IYamlTypeConverter
 
     public void WriteYaml(IEmitter emitter, object? value, Type type)
     {
-        var @event = new Scalar(null, null, ((Uri) value!).ToString(), ScalarStyle.Any, true, false);
+        var @event = new Scalar(null, null, ((Uri)value!).ToString(), ScalarStyle.Any, true, false);
         emitter.Emit(@event);
     }
 }
@@ -64,7 +64,7 @@ internal class ProjectTypeTypeConverter : IYamlTypeConverter
 
     public void WriteYaml(IEmitter emitter, object? value, Type type)
     {
-        var @event = new Scalar(null, null, ((ProjectType) value!).ToString(), ScalarStyle.Any, true, false);
+        var @event = new Scalar(null, null, ((ProjectType)value!).ToString(), ScalarStyle.Any, true, false);
         emitter.Emit(@event);
     }
 }

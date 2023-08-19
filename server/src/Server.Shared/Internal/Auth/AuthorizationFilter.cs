@@ -62,5 +62,5 @@ public class AuthorizationFilter : IAsyncAuthorizationFilter
     }
 
     private IActionResult GetForbiddenResult(string error) =>
-        new ObjectResult(error) { StatusCode = (int) HttpStatusCode.Forbidden };
+        new ObjectResult(error) { StatusCode = (int)HttpStatusCode.Forbidden };
 }

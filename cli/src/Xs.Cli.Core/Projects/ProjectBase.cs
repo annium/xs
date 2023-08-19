@@ -139,7 +139,7 @@ public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
         var result = await Shell
             .Cmd(command)
             .At(Directory)
-            .Pipe((LogLevel) LoggerConfiguration <= LogLevel.Debug)
+            .Pipe((LogLevel)LoggerConfiguration <= LogLevel.Debug)
             .RunAsync(ct);
 
         if (result.IsSuccess)

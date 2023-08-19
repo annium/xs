@@ -178,7 +178,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
     {
         var result = _shell
             .Cmd(_command.Replace("%", path))
-            .Pipe((LogLevel) _loggerConfiguration <= LogLevel.Debug)
+            .Pipe((LogLevel)_loggerConfiguration <= LogLevel.Debug)
             .Start();
 
         Task.Run(() => Pipe(result.Output));

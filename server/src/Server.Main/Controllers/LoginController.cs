@@ -44,7 +44,7 @@ public class LoginController : ServerController<User>
 
         var passwordHash = _securityService.Hash(password);
         if (user.PasswordHash != passwordHash)
-            return new ObjectResult("Invalid password") { StatusCode = (int) HttpStatusCode.Forbidden };
+            return new ObjectResult("Invalid password") { StatusCode = (int)HttpStatusCode.Forbidden };
 
         return Ok(user.ApiToken);
     }

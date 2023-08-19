@@ -52,9 +52,9 @@ public class PackageConsumptionController : ServerController<User>
             case PackageStatus.NotFound:
                 return NotFound();
             case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+                return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden };
             case PackageStatus.InternalError:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
+                return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError };
         }
 
         var content = await _packageStorage.GetPackageAsync(name, version);
@@ -72,9 +72,9 @@ public class PackageConsumptionController : ServerController<User>
             case PackageStatus.NotFound:
                 return NotFound();
             case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+                return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden };
             case PackageStatus.InternalError:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.InternalServerError };
+                return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError };
         }
 
         var content = await _packageStorage.GetNuspecAsync(name, version);

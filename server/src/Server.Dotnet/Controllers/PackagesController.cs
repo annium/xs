@@ -40,7 +40,7 @@ public class PackagesController : ServerController<User>
             PackageStatus.NotFound => NotFound(),
             PackageStatus.Forbidden => new ObjectResult(result)
             {
-                StatusCode = (int) HttpStatusCode.Forbidden
+                StatusCode = (int)HttpStatusCode.Forbidden
             },
             PackageStatus.Ok => Ok(result.Data
                 .Select(p => new PackageResponse(
@@ -69,7 +69,7 @@ public class PackagesController : ServerController<User>
             case PackageStatus.NotFound:
                 return NotFound();
             case PackageStatus.Forbidden:
-                return new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden };
+                return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden };
             default:
                 return NoContent();
         }

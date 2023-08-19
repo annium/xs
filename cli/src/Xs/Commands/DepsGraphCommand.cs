@@ -45,26 +45,26 @@ internal class DepsGraphCommand : AsyncCommand<DiscoverConfiguration>, ICommandD
     private RequestHandlerCallback HandleRequest(DiscoverConfiguration discoverCfg) => async ctx =>
     {
         var projects = _discoverTask.RunAsync(discoverCfg).Await().ToList();
-    
+
         var graph = new EdgeListGraph<string, Edge<string>>();
         foreach (var project in projects)
             graph.AddVerticesAndEdgeRange(project.Projects.Select(x => new Edge<string>(project.Name, x.Value.Name)));
-    
+
         var dot = graph.ToGraphviz(algo => { algo.FormatVertex += (_, args) => { args.VertexFormat.Label = args.Vertex; }; });
-    
+
         var tempPath = Path.GetTempPath();
         var id = Guid.NewGuid().ToString();
         var dotFile = Path.Combine(tempPath, $"{id}.dot");
         var svgFile = Path.Combine(tempPath, $"{id}.svg");
-    
+
         await File.WriteAllTextAsync(dotFile, dot);
-    
+
         await _shell.Cmd("dot", "-Tsvg", dotFile, "-o", svgFile).RunAsync();
-    
+
         ctx.Response.ContentType = "image/svg+xml";
         var content = await File.ReadAllBytesAsync(svgFile);
         await ctx.Response.OutputStream.WriteAsync(content);
-    
+
         File.Delete(dotFile);
         File.Delete(svgFile);
     };

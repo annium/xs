@@ -37,7 +37,7 @@ public class PackagesController : ServerController<User>
 
         return result.Status switch
         {
-            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
             PackageStatus.Ok        => Ok(result.Data.Select(p => new PackageResponse(p)).ToArray()),
             _                       => NotFound()
         };
@@ -53,7 +53,7 @@ public class PackagesController : ServerController<User>
         return result.Status switch
         {
             PackageStatus.NotFound  => NotFound(),
-            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int) HttpStatusCode.Forbidden },
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
             _                       => NoContent()
         };
     }
