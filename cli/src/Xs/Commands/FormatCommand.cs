@@ -1,15 +1,15 @@
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class FormatCommand : Command<FormatCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<FormatCommand>
+internal class FormatCommand : AsyncCommand<FormatCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<FormatCommand>
 {
     public static string Id => "format";
     public static string Description => "Format projects.";
@@ -25,13 +25,14 @@ internal class FormatCommand : Command<FormatCommandConfiguration, DiscoverConfi
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         FormatCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
-        var projects = _discoverTask.RunAsync(discoverCfg).Await()
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var projects = allProjects
             .FilterMask(cfg.Mask)
             .FilterType(cfg.Type)
             .ToArray();

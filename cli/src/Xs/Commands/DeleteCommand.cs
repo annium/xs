@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
@@ -10,7 +10,7 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<DeleteCommand>
+internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<DeleteCommand>
 {
     public static string Id => "delete";
     public static string Description => "Delete dependency from projects.";
@@ -32,7 +32,7 @@ internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfi
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         DeleteCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
@@ -40,7 +40,7 @@ internal class DeleteCommand : Command<DeleteCommandConfiguration, DiscoverConfi
     {
         var name = cfg.Dependency;
 
-        var allProjects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
         var allPackages = allProjects.SelectMany(e => e.Packages).Select(d => d.Value).Distinct().ToArray();
 
         var targets = allProjects.FilterMask(cfg.Mask).ToArray();

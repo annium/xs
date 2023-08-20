@@ -1,15 +1,15 @@
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class UnlinkCommand : Command<UnlinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UnlinkCommand>
+internal class UnlinkCommand : AsyncCommand<UnlinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UnlinkCommand>
 {
     public static string Id => "unlink";
     public static string Description => "Unlink project <-> package dependencies.";
@@ -25,21 +25,21 @@ internal class UnlinkCommand : Command<UnlinkCommandConfiguration, DiscoverConfi
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         UnlinkCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
         discoverCfg.Roots = new[] { cfg.Target };
-        var targets = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var targets = await _discoverTask.RunAsync(discoverCfg);
         discoverCfg.Roots = new[] { cfg.Source };
-        var sources = _discoverTask.RunAsync(discoverCfg).Await()
+        var sources = (await _discoverTask.RunAsync(discoverCfg))
             .Where(x => targets.All(t => t.File != x.File))
             .ToArray();
         var version = cfg.Version;
 
-        this.Log().Debug($"Unlink {sources.Length} projects from {targets.Length} external projects.");
+        this.Log().Debug($"Unlink {sources.Length} projects from {targets.Count} external projects.");
 
         foreach (var source in sources)
         {

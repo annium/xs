@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -8,7 +9,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<ExeCommand>
+public class ExeCommand : AsyncCommand<ExeCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<ExeCommand>
 {
     public static string Id => "exe";
     public static string Description => "Create new exe project.";
@@ -24,7 +25,7 @@ public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         ExeCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct

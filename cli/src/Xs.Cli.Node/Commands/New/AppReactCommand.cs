@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -9,7 +10,7 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AppReactCommand>
+public class AppReactCommand : AsyncCommand<AppReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AppReactCommand>
 {
     public static string Id => "app.react";
     public static string Description => "Create new app project, using React.";
@@ -25,7 +26,7 @@ public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverCon
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         AppReactCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct

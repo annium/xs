@@ -77,7 +77,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
         }
     }
 
-    public void Save(Configuration configuration, IProject[] projects)
+    public void Save(Configuration configuration, IReadOnlyCollection<IProject> projects)
     {
         this.Log().Trace($"Save configuration in {configuration.Directory}");
         var cfg = _mapper.Map<Config>(configuration);
@@ -98,7 +98,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
                 continue;
             }
 
-            var targets = projects.Where(p => p.Type == type).ToArray();
+            var targets = projects.Where(p => p.Type.Equals(type)).ToArray();
             if (!targets.Any())
             {
                 this.Log().Trace($"No {type} projects discovered to save configuration for");
@@ -110,7 +110,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
             var typeConfiguration = new ProjectTypeConfiguration(
                 uri,
                 configuration.Token,
-                configuration.Types.FirstOrDefault(c => c.Type == type)
+                configuration.Types.FirstOrDefault(c => c.Type.Equals(type))
             );
             foreach (var project in targets)
                 _specialManagers[type].Save(project, typeConfiguration);
@@ -145,7 +145,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
         void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(configuration.Directory), data);
     }
 
-    public void Delete(string folder, IProject[] projects)
+    public void Delete(string folder, IReadOnlyCollection<IProject> projects)
     {
         DeleteFile(GetConfigurationFile);
         DeleteFile(GetCredentialsFile);

@@ -11,7 +11,7 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where 
     public string Code => "useless-deps";
     public string Description => "Finds useless dependencies in projects. Fix deletes useless deps";
 
-    public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
+    public IReadOnlyCollection<AuditResult> Execute(IReadOnlyCollection<IProject> projects, TProject project, bool fix)
     {
         var results = new List<AuditResult>();
 

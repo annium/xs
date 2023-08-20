@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -8,7 +9,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibTestsCommand>
+public class LibTestsCommand : AsyncCommand<LibTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibTestsCommand>
 {
     public static string Id => "lib.tests";
     public static string Description => "Create new library tests project.";
@@ -24,7 +25,7 @@ public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverCon
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         LibTestsCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct

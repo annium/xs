@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -12,7 +12,7 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Ls;
 
-internal class ListInsCommand : Command<ListInsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
+internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
     public static string Id => "ins";
     public static string Description => "List projects and their dependencies.";
@@ -25,13 +25,14 @@ internal class ListInsCommand : Command<ListInsCommandConfiguration, DiscoverCon
         _discoverTask = discoverTask;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         ListInsCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
-        var projects = _discoverTask.RunAsync(discoverCfg).Await()
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var projects = allProjects
             .FilterMask(cfg.Mask)
             .FilterType(cfg.Type)
             .ToArray();

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
@@ -7,7 +8,7 @@ public interface IConfigurationManager
 {
     Configuration Load(string folder);
 
-    void Save(Configuration configuration, IProject[] projects);
+    void Save(Configuration configuration, IReadOnlyCollection<IProject> projects);
 
-    void Delete(string folder, IProject[] projects);
+    void Delete(string folder, IReadOnlyCollection<IProject> projects);
 }

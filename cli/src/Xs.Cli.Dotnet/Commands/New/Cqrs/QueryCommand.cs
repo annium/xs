@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
@@ -14,7 +14,7 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs;
 
-internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<QueryCommand>
+internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<QueryCommand>
 {
     private const string DomainQueryTemplate = "DomainQuery.cs_tpl";
     private const string ApplicationQueryTemplate = "ApplicationQuery.cs_tpl";
@@ -40,13 +40,13 @@ internal class QueryCommand : Command<QueryCommandConfiguration, DiscoverConfigu
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         QueryCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
-        var projects = _discoverTask.RunAsync(discoverCfg).Await().ToList();
+        var projects = await _discoverTask.RunAsync(discoverCfg);
 
         var domainProject = projects.FilterMask(cfg.DomainProject).SingleOrDefault();
         if (domainProject is null)

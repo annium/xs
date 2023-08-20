@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -10,7 +10,7 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LinkCommand>
+internal class LinkCommand : AsyncCommand<LinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LinkCommand>
 {
     public static string Id => "link";
     public static string Description => "Link project <-> package dependencies.";
@@ -26,18 +26,18 @@ internal class LinkCommand : Command<LinkCommandConfiguration, DiscoverConfigura
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         LinkCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
         discoverCfg.Roots = new[] { cfg.Source };
-        var sources = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var sources = await _discoverTask.RunAsync(discoverCfg);
         discoverCfg.Roots = new[] { cfg.Target };
-        var targets = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var targets = await _discoverTask.RunAsync(discoverCfg);
 
-        this.Log().Debug($"Link {sources.Length} projects to {targets.Length} external projects.");
+        this.Log().Debug($"Link {sources.Count} projects to {targets.Count} external projects.");
 
         foreach (var src in sources)
         {

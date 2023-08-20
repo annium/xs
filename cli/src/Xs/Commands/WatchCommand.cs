@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
@@ -72,7 +71,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         _discoverCfg = discoverCfg;
         _token = ct;
 
-        Discover();
+        await Discover();
 
         if (string.IsNullOrWhiteSpace(_command))
             await _watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChange, HandleDelete, ct);
@@ -91,7 +90,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         if (isProjectFile)
         {
             this.Log().Info($"Changed project file: {path}");
-            Discover();
+            await Discover();
 
             project = GetProjectByPath(path);
             if (project is not null)
@@ -120,7 +119,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         if (isProjectFile)
         {
             this.Log().Info($"Deleted project file: {path}");
-            Discover();
+            await Discover();
 
             await InstallAsync(project!, includeSelf: false);
         }
@@ -193,12 +192,13 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         }
     }
 
-    private void Discover()
+    private async Task Discover()
     {
-        var allProjects = _discoverTask.RunAsync(_discoverCfg).Await().OrderByDescending(p => p.Name.Length).ToArray();
+        var allProjects = await _discoverTask.RunAsync(_discoverCfg);
         var targets = allProjects
             .FilterMask(_mask)
             .FilterType(_type)
+            .OrderByDescending(p => p.Name.Length)
             .ToArray();
 
         var result = new HashSet<IProject>();

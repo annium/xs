@@ -44,7 +44,7 @@ internal abstract class SpecialProject<TProject> :
         _mapper = context.Mapper;
     }
 
-    public AuditResult[] Audit(IProject[] projects, string[] rules, bool fix, CancellationToken ct)
+    public IReadOnlyCollection<AuditResult> Audit(IReadOnlyCollection<IProject> projects, string[] rules, bool fix, CancellationToken ct)
     {
         var results = new List<AuditResult>();
 

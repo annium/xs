@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -8,7 +9,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebAssemblyAppCommand : Command<WebAssemblyAppCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebAssemblyAppCommand>
+public class WebAssemblyAppCommand : AsyncCommand<WebAssemblyAppCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebAssemblyAppCommand>
 {
     public static string Id => "wasm.app";
     public static string Description => "Create new WebAssembly Application project.";
@@ -24,7 +25,7 @@ public class WebAssemblyAppCommand : Command<WebAssemblyAppCommandConfiguration,
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         WebAssemblyAppCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct

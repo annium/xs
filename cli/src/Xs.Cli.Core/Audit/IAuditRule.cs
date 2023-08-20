@@ -5,7 +5,7 @@ namespace Xs.Cli.Core.Audit;
 
 public interface IAuditRule<TProject> : IAuditRule where TProject : IProject
 {
-    IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix);
+    IReadOnlyCollection<AuditResult> Execute(IReadOnlyCollection<IProject> projects, TProject project, bool fix);
 }
 
 public interface IAuditRule

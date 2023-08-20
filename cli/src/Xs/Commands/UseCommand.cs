@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
@@ -10,7 +10,7 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UseCommand>
+internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UseCommand>
 {
     public static string Id => "use";
     public static string Description => "Set dependency in projects to specific version.";
@@ -32,7 +32,7 @@ internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfigurati
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         UseCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
@@ -41,15 +41,15 @@ internal class UseCommand : Command<UseCommandConfiguration, DiscoverConfigurati
         var name = cfg.Name;
         var version = cfg.Version;
 
-        var allProjects = _discoverTask.RunAsync(discoverCfg);
-        var updatedPackages = allProjects.Await()
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var updatedPackages = allProjects
             .SelectMany(e => e.Packages)
             .FilterMask(name)
             .Where(e => e.Value.Version != version)
             .Distinct()
             .ToArray();
 
-        var targets = allProjects.Await()
+        var targets = allProjects
             .Where(e => e.Packages.Any(d => updatedPackages.Contains(d)))
             .ToArray();
 

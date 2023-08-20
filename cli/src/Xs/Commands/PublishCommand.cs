@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
@@ -44,7 +43,8 @@ internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, Discov
     {
         var configuration = _configurationManager.Load(discoverCfg.Root);
 
-        var projects = _discoverTask.RunAsync(discoverCfg).Await()
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var projects = allProjects
             .FilterMask(cfg.Mask)
             .OfType<IPublishableProject>()
             .ToArray();

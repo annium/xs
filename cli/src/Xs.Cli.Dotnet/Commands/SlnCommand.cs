@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Dotnet.Projects;
@@ -42,9 +41,8 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
     )
     {
         var root = Directory.GetCurrentDirectory();
-        var preservedProjects = _discoverTask.RunAsync(discoverCfg).Await()
-            .OfType<ISpecialProject>()
-            .ToArray();
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var preservedProjects = allProjects.OfType<ISpecialProject>().ToArray();
 
         var slnFile = SlnFile(root, cfg.Name);
         this.Log().Debug($"Write solution file {slnFile}");

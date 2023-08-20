@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
@@ -10,7 +10,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
+internal class SetLocalCommand : AsyncCommand<SetLocalCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
     public static string Id => "set-local";
     public static string Description => "Set local registry.";
@@ -26,7 +26,7 @@ internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverC
         _configurationManager = configurationManager;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         SetLocalCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
@@ -40,7 +40,7 @@ internal class SetLocalCommand : Command<SetLocalCommandConfiguration, DiscoverC
         configuration.SetToken(string.Empty);
         configuration.SetServers(ProjectType.List().ToDictionary(type => type, _ => location));
 
-        var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var projects = await _discoverTask.RunAsync(discoverCfg);
 
         _configurationManager.Save(configuration, projects);
 

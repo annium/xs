@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -54,7 +53,7 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
         var version = cfg.Version;
         var dependencyType = cfg.DependencyType;
 
-        var allProjects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
 
         var targets = allProjects.FilterMask(cfg.Mask).ToArray();
         if (targets.Length == 0)

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Threading.Tasks;
 using Server.Client;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
@@ -56,7 +55,7 @@ internal class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfig
             .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
         );
 
-        var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var projects = await _discoverTask.RunAsync(discoverCfg);
 
         _configurationManager.Save(configuration, projects);
 

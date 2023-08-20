@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -37,7 +36,8 @@ internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverCo
         CancellationToken ct
     )
     {
-        var projects = _discoverTask.RunAsync(discoverCfg).Await()
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var projects = allProjects
             .FilterMask(cfg.Mask)
             .FilterType(cfg.Type)
             .OfType<ICleanableProject>()

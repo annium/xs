@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
-using Annium.Threading.Tasks;
 using EmbedIO;
 using QuikGraph;
 using QuikGraph.Graphviz;
@@ -44,7 +43,7 @@ internal class DepsGraphCommand : AsyncCommand<DiscoverConfiguration>, ICommandD
 
     private RequestHandlerCallback HandleRequest(DiscoverConfiguration discoverCfg) => async ctx =>
     {
-        var projects = _discoverTask.RunAsync(discoverCfg).Await().ToList();
+        var projects = await _discoverTask.RunAsync(discoverCfg);
 
         var graph = new EdgeListGraph<string, Edge<string>>();
         foreach (var project in projects)

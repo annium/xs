@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -9,7 +10,7 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibReactCommand>
+public class LibReactCommand : AsyncCommand<LibReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibReactCommand>
 {
     public static string Id => "lib.react";
     public static string Description => "Create new library project, using React.";
@@ -25,7 +26,7 @@ public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverCon
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         LibReactCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct

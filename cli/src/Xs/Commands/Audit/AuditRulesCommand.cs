@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Audit;
 
 namespace Xs.Commands.Audit;
 
-internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>, ICommandDescriptor
+internal class AuditRulesCommand : AsyncCommand<AuditRulesCommandConfiguration>, ICommandDescriptor
 {
     public static string Id => "rules";
     public static string Description => "List audit rules.";
@@ -20,7 +21,7 @@ internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>, ICom
         _rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         AuditRulesCommandConfiguration cfg,
         CancellationToken ct
     )

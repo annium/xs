@@ -1,15 +1,14 @@
 using System;
-using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class DeleteCommand : Command<DiscoverConfiguration>, ICommandDescriptor
+internal class DeleteCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescriptor
 {
     public static string Id => "delete";
     public static string Description => "Stop tracking registry.";
@@ -25,14 +24,14 @@ internal class DeleteCommand : Command<DiscoverConfiguration>, ICommandDescripto
         _configurationManager = configurationManager;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
         var dir = discoverCfg.Root;
 
-        var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var projects = await _discoverTask.RunAsync(discoverCfg);
 
         _configurationManager.Delete(dir, projects);
 

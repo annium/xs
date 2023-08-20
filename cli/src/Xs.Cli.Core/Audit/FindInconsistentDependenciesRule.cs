@@ -10,7 +10,7 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject> w
     public string Code => "deps-consist";
     public string Description => "Finds inconsistent dependencies across projects. Fix uses latest for all projects";
 
-    public IEnumerable<AuditResult> Execute(IProject[] projects, TProject project, bool fix)
+    public IReadOnlyCollection<AuditResult> Execute(IReadOnlyCollection<IProject> projects, TProject project, bool fix)
     {
         var results = new List<AuditResult>();
 

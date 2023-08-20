@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Server.Client;
 using Server.Client.Clients;
 using Xs.Cli.Core.Commands;
@@ -51,7 +50,8 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
     {
         var configuration = _configurationManager.Load(discoverCfg.Root);
 
-        var projects = _discoverTask.RunAsync(discoverCfg).Await()
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
+        var projects = allProjects
             .FilterMask(cfg.Mask)
             .OfType<IPublishableProject>()
             .ToArray();

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -12,7 +12,7 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Ls;
 
-internal class ListOutsCommand : Command<ListOutsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
+internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
     public static string Id => "outs";
     public static string Description => "List projects and their project dependents.";
@@ -25,13 +25,13 @@ internal class ListOutsCommand : Command<ListOutsCommandConfiguration, DiscoverC
         _discoverTask = discoverTask;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         ListOutsCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
-        var allProjects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var allProjects = await _discoverTask.RunAsync(discoverCfg);
         var projects = allProjects
             .FilterType(cfg.Type)
             .FilterMask(cfg.Mask)

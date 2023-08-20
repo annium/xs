@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class MoveCommand : Command<MoveCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<MoveCommand>
+internal class MoveCommand : AsyncCommand<MoveCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<MoveCommand>
 {
     public static string Id => "move";
     public static string Description => "Move project to different location.";
@@ -28,7 +28,7 @@ internal class MoveCommand : Command<MoveCommandConfiguration, DiscoverConfigura
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         MoveCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
@@ -40,7 +40,7 @@ internal class MoveCommand : Command<MoveCommandConfiguration, DiscoverConfigura
             return;
         }
 
-        var projects = _discoverTask.RunAsync(discoverCfg).Await().ToArray();
+        var projects = await _discoverTask.RunAsync(discoverCfg);
         var targets = projects.FilterMask(cfg.Filter).ToArray();
         if (targets.Length == 0)
             throw new InvalidOperationException($"No projects matched filter {cfg.Filter}.");

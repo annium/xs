@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class ClassCommand : Command<ClassCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<ClassCommand>
+public class ClassCommand : AsyncCommand<ClassCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<ClassCommand>
 {
     private const string ClassTemplate = "Class.cs_tpl";
 
@@ -33,15 +33,15 @@ public class ClassCommand : Command<ClassCommandConfiguration, DiscoverConfigura
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         ClassCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
         var output = Path.GetFullPath(Path.Combine(discoverCfg.Root, cfg.Output));
-        var project = _discoverTask.RunAsync(discoverCfg).Await()
-            .FirstOrDefault(p => output.StartsWith(p.Directory));
+        var projects = await _discoverTask.RunAsync(discoverCfg);
+        var project = projects.FirstOrDefault(p => output.StartsWith(p.Directory));
 
         if (project is null)
         {

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
-using Annium.Threading.Tasks;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
@@ -12,7 +12,7 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Audit;
 
-internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AuditCommand>
+internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AuditCommand>
 {
     public static string Id => "";
     public static string Description => "Audit projects.";
@@ -31,14 +31,13 @@ internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfigu
         Logger = logger;
     }
 
-    public override void Handle(
+    public override async Task HandleAsync(
         AuditCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )
     {
-        var projects = _discoverTask.RunAsync(discoverCfg).Await()
-            .ToArray();
+        var projects = await _discoverTask.RunAsync(discoverCfg);
         var auditedProjects = projects
             .FilterMask(cfg.Mask)
             .OfType<IAuditableProject>()
@@ -63,9 +62,9 @@ internal class AuditCommand : Command<AuditCommandConfiguration, DiscoverConfigu
         foreach (var project in auditedProjects)
         {
             var results = project.Audit(projects, usedRules, cfg.Fix, ct);
-            if (results.Length > 0)
+            if (results.Count > 0)
             {
-                Console.WriteLine($"{project}: {results.Length} result(s):");
+                Console.WriteLine($"{project}: {results.Count} result(s):");
                 foreach (var result in results)
                     Console.WriteLine($" - {result.Message} (" + (result.IsFixed ? "fixed" : "not fixed") + ")");
             }
