@@ -135,12 +135,10 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         newProps.Add(remainingProps);
 
         // add package references group
-        if (project.Packages.Count > 0)
-            newProps.AddAfterSelf(SavePackages(info, project.Packages));
+        newProps.AddAfterSelf(SavePackages(info, project.Packages));
 
         // add project references group
-        if (project.Projects.Count > 0)
-            newProps.AddAfterSelf(SaveProjects(info, dir, project.Config.DirectorySeparator[0], project.Projects));
+        newProps.AddAfterSelf(SaveProjects(info, dir, project.Config.DirectorySeparator[0], project.Projects));
 
         // remove empty item groups
         info.GetElements(El.ItemGroup).Where(x => !x.HasElements).Remove();
