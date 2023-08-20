@@ -69,7 +69,7 @@ public class PackagePublicationController : ServerController<User>
         var dependencies = nuspec.GetDependencyGroups()
             .SelectMany(dependencyGroup =>
             {
-                var framework = dependencyGroup.TargetFramework.GetShortFolderName()!;
+                var framework = dependencyGroup.TargetFramework.GetShortFolderName();
 
                 return dependencyGroup.Packages
                     .Select(dependency => new PackageDependency(packageId, framework, dependency.Id, dependency.VersionRange.ToNormalizedString()));

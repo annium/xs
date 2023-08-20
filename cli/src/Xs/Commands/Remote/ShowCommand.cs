@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Helpers;
@@ -8,7 +7,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands.Remote;
 
-internal class ShowCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescriptor
+internal class ShowCommand : Command<DiscoverConfiguration>, ICommandDescriptor
 {
     public static string Id => "show";
     public static string Description => "Show information about tracked registry.";
@@ -21,7 +20,7 @@ internal class ShowCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescri
         _configurationManager = configurationManager;
     }
 
-    public override async Task HandleAsync(
+    public override void Handle(
         DiscoverConfiguration discoverCfg,
         CancellationToken ct
     )

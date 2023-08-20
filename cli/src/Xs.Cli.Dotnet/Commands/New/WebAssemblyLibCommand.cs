@@ -1,6 +1,5 @@
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Logging.Abstractions;
 using Xs.Cli.Core.Commands;
@@ -9,7 +8,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebAssemblyLibCommand : AsyncCommand<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebAssemblyLibCommand>
+public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebAssemblyLibCommand>
 {
     public static string Id => "wasm.lib";
     public static string Description => "Create new WebAssembly Library project.";
@@ -25,7 +24,7 @@ public class WebAssemblyLibCommand : AsyncCommand<WebAssemblyLibCommandConfigura
         Logger = logger;
     }
 
-    public override async Task HandleAsync(
+    public override void Handle(
         WebAssemblyLibCommandConfiguration cfg,
         DiscoverConfiguration discoverCfg,
         CancellationToken ct

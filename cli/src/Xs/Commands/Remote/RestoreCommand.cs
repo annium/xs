@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium;
 using Annium.Extensions.Arguments;
 using Server.Client;
 using Xs.Cli.Core.Commands;
@@ -52,12 +53,11 @@ internal class RestoreCommand : AsyncCommand<RestoreCommandConfiguration, Discov
             ? Annium.Extensions.CommandLine.Cli.ReadSecure("Password: ")
             : cfg.Password;
 
-        configuration.SetToken(await client.LoginAsync(user, password));
-        configuration.SetServers(
-            (await client.GetRegistryInfoAsync())
-            .Servers
-            .ToDictionary(e => ProjectType.Get(e.Key), e => e.Value)
-        );
+        var token = await client.LoginAsync(user, password);
+        configuration.SetToken(token);
+        var registryInfo = await client.GetRegistryInfoAsync();
+        var servers = registryInfo.Servers.ToDictionary(e => e.Key.ParseEnum<ProjectType>(), e => e.Value);
+        configuration.SetServers(servers);
 
         var projects = await _discoverTask.RunAsync(discoverCfg);
 

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
+using Annium.Linq;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
@@ -38,7 +39,7 @@ internal class SetLocalCommand : AsyncCommand<SetLocalCommandConfiguration, Disc
         var configuration = _configurationManager.Load(dir);
         configuration.SetRegistry(location);
         configuration.SetToken(string.Empty);
-        configuration.SetServers(ProjectType.List().ToDictionary(type => type, _ => location));
+        configuration.SetServers(Enum.GetValues<ProjectType>().Except(ProjectType.None.Yield()).ToDictionary(type => type, _ => location));
 
         var projects = await _discoverTask.RunAsync(discoverCfg);
 
