@@ -15,7 +15,7 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject> w
         var results = new List<AuditResult>();
 
         var version = projects.Max(p => p.Version)!;
-        if (project.Version != version)
+        if (!project.Version.Equals(version))
         {
             if (fix)
                 project.Version.Update(version);

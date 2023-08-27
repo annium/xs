@@ -45,7 +45,7 @@ internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfig
         var updatedPackages = allProjects
             .SelectMany(e => e.Packages)
             .FilterMask(name)
-            .Where(e => e.Value.Version != version)
+            .Where(e => !e.Value.Version.Equals(version))
             .Distinct()
             .ToArray();
 
