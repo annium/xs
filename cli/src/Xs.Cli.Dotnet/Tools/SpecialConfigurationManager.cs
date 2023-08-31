@@ -50,7 +50,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
     private void Save(string folder, XElement info)
     {
         var path = FilePath(folder);
-        var xws = new XmlWriterSettings()
+        var xws = new XmlWriterSettings
         {
             Indent = true,
             IndentChars = new string(' ', 2),
@@ -58,7 +58,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
             Encoding = new UTF8Encoding(false),
         };
 
-        using var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+        using var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
         using var xw = XmlWriter.Create(fs, xws);
         info.Save(xw);
     }

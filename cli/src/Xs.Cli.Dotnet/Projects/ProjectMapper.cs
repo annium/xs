@@ -151,7 +151,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             Encoding = new UTF8Encoding(false),
         };
 
-        using var fs = new FileStream(path, FileMode.Truncate);
+        using var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
         using var xw = XmlWriter.Create(fs, xws);
         info.Save(xw);
     }
