@@ -10,9 +10,9 @@ namespace Xs.Cli.Node.Tools;
 
 internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject<SpecialConfigurationManager>
 {
-    private const string File = ".npmrc";
+    private const string ConfigFile = ".npmrc";
     public ProjectType Type => Constants.ProjectType;
-    public string[] IgnorePatterns { get; } = new[] { File };
+    public string[] IgnorePatterns { get; } = { ConfigFile };
     public ILogger<SpecialConfigurationManager> Logger { get; }
 
     public SpecialConfigurationManager(
@@ -41,16 +41,16 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
             foreach (var privateScope in ((SpecialConfiguration)configuration.Special).PrivateScopes.ToHashSet())
                 sb.AppendLine($"@{privateScope}:registry={configuration.Server}");
         sb.AppendLine($"//{configuration.Server.Authority}/:_authToken=\"{configuration.Token}\"");
-        System.IO.File.WriteAllText(FilePath(project), sb.ToString());
+        File.WriteAllText(ConfigFilePath(project), sb.ToString());
 
         static string GetScope(string name) => name.StartsWith('@') ? name[1..].Split('/')[0] : string.Empty;
     }
 
     public void Delete(IProject project)
     {
-        var path = FilePath(project);
-        if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        var path = ConfigFilePath(project);
+        if (File.Exists(path)) File.Delete(path);
     }
 
-    private string FilePath(IProject project) => Path.Combine(project.Directory, File);
+    private static string ConfigFilePath(IProject project) => Path.Combine(project.Directory, ConfigFile);
 }

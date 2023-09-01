@@ -151,9 +151,13 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             Encoding = new UTF8Encoding(false),
         };
 
-        using var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-        using var xw = XmlWriter.Create(fs, xws);
-        info.Save(xw);
+        var sb = new StringBuilder();
+        using (var xw = XmlWriter.Create(sb, xws))
+        {
+            info.Save(xw);
+        }
+
+        File.WriteAllText(path, sb.ToString());
     }
 
     private XElement SaveProjects(XElement info, string dir, char separator, IReadOnlyCollection<Dependency<IProject>> projects)

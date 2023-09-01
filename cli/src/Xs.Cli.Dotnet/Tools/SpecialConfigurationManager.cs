@@ -12,9 +12,9 @@ namespace Xs.Cli.Dotnet.Tools;
 
 internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject<SpecialConfigurationManager>
 {
-    private const string File = "nuget.config";
+    private const string ConfigFile = "nuget.config";
     public ProjectType Type => Constants.ProjectType;
-    public string[] IgnorePatterns { get; } = new[] { File, "lcov.info" };
+    public string[] IgnorePatterns { get; } = { ConfigFile, "lcov.info" };
     public ILogger<SpecialConfigurationManager> Logger { get; }
     private readonly string _registryName = "registry";
     private readonly string _defaultName = "nuget";
@@ -43,13 +43,13 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
 
     public void Delete(IProject project)
     {
-        var path = FilePath(project.Directory);
-        if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        var path = ConfigFilePath(project.Directory);
+        if (File.Exists(path)) File.Delete(path);
     }
 
     private void Save(string folder, XElement info)
     {
-        var path = FilePath(folder);
+        var path = ConfigFilePath(folder);
         var xws = new XmlWriterSettings
         {
             Indent = true,
@@ -58,9 +58,13 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
             Encoding = new UTF8Encoding(false),
         };
 
-        using var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-        using var xw = XmlWriter.Create(fs, xws);
-        info.Save(xw);
+        var sb = new StringBuilder();
+        using (var xw = XmlWriter.Create(sb, xws))
+        {
+            info.Save(xw);
+        }
+
+        File.WriteAllText(path, sb.ToString());
     }
 
     private XElement GetAddRule(string name, Uri uri) => new(
@@ -69,7 +73,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
         new XAttribute(El.Value, uri.IsFile ? uri.AbsolutePath : new Uri(uri, Constants.ServerPathSuffix).ToString())
     );
 
-    private string FilePath(string folder) => Path.Combine(folder, File);
+    private static string ConfigFilePath(string folder) => Path.Combine(folder, ConfigFile);
 
     private static class El
     {
