@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -11,18 +11,18 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<InstallCommand>
+internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "install";
     public static string Description => "Install projects' dependencies.";
-    public ILogger<InstallCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 
     public InstallCommand(
         DiscoverProjectsTask discoverTask,
         ProjectsRunner runner,
-        ILogger<InstallCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -46,7 +46,7 @@ internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, Discov
 
         if (force)
         {
-            this.Log().Debug($"Clear {projects.Length} projects cache.");
+            this.Debug($"Clear {projects.Length} projects cache.");
             await _runner.RunAsync(
                 projects.OfType<ICachingProject>().ToArray(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
@@ -55,7 +55,7 @@ internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, Discov
             );
         }
 
-        this.Log().Debug($"Install {projects.Length} projects.");
+        this.Debug($"Install {projects.Length} projects.");
         await _runner.RunAsync(
             projects.OfType<IInstallableProject>().ToArray(),
             (project, tkn) => project.InstallAsync(force, tkn),

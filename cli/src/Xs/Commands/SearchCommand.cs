@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Server.Client;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
@@ -10,18 +10,18 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands;
 
-internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<SearchCommand>
+internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "search";
     public static string Description => "Search for packages in tracked registry.";
-    public ILogger<SearchCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly MainClientFactory _mainClientFactory;
 
     public SearchCommand(
         IConfigurationManager configurationManager,
         MainClientFactory mainClientFactory,
-        ILogger<SearchCommand> logger
+        ILogger logger
     )
     {
         _configurationManager = configurationManager;

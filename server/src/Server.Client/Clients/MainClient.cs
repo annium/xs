@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using Annium;
 using Annium.Net.Http;
 using Server.Client.Internal;
 using Server.Client.Models;
@@ -16,31 +18,43 @@ public class MainClient : ClientBase
         _httpRequestFactory = httpRequestFactory;
     }
 
-    public Task<string> LoginAsync(string login, string password)
+    public async Task<string> LoginAsync(string login, string password)
     {
-        return _httpRequestFactory.New(Uri)
+        var response = await _httpRequestFactory.New(Uri)
             .Post("login")
             .JsonContent(new { login, password })
-            .EnsureSuccessStatusCode(response => $"User login failed with {response.StatusCode} ({response.StatusText}).")
-            .AsAsync<string>();
+            .AsResponseAsync<string>();
+
+        if (response.IsFailure)
+            throw new Exception($"User login failed with {response.StatusCode} ({response.StatusText}).");
+
+        return response.Data.NotNull();
     }
 
-    public Task<Registry> GetRegistryInfoAsync()
+    public async Task<Registry> GetRegistryInfoAsync()
     {
-        return _httpRequestFactory.New(Uri)
+        var response = await _httpRequestFactory.New(Uri)
             .Get("registry")
-            .EnsureSuccessStatusCode(response => $"Registry info fetch failed with {response.StatusCode} ({response.StatusText}).")
-            .AsAsync<Registry>();
+            .AsResponseAsync<Registry>();
+
+        if (response.IsFailure)
+            throw new Exception($"Registry info fetch failed with {response.StatusCode} ({response.StatusText}).");
+
+        return response.Data.NotNull();
     }
 
-    public Task<MetaPackage[]> SearchAsync(string token, string type, string query)
+    public async Task<MetaPackage[]> SearchAsync(string token, string type, string query)
     {
-        return _httpRequestFactory.New(Uri)
+        var response = await _httpRequestFactory.New(Uri)
             .Get("packages/search")
             .BearerAuthorization(token)
             .Param("type", type)
             .Param("query", query)
-            .EnsureSuccessStatusCode(response => $"Search failed with {response.StatusCode} ({response.StatusText}).")
-            .AsAsync<MetaPackage[]>();
+            .AsResponseAsync<MetaPackage[]>();
+
+        if (response.IsFailure)
+            throw new Exception($"Search failed with {response.StatusCode} ({response.StatusText}).");
+
+        return response.Data.NotNull();
     }
 }

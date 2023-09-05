@@ -4,19 +4,19 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using NodaTime;
 
 namespace Xs.Tools;
 
-internal class Watcher : ILogSubject<Watcher>
+internal class Watcher : ILogSubject
 {
-    public ILogger<Watcher> Logger { get; }
+    public ILogger Logger { get; }
     private readonly ITimeProvider _timeProvider;
 
     public Watcher(
         ITimeProvider timeProvider,
-        ILogger<Watcher> logger
+        ILogger logger
     )
     {
         _timeProvider = timeProvider;
@@ -49,7 +49,7 @@ internal class Watcher : ILogSubject<Watcher>
         };
         watcher.Changed += (_, args) => AddTask(args.FullPath);
         watcher.Deleted += (_, args) => AddTask(args.FullPath);
-        watcher.Error += (_, args) => this.Log().Error(args.GetException());
+        watcher.Error += (_, args) => this.Error(args.GetException());
 
         // no tasks -> reset -> wait
         // add task -> set
@@ -60,11 +60,11 @@ internal class Watcher : ILogSubject<Watcher>
             gate.Reset();
             if (tasks.Count == 0)
             {
-                this.Log().Trace("Wait for tasks.");
+                this.Trace("Wait for tasks.");
                 gate.Wait(ct);
             }
 
-            this.Log().Trace($"Pending {tasks.Count} task(s).");
+            this.Trace($"Pending {tasks.Count} task(s).");
             // get and execute task
             var (task, path) = tasks.Dequeue();
             try
@@ -76,7 +76,7 @@ internal class Watcher : ILogSubject<Watcher>
             }
             catch (Exception exception)
             {
-                this.Log().Error(exception);
+                this.Error(exception);
             }
         }
 
@@ -86,7 +86,7 @@ internal class Watcher : ILogSubject<Watcher>
                 return;
 
             var task = File.Exists(path) ? handleChange : handleDelete;
-            this.Log().Trace($"Enqueue task for {path}");
+            this.Trace($"Enqueue task for {path}");
             tasks.Enqueue((task, path));
             // ReSharper disable once AccessToDisposedClosure
             gate.Set();

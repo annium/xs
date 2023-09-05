@@ -2,17 +2,21 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using Annium;
+using Annium.Logging;
 using Server.Main.Services;
 
 namespace Server.Main.Internal.Services;
 
 internal class SecurityService : ISecurityService, IDisposable
 {
-    private readonly DisposableBox _disposable = Disposable.Box();
+    private readonly DisposableBox _disposable;
     private readonly HashAlgorithm _hashAlgorithm;
 
-    public SecurityService()
+    public SecurityService(
+        ILogger logger
+    )
     {
+        _disposable = Disposable.Box(logger);
         _disposable += _hashAlgorithm = SHA512.Create();
     }
 

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class TestProject : SpecialProject<TestProject>, ITestableProject
+internal class TestProject : SpecialProject, ITestableProject
 {
-    public TestProject(SpecialProjectContext<TestProject> context) : base(context)
+    public TestProject(SpecialProjectContext context) : base(context)
     {
     }
 

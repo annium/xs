@@ -6,27 +6,27 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands;
 
-public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<SlnCommand>
+public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     private const string SlnExtension = ".sln";
 
     public static string Id => "sln";
     public static string Description => "Create sln file from project.";
-    public ILogger<SlnCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IShell _shell;
 
     public SlnCommand(
         DiscoverProjectsTask discoverTask,
         IShell shell,
-        ILogger<SlnCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -45,7 +45,7 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
         var preservedProjects = allProjects.OfType<ISpecialProject>().ToArray();
 
         var slnFile = SlnFile(root, cfg.Name);
-        this.Log().Debug($"Write solution file {slnFile}");
+        this.Debug($"Write solution file {slnFile}");
         await _shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root} --force").RunAsync();
 
         var currentProjects = await GetSolutionProjectPathsAsync(root, cfg.Name);
@@ -60,13 +60,13 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
                 throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
             if (parent == root)
             {
-                this.Log().Debug($"Add {project} to solution file at root");
+                this.Debug($"Add {project} to solution file at root");
                 await _shell.Cmd($"dotnet sln {slnFile} add {project.File}").RunAsync();
             }
             else
             {
                 var folder = Path.GetRelativePath(root, parent);
-                this.Log().Debug($"Add {project} to solution file at {folder}");
+                this.Debug($"Add {project} to solution file at {folder}");
                 await _shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
             }
         }
@@ -74,7 +74,7 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
         // delete missing projects
         foreach (var path in removedProjects)
         {
-            this.Log().Debug($"Remove {path} from solution file");
+            this.Debug($"Remove {path} from solution file");
             await _shell.Cmd($"dotnet sln {slnFile} remove {path}").RunAsync();
         }
     }

@@ -1,23 +1,23 @@
 using System.IO;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebTestsCommand>
+public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "web.tests";
     public static string Description => "Create new web tests project.";
-    public ILogger<WebTestsCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
     public WebTestsCommand(
         ITemplateWriter templateWriter,
-        ILogger<WebTestsCommand> logger
+        ILogger logger
     )
     {
         _templateWriter = templateWriter;
@@ -33,7 +33,7 @@ public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverCon
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Log().Debug($"Create web tests project {name} at {location}");
+        this.Debug($"Create web tests project {name} at {location}");
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.WebTests");
         _templateWriter.SetRoot(Path.Combine(location, name));

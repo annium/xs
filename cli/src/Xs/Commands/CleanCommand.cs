@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -11,18 +11,18 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<CleanCommand>
+internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "clean";
     public static string Description => "Clean projects.";
-    public ILogger<CleanCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 
     public CleanCommand(
         DiscoverProjectsTask discoverTask,
         ProjectsRunner runner,
-        ILogger<CleanCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -43,7 +43,7 @@ internal class CleanCommand : AsyncCommand<CleanCommandConfiguration, DiscoverCo
             .OfType<ICleanableProject>()
             .ToArray();
 
-        this.Log().Debug($"Clean {projects.Length} projects.");
+        this.Debug($"Clean {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
             (project, tkn) => project.CleanAsync(cfg.Force, tkn),

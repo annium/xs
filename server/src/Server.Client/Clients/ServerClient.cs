@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
@@ -16,12 +17,14 @@ public class ServerClient : ClientBase
         _httpRequestFactory = httpRequestFactory;
     }
 
-    public Task DeletePackageAsync(string token, string name, string version)
+    public async Task DeletePackageAsync(string token, string name, string version)
     {
-        return _httpRequestFactory.New(Uri)
+        var response = await _httpRequestFactory.New(Uri)
             .Delete($"packages/{HttpUtility.UrlEncode(name)}/{version}")
             .BearerAuthorization(token)
-            .EnsureSuccessStatusCode(response => $"Delete package failed with {response.StatusCode} ({response.StatusText}).")
             .RunAsync();
+
+        if (response.IsFailure)
+            throw new Exception($"Delete package failed with {response.StatusCode} ({response.StatusText}).");
     }
 }

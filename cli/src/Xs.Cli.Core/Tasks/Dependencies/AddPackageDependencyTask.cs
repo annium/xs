@@ -1,16 +1,16 @@
 using System.Linq;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tasks.Dependencies;
 
-public class AddPackageDependencyTask : ILogSubject<AddPackageDependencyTask>
+public class AddPackageDependencyTask : ILogSubject
 {
-    public ILogger<AddPackageDependencyTask> Logger { get; }
+    public ILogger Logger { get; }
 
     public AddPackageDependencyTask(
-        ILogger<AddPackageDependencyTask> logger
+        ILogger logger
     )
     {
         Logger = logger;
@@ -20,22 +20,22 @@ public class AddPackageDependencyTask : ILogSubject<AddPackageDependencyTask>
     {
         var (_, package) = dependency;
 
-        this.Log().Debug($"Add package {package} as {package.Type} dependency to {targets.Length} projects.");
+        this.Debug($"Add package {package} as {package.Type} dependency to {targets.Length} projects.");
         foreach (var target in targets)
         {
             if (target.Packages.Contains(dependency))
             {
-                this.Log().Debug($"Skip adding package {package} as dependency of {target}. {target} already uses {package}.");
+                this.Debug($"Skip adding package {package} as dependency of {target}. {target} already uses {package}.");
                 continue;
             }
 
             if (target.Packages.Any(p => p.Value == package))
             {
-                this.Log().Debug($"Delete package {package} as dependency of {target} due to dependency type change.");
+                this.Debug($"Delete package {package} as dependency of {target} due to dependency type change.");
                 target.Packages.RemoveWhere(p => p.Value == package);
             }
 
-            this.Log().Debug($"Add package {package} as dependency of {target}.");
+            this.Debug($"Add package {package} as dependency of {target}.");
             target.Packages.Add(dependency);
             target.Save();
         }

@@ -1,20 +1,21 @@
-using Annium.Logging.Abstractions;
+
+using Annium.Logging;
 using LinqToDB;
 using LinqToDB.Data;
 using Server.Shared.Domain.Interfaces;
 
 namespace Server.Abstractions.Internal.Db;
 
-internal class ServerConnection<TPackage, TPackageDependency> : DataConnection, ILogSubject<ServerConnection<TPackage, TPackageDependency>>
+internal class ServerConnection<TPackage, TPackageDependency> : DataConnection, ILogSubject
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
 {
-    public ILogger<ServerConnection<TPackage, TPackageDependency>> Logger { get; }
+    public ILogger Logger { get; }
     public ITable<TPackage> Packages { get; }
 
     public ServerConnection(
         DataOptions<ServerConnection<TPackage, TPackageDependency>> config,
-        ILogger<ServerConnection<TPackage, TPackageDependency>> logger
+        ILogger logger
     ) : base(config.Options)
     {
         Logger = logger;

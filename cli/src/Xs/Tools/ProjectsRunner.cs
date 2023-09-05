@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Tools;
 
-internal class ProjectsRunner : ILogSubject<ProjectsRunner>
+internal class ProjectsRunner : ILogSubject
 {
-    public ILogger<ProjectsRunner> Logger { get; }
+    public ILogger Logger { get; }
 
     public ProjectsRunner(
-        ILogger<ProjectsRunner> logger
+        ILogger logger
     )
     {
         Logger = logger;
@@ -40,7 +40,7 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
         var running = new List<TProject>();
         var errors = new List<Exception>();
 
-        this.Log().Trace($"Start run with {pending.Count} project(s).");
+        this.Trace($"Start run with {pending.Count} project(s).");
 
         while (pending.Count > 0)
         {
@@ -59,7 +59,7 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
                 if (running.Count == 0 && starting.Length == 0)
                     throw new InvalidOperationException($"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run.");
 
-                this.Log().Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine, starting.Select(e => e.Name))}");
+                this.Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine, starting.Select(e => e.Name))}");
 
                 running.AddRange(starting);
             }
@@ -70,7 +70,7 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
                 {
                     try
                     {
-                        this.Log().Trace($"Starting run for {project}");
+                        this.Trace($"Starting run for {project}");
 
                         // handle project
                         await handle(project, ct);
@@ -78,7 +78,7 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
                         // if succeed - remove from pending
                         lock (locker) pending.Remove(project);
 
-                        this.Log().Trace($"Finished run for {project}");
+                        this.Trace($"Finished run for {project}");
                     }
                     catch (Exception e)
                         when (e is TaskCanceledException || e is OperationCanceledException)
@@ -86,7 +86,7 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
                         // if canceled - clear pending
                         lock (locker) pending.Clear();
 
-                        this.Log().Trace($"Cancelled run for {project}");
+                        this.Trace($"Cancelled run for {project}");
                     }
                     catch (Exception exception)
                     {
@@ -94,14 +94,14 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
                         errors.Add(exception);
                         lock (locker) pending.Clear();
 
-                        this.Log().Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
+                        this.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
                     }
                     finally
                     {
                         // remove from running ones
                         lock (locker) running.Remove(project);
 
-                        this.Log().Trace($"Finalized run for {project}. Signal.");
+                        this.Trace($"Finalized run for {project}. Signal.");
 
                         // signal for next iteration
                         // ReSharper disable once AccessToDisposedClosure
@@ -110,12 +110,12 @@ internal class ProjectsRunner : ILogSubject<ProjectsRunner>
                 });
 
             // wait for next iteration
-            this.Log().Trace("Waiting for a signal.");
+            this.Trace("Waiting for a signal.");
             gate.Wait(ct);
             gate.Reset();
         }
 
-        this.Log().Trace($"Finished run of {projects.Count} with {errors.Count} error(s).");
+        this.Trace($"Finished run of {projects.Count} with {errors.Count} error(s).");
 
         if (errors.Count > 0)
             throw new AggregateException(errors);

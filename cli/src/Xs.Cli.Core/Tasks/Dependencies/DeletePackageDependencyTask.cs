@@ -1,16 +1,16 @@
 using System.Linq;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tasks.Dependencies;
 
-public class DeletePackageDependencyTask : ILogSubject<DeletePackageDependencyTask>
+public class DeletePackageDependencyTask : ILogSubject
 {
-    public ILogger<DeletePackageDependencyTask> Logger { get; }
+    public ILogger Logger { get; }
 
     public DeletePackageDependencyTask(
-        ILogger<DeletePackageDependencyTask> logger
+        ILogger logger
     )
     {
         Logger = logger;
@@ -18,16 +18,16 @@ public class DeletePackageDependencyTask : ILogSubject<DeletePackageDependencyTa
 
     public void Run(IProject[] targets, Package package)
     {
-        this.Log().Debug($"Delete package {package} as {package.Type} dependency from {targets.Length} projects.");
+        this.Debug($"Delete package {package} as {package.Type} dependency from {targets.Length} projects.");
         foreach (var target in targets)
         {
             if (target.Packages.All(p => p.Value != package))
             {
-                this.Log().Debug($"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}.");
+                this.Debug($"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}.");
                 continue;
             }
 
-            this.Log().Debug($"Delete package {package} from dependencies of {target}.");
+            this.Debug($"Delete package {package} from dependencies of {target}.");
             target.Packages.RemoveWhere(p => p.Value == package);
             target.Save();
         }

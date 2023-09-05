@@ -5,23 +5,23 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class MoveCommand : AsyncCommand<MoveCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<MoveCommand>
+internal class MoveCommand : AsyncCommand<MoveCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "move";
     public static string Description => "Move project to different location.";
-    public ILogger<MoveCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
     public MoveCommand(
         DiscoverProjectsTask discoverTask,
-        ILogger<MoveCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -36,7 +36,7 @@ internal class MoveCommand : AsyncCommand<MoveCommandConfiguration, DiscoverConf
     {
         if (!cfg.IsMove && !cfg.IsRename)
         {
-            this.Log().Info("Specify at least new project name or new project directory");
+            this.Info("Specify at least new project name or new project directory");
             return;
         }
 
@@ -69,13 +69,13 @@ internal class MoveCommand : AsyncCommand<MoveCommandConfiguration, DiscoverConf
     private void Move(IProject project, string directory)
     {
         var target = Path.GetFullPath(Path.Combine(directory, Path.GetFileName(project.Directory)));
-        this.Log().Debug($"Move {project.Directory} -> {target}");
+        this.Debug($"Move {project.Directory} -> {target}");
         project.SetDirectory(target);
     }
 
     private void Rename(IProject project, string name)
     {
-        this.Log().Debug($"Rename {project.Name} -> {name}");
+        this.Debug($"Rename {project.Name} -> {name}");
         project.SetName(name);
     }
 

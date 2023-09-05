@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Annium.Extensions.Shell;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
@@ -9,7 +9,7 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Projects;
 
-internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> where TProject : SpecialProject<TProject>
+internal class SpecialProjectContext : ProjectBaseContext 
 {
     public IReadOnlyDictionary<string, string> Scripts { get; }
     public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
@@ -27,7 +27,7 @@ internal class SpecialProjectContext<TProject> : ProjectBaseContext<TProject> wh
         IReadOnlyDictionary<string, string> scripts,
         IShell shell,
         LoggerConfiguration loggerConfiguration,
-        ILogger<TProject> logger,
+        ILogger logger,
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
         SpecialConfiguration config,
         ProjectMapper mapper

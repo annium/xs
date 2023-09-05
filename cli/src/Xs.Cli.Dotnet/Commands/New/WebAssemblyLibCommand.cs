@@ -1,23 +1,23 @@
 using System.IO;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WebAssemblyLibCommand>
+public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "wasm.lib";
     public static string Description => "Create new WebAssembly Library project.";
-    public ILogger<WebAssemblyLibCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
     public WebAssemblyLibCommand(
         ITemplateWriter templateWriter,
-        ILogger<WebAssemblyLibCommand> logger
+        ILogger logger
     )
     {
         _templateWriter = templateWriter;
@@ -33,7 +33,7 @@ public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration,
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Log().Debug($"Create WebAssembly Library project {name} at {location}");
+        this.Debug($"Create WebAssembly Library project {name} at {location}");
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.WebAssemblyLibrary");
         _templateWriter.SetRoot(Path.Combine(location, name));

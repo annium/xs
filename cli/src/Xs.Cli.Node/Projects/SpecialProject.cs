@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -13,13 +13,13 @@ using SysDirectory = System.IO.Directory;
 
 namespace Xs.Cli.Node.Projects;
 
-internal abstract class SpecialProject<TProject> : ProjectBase<TProject>,
+internal abstract class SpecialProject : ProjectBase,
     ISpecialProject,
     IAuditableProject,
     ICachingProject,
     ICleanableProject,
     IInstallableProject,
-    IBuildableProject where TProject : SpecialProject<TProject>
+    IBuildableProject
 {
     // TODO: rewrite through project options - projects can have different shapes in a moment
     // private static readonly object CacheLocker = new object();
@@ -38,7 +38,7 @@ internal abstract class SpecialProject<TProject> : ProjectBase<TProject>,
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
-    public SpecialProject(SpecialProjectContext<TProject> context) : base(context)
+    public SpecialProject(SpecialProjectContext context) : base(context)
     {
         Config = context.Config;
         Scripts = context.Scripts;
@@ -63,7 +63,7 @@ internal abstract class SpecialProject<TProject> : ProjectBase<TProject>,
 
     public Task ClearCacheAsync(CancellationToken ct)
     {
-        this.Log().Info($"Start {Name} cache clean.");
+        this.Info($"Start {Name} cache clean.");
 
         // lock (CacheLocker)
         // {
@@ -78,14 +78,14 @@ internal abstract class SpecialProject<TProject> : ProjectBase<TProject>,
         //     }
         // }
 
-        this.Log().Info($"Finished {Name} cache clean.");
+        this.Info($"Finished {Name} cache clean.");
 
         return Task.CompletedTask;
     }
 
     public async Task CleanAsync(bool force, CancellationToken ct)
     {
-        this.Log().Info($"Start {Name} clean.");
+        this.Info($"Start {Name} clean.");
 
         DeleteDirectory(ProjectFactory.ModulesDirectory);
         DeleteFiles("*.tgz");
@@ -97,7 +97,7 @@ internal abstract class SpecialProject<TProject> : ProjectBase<TProject>,
         if (Scripts.ContainsKey("clean"))
             await RunAsync("pnpm clean", "pnpm run clean", ct);
 
-        this.Log().Info($"Finished {Name} clean.");
+        this.Info($"Finished {Name} clean.");
     }
 
     public Task InstallAsync(bool force, CancellationToken ct)

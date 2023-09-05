@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -16,15 +16,14 @@ using SysFile = System.IO.File;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal abstract class SpecialProject<TProject> :
-    ProjectBase<TProject>,
+internal abstract class SpecialProject :
+    ProjectBase,
     ISpecialProject,
     IAuditableProject,
     ICachingProject,
     ICleanableProject,
     IInstallableProject,
     IBuildableProject
-    where TProject : SpecialProject<TProject>
 {
     // ReSharper disable once StaticMemberInGenericType
     private static readonly object CacheLocker = new();
@@ -35,7 +34,7 @@ internal abstract class SpecialProject<TProject> :
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
-    protected SpecialProject(SpecialProjectContext<TProject> context) : base(context)
+    protected SpecialProject(SpecialProjectContext context) : base(context)
     {
         Config = context.Config;
         TargetFramework = context.TargetFramework;
@@ -56,7 +55,7 @@ internal abstract class SpecialProject<TProject> :
 
     public Task ClearCacheAsync(CancellationToken ct)
     {
-        this.Log().Info($"Start {Name} cache clean.");
+        this.Info($"Start {Name} cache clean.");
 
         var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
         lock (CacheLocker)
@@ -69,14 +68,14 @@ internal abstract class SpecialProject<TProject> :
             }
         }
 
-        this.Log().Info($"Finished {Name} cache clean.");
+        this.Info($"Finished {Name} cache clean.");
 
         return Task.CompletedTask;
     }
 
     public Task CleanAsync(bool force, CancellationToken ct)
     {
-        this.Log().Info($"Start {Name} clean.");
+        this.Info($"Start {Name} clean.");
 
         DeleteDirectory("bin");
         DeleteDirectory("obj");
@@ -84,7 +83,7 @@ internal abstract class SpecialProject<TProject> :
         DeleteFiles("*.nupkg");
         DeleteFiles("*.snupkg");
 
-        this.Log().Info($"Finished {Name} clean.");
+        this.Info($"Finished {Name} clean.");
 
         return Task.CompletedTask;
     }

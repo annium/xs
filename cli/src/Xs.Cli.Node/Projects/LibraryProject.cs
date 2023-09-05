@@ -9,9 +9,9 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Node.Projects;
 
-internal class LibraryProject : SpecialProject<LibraryProject>, IPublishableProject
+internal class LibraryProject : SpecialProject, IPublishableProject
 {
-    public LibraryProject(SpecialProjectContext<LibraryProject> context) : base(context)
+    public LibraryProject(SpecialProjectContext context) : base(context)
     {
     }
 

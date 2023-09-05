@@ -3,25 +3,25 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Tools;
 
-internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject<SpecialConfigurationManager>
+internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
 {
     private const string ConfigFile = "nuget.config";
     public ProjectType Type => Constants.ProjectType;
     public string[] IgnorePatterns { get; } = { ConfigFile, "lcov.info" };
-    public ILogger<SpecialConfigurationManager> Logger { get; }
+    public ILogger Logger { get; }
     private readonly string _registryName = "registry";
     private readonly string _defaultName = "nuget";
     private readonly Uri _defaultUri = new(Constants.DefaultServer);
 
     public SpecialConfigurationManager(
-        ILogger<SpecialConfigurationManager> logger
+        ILogger logger
     )
     {
         Logger = logger;
@@ -29,7 +29,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
 
     public void Save(IProject project, ProjectTypeConfiguration configuration)
     {
-        this.Log().Trace($"Save configuration for {Constants.ProjectType} project {project}");
+        this.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
         var sources = new XElement(El.PackageSources);
         sources.Add(new XElement(El.Clear));

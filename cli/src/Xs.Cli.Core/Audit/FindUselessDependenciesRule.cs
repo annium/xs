@@ -6,7 +6,8 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Audit;
 
-public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject> where TProject : IProject
+public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject>
+    where TProject : IProject
 {
     public string Code => "useless-deps";
     public string Description => "Finds useless dependencies in projects. Fix deletes useless deps";

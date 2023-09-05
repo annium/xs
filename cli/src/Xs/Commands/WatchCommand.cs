@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
@@ -16,11 +16,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<WatchCommand>
+internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "watch";
     public static string Description => "Watch projects' changes and install/build/test on fly.";
-    public ILogger<WatchCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly IProjectFactory _projectFactory;
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
@@ -43,7 +43,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         ProjectsRunner runner,
         Watcher watcher,
         IShell shell,
-        ILogger<WatchCommand> logger,
+        ILogger logger,
         LoggerConfiguration loggerConfiguration
     )
     {
@@ -89,7 +89,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
 
         if (isProjectFile)
         {
-            this.Log().Info($"Changed project file: {path}");
+            this.Info($"Changed project file: {path}");
             await Discover();
 
             project = GetProjectByPath(path);
@@ -102,13 +102,13 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         if (project is null)
             return;
 
-        this.Log().Info($"Changed {project} related file: {path}");
+        this.Info($"Changed {project} related file: {path}");
 
         await BuildAsync(project, includeSelf: true);
         if (_runTests)
             await TestAsync(project, includeSelf: true);
 
-        this.Log().Info($"Done.");
+        this.Info($"Done.");
     }
 
     private async Task HandleDelete(string path)
@@ -118,7 +118,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
 
         if (isProjectFile)
         {
-            this.Log().Info($"Deleted project file: {path}");
+            this.Info($"Deleted project file: {path}");
             await Discover();
 
             await InstallAsync(project!, includeSelf: false);
@@ -129,13 +129,13 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
         if (project is null)
             return;
 
-        this.Log().Info($"Deleted {project} related file: {path}");
+        this.Info($"Deleted {project} related file: {path}");
 
         await BuildAsync(project, includeSelf: !isProjectFile);
         if (_runTests)
             await TestAsync(project, includeSelf: !isProjectFile);
 
-        this.Log().Info($"Done.");
+        this.Info($"Done.");
     }
 
     private Task InstallAsync(IProject project, bool includeSelf) =>
@@ -207,9 +207,9 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
 
         _projects = result.ToArray();
 
-        this.Log().Debug($"Discovered {_projects.Length} project(s) to watch:");
+        this.Debug($"Discovered {_projects.Length} project(s) to watch:");
         foreach (var project in _projects)
-            this.Log().Debug(project.Name);
+            this.Debug(project.Name);
     }
 
     private void CollectTargets(IProject project, HashSet<IProject> targets)

@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -11,18 +11,18 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<TestCommand>
+internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "test";
     public static string Description => "Test projects.";
-    public ILogger<TestCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 
     public TestCommand(
         DiscoverProjectsTask discoverTask,
         ProjectsRunner runner,
-        ILogger<TestCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -43,7 +43,7 @@ internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConf
             .OfType<ITestableProject>()
             .ToArray();
 
-        this.Log().Debug($"Test {projects.Length} projects.");
+        this.Debug($"Test {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
             (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn),

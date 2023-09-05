@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Server.Client;
 using Server.Client.Clients;
 using Xs.Cli.Core.Commands;
@@ -17,11 +17,11 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UnpublishCommand>
+internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "unpublish";
     public static string Description => "Unpublish package from registry.";
-    public ILogger<UnpublishCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
@@ -32,7 +32,7 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
         DiscoverProjectsTask discoverTask,
         ProjectsRunner runner,
         ServerClientFactory serverClientFactory,
-        ILogger<UnpublishCommand> logger
+        ILogger logger
     )
     {
         _configurationManager = configurationManager;
@@ -58,7 +58,7 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
 
         if (projects.Length == 0)
         {
-            this.Log().Info($"No projects found unpublish.");
+            this.Info($"No projects found unpublish.");
             return;
         }
 
@@ -71,7 +71,7 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
                 throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
         }
 
-        this.Log().Debug($"Unpublish {projects.Length} projects.");
+        this.Debug($"Unpublish {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
             (project, _) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),

@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Annium;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Scriban;
 using Scriban.Runtime;
 using Xs.Cli.Core.Helpers;
 
 namespace Xs.Cli.Core.Tools;
 
-internal class TemplateWriter : ITemplateWriter, ILogSubject<TemplateWriter>
+internal class TemplateWriter : ITemplateWriter, ILogSubject
 {
-    public ILogger<TemplateWriter> Logger { get; }
+    public ILogger Logger { get; }
     private const string TemplateExtension = "tpl";
     private string _root = Directory.GetCurrentDirectory();
 
@@ -46,7 +46,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject<TemplateWriter>
     private IList<Resource> _resources = new List<Resource>();
 
     public TemplateWriter(
-        ILogger<TemplateWriter> logger
+        ILogger logger
     )
     {
         Logger = logger;
@@ -81,7 +81,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject<TemplateWriter>
         var resource = _resources.First(r => r.Name == resourceName);
         if (resourceName.EndsWith(TemplateExtension))
         {
-            this.Log().Trace($"Write template {resourceName} -> {path}");
+            this.Trace($"Write template {resourceName} -> {path}");
             var scriptObject = new ScriptObject();
             scriptObject.Import(data);
             scriptObject.Import(typeof(StringExtensions));
@@ -93,7 +93,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject<TemplateWriter>
         }
         else
         {
-            this.Log().Trace($"Write as is {resourceName} -> {path}");
+            this.Trace($"Write as is {resourceName} -> {path}");
             using var fs = File.Create(path);
             resource.Content.CopyTo(fs);
         }

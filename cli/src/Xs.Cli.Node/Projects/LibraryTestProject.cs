@@ -10,9 +10,9 @@ using Version = Xs.Cli.Core.Models.Version;
 namespace Xs.Cli.Node.Projects;
 
 // TODO: rewrite into single project view
-internal class LibraryTestProject : SpecialProject<LibraryTestProject>, IPublishableProject, ITestableProject
+internal class LibraryTestProject : SpecialProject, IPublishableProject, ITestableProject
 {
-    public LibraryTestProject(SpecialProjectContext<LibraryTestProject> context) : base(context)
+    public LibraryTestProject(SpecialProjectContext context) : base(context)
     {
     }
 

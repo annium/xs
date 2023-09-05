@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Node.Projects;
@@ -9,16 +9,16 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibReactCommand>
+public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "lib.react";
     public static string Description => "Create new library project, using React.";
-    public ILogger<LibReactCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
     public LibReactCommand(
         ITemplateWriter templateWriter,
-        ILogger<LibReactCommand> logger
+        ILogger logger
     )
     {
         _templateWriter = templateWriter;
@@ -34,7 +34,7 @@ public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverCon
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Log().Debug($"Create library project {name} at {location}");
+        this.Debug($"Create library project {name} at {location}");
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.LibReact");
         _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));

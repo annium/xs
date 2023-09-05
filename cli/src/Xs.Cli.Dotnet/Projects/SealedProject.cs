@@ -1,8 +1,8 @@
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class SealedProject : SpecialProject<SealedProject>
+internal class SealedProject : SpecialProject
 {
-    public SealedProject(SpecialProjectContext<SealedProject> context) : base(context)
+    public SealedProject(SpecialProjectContext context) : base(context)
     {
     }
 }

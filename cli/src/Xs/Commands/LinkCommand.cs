@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -10,16 +10,16 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class LinkCommand : AsyncCommand<LinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LinkCommand>
+internal class LinkCommand : AsyncCommand<LinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "link";
     public static string Description => "Link project <-> package dependencies.";
-    public ILogger<LinkCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
     public LinkCommand(
         DiscoverProjectsTask discoverTask,
-        ILogger<LinkCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -37,7 +37,7 @@ internal class LinkCommand : AsyncCommand<LinkCommandConfiguration, DiscoverConf
         discoverCfg.Roots = new[] { cfg.Target };
         var targets = await _discoverTask.RunAsync(discoverCfg);
 
-        this.Log().Debug($"Link {sources.Count} projects to {targets.Count} external projects.");
+        this.Debug($"Link {sources.Count} projects to {targets.Count} external projects.");
 
         foreach (var src in sources)
         {
@@ -56,13 +56,13 @@ internal class LinkCommand : AsyncCommand<LinkCommandConfiguration, DiscoverConf
             foreach (var (package, project) in externalDependencies)
             {
                 // otherwise - it's external and it's reference is converted to project
-                this.Log().Trace($"Update {src}: replace {package} with {project}.");
+                this.Trace($"Update {src}: replace {package} with {project}.");
 
                 src.Packages.Remove(package);
                 src.Projects.Add(new Dependency<IProject>(package.Type, project!));
             }
 
-            this.Log().Debug($"Updated {src}.");
+            this.Debug($"Updated {src}.");
 
             src.Save();
         }

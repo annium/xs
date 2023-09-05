@@ -5,27 +5,27 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class InterfaceCommand : AsyncCommand<InterfaceCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<InterfaceCommand>
+public class InterfaceCommand : AsyncCommand<InterfaceCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     private const string InterfaceTemplate = "Interface.cs_tpl";
 
     public static string Id => "interface";
     public static string Description => "Create new interfaces.";
-    public ILogger<InterfaceCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 
     public InterfaceCommand(
         DiscoverProjectsTask discoverTask,
         ITemplateWriter templateWriter,
-        ILogger<InterfaceCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -63,13 +63,13 @@ public class InterfaceCommand : AsyncCommand<InterfaceCommandConfiguration, Disc
         if (names.Count == 0)
             return;
 
-        this.Log().Debug($"{names.Count} interface(s) to create");
+        this.Debug($"{names.Count} interface(s) to create");
 
         Directory.CreateDirectory(output);
 
         foreach (var name in names)
         {
-            this.Log().Debug($"Create interface {name} at {output}");
+            this.Debug($"Create interface {name} at {output}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Interface");
             _templateWriter.SetRoot(output);

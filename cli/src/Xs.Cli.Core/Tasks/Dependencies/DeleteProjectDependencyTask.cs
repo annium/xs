@@ -1,15 +1,15 @@
 using System.Linq;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tasks.Dependencies;
 
-public class DeleteProjectDependencyTask : ILogSubject<DeleteProjectDependencyTask>
+public class DeleteProjectDependencyTask : ILogSubject
 {
-    public ILogger<DeleteProjectDependencyTask> Logger { get; }
+    public ILogger Logger { get; }
 
     public DeleteProjectDependencyTask(
-        ILogger<DeleteProjectDependencyTask> logger
+        ILogger logger
     )
     {
         Logger = logger;
@@ -17,16 +17,16 @@ public class DeleteProjectDependencyTask : ILogSubject<DeleteProjectDependencyTa
 
     public void Run(IProject[] targets, IProject project)
     {
-        this.Log().Debug($"Delete project {project} as {project.Type} dependency from {targets.Length} projects.");
+        this.Debug($"Delete project {project} as {project.Type} dependency from {targets.Length} projects.");
         foreach (var target in targets)
         {
             if (target.Projects.All(p => p.Value != project))
             {
-                this.Log().Debug($"Skip deleting project {project} as dependency of {target}. {target} doesn't use {project}.");
+                this.Debug($"Skip deleting project {project} as dependency of {target}. {target} doesn't use {project}.");
                 continue;
             }
 
-            this.Log().Debug($"Delete project {project} from dependencies of {target}.");
+            this.Debug($"Delete project {project} from dependencies of {target}.");
             target.Projects.RemoveWhere(p => p.Value == project);
             target.Save();
         }

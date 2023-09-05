@@ -3,7 +3,8 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Audit;
 
-public interface IAuditRule<TProject> : IAuditRule where TProject : IProject
+public interface IAuditRule<TProject> : IAuditRule
+    where TProject : IProject
 {
     IReadOnlyCollection<AuditResult> Execute(IReadOnlyCollection<IProject> projects, TProject project, bool fix);
 }

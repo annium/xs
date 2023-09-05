@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Annium.Core.DependencyInjection;
 using Annium.Extensions.Shell;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Logging;
@@ -103,7 +103,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
 
         return new SealedProject(GetContext<SealedProject>());
 
-        SpecialProjectContext<TProject> GetContext<TProject>() where TProject : SpecialProject<TProject>
+        SpecialProjectContext GetContext<TProject>() where TProject : SpecialProject
             => new(
                 Constants.ProjectType,
                 name,
@@ -115,7 +115,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
                 scripts,
                 _shell,
                 _loggerConfiguration,
-                _provider.Resolve<ILogger<TProject>>(),
+                _provider.Resolve<ILogger>(),
                 _auditRules,
                 projectCfg as Tools.SpecialConfiguration ?? new Tools.SpecialConfiguration(),
                 _mapper

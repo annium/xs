@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -14,11 +14,11 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UpdateCommand>
+internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "update";
     public static string Description => "Update dependencies in projects.";
-    public ILogger<UpdateCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IEnumerable<IDependencyManager> _dependencyManagers;
     private readonly IConfigurationManager _configurationManager;
@@ -29,7 +29,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
         IEnumerable<IDependencyManager> dependencyManagers,
         IConfigurationManager configurationManager,
         ProjectsRunner runner,
-        ILogger<UpdateCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -49,18 +49,18 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
         var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).ToArray();
         if (projects.Length == 0)
         {
-            this.Log().Info("No projects found to update.");
+            this.Info("No projects found to update.");
             return;
         }
 
         var dependencies = projects.SelectMany(e => e.Packages).Select(e => e.Value).Distinct().ToArray();
         if (dependencies.Length == 0)
         {
-            this.Log().Info("No projects found to update.");
+            this.Info("No projects found to update.");
             return;
         }
 
-        this.Log().Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
+        this.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
 
         // resolve dependency managers for types
         var dependencyManagers = dependencies
@@ -86,14 +86,14 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
                 versions = await dependencyManager.ResolveVersionsAsync(d, dependencyManager.DefaultServer, string.Empty);
 
             var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-            this.Log().Trace($"Resolve: {d} - {versions.Length} version(s)");
+            this.Trace($"Resolve: {d} - {versions.Length} version(s)");
 
             if (result is null)
-                this.Log().Warn($"Resolve: {d} unresolved");
+                this.Warn($"Resolve: {d} unresolved");
             else if (result == d)
-                this.Log().Debug($"Resolve: {d} unchanged");
+                this.Debug($"Resolve: {d} unchanged");
             else
-                this.Log().Debug($"Resolve: {d} -> {result}");
+                this.Debug($"Resolve: {d} -> {result}");
 
             return result;
         }))).OfType<Package>().ToArray();
@@ -102,7 +102,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
         {
             foreach (var project in projects)
                 if (UpdateProject(project, updates))
-                    this.Log().Info($"{project} is to be updated.");
+                    this.Info($"{project} is to be updated.");
 
             return;
         }
@@ -118,12 +118,12 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
 
         if (updated.Count == 0)
         {
-            this.Log().Info("No projects updated.");
+            this.Info("No projects updated.");
             return;
         }
 
         // install installable updates
-        this.Log().Debug($"Clear {updated.Count} projects cache.");
+        this.Debug($"Clear {updated.Count} projects cache.");
         await _runner.RunAsync(
             updated.OfType<ICachingProject>().ToArray(),
             (project, tkn) => project.ClearCacheAsync(tkn),
@@ -131,7 +131,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
             ct
         );
 
-        this.Log().Debug($"Install {updated.Count} projects.");
+        this.Debug($"Install {updated.Count} projects.");
         await _runner.RunAsync(
             updated.OfType<IInstallableProject>().ToArray(),
             (project, tkn) => project.InstallAsync(true, tkn),
@@ -139,7 +139,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
             ct
         );
 
-        this.Log().Info($"{updated.Count} projects updated.");
+        this.Info($"{updated.Count} projects updated.");
     }
 
     private bool UpdateProject(IProject project, Package[] updates)

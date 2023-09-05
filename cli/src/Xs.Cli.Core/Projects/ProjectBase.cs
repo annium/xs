@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Shell;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 using SysDirectory = System.IO.Directory;
@@ -13,8 +13,7 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Core.Projects;
 
-public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
-    where TProject : ProjectBase<TProject>
+public abstract class ProjectBase : IProject, ILogSubject
 {
     public ProjectType Type { get; }
     public string Name { get; private set; }
@@ -24,13 +23,13 @@ public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
     public abstract string File { get; }
     public HashSet<Dependency<IProject>> Projects { get; }
     public HashSet<Dependency<Package>> Packages { get; }
-    public ILogger<TProject> Logger { get; }
+    public ILogger Logger { get; }
     protected readonly IShell Shell;
     protected readonly LoggerConfiguration LoggerConfiguration;
     private string _currentDirectory;
     private string _currentName;
 
-    protected ProjectBase(ProjectBaseContext<TProject> context)
+    protected ProjectBase(ProjectBaseContext context)
     {
         Type = context.Type;
         Name = _currentName = context.Name;
@@ -84,11 +83,11 @@ public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
             var parentDirectory = Path.GetDirectoryName(Directory) ?? throw new DirectoryNotFoundException($"Directory {Directory} has no parent directory");
             if (!SysDirectory.Exists(parentDirectory))
             {
-                this.Log().Trace($"Create {Name} missing target parent directory {parentDirectory}");
+                this.Trace($"Create {Name} missing target parent directory {parentDirectory}");
                 SysDirectory.CreateDirectory(parentDirectory);
             }
 
-            this.Log().Debug($"Move {Name} to {Directory}");
+            this.Debug($"Move {Name} to {Directory}");
 
             SysDirectory.Move(_currentDirectory, Directory);
 
@@ -134,7 +133,7 @@ public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
 
     protected async Task RunAsync(string operation, string command, CancellationToken ct)
     {
-        this.Log().Info($"Start {Name} {operation}.");
+        this.Info($"Start {Name} {operation}.");
 
         var result = await Shell
             .Cmd(command)
@@ -143,7 +142,7 @@ public abstract class ProjectBase<TProject> : IProject, ILogSubject<TProject>
             .RunAsync(ct);
 
         if (result.IsSuccess)
-            this.Log().Info($"Finished {Name} {operation}.");
+            this.Info($"Finished {Name} {operation}.");
         else
             throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
     }

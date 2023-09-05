@@ -2,23 +2,23 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class UnlinkCommand : AsyncCommand<UnlinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UnlinkCommand>
+internal class UnlinkCommand : AsyncCommand<UnlinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "unlink";
     public static string Description => "Unlink project <-> package dependencies.";
-    public ILogger<UnlinkCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
     public UnlinkCommand(
         DiscoverProjectsTask discoverTask,
-        ILogger<UnlinkCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -39,7 +39,7 @@ internal class UnlinkCommand : AsyncCommand<UnlinkCommandConfiguration, Discover
             .ToArray();
         var version = cfg.Version;
 
-        this.Log().Debug($"Unlink {sources.Length} projects from {targets.Count} external projects.");
+        this.Debug($"Unlink {sources.Length} projects from {targets.Count} external projects.");
 
         foreach (var source in sources)
         {
@@ -52,13 +52,13 @@ internal class UnlinkCommand : AsyncCommand<UnlinkCommandConfiguration, Discover
             foreach (var project in externalDependencies)
             {
                 var package = new Package(project.Value.Type, project.Value.Name, version);
-                this.Log().Trace($"Update {source}: replace {project} with {package}.");
+                this.Trace($"Update {source}: replace {project} with {package}.");
 
                 source.Projects.Remove(project);
                 source.Packages.Add(new Dependency<Package>(project.Type, package));
             }
 
-            this.Log().Debug($"Updated {source}.");
+            this.Debug($"Updated {source}.");
 
             source.Save();
         }

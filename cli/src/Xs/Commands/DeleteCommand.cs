@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
@@ -10,11 +10,11 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<DeleteCommand>
+internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "delete";
     public static string Description => "Delete dependency from projects.";
-    public ILogger<DeleteCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
     private readonly DeleteProjectDependencyTask _deleteProjectDependencyTask;
@@ -23,7 +23,7 @@ internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, Discover
         DiscoverProjectsTask discoverTask,
         DeletePackageDependencyTask deletePackageDependencyTask,
         DeleteProjectDependencyTask deleteProjectDependencyTask,
-        ILogger<DeleteCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -46,11 +46,11 @@ internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, Discover
         var targets = allProjects.FilterMask(cfg.Mask).ToArray();
         if (targets.Length == 0)
         {
-            this.Log().Info($"No projects found to add dependency to.");
+            this.Info($"No projects found to add dependency to.");
             return;
         }
 
-        this.Log().Debug($"Try delete dependency {name} from {targets.Length} projects.");
+        this.Debug($"Try delete dependency {name} from {targets.Length} projects.");
 
         var projects = allProjects.FilterMask(name).ToArray();
         if (projects.Length > 0)
@@ -66,7 +66,7 @@ internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, Discover
         // if no packages found
         if (packages.Length == 0)
         {
-            this.Log().Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
+            this.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
             return;
         }
 

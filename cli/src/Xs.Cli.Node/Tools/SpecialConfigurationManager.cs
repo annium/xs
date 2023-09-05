@@ -1,22 +1,22 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Tools;
 
-internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject<SpecialConfigurationManager>
+internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
 {
     private const string ConfigFile = ".npmrc";
     public ProjectType Type => Constants.ProjectType;
     public string[] IgnorePatterns { get; } = { ConfigFile };
-    public ILogger<SpecialConfigurationManager> Logger { get; }
+    public ILogger Logger { get; }
 
     public SpecialConfigurationManager(
-        ILogger<SpecialConfigurationManager> logger
+        ILogger logger
     )
     {
         Logger = logger;
@@ -24,13 +24,13 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
 
     public void Save(IProject project, ProjectTypeConfiguration configuration)
     {
-        this.Log().Trace($"Save configuration for {Constants.ProjectType} project {project}");
+        this.Trace($"Save configuration for {Constants.ProjectType} project {project}");
 
         // with NPM currently it's not possible to publish unscoped packages privately
         var scope = GetScope(project.Name);
         if (string.IsNullOrWhiteSpace(scope))
         {
-            this.Log().Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
+            this.Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
             return;
         }
 

@@ -1,23 +1,23 @@
 using System.IO;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<LibCommand>
+public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "lib";
     public static string Description => "Create new library project.";
-    public ILogger<LibCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
     public LibCommand(
         ITemplateWriter templateWriter,
-        ILogger<LibCommand> logger
+        ILogger logger
     )
     {
         _templateWriter = templateWriter;
@@ -33,7 +33,7 @@ public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Log().Debug($"Create library project {name} at {location}");
+        this.Debug($"Create library project {name} at {location}");
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.Lib");
         _templateWriter.SetRoot(Path.Combine(location, name));

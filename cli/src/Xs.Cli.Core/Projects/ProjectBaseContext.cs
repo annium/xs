@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Annium.Extensions.Shell;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects;
 
-public abstract class ProjectBaseContext<TProject> where TProject : class, IProject
+public abstract class ProjectBaseContext
 {
     public ProjectType Type { get; }
     public string Name { get; }
@@ -17,7 +17,7 @@ public abstract class ProjectBaseContext<TProject> where TProject : class, IProj
     public HashSet<Dependency<Package>> Packages { get; }
     public IShell Shell { get; }
     public LoggerConfiguration LoggerConfiguration { get; }
-    public ILogger<TProject> Logger { get; }
+    public ILogger Logger { get; }
 
     public ProjectBaseContext(
         ProjectType type,
@@ -29,7 +29,7 @@ public abstract class ProjectBaseContext<TProject> where TProject : class, IProj
         HashSet<Dependency<Package>> packages,
         IShell shell,
         LoggerConfiguration loggerConfiguration,
-        ILogger<TProject> logger
+        ILogger logger
     )
     {
         Type = type;

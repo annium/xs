@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
@@ -14,7 +14,7 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs;
 
-internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<QueryCommand>
+internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     private const string DomainQueryTemplate = "DomainQuery.cs_tpl";
     private const string ApplicationQueryTemplate = "ApplicationQuery.cs_tpl";
@@ -23,7 +23,7 @@ internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverCo
     private const string Queries = "Queries";
     private const string Requests = "Requests";
     private const string Responses = "Responses";
-    public ILogger<QueryCommand> Logger { get; }
+    public ILogger Logger { get; }
     public static string Id => "query";
     public static string Description => "Create query.";
     private readonly DiscoverProjectsTask _discoverTask;
@@ -32,7 +32,7 @@ internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverCo
     public QueryCommand(
         DiscoverProjectsTask discoverTask,
         ITemplateWriter templateWriter,
-        ILogger<QueryCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -73,7 +73,7 @@ internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverCo
 
         var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-        this.Log().Debug($"Create query {data.Entity}:{data.Name}");
+        this.Debug($"Create query {data.Entity}:{data.Name}");
 
         // write files
         _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Queries, data.Entity));

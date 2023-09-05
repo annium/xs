@@ -2,23 +2,23 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class FormatCommand : AsyncCommand<FormatCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<FormatCommand>
+internal class FormatCommand : AsyncCommand<FormatCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "format";
     public static string Description => "Format projects.";
-    public ILogger<FormatCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
     public FormatCommand(
         DiscoverProjectsTask discoverTask,
-        ILogger<FormatCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -37,10 +37,10 @@ internal class FormatCommand : AsyncCommand<FormatCommandConfiguration, Discover
             .FilterType(cfg.Type)
             .ToArray();
 
-        this.Log().Debug($"Format {projects} project(s)");
+        this.Debug($"Format {projects} project(s)");
         foreach (var project in projects)
         {
-            this.Log().Debug($"Format {project}");
+            this.Debug($"Format {project}");
             project.Save();
         }
     }

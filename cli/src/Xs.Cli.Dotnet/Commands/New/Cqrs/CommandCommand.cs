@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
@@ -14,7 +14,7 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs;
 
-internal class CommandCommand : AsyncCommand<CommandCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<CommandCommand>
+internal class CommandCommand : AsyncCommand<CommandCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     private const string DomainCommandTemplate = "DomainCommand.cs_tpl";
     private const string ApplicationCommandTemplate = "ApplicationCommand.cs_tpl";
@@ -24,14 +24,14 @@ internal class CommandCommand : AsyncCommand<CommandCommandConfiguration, Discov
 
     public static string Id => "command";
     public static string Description => "Create command.";
-    public ILogger<CommandCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 
     public CommandCommand(
         DiscoverProjectsTask discoverTask,
         ITemplateWriter templateWriter,
-        ILogger<CommandCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -72,7 +72,7 @@ internal class CommandCommand : AsyncCommand<CommandCommandConfiguration, Discov
 
         var data = GetCommandDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-        this.Log().Debug($"Create command {data.Entity}:{data.Name}");
+        this.Debug($"Create command {data.Entity}:{data.Name}");
 
         // write files
         _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Commands, data.Entity));

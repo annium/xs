@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Tasks;
@@ -10,11 +10,11 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<UseCommand>
+internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "use";
     public static string Description => "Set dependency in projects to specific version.";
-    public ILogger<UseCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly AddPackageDependencyTask _addPackageDependencyTask;
     private readonly DeletePackageDependencyTask _deletePackageDependencyTask;
@@ -23,7 +23,7 @@ internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfig
         DiscoverProjectsTask discoverTask,
         AddPackageDependencyTask addPackageDependencyTask,
         DeletePackageDependencyTask deletePackageDependencyTask,
-        ILogger<UseCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -55,7 +55,7 @@ internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfig
 
         if (targets.Length == 0)
         {
-            this.Log().Info($"No projects found to update.");
+            this.Info($"No projects found to update.");
             return;
         }
 

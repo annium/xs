@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Node.Projects;
@@ -9,16 +9,16 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AppReactCommand>
+public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "app.react";
     public static string Description => "Create new app project, using React.";
-    public ILogger<AppReactCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
     public AppReactCommand(
         ITemplateWriter templateWriter,
-        ILogger<AppReactCommand> logger
+        ILogger logger
     )
     {
         _templateWriter = templateWriter;
@@ -34,7 +34,7 @@ public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverCon
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Log().Debug($"Create app project {name} at {location}");
+        this.Debug($"Create app project {name} at {location}");
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.AppReact");
         _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));

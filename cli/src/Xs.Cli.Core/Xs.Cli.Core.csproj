@@ -14,10 +14,12 @@
     <ItemGroup>
         <PackageReference Include="Annium.Configuration.CommandLine" Version="0.1.0" />
         <PackageReference Include="Annium.Configuration.Yaml" Version="0.1.0" />
+        <PackageReference Include="Annium.Data.Operations.Serialization.Json" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.Arguments" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.CommandLine" Version="0.1.0" />
         <PackageReference Include="Annium.Extensions.Shell" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
+        <PackageReference Include="Annium.NodaTime.Serialization.Json" Version="0.1.0" />
         <PackageReference Include="Annium.Serialization.Json" Version="0.1.0" />
         <PackageReference Include="Annium.Serialization.Yaml" Version="0.1.0" />
         <PackageReference Include="Scriban" Version="5.7.0" />

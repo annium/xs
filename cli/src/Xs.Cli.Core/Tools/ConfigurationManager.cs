@@ -5,20 +5,20 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Annium.Configuration.Abstractions;
 using Annium.Core.Mapper;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Helpers;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tools;
 
-internal class ConfigurationManager : IConfigurationManager, ILogSubject<ConfigurationManager>
+internal class ConfigurationManager : IConfigurationManager, ILogSubject
 {
     private const string ConfigurationFile = ".xs";
     private const string CredentialsFile = ".xs.credentials";
     private const string IgnoreHeader = "# xs ignore patterns";
     private const string IgnoreFile = ".gitignore";
-    public ILogger<ConfigurationManager> Logger { get; }
+    public ILogger Logger { get; }
     private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> _specialManagers;
     private readonly Func<IConfigurationBuilder> _configurationBuilderFactory;
     private readonly IMapper _mapper;
@@ -27,7 +27,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
         IEnumerable<ISpecialConfigurationManager> specialManagers,
         Func<IConfigurationBuilder> configurationBuilderFactory,
         IMapper mapper,
-        ILogger<ConfigurationManager> logger
+        ILogger logger
     )
     {
         _specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
@@ -38,16 +38,16 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
 
     public Configuration Load(string folder)
     {
-        this.Log().Trace($"Load configuration from {folder}");
+        this.Trace($"Load configuration from {folder}");
         var directory = GetConfigurationFolder(new DirectoryInfo(folder));
 
         if (directory is null)
         {
-            this.Log().Trace($"Configuration missing in {folder}. Returning default");
+            this.Trace($"Configuration missing in {folder}. Returning default");
             return Configuration.Empty;
         }
 
-        this.Log().Trace($"Loaded configuration from {directory}");
+        this.Trace($"Loaded configuration from {directory}");
         var cfgFile = GetConfigurationFile(directory.FullName);
         var credFile = GetCredentialsFile(directory.FullName);
 
@@ -55,7 +55,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
             .AddYamlFile(cfgFile)
             .Build<Config>();
 
-        this.Log().Trace($"Configuration loaded from {folder}");
+        this.Trace($"Configuration loaded from {folder}");
 
         return new Configuration(
             directory.FullName,
@@ -79,7 +79,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
 
     public void Save(Configuration configuration, IReadOnlyCollection<IProject> projects)
     {
-        this.Log().Trace($"Save configuration in {configuration.Directory}");
+        this.Trace($"Save configuration in {configuration.Directory}");
         var cfg = _mapper.Map<Config>(configuration);
         Write(GetConfigurationFile, Yaml.Serializer.Serialize(cfg));
         Write(GetCredentialsFile, configuration.Token);
@@ -94,18 +94,18 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
         {
             if (!_specialManagers.ContainsKey(type))
             {
-                this.Log().Trace($"{type} configuration manager not found");
+                this.Trace($"{type} configuration manager not found");
                 continue;
             }
 
             var targets = projects.Where(p => p.Type.Equals(type)).ToArray();
             if (!targets.Any())
             {
-                this.Log().Trace($"No {type} projects discovered to save configuration for");
+                this.Trace($"No {type} projects discovered to save configuration for");
                 continue;
             }
 
-            this.Log().Trace($"Save {type} -> {uri} configuration");
+            this.Trace($"Save {type} -> {uri} configuration");
             ignorePatterns.AddRange(_specialManagers[type].IgnorePatterns);
             var typeConfiguration = new ProjectTypeConfiguration(
                 uri,
@@ -116,7 +116,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject<Configu
                 _specialManagers[type].Save(project, typeConfiguration);
         }
 
-        this.Log().Trace($"Update ignore file in {configuration.Directory}");
+        this.Trace($"Update ignore file in {configuration.Directory}");
         var ignoreFile = Path.Combine(configuration.Directory, IgnoreFile);
 
         if (File.Exists(ignoreFile))

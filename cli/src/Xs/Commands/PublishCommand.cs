@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
@@ -13,11 +13,11 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<PublishCommand>
+internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "publish";
     public static string Description => "Publish packages to registry.";
-    public ILogger<PublishCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly IConfigurationManager _configurationManager;
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
@@ -26,7 +26,7 @@ internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, Discov
         IConfigurationManager configurationManager,
         DiscoverProjectsTask discoverTask,
         ProjectsRunner runner,
-        ILogger<PublishCommand> logger
+        ILogger logger
     )
     {
         _configurationManager = configurationManager;
@@ -51,7 +51,7 @@ internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, Discov
 
         if (projects.Length == 0)
         {
-            this.Log().Info($"No projects found publish.");
+            this.Info($"No projects found publish.");
             return;
         }
 
@@ -59,7 +59,7 @@ internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, Discov
             if (!configuration.Servers.ContainsKey(project.Type))
                 throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
 
-        this.Log().Debug($"Publish {projects.Length} projects.");
+        this.Debug($"Publish {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
             (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),

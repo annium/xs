@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
@@ -12,18 +12,18 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Audit;
 
-internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<AuditCommand>
+internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "";
     public static string Description => "Audit projects.";
-    public ILogger<AuditCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IAuditRule[] _rules;
 
     public AuditCommand(
         DiscoverProjectsTask discoverTask,
         IEnumerable<IAuditRule> rules,
-        ILogger<AuditCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -42,7 +42,7 @@ internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverCo
             .FilterMask(cfg.Mask)
             .OfType<IAuditableProject>()
             .ToArray();
-        this.Log().Debug($"Audit {auditedProjects.Length} projects.");
+        this.Debug($"Audit {auditedProjects.Length} projects.");
 
         var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)
             .Where(r => !cfg.Exclude.Contains(r.Code))
@@ -55,9 +55,9 @@ internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverCo
             return;
         }
 
-        this.Log().Debug($"Use {usedRules.Length} rule(s):");
+        this.Debug($"Use {usedRules.Length} rule(s):");
         foreach (var rule in usedRules)
-            this.Log().Debug(rule);
+            this.Debug(rule);
 
         foreach (var project in auditedProjects)
         {

@@ -1,7 +1,7 @@
 using System;
 using Annium.Configuration.Abstractions;
 using Annium.Core.DependencyInjection;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Annium.Logging.Shared;
 using Xs.Cli.Core.Logging;
 using Xs.Cli.Core.Projects;
@@ -32,7 +32,7 @@ public class ServicePack : ServicePackBase
                 d.WithNamingConvention(CamelCaseNamingConvention.Instance);
                 s.DisableAliases();
             });
-        container.AddHttpRequestFactory().SetDefault();
+        container.AddHttpRequestFactory(true);
         container.AddLogging();
         container.AddShell();
 

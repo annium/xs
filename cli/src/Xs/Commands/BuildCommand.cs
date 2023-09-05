@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -11,18 +11,18 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<BuildCommand>
+internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     public static string Id => "build";
     public static string Description => "Build projects.";
-    public ILogger<BuildCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 
     public BuildCommand(
         DiscoverProjectsTask discoverTask,
         ProjectsRunner runner,
-        ILogger<BuildCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -42,7 +42,7 @@ internal class BuildCommand : AsyncCommand<BuildCommandConfiguration, DiscoverCo
             .FilterType(cfg.Type)
             .OfType<IBuildableProject>()
             .ToArray();
-        this.Log().Debug($"Build {projects.Length} projects.");
+        this.Debug($"Build {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
             (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn),

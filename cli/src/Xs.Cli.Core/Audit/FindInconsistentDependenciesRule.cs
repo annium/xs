@@ -5,7 +5,8 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Audit;
 
-public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject> where TProject : IProject
+public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject>
+    where TProject : IProject
 {
     public string Code => "deps-consist";
     public string Description => "Finds inconsistent dependencies across projects. Fix uses latest for all projects";

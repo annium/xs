@@ -5,27 +5,27 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
-using Annium.Logging.Abstractions;
+using Annium.Logging;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class ClassCommand : AsyncCommand<ClassCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject<ClassCommand>
+public class ClassCommand : AsyncCommand<ClassCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     private const string ClassTemplate = "Class.cs_tpl";
 
     public static string Id => "class";
     public static string Description => "Create new classes.";
-    public ILogger<ClassCommand> Logger { get; }
+    public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 
     public ClassCommand(
         DiscoverProjectsTask discoverTask,
         ITemplateWriter templateWriter,
-        ILogger<ClassCommand> logger
+        ILogger logger
     )
     {
         _discoverTask = discoverTask;
@@ -63,13 +63,13 @@ public class ClassCommand : AsyncCommand<ClassCommandConfiguration, DiscoverConf
         if (names.Count == 0)
             return;
 
-        this.Log().Debug($"{names.Count} class(es) to create");
+        this.Debug($"{names.Count} class(es) to create");
 
         Directory.CreateDirectory(output);
 
         foreach (var name in names)
         {
-            this.Log().Debug($"Create class {name} at {output}");
+            this.Debug($"Create class {name} at {output}");
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Class");
             _templateWriter.SetRoot(output);

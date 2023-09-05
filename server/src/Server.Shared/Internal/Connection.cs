@@ -1,20 +1,21 @@
-using Annium.Logging.Abstractions;
+
+using Annium.Logging;
 using LinqToDB;
 using LinqToDB.Data;
 using Server.Shared.Domain.Models;
 
 namespace Server.Shared.Internal;
 
-internal class Connection : DataConnection, ILogSubject<Connection>
+internal class Connection : DataConnection, ILogSubject
 {
-    public ILogger<Connection> Logger { get; }
+    public ILogger Logger { get; }
     public ITable<MetaPackage> MetaPackages { get; set; }
     public ITable<MetaPackagePermission> MetaPackagePermissions { get; set; }
     public ITable<User> Users { get; set; }
 
     public Connection(
         DataOptions<Connection> config,
-        ILogger<Connection> logger
+        ILogger logger
     ) : base(config.Options)
     {
         Logger = logger;
