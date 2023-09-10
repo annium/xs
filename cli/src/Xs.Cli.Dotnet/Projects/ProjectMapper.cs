@@ -148,16 +148,11 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             Indent = true,
             IndentChars = new string(' ', 4),
             OmitXmlDeclaration = true,
-            Encoding = new UTF8Encoding(false),
+            Encoding = Encoding.UTF8,
         };
 
-        var sb = new StringBuilder();
-        using (var xw = XmlWriter.Create(sb, xws))
-        {
-            info.Save(xw);
-        }
-
-        File.WriteAllText(path, sb.ToString());
+        using var xw = XmlWriter.Create(path, xws);
+        info.Save(xw);
     }
 
     private XElement SaveProjects(XElement info, string dir, char separator, IReadOnlyCollection<Dependency<IProject>> projects)
