@@ -1,5 +1,7 @@
 using System;
+using System.Text;
 using Annium.Core.DependencyInjection;
+using Annium.Logging.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace {{name}};
@@ -15,20 +17,35 @@ public class ServicePack : ServicePackBase
         container.AddMapper();
         container.AddHttpRequestFactory(true);
         container.AddSerializers()
-            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime(), isDefault: true);
+            .WithJson(opts =>
+                {
+                    opts.ConfigureForOperations();
+                    opts.ConfigureForNodaTime();
+                },
+                isDefault: true);
 
         // web
         container.AddRouting();
         container.AddHostHttpRequestFactory();
         container.AddApiServices();
-        container.AddStorages();
-        container.AddComponentFormStateFactory();
+        container.AddStates();
+        container.AddStateFactory();
         container.AddCss();
         container.Collection.AddAntDesign();
     }
 
     public override void Setup(IServiceProvider provider)
     {
-        provider.UseLogging(route => route.UseConsole((m, msg) => $"{m.Type}#{m.Line} >> {msg}"));
+        provider.UseLogging(route => route
+            .UseConsole(m =>
+            {
+                var sb = new StringBuilder();
+                sb.Append(m.Subject());
+                if (m.Line != 0)
+                    sb.Append(m.Location());
+
+                return $"{sb} >> {m.Message}";
+            })
+        );
     }
 }

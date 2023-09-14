@@ -1,10 +1,10 @@
-@using Annium.Logging.Abstractions
+@using Annium.Logging
 
 @page "/"
 
 @namespace {{name}}.Pages.Home
 
 @inject Style Style;
-@inject ILogger<HomePage> logger;
+@inject ILogger Logger;
 
 <div class="@Style.Text">Hello, world!</div>

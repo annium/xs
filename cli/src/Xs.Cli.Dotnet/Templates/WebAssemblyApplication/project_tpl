@@ -13,6 +13,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Annium.Blazor.Ant" Version="0.1.0" />
+        <PackageReference Include="Annium.Blazor.Core" Version="0.1.0" />
         <PackageReference Include="Annium.Blazor.Css" Version="0.1.0" />
         <PackageReference Include="Annium.Blazor.Net" Version="0.1.0" />
         <PackageReference Include="Annium.Blazor.Routing" Version="0.1.0" />
@@ -20,9 +21,11 @@
         <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
         <PackageReference Include="Annium.Logging.Microsoft" Version="0.1.0" />
+        <PackageReference Include="Annium.Data.Operations.Serialization.Json" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
+        <PackageReference Include="Annium.NodaTime.Serialization.Json" Version="0.1.0" />
         <PackageReference Include="Annium.Serialization.Json" Version="0.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.8" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" />
     </ItemGroup>
 </Project>
