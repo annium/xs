@@ -16,7 +16,7 @@
         <PackageReference Include="Annium.Blazor.Css" Version="0.1.0" />
         <PackageReference Include="Annium.Blazor.Net" Version="0.1.0" />
         <PackageReference Include="Annium.Blazor.Routing" Version="0.1.0" />
-        <PackageReference Include="Annium.Blazor.Storage" Version="0.1.0" />
+        <PackageReference Include="Annium.Blazor.State" Version="0.1.0" />
         <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
         <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
         <PackageReference Include="Annium.Logging.Microsoft" Version="0.1.0" />
