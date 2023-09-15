@@ -55,7 +55,7 @@ internal abstract class SpecialProject :
 
     public Task ClearCacheAsync(CancellationToken ct)
     {
-        this.Info($"Start {Name} cache clean.");
+        this.Debug($"Start {Name} cache clean.");
 
         var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
         lock (CacheLocker)
@@ -68,14 +68,14 @@ internal abstract class SpecialProject :
             }
         }
 
-        this.Info($"Finished {Name} cache clean.");
+        this.Debug($"Finished {Name} cache clean.");
 
         return Task.CompletedTask;
     }
 
     public Task CleanAsync(bool force, CancellationToken ct)
     {
-        this.Info($"Start {Name} clean.");
+        this.Debug($"Start {Name} clean.");
 
         DeleteDirectory("bin");
         DeleteDirectory("obj");
@@ -83,7 +83,7 @@ internal abstract class SpecialProject :
         DeleteFiles("*.nupkg");
         DeleteFiles("*.snupkg");
 
-        this.Info($"Finished {Name} clean.");
+        this.Debug($"Finished {Name} clean.");
 
         return Task.CompletedTask;
     }

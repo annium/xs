@@ -63,7 +63,7 @@ internal abstract class SpecialProject : ProjectBase,
 
     public Task ClearCacheAsync(CancellationToken ct)
     {
-        this.Info($"Start {Name} cache clean.");
+        this.Debug($"Start {Name} cache clean.");
 
         // lock (CacheLocker)
         // {
@@ -78,14 +78,14 @@ internal abstract class SpecialProject : ProjectBase,
         //     }
         // }
 
-        this.Info($"Finished {Name} cache clean.");
+        this.Debug($"Finished {Name} cache clean.");
 
         return Task.CompletedTask;
     }
 
     public async Task CleanAsync(bool force, CancellationToken ct)
     {
-        this.Info($"Start {Name} clean.");
+        this.Debug($"Start {Name} clean.");
 
         DeleteDirectory(ProjectFactory.ModulesDirectory);
         DeleteFiles("*.tgz");
@@ -97,7 +97,7 @@ internal abstract class SpecialProject : ProjectBase,
         if (Scripts.ContainsKey("clean"))
             await RunAsync("pnpm clean", "pnpm run clean", ct);
 
-        this.Info($"Finished {Name} clean.");
+        this.Debug($"Finished {Name} clean.");
     }
 
     public Task InstallAsync(bool force, CancellationToken ct)

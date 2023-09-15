@@ -3,6 +3,30 @@ TAG_PREFIX := registry.annium.com/$(PROJECT_NAME)
 TFM := net7.0
 BIN_DEBUG := bin/Debug/$(TFM)
 
+install:
+	xs remote restore -user $(user) -password $(pass)
+
+update:
+	xs update all dotnet -debug -sc -ic
+
+clean:
+	xs clean -sc -ic
+
+build:
+	dotnet build --nologo -v q
+
+test:
+	dotnet test --nologo -v q
+
+publish:
+	make publish-tools
+
+install-cli:
+	./cli/scripts/nix_install.sh
+
+uninstall-cli:
+	./cli/scripts/nix_uninstall.sh
+
 configure:
 	@# host
 	$(call copy,shared,main.yml,run/server/configuration server/src/Server.Host/configuration)
@@ -20,7 +44,7 @@ deconfigure:
 run:
 	cd server/src/Server.Host && ./bin/Debug/net7.0/Server.Host
 
-publish: publish-server
+publish-all: publish-server
 
 publish-server:
 	$(call publish,server,.,server/src/Server.Host/app.dockerfile)
