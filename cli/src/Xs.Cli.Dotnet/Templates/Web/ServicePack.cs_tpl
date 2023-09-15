@@ -16,7 +16,12 @@ internal class ServicePack : ServicePackBase
     {
         container.AddTime().WithRealTime().SetDefault();
         container.AddSerializers()
-            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime(), isDefault: true);
+            .WithJson(opts =>
+            {
+                opts.ConfigureForOperations();
+                opts.ConfigureForNodaTime();
+            }, isDefault: true);
+        container.AddMediator();
         container.AddLogging();
 
         // server
