@@ -14,7 +14,7 @@ await using var entry = Entrypoint.Default
     .Setup();
 
 var (provider, ct) = entry;
-var verbose = args.Contains("--verbose");
+var verbose = args.Contains("-verbose");
 
 try
 {
