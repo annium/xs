@@ -133,7 +133,7 @@ public abstract class ProjectBase : IProject, ILogSubject
 
     protected async Task RunAsync(string operation, string command, CancellationToken ct)
     {
-        this.Info($"Start {Name} {operation}.");
+        this.Trace($"Start {Name} {operation}.");
 
         var result = await Shell
             .Cmd(command)
@@ -142,7 +142,7 @@ public abstract class ProjectBase : IProject, ILogSubject
             .RunAsync(ct);
 
         if (result.IsSuccess)
-            this.Info($"Finished {Name} {operation}.");
+            this.Trace($"Finished {Name} {operation}.");
         else
             throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
     }
