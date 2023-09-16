@@ -6,7 +6,7 @@ BIN_DEBUG := bin/Debug/$(TFM)
 format:
 	xs format -sc -ic
 
-install:
+setup:
 	xs remote restore -user $(user) -password $(pass)
 
 update:
