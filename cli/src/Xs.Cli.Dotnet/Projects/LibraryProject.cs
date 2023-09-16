@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Annium.Logging;
 using Xs.Cli.Core.Projects;
 using SysFile = System.IO.File;
 using Version = Xs.Cli.Core.Models.Version;
@@ -37,6 +38,8 @@ internal class LibraryProject : SpecialProject, IPublishableProject
 
     public async Task PublishAsync(Uri registry, string accessToken, Version version, CancellationToken ct)
     {
+        this.Info($"Start {Name}@{Version} publish.");
+
         var packageFile = await PackAsync(version, ct);
 
         var source = registry.IsFile ? registry.AbsolutePath : new Uri(registry, Constants.ServerPathSuffix).ToString();
@@ -46,6 +49,8 @@ internal class LibraryProject : SpecialProject, IPublishableProject
             cmd += $" --api-key {accessToken}";
 
         await RunAsync("publish", cmd, ct);
+
+        this.Info($"Done {Name}@{Version} publish.");
 
         SysFile.Delete(packageFile);
     }
