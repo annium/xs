@@ -22,7 +22,7 @@ test:
 	dotnet test --nologo -v q
 
 publish:
-	make publish-tools
+	@echo "noop"
 
 install-cli:
 	./cli/scripts/nix_install.sh
