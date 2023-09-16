@@ -3,6 +3,9 @@ TAG_PREFIX := registry.annium.com/$(PROJECT_NAME)
 TFM := net7.0
 BIN_DEBUG := bin/Debug/$(TFM)
 
+format:
+	xs format -sc -ic
+
 install:
 	xs remote restore -user $(user) -password $(pass)
 
