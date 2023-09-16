@@ -10,7 +10,7 @@ setup:
 	xs remote restore -user $(user) -password $(pass)
 
 update:
-	xs update all dotnet -debug -sc -ic
+	xs update all dotnet -sc -ic
 
 clean:
 	xs clean -sc -ic

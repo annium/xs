@@ -102,7 +102,7 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
         {
             foreach (var project in projects)
                 if (UpdateProject(project, updates))
-                    this.Info($"{project} is to be updated.");
+                    this.Debug($"{project} is to be updated.");
 
             return;
         }
