@@ -1,0 +1,9 @@
+using Annium.Logging;
+
+namespace {{name}};
+
+public sealed record SiteConfiguration
+{
+    public string Server { get; set; } = default!;
+    public LogLevel LogLevel { get; set; } = LogLevel.Info;
+}

@@ -1,9 +1,11 @@
 using Annium.Blazor.Core;
+using Annium.Configuration.Abstractions;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using {{name}};
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.StartAt<App>();
 builder.UseServicePack<ServicePack>();
+await builder.AddConfiguration<SiteConfiguration>(async cfg => await cfg.AddRemoteYaml($"{builder.HostEnvironment.BaseAddress}site.yml"));
 var app = builder.Build();
 await app.RunAsync();
