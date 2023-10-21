@@ -30,7 +30,4 @@
     <ItemGroup>
         <EmbeddedResource Include="Scripts/**/*.sql" />
     </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Domain" />
-    </ItemGroup>
 </Project>
