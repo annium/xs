@@ -62,8 +62,7 @@ public static class FileManager
                 return true;
 
             dir = Directory.GetParent(dir)?.FullName;
-        }
-        while (dir is not null && dir.Contains(root));
+        } while (dir is not null && dir.Contains(root));
 
         return false;
     }
@@ -78,18 +77,18 @@ public static class FileManager
                 return true;
 
             dir = Directory.GetParent(dir)?.FullName;
-        }
-        while (dir is not null);
+        } while (dir is not null);
 
         return false;
     }
 
     private static bool IsDirectoryIgnored(string directory, string[] ignoredDirectories)
     {
-        var ignored = GloballyIgnoredDirectories.Any(directory.Contains) ||
-            ignoredDirectories.Any(directory.Contains) ||
-            !Directory.Exists(directory) ||
-            Directory.GetFiles(directory, IgnoreFile, SearchOption.TopDirectoryOnly).Length > 0;
+        var ignored =
+            GloballyIgnoredDirectories.Any(directory.Contains)
+            || ignoredDirectories.Any(directory.Contains)
+            || !Directory.Exists(directory)
+            || Directory.GetFiles(directory, IgnoreFile, SearchOption.TopDirectoryOnly).Length > 0;
 
         return ignored;
     }

@@ -12,12 +12,13 @@ public static class ResourceLoader
     {
         prefix = $"{assembly.GetName().Name}.{prefix}.";
 
-        return assembly.GetManifestResourceNames()
+        return assembly
+            .GetManifestResourceNames()
             .Where(r => r.StartsWith(prefix))
             .Select(r =>
             {
                 var name = r.Substring(prefix.Length);
-                var rs = assembly.GetManifestResourceStream(r) !;
+                var rs = assembly.GetManifestResourceStream(r)!;
                 rs.Seek(0, SeekOrigin.Begin);
 
                 return new Resource(name, rs);

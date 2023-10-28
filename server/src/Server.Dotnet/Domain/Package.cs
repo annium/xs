@@ -17,7 +17,8 @@ public sealed record Package : IPackage<PackageDependency>, IIdEntity<Guid>
     public string Description { get; private init; } = string.Empty;
     public Instant Published { get; private init; }
     public int Downloads { get; private init; }
-    public IReadOnlyCollection<PackageDependency> Dependencies { get; private init; } = Array.Empty<PackageDependency>();
+    public IReadOnlyCollection<PackageDependency> Dependencies { get; private init; } =
+        Array.Empty<PackageDependency>();
 
     public Package(
         Guid id,
@@ -39,7 +40,5 @@ public sealed record Package : IPackage<PackageDependency>, IIdEntity<Guid>
         Dependencies = dependencies;
     }
 
-    internal Package()
-    {
-    }
+    internal Package() { }
 }

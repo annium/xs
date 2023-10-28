@@ -10,18 +10,15 @@ internal class PackageStorage : IPackageStorage
 {
     private readonly IStorage _storage;
 
-    public PackageStorage(
-        IStorageFactory storageFactory,
-        Configuration configuration
-    )
+    public PackageStorage(IStorageFactory storageFactory, Configuration configuration)
     {
         _storage = storageFactory.Create(configuration.PackagesFolder);
     }
 
     public async Task<bool> ExistsAsync(string name, string version)
     {
-        return await _storage.ExistsAsync(GetPackagePath(name, version)) &&
-            await _storage.ExistsAsync(GetNuspecPath(name, version));
+        return await _storage.ExistsAsync(GetPackagePath(name, version))
+            && await _storage.ExistsAsync(GetNuspecPath(name, version));
     }
 
     public async Task SaveAsync(string name, string version, Stream stream)

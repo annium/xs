@@ -9,7 +9,7 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Projects;
 
-internal class SpecialProjectContext : ProjectBaseContext 
+internal class SpecialProjectContext : ProjectBaseContext
 {
     public IReadOnlyDictionary<string, string> Scripts { get; }
     public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
@@ -31,18 +31,8 @@ internal class SpecialProjectContext : ProjectBaseContext
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
         SpecialConfiguration config,
         ProjectMapper mapper
-    ) : base(
-        type,
-        name,
-        version,
-        description,
-        directory,
-        projects,
-        packages,
-        shell,
-        loggerConfiguration,
-        logger
     )
+        : base(type, name, version, description, directory, projects, packages, shell, loggerConfiguration, logger)
     {
         Scripts = scripts;
         AuditRules = auditRules;

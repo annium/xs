@@ -15,8 +15,8 @@ public sealed record ProjectType
         return Get(name);
     }
 
-    public static ProjectType Get(string name) => Types.Find(e => e._name == name) ??
-        throw new Exception($"Project type {name} is not registered.");
+    public static ProjectType Get(string name) =>
+        Types.Find(e => e._name == name) ?? throw new Exception($"Project type {name} is not registered.");
 
     private readonly string _name;
 

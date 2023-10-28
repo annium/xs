@@ -67,7 +67,8 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
         if (!file.EndsWith(ProjectFileName))
             return false;
 
-        var parent = Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
+        var parent =
+            Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
         var directory = parent.FullName;
         if (FileManager.IsUnrootedDirectoryIgnored(directory, IgnoredFolders))
             return false;
@@ -75,18 +76,15 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
         return IsProjectDirectory(directory);
     }
 
-    public IProject CreateProject(
-        string directory,
-        DiscoverConfiguration discoverCfg,
-        SpecialConfiguration? projectCfg
-    )
+    public IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, SpecialConfiguration? projectCfg)
     {
         var file = new FileInfo(Path.Combine(directory, ProjectFileName));
-        var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = _mapper.Load(file.FullName, discoverCfg);
+        var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = _mapper.Load(
+            file.FullName,
+            discoverCfg
+        );
 
-        var projectDependencies = projectDeps
-            .Select(e => GetProjectDependencyMock(file, e))
-            .ToHashSet();
+        var projectDependencies = projectDeps.Select(e => GetProjectDependencyMock(file, e)).ToHashSet();
 
         var packageDependencies = packageDeps.ToHashSet();
 
@@ -103,8 +101,9 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
 
         return new SealedProject(GetContext<SealedProject>());
 
-        SpecialProjectContext GetContext<TProject>() where TProject : SpecialProject
-            => new(
+        SpecialProjectContext GetContext<TProject>()
+            where TProject : SpecialProject =>
+            new(
                 Constants.ProjectType,
                 name,
                 version,

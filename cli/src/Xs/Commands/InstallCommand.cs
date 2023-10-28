@@ -11,7 +11,10 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class InstallCommand
+    : AsyncCommand<InstallCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "install";
     public static string Description => "Install projects' dependencies.";
@@ -19,11 +22,7 @@ internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, Discov
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 
-    public InstallCommand(
-        DiscoverProjectsTask discoverTask,
-        ProjectsRunner runner,
-        ILogger logger
-    )
+    public InstallCommand(DiscoverProjectsTask discoverTask, ProjectsRunner runner, ILogger logger)
     {
         _discoverTask = discoverTask;
         _runner = runner;
@@ -39,10 +38,7 @@ internal class InstallCommand : AsyncCommand<InstallCommandConfiguration, Discov
         var force = cfg.Force;
 
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterMask(cfg.Mask)
-            .FilterType(cfg.Type)
-            .ToArray();
+        var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).ToArray();
 
         if (force)
         {

@@ -16,7 +16,9 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
 {
     public static string Id => "";
     public static string Description => "Execute repositories sync";
-    private static readonly IReadOnlyCollection<FileStatus> Statuses = Enum.GetValues<FileStatus>().Except(FileStatus.Unaltered.Yield()).ToArray();
+    private static readonly IReadOnlyCollection<FileStatus> Statuses = Enum.GetValues<FileStatus>()
+        .Except(FileStatus.Unaltered.Yield())
+        .ToArray();
     private static readonly IReadOnlyDictionary<FileStatus, string> StatusLabels;
     private string Indent => new(' ', _indentation);
     private readonly SyncConfigurator _configurator;
@@ -44,19 +46,13 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
         StatusLabels = statuses;
     }
 
-    public SyncCommand(
-        SyncConfigurator configurator,
-        IShell shell
-    )
+    public SyncCommand(SyncConfigurator configurator, IShell shell)
     {
         _configurator = configurator;
         _shell = shell;
     }
 
-    public override async Task HandleAsync(
-        SyncCommandConfiguration cfg,
-        CancellationToken ct
-    )
+    public override async Task HandleAsync(SyncCommandConfiguration cfg, CancellationToken ct)
     {
         var projects = _configurator.Read();
 
@@ -70,9 +66,7 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
             return;
         }
 
-        var groups = projects
-            .GroupBy(x => x.Group)
-            .ToDictionary(x => x.Key);
+        var groups = projects.GroupBy(x => x.Group).ToDictionary(x => x.Key);
 
         if (groups.ContainsKey(cfg.PathOrGroup))
         {
@@ -101,16 +95,23 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
 
         var localBranches = repo.Branches.Where(x => !x.IsRemote).ToArray();
 
-        var changes = repo.RetrieveStatus()
-            .Where(x => x.State is not FileStatus.Ignored)
-            .ToArray();
+        var changes = repo.RetrieveStatus().Where(x => x.State is not FileStatus.Ignored).ToArray();
         var touchedPaths = changes
-            .SelectMany(x => x.State switch
-            {
-                FileStatus.RenamedInIndex   => new[] { x.HeadToIndexRenameDetails.OldFilePath, x.HeadToIndexRenameDetails.NewFilePath },
-                FileStatus.RenamedInWorkdir => new[] { x.IndexToWorkDirRenameDetails.OldFilePath, x.IndexToWorkDirRenameDetails.NewFilePath },
-                _                           => x.FilePath.Yield()
-            })
+            .SelectMany(
+                x =>
+                    x.State switch
+                    {
+                        FileStatus.RenamedInIndex
+                            => new[] { x.HeadToIndexRenameDetails.OldFilePath, x.HeadToIndexRenameDetails.NewFilePath },
+                        FileStatus.RenamedInWorkdir
+                            => new[]
+                            {
+                                x.IndexToWorkDirRenameDetails.OldFilePath,
+                                x.IndexToWorkDirRenameDetails.NewFilePath
+                            },
+                        _ => x.FilePath.Yield()
+                    }
+            )
             .ToHashSet();
 
         foreach (var remote in repo.Network.Remotes)
@@ -124,11 +125,17 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
             {
                 var fileChange = change.State switch
                 {
-                    FileStatus.RenamedInIndex   => $"{change.HeadToIndexRenameDetails.OldFilePath} -> {change.HeadToIndexRenameDetails.NewFilePath}",
-                    FileStatus.RenamedInWorkdir => $"{change.IndexToWorkDirRenameDetails.OldFilePath} -> {change.IndexToWorkDirRenameDetails.NewFilePath}",
-                    _                           => change.FilePath
+                    FileStatus.RenamedInIndex
+                        => $"{change.HeadToIndexRenameDetails.OldFilePath} -> {change.HeadToIndexRenameDetails.NewFilePath}",
+                    FileStatus.RenamedInWorkdir
+                        => $"{change.IndexToWorkDirRenameDetails.OldFilePath} -> {change.IndexToWorkDirRenameDetails.NewFilePath}",
+                    _ => change.FilePath
                 };
-                var status = Statuses.Where(x => change.State.HasFlag(x)).Select(x => StatusLabels[x]).Distinct().Join(", ");
+                var status = Statuses
+                    .Where(x => change.State.HasFlag(x))
+                    .Select(x => StatusLabels[x])
+                    .Distinct()
+                    .Join(", ");
                 Line($"  {status}: {fileChange}");
             }
         }
@@ -146,10 +153,7 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
     {
         Pending($"{remote.Name}: ");
 
-        await _shell
-            .Cmd($"git fetch {remote.Name} -p")
-            .At(repo.Info.WorkingDirectory)
-            .ExecuteAsync();
+        await _shell.Cmd($"git fetch {remote.Name} -p").At(repo.Info.WorkingDirectory).ExecuteAsync();
         Info("fetched");
 
         AddIndent();
@@ -157,7 +161,9 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
         var remoteBranches = repo.Branches.Where(x => x.IsRemote && x.RemoteName == remote.Name).ToArray();
         foreach (var localBranch in localBranches)
         {
-            var remoteBranch = remoteBranches.SingleOrDefault(x => x.UpstreamBranchCanonicalName == localBranch.CanonicalName);
+            var remoteBranch = remoteBranches.SingleOrDefault(
+                x => x.UpstreamBranchCanonicalName == localBranch.CanonicalName
+            );
             await SyncBranch(project, repo, remote, localBranch, remoteBranch, touchedPaths);
         }
 
@@ -240,24 +246,23 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
             return;
         }
 
-        await _shell.Cmd($"git pull {remote.Name} {localBranch.CanonicalName}").At(repo.Info.WorkingDirectory).ExecuteAsync();
+        await _shell
+            .Cmd($"git pull {remote.Name} {localBranch.CanonicalName}")
+            .At(repo.Info.WorkingDirectory)
+            .ExecuteAsync();
         Success("pulled");
     }
 
-    private async Task Push(
-        Repository repo,
-        LibGit2Sharp.Remote remote,
-        Branch localBranch
-    )
+    private async Task Push(Repository repo, LibGit2Sharp.Remote remote, Branch localBranch)
     {
-        await _shell.Cmd($"git push {remote.Name} {localBranch.CanonicalName}").At(repo.Info.WorkingDirectory).ExecuteAsync();
+        await _shell
+            .Cmd($"git push {remote.Name} {localBranch.CanonicalName}")
+            .At(repo.Info.WorkingDirectory)
+            .ExecuteAsync();
         Success("pushed");
     }
 
-    private void DescribeDivergence(
-        List<Commit> localCommits,
-        List<Commit> remoteCommits
-    )
+    private void DescribeDivergence(List<Commit> localCommits, List<Commit> remoteCommits)
     {
         // branches diverged - find common ancestor commit
         var localIndex = -1;
@@ -273,15 +278,25 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
             break;
         }
 
-        Warning(localIndex == -1 ? "local and remote branches have completely diverged" : $"local and remote branches have diverged by {localIndex} and {remoteIndex} commit(s) respectively");
+        Warning(
+            localIndex == -1
+                ? "local and remote branches have completely diverged"
+                : $"local and remote branches have diverged by {localIndex} and {remoteIndex} commit(s) respectively"
+        );
     }
 
     private void Pending(string message) => Console.Write($"{Indent}{message}");
+
     private void Line(string message) => Console.WriteLine($"{Indent}{message}");
+
     private void Info(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Blue);
+
     private void Success(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Green);
+
     private void Warning(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Yellow);
+
     private void AddIndent() => _indentation += 2;
+
     private void RemoveIndent() => _indentation -= 2;
 }
 

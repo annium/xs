@@ -10,12 +10,7 @@ public class PackageDependency : IPackageDependency
     public string Name { get; private init; } = string.Empty;
     public string Version { get; private init; } = string.Empty;
 
-    public PackageDependency(
-        Guid packageId,
-        string framework,
-        string name,
-        string version
-    )
+    public PackageDependency(Guid packageId, string framework, string name, string version)
     {
         PackageId = packageId;
         Framework = framework;
@@ -23,7 +18,5 @@ public class PackageDependency : IPackageDependency
         Version = version;
     }
 
-    internal PackageDependency()
-    {
-    }
+    internal PackageDependency() { }
 }

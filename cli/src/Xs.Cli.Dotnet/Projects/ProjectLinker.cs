@@ -25,10 +25,15 @@ internal class ProjectLinker : SpecialProjectLinkerBase, ISpecialProjectLinker
             var frameworks = typeProjects.Select(p => p.TargetFramework).Distinct();
             if (!TargetFramework.SupportedGroups.Any(g => frameworks.All(g.Contains)))
             {
-                var usages = string.Join(Environment.NewLine, typeProjects.Select(p => $"{p.Name}: {p.TargetFramework}"));
-                addError(new InvalidOperationException(
-                    $"{Type} projects use incompatible target framework:{Environment.NewLine}{usages}"
-                ));
+                var usages = string.Join(
+                    Environment.NewLine,
+                    typeProjects.Select(p => $"{p.Name}: {p.TargetFramework}")
+                );
+                addError(
+                    new InvalidOperationException(
+                        $"{Type} projects use incompatible target framework:{Environment.NewLine}{usages}"
+                    )
+                );
             }
         }
     }

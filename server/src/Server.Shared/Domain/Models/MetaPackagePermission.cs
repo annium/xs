@@ -9,18 +9,12 @@ public sealed record MetaPackagePermission
     public PermissionCategory Category { get; private init; }
     public Permission Permission { get; private init; }
 
-    public MetaPackagePermission(
-        Guid metaPackageId,
-        PermissionCategory category,
-        Permission permission
-    )
+    public MetaPackagePermission(Guid metaPackageId, PermissionCategory category, Permission permission)
     {
         MetaPackageId = metaPackageId;
         Category = category;
         Permission = permission;
     }
 
-    internal MetaPackagePermission()
-    {
-    }
+    internal MetaPackagePermission() { }
 }

@@ -11,9 +11,8 @@ namespace Xs.Cli.Node.Projects;
 
 internal class LibraryProject : SpecialProject, IPublishableProject
 {
-    public LibraryProject(SpecialProjectContext context) : base(context)
-    {
-    }
+    public LibraryProject(SpecialProjectContext context)
+        : base(context) { }
 
     public async Task<string> PackAsync(Version version, CancellationToken ct)
     {
@@ -38,7 +37,9 @@ internal class LibraryProject : SpecialProject, IPublishableProject
             SetVersion(version);
             Projects.Clear();
             foreach (var (type, dependency) in projectDependencies)
-                Packages.Add(new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version)));
+                Packages.Add(
+                    new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version))
+                );
 
             Save();
 

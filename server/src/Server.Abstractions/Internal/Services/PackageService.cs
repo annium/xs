@@ -16,7 +16,8 @@ using Server.Shared.Tools;
 
 namespace Server.Abstractions.Internal.Services;
 
-internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : IPackageService<TPackage, TPackageDependency, TPackageRequest>
+internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
+    : IPackageService<TPackage, TPackageDependency, TPackageRequest>
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
     where TPackageRequest : class, IPackageRequest
@@ -42,7 +43,10 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
         _packageRequestParser = packageRequestParser;
     }
 
-    public async Task<IStatusResult<PackageStatus, IReadOnlyCollection<TPackage>>> GetPackagesAsync(User user, string name)
+    public async Task<IStatusResult<PackageStatus, IReadOnlyCollection<TPackage>>> GetPackagesAsync(
+        User user,
+        string name
+    )
     {
         var packages = await _packageRepository.FindAllByNameAsync(name);
         if (packages.Count == 0)
@@ -50,7 +54,8 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
 
         var access = await _metaPackageRepository.TryGetAccessByIdAsync(packages.ElementAt(0).MetaPackageId);
         if (access is null || !access.ForUser(user).Has(Permission.Read))
-            return Result.Status(PackageStatus.Forbidden, packages)
+            return Result
+                .Status(PackageStatus.Forbidden, packages)
                 .Error("You need read permission to get this package.");
 
         return Result.Status(PackageStatus.Ok, packages);
@@ -113,7 +118,8 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
 
         var access = _metaPackageTool.GetAccess(metaPackage).ForUser(user);
         if (!access.Has(Permission.Unpublish))
-            return Result.Status(PackageStatus.Forbidden)
+            return Result
+                .Status(PackageStatus.Forbidden)
                 .Error("You need unpublish permission to unpublish this package.");
 
         var executor = Executor.Batch();
@@ -139,10 +145,11 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
 
             // and anyway - recount downloads
             executor.With(
-                async () => await _metaPackageRepository.SetDownloadsAsync(
-                    metaPackage.Id,
-                    await _packageRepository.CountAllDownloadsAsync(metaPackage.Name)
-                )
+                async () =>
+                    await _metaPackageRepository.SetDownloadsAsync(
+                        metaPackage.Id,
+                        await _packageRepository.CountAllDownloadsAsync(metaPackage.Name)
+                    )
             );
         }
 
@@ -151,7 +158,12 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
         return Result.Status(PackageStatus.Ok);
     }
 
-    public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User? user, string name, string version, bool countDownload)
+    public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(
+        User? user,
+        string name,
+        string version,
+        bool countDownload
+    )
     {
         var package = await _packageRepository.TryFindByNameVersionAsync(name, version);
         if (package is null)
@@ -159,12 +171,10 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
 
         var access = await _metaPackageRepository.TryGetAccessByIdAsync(package.MetaPackageId);
         if (access is null || !access.ForUser(user).Has(Permission.Read))
-            return Result.Status(PackageStatus.Forbidden)
-                .Error("You need read permission to get this package.");
+            return Result.Status(PackageStatus.Forbidden).Error("You need read permission to get this package.");
 
         if (!await _packageStorage.ExistsAsync(name, version))
-            return Result.Status(PackageStatus.InternalError)
-                .Error("Package file missing");
+            return Result.Status(PackageStatus.InternalError).Error("Package file missing");
 
         if (!countDownload)
             return Result.Status(PackageStatus.Ok);
@@ -184,10 +194,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
     )
     {
         // commit stage is missing, cause manually called earlier; so just deletion stage
-        executor.Stage(
-            () => { },
-            () => _metaPackageRepository.DeleteByIdAsync(metaPackage.Id)
-        );
+        executor.Stage(() => { }, () => _metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
 
         return await PublishPackageVersionAsync(executor, metaPackage, access, request);
     }
@@ -200,8 +207,11 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
     )
     {
         if (!access.Has(Permission.Unpublish))
-            return Result.Status(PackageStatus.Conflict)
-                .Error($"Package {request.Name} {request.Version} already exists. You need unpublish permission to overwrite it.");
+            return Result
+                .Status(PackageStatus.Conflict)
+                .Error(
+                    $"Package {request.Name} {request.Version} already exists. You need unpublish permission to overwrite it."
+                );
 
         executor.Stage(
             async () =>
@@ -223,7 +233,8 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
     )
     {
         if (!access.Has(Permission.Publish))
-            return Result.Status(PackageStatus.Forbidden)
+            return Result
+                .Status(PackageStatus.Forbidden)
                 .Error($"You need publish permission to publish package {request.Name} {request.Version}.");
 
         var pkg = _packageRequestParser.Parse(metaPackage, request);
@@ -239,14 +250,16 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest> : I
         );
 
         executor.Stage(
-            async () => await _metaPackageRepository.SetDownloadsAsync(
-                metaPackage.Id,
-                await _packageRepository.CountAllDownloadsAsync(pkg.Name)
-            ),
-            async () => await _metaPackageRepository.SetDownloadsAsync(
-                metaPackage.Id,
-                await _packageRepository.CountAllDownloadsAsync(pkg.Name)
-            )
+            async () =>
+                await _metaPackageRepository.SetDownloadsAsync(
+                    metaPackage.Id,
+                    await _packageRepository.CountAllDownloadsAsync(pkg.Name)
+                ),
+            async () =>
+                await _metaPackageRepository.SetDownloadsAsync(
+                    metaPackage.Id,
+                    await _packageRepository.CountAllDownloadsAsync(pkg.Name)
+                )
         );
 
         if (string.Compare(pkg.Version, metaPackage.Version, StringComparison.Ordinal) >= 0)

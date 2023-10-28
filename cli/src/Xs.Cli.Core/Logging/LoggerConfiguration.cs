@@ -1,5 +1,3 @@
-
-
 using Annium.Logging;
 
 namespace Xs.Cli.Core.Logging;

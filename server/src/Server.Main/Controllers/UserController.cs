@@ -17,10 +17,7 @@ public class UserController : ServerController<User>
     private readonly IUserService _userService;
     private readonly ISecurityService _securityService;
 
-    public UserController(
-        IUserService userService,
-        ISecurityService securityService
-    )
+    public UserController(IUserService userService, ISecurityService securityService)
     {
         _userService = userService;
         _securityService = securityService;

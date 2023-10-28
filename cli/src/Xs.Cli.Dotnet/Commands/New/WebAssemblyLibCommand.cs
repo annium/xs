@@ -8,17 +8,17 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebAssemblyLibCommand : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class WebAssemblyLibCommand
+    : Command<WebAssemblyLibCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "wasm.lib";
     public static string Description => "Create new WebAssembly Library project.";
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public WebAssemblyLibCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public WebAssemblyLibCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;

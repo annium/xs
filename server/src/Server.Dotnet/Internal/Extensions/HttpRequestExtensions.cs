@@ -7,7 +7,10 @@ namespace Server.Dotnet.Internal.Extensions;
 
 internal static class HttpRequestExtensions
 {
-    public static async Task<Stream?> GetUploadStreamOrNullAsync(this HttpRequest request, CancellationToken cancellationToken)
+    public static async Task<Stream?> GetUploadStreamOrNullAsync(
+        this HttpRequest request,
+        CancellationToken cancellationToken
+    )
     {
         // Try to get the nupkg from the multipart/form-data
         Stream? rawUploadStream = null;

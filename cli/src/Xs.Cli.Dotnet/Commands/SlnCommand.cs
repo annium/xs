@@ -23,11 +23,7 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IShell _shell;
 
-    public SlnCommand(
-        DiscoverProjectsTask discoverTask,
-        IShell shell,
-        ILogger logger
-    )
+    public SlnCommand(DiscoverProjectsTask discoverTask, IShell shell, ILogger logger)
     {
         _discoverTask = discoverTask;
         _shell = shell;
@@ -49,15 +45,14 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
         await _shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root} --force").RunAsync();
 
         var currentProjects = await GetSolutionProjectPathsAsync(root, cfg.Name);
-        var removedProjects = currentProjects
-            .Where(path => preservedProjects.All(pp => pp.File != path))
-            .ToList();
+        var removedProjects = currentProjects.Where(path => preservedProjects.All(pp => pp.File != path)).ToList();
 
         // add current projects
         foreach (var project in preservedProjects)
         {
-            var parent = Directory.GetParent(project.Directory)?.FullName ??
-                throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
+            var parent =
+                Directory.GetParent(project.Directory)?.FullName
+                ?? throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
             if (parent == root)
             {
                 this.Debug($"Add {project} to solution file at root");
@@ -97,7 +92,9 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
         //      ----------
         //      path/to/project.csproj
         // So, code belong is targeting that specific behavior
-        return output.Length > 2 ? output.Skip(2).Select(p => Path.Combine(root, p)).ToList() : Enumerable.Empty<string>();
+        return output.Length > 2
+            ? output.Skip(2).Select(p => Path.Combine(root, p)).ToList()
+            : Enumerable.Empty<string>();
     }
 
     private string SlnFile(string root, string name) => Path.Combine(root, $"{name}{SlnExtension}");

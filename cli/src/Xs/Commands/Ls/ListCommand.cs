@@ -18,9 +18,7 @@ internal class ListCommand : AsyncCommand<ListCommandConfiguration, DiscoverConf
     public static string Description => "List projects.";
     private readonly DiscoverProjectsTask _discoverTask;
 
-    public ListCommand(
-        DiscoverProjectsTask discoverTask
-    )
+    public ListCommand(DiscoverProjectsTask discoverTask)
     {
         _discoverTask = discoverTask;
     }
@@ -32,10 +30,7 @@ internal class ListCommand : AsyncCommand<ListCommandConfiguration, DiscoverConf
     )
     {
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterMask(cfg.Mask)
-            .FilterType(cfg.Type)
-            .ToArray();
+        var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).ToArray();
 
         foreach (var project in SelectProjects(projects, cfg))
             LogProject(project, cfg.Path, cfg.Attributes);

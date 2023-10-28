@@ -66,13 +66,21 @@ public class PackagePublicationController : ServerController<User>
 
         var packageId = Guid.NewGuid();
         var nuspec = packageReader.NuspecReader;
-        var dependencies = nuspec.GetDependencyGroups()
+        var dependencies = nuspec
+            .GetDependencyGroups()
             .SelectMany(dependencyGroup =>
             {
                 var framework = dependencyGroup.TargetFramework.GetShortFolderName();
 
-                return dependencyGroup.Packages
-                    .Select(dependency => new PackageDependency(packageId, framework, dependency.Id, dependency.VersionRange.ToNormalizedString()));
+                return dependencyGroup.Packages.Select(
+                    dependency =>
+                        new PackageDependency(
+                            packageId,
+                            framework,
+                            dependency.Id,
+                            dependency.VersionRange.ToNormalizedString()
+                        )
+                );
             })
             .ToArray();
 

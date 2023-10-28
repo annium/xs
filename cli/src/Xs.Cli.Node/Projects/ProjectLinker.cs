@@ -15,9 +15,7 @@ internal class ProjectLinker : SpecialProjectLinkerBase, ISpecialProjectLinker
         IReadOnlyCollection<IProject> projects,
         DiscoverConfiguration configuration,
         Action<Exception> addError
-    )
-    {
-    }
+    ) { }
 
     public void Link(
         IProject project,

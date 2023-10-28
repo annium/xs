@@ -17,7 +17,8 @@ public sealed record MetaPackage : IPackageInfo, IIdEntity<Guid>
     public int Downloads { get; private init; }
     public Guid OwnerId { get; private init; }
     public User Owner { get; private init; } = default!;
-    public IReadOnlyCollection<MetaPackagePermission> Permissions { get; private init; } = Array.Empty<MetaPackagePermission>();
+    public IReadOnlyCollection<MetaPackagePermission> Permissions { get; private init; } =
+        Array.Empty<MetaPackagePermission>();
 
     public MetaPackage(
         ProjectType type,
@@ -43,8 +44,5 @@ public sealed record MetaPackage : IPackageInfo, IIdEntity<Guid>
         Permissions = permissions;
     }
 
-    internal MetaPackage(
-    )
-    {
-    }
+    internal MetaPackage() { }
 }

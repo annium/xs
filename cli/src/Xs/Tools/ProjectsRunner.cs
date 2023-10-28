@@ -12,9 +12,7 @@ internal class ProjectsRunner : ILogSubject
 {
     public ILogger Logger { get; }
 
-    public ProjectsRunner(
-        ILogger logger
-    )
+    public ProjectsRunner(ILogger logger)
     {
         Logger = logger;
     }
@@ -53,13 +51,18 @@ internal class ProjectsRunner : ILogSubject
                 var startingSet = pending
                     .Where(e => e.Projects.All(d => pending.All(p => p as IProject != d.Value)))
                     .Except(running);
-                starting = config.Parallelism > 0 ? startingSet.Take(config.Parallelism).ToArray() : startingSet.ToArray();
+                starting =
+                    config.Parallelism > 0 ? startingSet.Take(config.Parallelism).ToArray() : startingSet.ToArray();
 
                 // if there are no projects running and nothing to start - we have a deadlock
                 if (running.Count == 0 && starting.Length == 0)
-                    throw new InvalidOperationException($"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run.");
+                    throw new InvalidOperationException(
+                        $"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run."
+                    );
 
-                this.Trace($"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine, starting.Select(e => e.Name))}");
+                this.Trace(
+                    $"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine, starting.Select(e => e.Name))}"
+                );
 
                 running.AddRange(starting);
             }
@@ -76,15 +79,16 @@ internal class ProjectsRunner : ILogSubject
                         await handle(project, ct);
 
                         // if succeed - remove from pending
-                        lock (locker) pending.Remove(project);
+                        lock (locker)
+                            pending.Remove(project);
 
                         this.Trace($"Finished run for {project}");
                     }
-                    catch (Exception e)
-                        when (e is TaskCanceledException || e is OperationCanceledException)
+                    catch (Exception e) when (e is TaskCanceledException || e is OperationCanceledException)
                     {
                         // if canceled - clear pending
-                        lock (locker) pending.Clear();
+                        lock (locker)
+                            pending.Clear();
 
                         this.Trace($"Cancelled run for {project}");
                     }
@@ -92,14 +96,16 @@ internal class ProjectsRunner : ILogSubject
                     {
                         // if failed - add exception and clear pending to avoid next iterations
                         errors.Add(exception);
-                        lock (locker) pending.Clear();
+                        lock (locker)
+                            pending.Clear();
 
                         this.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
                     }
                     finally
                     {
                         // remove from running ones
-                        lock (locker) running.Remove(project);
+                        lock (locker)
+                            running.Remove(project);
 
                         this.Trace($"Finalized run for {project}. Signal.");
 

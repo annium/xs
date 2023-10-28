@@ -11,7 +11,10 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class TestCommand
+    : AsyncCommand<TestCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "test";
     public static string Description => "Test projects.";
@@ -19,11 +22,7 @@ internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConf
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ProjectsRunner _runner;
 
-    public TestCommand(
-        DiscoverProjectsTask discoverTask,
-        ProjectsRunner runner,
-        ILogger logger
-    )
+    public TestCommand(DiscoverProjectsTask discoverTask, ProjectsRunner runner, ILogger logger)
     {
         _discoverTask = discoverTask;
         _runner = runner;
@@ -37,11 +36,7 @@ internal class TestCommand : AsyncCommand<TestCommandConfiguration, DiscoverConf
     )
     {
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterMask(cfg.Mask)
-            .FilterType(cfg.Type)
-            .OfType<ITestableProject>()
-            .ToArray();
+        var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).OfType<ITestableProject>().ToArray();
 
         this.Debug($"Test {projects.Length} projects.");
         await _runner.RunAsync(

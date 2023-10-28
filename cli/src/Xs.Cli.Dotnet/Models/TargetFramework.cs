@@ -37,8 +37,28 @@ internal class TargetFramework
             new List<TargetFramework> { NetStandard20, NetStandard21, NetCoreApp30 },
             new List<TargetFramework> { NetStandard21, NetCoreApp31 },
             new List<TargetFramework> { NetStandard21, Net5 },
-            new List<TargetFramework> { NetStandard21, Net6, Net6Android, Net6Ios, Net6MacCatalyst, Net6MacOs, Net6TvOs, Net6Windows },
-            new List<TargetFramework> { NetStandard21, Net7, Net7Android, Net7Ios, Net7MacCatalyst, Net7MacOs, Net7TvOs, Net7Windows },
+            new List<TargetFramework>
+            {
+                NetStandard21,
+                Net6,
+                Net6Android,
+                Net6Ios,
+                Net6MacCatalyst,
+                Net6MacOs,
+                Net6TvOs,
+                Net6Windows
+            },
+            new List<TargetFramework>
+            {
+                NetStandard21,
+                Net7,
+                Net7Android,
+                Net7Ios,
+                Net7MacCatalyst,
+                Net7MacOs,
+                Net7TvOs,
+                Net7Windows
+            },
         };
 
     private readonly string _moniker;

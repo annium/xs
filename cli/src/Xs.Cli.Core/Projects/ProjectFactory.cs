@@ -7,9 +7,7 @@ internal class ProjectFactory : IProjectFactory
 {
     private readonly IEnumerable<ISpecialProjectFactory> _factories;
 
-    public ProjectFactory(
-        IEnumerable<ISpecialProjectFactory> factories
-    )
+    public ProjectFactory(IEnumerable<ISpecialProjectFactory> factories)
     {
         _factories = factories;
     }

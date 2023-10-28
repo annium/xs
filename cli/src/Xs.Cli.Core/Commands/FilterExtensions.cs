@@ -7,11 +7,11 @@ namespace Xs.Cli.Core.Commands;
 
 public static class FilterExtensions
 {
-    public static IEnumerable<Dependency<T>> FilterMask<T>(this IEnumerable<Dependency<T>> references, string mask) where T : IReference =>
-        references.FilterMask(p => p.Value.Name, mask);
+    public static IEnumerable<Dependency<T>> FilterMask<T>(this IEnumerable<Dependency<T>> references, string mask)
+        where T : IReference => references.FilterMask(p => p.Value.Name, mask);
 
-    public static IEnumerable<T> FilterMask<T>(this IEnumerable<T> references, string mask) where T : IReference =>
-        references.FilterMask(e => e.Name, mask);
+    public static IEnumerable<T> FilterMask<T>(this IEnumerable<T> references, string mask)
+        where T : IReference => references.FilterMask(e => e.Name, mask);
 
     private static IEnumerable<T> FilterMask<T>(this IEnumerable<T> references, Func<T, string> getName, string mask)
     {
@@ -22,7 +22,7 @@ public static class FilterExtensions
         var comparison = StringComparison.CurrentCultureIgnoreCase;
 
         var exactMatch = list.FirstOrDefault(i => getName(i).Equals(mask, comparison));
-        if (exactMatch is not null && !exactMatch.Equals(default(T) !))
+        if (exactMatch is not null && !exactMatch.Equals(default(T)!))
             return new[] { exactMatch };
 
         return list.Where(p => getName(p).Contains(mask, comparison));

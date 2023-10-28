@@ -11,18 +11,14 @@ using Server.Shared.Internal.Repositories;
 
 namespace Server.Abstractions.Internal.Db.Repositories;
 
-internal class PackageRepository<TPackage, TPackageDependency> :
-    RepositoryBase<ServerConnection<TPackage, TPackageDependency>>,
-    IPackageRepository<TPackage, TPackageDependency>
+internal class PackageRepository<TPackage, TPackageDependency>
+    : RepositoryBase<ServerConnection<TPackage, TPackageDependency>>,
+        IPackageRepository<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
     where TPackageDependency : class, IPackageDependency
-
 {
-    public PackageRepository(
-        ServerConnection<TPackage, TPackageDependency> db
-    ) : base(db)
-    {
-    }
+    public PackageRepository(ServerConnection<TPackage, TPackageDependency> db)
+        : base(db) { }
 
     public async Task CreateAsync(TPackage package)
     {
@@ -60,10 +56,7 @@ internal class PackageRepository<TPackage, TPackageDependency> :
 
     public async Task IncrementDownloadsAsync(Guid id)
     {
-        await Db.Packages
-            .Where(x => x.Id == id)
-            .Set(x => x.Downloads, x => x.Downloads + 1)
-            .UpdateAsync();
+        await Db.Packages.Where(x => x.Id == id).Set(x => x.Downloads, x => x.Downloads + 1).UpdateAsync();
     }
 
     public async Task DeleteByNameVersionAsync(string name, string version)

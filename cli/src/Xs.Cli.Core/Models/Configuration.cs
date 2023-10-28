@@ -15,13 +15,14 @@ public sealed record Configuration(
     SpecialConfiguration[] Types
 )
 {
-    public static Configuration Empty { get; } = new(
-        string.Empty,
-        new Uri("http://localhost"),
-        string.Empty,
-        new Dictionary<ProjectType, Uri>(),
-        Array.Empty<SpecialConfiguration>()
-    );
+    public static Configuration Empty { get; } =
+        new(
+            string.Empty,
+            new Uri("http://localhost"),
+            string.Empty,
+            new Dictionary<ProjectType, Uri>(),
+            Array.Empty<SpecialConfiguration>()
+        );
 
     public Uri Registry { get; private set; } = Registry;
     public string Token { get; private set; } = Token;
@@ -29,14 +30,12 @@ public sealed record Configuration(
 
     public void SetRegistry(Uri registry)
     {
-        Registry = registry ??
-            throw new ArgumentNullException(nameof(registry));
+        Registry = registry ?? throw new ArgumentNullException(nameof(registry));
     }
 
     public void SetToken(string token)
     {
-        Token = token ??
-            throw new ArgumentNullException(nameof(token));
+        Token = token ?? throw new ArgumentNullException(nameof(token));
     }
 
     public void SetServers(IReadOnlyDictionary<ProjectType, Uri> servers)

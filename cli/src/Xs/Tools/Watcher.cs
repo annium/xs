@@ -14,10 +14,7 @@ internal class Watcher : ILogSubject
     public ILogger Logger { get; }
     private readonly ITimeProvider _timeProvider;
 
-    public Watcher(
-        ITimeProvider timeProvider,
-        ILogger logger
-    )
+    public Watcher(ITimeProvider timeProvider, ILogger logger)
     {
         _timeProvider = timeProvider;
         Logger = logger;
@@ -71,9 +68,7 @@ internal class Watcher : ILogSubject
             {
                 await task(path);
             }
-            catch (OperationCanceledException)
-            {
-            }
+            catch (OperationCanceledException) { }
             catch (Exception exception)
             {
                 this.Error(exception);

@@ -16,9 +16,7 @@ public class AuthorizationFilter : IAsyncAuthorizationFilter
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public AuthorizationFilter(
-        IServiceProvider serviceProvider
-    )
+    public AuthorizationFilter(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }

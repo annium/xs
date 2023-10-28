@@ -21,14 +21,21 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject>
             if (fix)
                 project.Version.Update(version);
 
-            results.Add(new AuditResult(fix,
-                $"Project {project} uses lower version {project.Version} than {version}, used by others: {string.Join(", ", projects.Where(p => p.Version == version))}"
-            ));
+            results.Add(
+                new AuditResult(
+                    fix,
+                    $"Project {project} uses lower version {project.Version} than {version}, used by others: {string.Join(", ", projects.Where(p => p.Version == version))}"
+                )
+            );
         }
 
-        var packages = projects.SelectMany(p => p.Packages).Select(d => d.Value)
-            .OrderBy(d => d.Name).ThenByDescending(d => d.Version)
-            .Distinct().ToArray();
+        var packages = projects
+            .SelectMany(p => p.Packages)
+            .Select(d => d.Value)
+            .OrderBy(d => d.Name)
+            .ThenByDescending(d => d.Version)
+            .Distinct()
+            .ToArray();
 
         foreach (var package in project.Packages.ToArray())
             results.AddRange(AuditPackage(packages, package, project, fix));
@@ -59,11 +66,15 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject>
             if (fix)
             {
                 project.Packages.Remove(package);
-                package = new Dependency<Package>(package.Type, new Package(package.Value.Type, correctName, package.Value.Version));
+                package = new Dependency<Package>(
+                    package.Type,
+                    new Package(package.Value.Type, correctName, package.Value.Version)
+                );
                 project.Packages.Add(package);
             }
 
-            yield return new AuditResult(fix,
+            yield return new AuditResult(
+                fix,
                 $"Project {project} uses different package naming: {project.Name} != {correctName}."
             );
         }
@@ -74,11 +85,15 @@ public class FindInconsistentDependenciesRule<TProject> : IAuditRule<TProject>
             if (fix)
             {
                 project.Packages.Remove(package);
-                package = new Dependency<Package>(package.Type, new Package(package.Value.Type, package.Value.Name, correctVersion));
+                package = new Dependency<Package>(
+                    package.Type,
+                    new Package(package.Value.Type, package.Value.Name, correctVersion)
+                );
                 project.Packages.Add(package);
             }
 
-            yield return new AuditResult(fix,
+            yield return new AuditResult(
+                fix,
                 $"Project {project} uses different package {name} version: {version} != {correctVersion}."
             );
         }

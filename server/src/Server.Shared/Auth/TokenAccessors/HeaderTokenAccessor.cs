@@ -19,7 +19,9 @@ public class HeaderTokenAccessor : ITokenAccessor
         if (!request.Headers.ContainsKey(_header))
             return Fail(HttpStatusCode.Unauthorized, $"Authorization with '{_header}' header required.");
 
-        return Guid.TryParse(request.Headers[_header].ToString(), out var token) ? (token, null) : Fail(HttpStatusCode.Forbidden, "Invalid token passed");
+        return Guid.TryParse(request.Headers[_header].ToString(), out var token)
+            ? (token, null)
+            : Fail(HttpStatusCode.Forbidden, "Invalid token passed");
     }
 
     private (Guid, IActionResult) Fail(HttpStatusCode statusCode, string message) =>

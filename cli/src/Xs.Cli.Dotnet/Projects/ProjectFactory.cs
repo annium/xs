@@ -47,9 +47,9 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
     {
         // considered project directory, if in current directory there's single project file
         // and it's only one in all subdirectories
-        return Directory.Exists(directory) &&
-            Directory.GetFiles(directory, ProjectFileMask).Length == 1 &&
-            !FileManager.FindDirectory(directory, IsMatch, IgnoredFolders);
+        return Directory.Exists(directory)
+            && Directory.GetFiles(directory, ProjectFileMask).Length == 1
+            && !FileManager.FindDirectory(directory, IsMatch, IgnoredFolders);
 
         static bool IsMatch(string dir) => Directory.GetFiles(dir, ProjectFileMask).Length > 0;
     }
@@ -59,7 +59,8 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
         if (!file.EndsWith(ProjectFileExtension))
             return false;
 
-        var parent = Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
+        var parent =
+            Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
         var directory = parent.FullName;
         if (FileManager.IsUnrootedDirectoryIgnored(directory, IgnoredFolders))
             return false;
@@ -67,19 +68,22 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
         return IsProjectDirectory(directory);
     }
 
-    public IProject CreateProject(
-        string directory,
-        DiscoverConfiguration discoverCfg,
-        SpecialConfiguration? projectCfg
-    )
+    public IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, SpecialConfiguration? projectCfg)
     {
         var file = new FileInfo(Directory.GetFiles(directory, ProjectFileMask, SearchOption.TopDirectoryOnly).First());
-        var (name, version, description, targetFramework, outputType, projectDeps, packageDeps, isPackable, isTestProject) =
-            _mapper.Load(file.FullName, discoverCfg);
+        var (
+            name,
+            version,
+            description,
+            targetFramework,
+            outputType,
+            projectDeps,
+            packageDeps,
+            isPackable,
+            isTestProject
+        ) = _mapper.Load(file.FullName, discoverCfg);
 
-        var projectDependencies = projectDeps
-            .Select(e => GetProjectDependencyMock(file, e))
-            .ToHashSet();
+        var projectDependencies = projectDeps.Select(e => GetProjectDependencyMock(file, e)).ToHashSet();
 
         var packageDependencies = packageDeps.ToHashSet();
 
@@ -91,8 +95,8 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
 
         return new SealedProject(GetContext());
 
-        SpecialProjectContext GetContext()
-            => new(
+        SpecialProjectContext GetContext() =>
+            new(
                 Constants.ProjectType,
                 name,
                 version,

@@ -15,7 +15,13 @@ namespace Server.Abstractions;
 
 public static class ServiceContainerExtensions
 {
-    public static IServiceContainer AddTools<TPackage, TPackageDependency, TPackageRequest, TPackageRequestParser, TPackageStorage>(this IServiceContainer container, ProjectType projectType)
+    public static IServiceContainer AddTools<
+        TPackage,
+        TPackageDependency,
+        TPackageRequest,
+        TPackageRequestParser,
+        TPackageStorage
+    >(this IServiceContainer container, ProjectType projectType)
         where TPackage : class, IPackage<TPackageDependency>
         where TPackageDependency : class, IPackageDependency
         where TPackageRequest : class, IPackageRequest
@@ -24,15 +30,27 @@ public static class ServiceContainerExtensions
     {
         // db
         container.AddPostgreSql<ServerConnection<TPackage, TPackageDependency>>();
-        container.Add<IPackageRepository<TPackage, TPackageDependency>, PackageRepository<TPackage, TPackageDependency>>().Scoped();
+        container
+            .Add<IPackageRepository<TPackage, TPackageDependency>, PackageRepository<TPackage, TPackageDependency>>()
+            .Scoped();
 
         // services
-        container.Add<IPackageService<TPackage, TPackageDependency, TPackageRequest>, PackageService<TPackage, TPackageDependency, TPackageRequest>>().Scoped();
-        container.Add<IPackageRequestParser<TPackage, TPackageDependency, TPackageRequest>, TPackageRequestParser>().Singleton();
+        container
+            .Add<
+                IPackageService<TPackage, TPackageDependency, TPackageRequest>,
+                PackageService<TPackage, TPackageDependency, TPackageRequest>
+            >()
+            .Scoped();
+        container
+            .Add<IPackageRequestParser<TPackage, TPackageDependency, TPackageRequest>, TPackageRequestParser>()
+            .Singleton();
         container.Add<TPackageStorage>().AsInterfaces().Singleton();
 
         // tools
-        container.Add<UrlTool>(sp => new UrlTool(sp.Resolve<Configuration>().Servers[projectType])).AsKeyed<IUrlTool, ProjectType>(projectType).Singleton();
+        container
+            .Add<UrlTool>(sp => new UrlTool(sp.Resolve<Configuration>().Servers[projectType]))
+            .AsKeyed<IUrlTool, ProjectType>(projectType)
+            .Singleton();
 
         return container;
     }

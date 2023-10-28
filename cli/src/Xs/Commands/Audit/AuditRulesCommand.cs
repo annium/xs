@@ -13,17 +13,12 @@ internal class AuditRulesCommand : Command<AuditRulesCommandConfiguration>, ICom
     public static string Description => "List audit rules.";
     private readonly IAuditRule[] _rules;
 
-    public AuditRulesCommand(
-        IEnumerable<IAuditRule> rules
-    )
+    public AuditRulesCommand(IEnumerable<IAuditRule> rules)
     {
         _rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
     }
 
-    public override void Handle(
-        AuditRulesCommandConfiguration cfg,
-        CancellationToken ct
-    )
+    public override void Handle(AuditRulesCommandConfiguration cfg, CancellationToken ct)
     {
         var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)
             .Where(r => !cfg.Exclude.Contains(r.Code))

@@ -10,7 +10,10 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class DeleteCommand : AsyncCommand<DeleteCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class DeleteCommand
+    : AsyncCommand<DeleteCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "delete";
     public static string Description => "Delete dependency from projects.";

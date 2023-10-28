@@ -9,10 +9,7 @@ internal class PackageStorage : IPackageStorage
 {
     private readonly IStorage _storage;
 
-    public PackageStorage(
-        IStorageFactory storageFactory,
-        Configuration configuration
-    )
+    public PackageStorage(IStorageFactory storageFactory, Configuration configuration)
     {
         _storage = storageFactory.Create(configuration.PackagesFolder);
     }
@@ -29,8 +26,7 @@ internal class PackageStorage : IPackageStorage
         return _storage.SaveAsync(GetPackagePath(name, version), packageStream);
     }
 
-    public Task DeleteAsync(string name, string version) =>
-        _storage.DeleteAsync(GetPackagePath(name, version));
+    public Task DeleteAsync(string name, string version) => _storage.DeleteAsync(GetPackagePath(name, version));
 
     public Task<Stream> GetAsync(string name, string version)
     {

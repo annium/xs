@@ -11,9 +11,7 @@ internal class AuthorizationApplicationModelProvider : IApplicationModelProvider
     public int Order => -990;
     private readonly IServiceProvider _sp;
 
-    public AuthorizationApplicationModelProvider(
-        IServiceProvider sp
-    )
+    public AuthorizationApplicationModelProvider(IServiceProvider sp)
     {
         _sp = sp;
     }

@@ -10,7 +10,10 @@ using Xs.Cli.Core.Tasks.Dependencies;
 
 namespace Xs.Commands;
 
-internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class UseCommand
+    : AsyncCommand<UseCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "use";
     public static string Description => "Set dependency in projects to specific version.";
@@ -49,9 +52,7 @@ internal class UseCommand : AsyncCommand<UseCommandConfiguration, DiscoverConfig
             .Distinct()
             .ToArray();
 
-        var targets = allProjects
-            .Where(e => e.Packages.Any(d => updatedPackages.Contains(d)))
-            .ToArray();
+        var targets = allProjects.Where(e => e.Packages.Any(d => updatedPackages.Contains(d))).ToArray();
 
         if (targets.Length == 0)
         {

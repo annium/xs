@@ -26,12 +26,15 @@ public class ServicePack : ServicePackBase
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsSelf().Singleton();
 
         // packages
-        container.AddTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>(Constants.ProjectType);
+        container.AddTools<Package, PackageDependency, PackageRequest, PackageRequestParser, PackageStorage>(
+            Constants.ProjectType
+        );
     }
 
     public override void Setup(IServiceProvider provider)
     {
-        Migrator.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
+        Migrator
+            .ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
             .WithScriptsFromAssembly(GetType().Assembly)
             .Execute();
     }

@@ -9,17 +9,17 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class LibReactCommand : Command<LibReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class LibReactCommand
+    : Command<LibReactCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "lib.react";
     public static string Description => "Create new library project, using React.";
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public LibReactCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public LibReactCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;

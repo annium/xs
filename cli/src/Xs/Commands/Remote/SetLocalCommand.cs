@@ -18,10 +18,7 @@ internal class SetLocalCommand : AsyncCommand<SetLocalCommandConfiguration, Disc
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IConfigurationManager _configurationManager;
 
-    public SetLocalCommand(
-        DiscoverProjectsTask discoverTask,
-        IConfigurationManager configurationManager
-    )
+    public SetLocalCommand(DiscoverProjectsTask discoverTask, IConfigurationManager configurationManager)
     {
         _discoverTask = discoverTask;
         _configurationManager = configurationManager;
@@ -39,7 +36,9 @@ internal class SetLocalCommand : AsyncCommand<SetLocalCommandConfiguration, Disc
         var configuration = _configurationManager.Load(dir);
         configuration.SetRegistry(location);
         configuration.SetToken(string.Empty);
-        configuration.SetServers(Enum.GetValues<ProjectType>().Except(ProjectType.None.Yield()).ToDictionary(type => type, _ => location));
+        configuration.SetServers(
+            Enum.GetValues<ProjectType>().Except(ProjectType.None.Yield()).ToDictionary(type => type, _ => location)
+        );
 
         var projects = await _discoverTask.RunAsync(discoverCfg);
 

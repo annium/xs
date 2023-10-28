@@ -11,7 +11,10 @@ internal class MetaPackageConfiguration : IdEntityConfiguration<MetaPackage, Gui
     {
         builder.HasSchemaName(Constants.Schema).HasTableName("meta_packages");
         base.Configure(builder);
-        builder.Property(x => x.Type).IsColumn().HasConversion(x => x.ToString(), x => ProjectType.Get(x), handlesNulls: false);
+        builder
+            .Property(x => x.Type)
+            .IsColumn()
+            .HasConversion(x => x.ToString(), x => ProjectType.Get(x), handlesNulls: false);
         builder.Property(x => x.Name).IsColumn();
         builder.Property(x => x.Version).IsColumn();
         builder.Property(x => x.Description).IsColumn();

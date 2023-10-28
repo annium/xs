@@ -46,10 +46,10 @@ public class PackageConsumptionController : ServerController<User>
 
         return result.Status switch
         {
-            PackageStatus.NotFound  => NotFound(),
+            PackageStatus.NotFound => NotFound(),
             PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
-            PackageStatus.Ok        => Ok(new PackagesResponse(result.Data, _urlTool)),
-            _                       => NotFound()
+            PackageStatus.Ok => Ok(new PackagesResponse(result.Data, _urlTool)),
+            _ => NotFound()
         };
     }
 
@@ -62,12 +62,14 @@ public class PackageConsumptionController : ServerController<User>
 
         return result.Status switch
         {
-            PackageStatus.NotFound      => NotFound(),
-            PackageStatus.Forbidden     => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
-            PackageStatus.InternalError => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError },
-            PackageStatus.Ok            => File(await _packageStorage.GetAsync(packageName, version), MediaTypeNames.Application.Octet),
-            PackageStatus.Conflict      => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError },
-            _                           => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError }
+            PackageStatus.NotFound => NotFound(),
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
+            PackageStatus.InternalError
+                => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError },
+            PackageStatus.Ok
+                => File(await _packageStorage.GetAsync(packageName, version), MediaTypeNames.Application.Octet),
+            PackageStatus.Conflict => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError },
+            _ => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError }
         };
     }
 }

@@ -16,7 +16,10 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class WatchCommand
+    : AsyncCommand<WatchCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "watch";
     public static string Description => "Watch projects' changes and install/build/test on fly.";
@@ -195,11 +198,7 @@ internal class WatchCommand : AsyncCommand<WatchCommandConfiguration, DiscoverCo
     private async Task Discover()
     {
         var allProjects = await _discoverTask.RunAsync(_discoverCfg);
-        var targets = allProjects
-            .FilterMask(_mask)
-            .FilterType(_type)
-            .OrderByDescending(p => p.Name.Length)
-            .ToArray();
+        var targets = allProjects.FilterMask(_mask).FilterType(_type).OrderByDescending(p => p.Name.Length).ToArray();
 
         var result = new HashSet<IProject>();
         foreach (var project in targets)

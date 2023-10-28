@@ -27,7 +27,10 @@ public sealed record PackagesResponse
         DistributionTags = new Dictionary<string, string>() { { "latest", latest.Version } };
         Versions = packages.Select(e => new PackageVersionResponse(e, urlTool)).ToDictionary(e => e.Version, e => e);
 
-        var times = packages.ToDictionary(e => e.Version, e => e.Published.InUtc().ToString(Configuration.DateFormat, null));
+        var times = packages.ToDictionary(
+            e => e.Version,
+            e => e.Published.InUtc().ToString(Configuration.DateFormat, null)
+        );
         times["created"] = packages.First().Published.InUtc().ToString(Configuration.DateFormat, null);
         times["modified"] = latest.Published.InUtc().ToString(Configuration.DateFormat, null);
         Time = times;

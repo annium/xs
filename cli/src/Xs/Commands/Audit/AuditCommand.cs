@@ -12,7 +12,10 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands.Audit;
 
-internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class AuditCommand
+    : AsyncCommand<AuditCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "";
     public static string Description => "Audit projects.";
@@ -20,11 +23,7 @@ internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverCo
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IAuditRule[] _rules;
 
-    public AuditCommand(
-        DiscoverProjectsTask discoverTask,
-        IEnumerable<IAuditRule> rules,
-        ILogger logger
-    )
+    public AuditCommand(DiscoverProjectsTask discoverTask, IEnumerable<IAuditRule> rules, ILogger logger)
     {
         _discoverTask = discoverTask;
         _rules = rules.GroupBy(r => r.Code).Select(g => g.First()).ToArray();
@@ -38,10 +37,7 @@ internal class AuditCommand : AsyncCommand<AuditCommandConfiguration, DiscoverCo
     )
     {
         var projects = await _discoverTask.RunAsync(discoverCfg);
-        var auditedProjects = projects
-            .FilterMask(cfg.Mask)
-            .OfType<IAuditableProject>()
-            .ToArray();
+        var auditedProjects = projects.FilterMask(cfg.Mask).OfType<IAuditableProject>().ToArray();
         this.Debug($"Audit {auditedProjects.Length} projects.");
 
         var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)

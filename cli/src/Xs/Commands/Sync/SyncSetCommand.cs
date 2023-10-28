@@ -12,17 +12,12 @@ internal class SyncSetCommand : AsyncCommand<SyncAddCommandConfiguration>, IComm
     public static string Description => "Setup repository in sync config";
     private readonly SyncConfigurator _configurator;
 
-    public SyncSetCommand(
-        SyncConfigurator configurator
-    )
+    public SyncSetCommand(SyncConfigurator configurator)
     {
         _configurator = configurator;
     }
 
-    public override Task HandleAsync(
-        SyncAddCommandConfiguration cfg,
-        CancellationToken ct
-    )
+    public override Task HandleAsync(SyncAddCommandConfiguration cfg, CancellationToken ct)
     {
         var projects = _configurator.Read();
 
@@ -32,15 +27,14 @@ internal class SyncSetCommand : AsyncCommand<SyncAddCommandConfiguration>, IComm
         if (project is not null)
             projects.Remove(project);
 
-        projects.Add(new SyncProject
-        {
-            Path = path,
-            Group = cfg.Group,
-            Config = new SyncProjectConfig
+        projects.Add(
+            new SyncProject
             {
-                Push = cfg.Push
+                Path = path,
+                Group = cfg.Group,
+                Config = new SyncProjectConfig { Push = cfg.Push }
             }
-        });
+        );
 
         _configurator.Write(projects);
 

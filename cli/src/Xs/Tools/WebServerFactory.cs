@@ -20,13 +20,11 @@ public class WebServerFactory
     {
         var url = $"http://localhost:{FreePort()}/";
 
-        using var server = new WebServer(o => o.WithUrlPrefix(url).WithMode(HttpListenerMode.Microsoft))
-            .WithModule(new ActionModule("/", HttpVerbs.Get, callback));
+        using var server = new WebServer(o => o.WithUrlPrefix(url).WithMode(HttpListenerMode.Microsoft)).WithModule(
+            new ActionModule("/", HttpVerbs.Get, callback)
+        );
 
-        var browser = new Process
-        {
-            StartInfo = new ProcessStartInfo(url) { UseShellExecute = true }
-        };
+        var browser = new Process { StartInfo = new ProcessStartInfo(url) { UseShellExecute = true } };
         browser.Start();
 
         await server.RunAsync(ct);

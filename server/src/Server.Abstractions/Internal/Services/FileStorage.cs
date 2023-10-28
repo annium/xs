@@ -11,9 +11,7 @@ internal class FileStorage : IStorage
 
     private readonly string _root;
 
-    public FileStorage(
-        string root
-    )
+    public FileStorage(string root)
     {
         _root = Path.GetFullPath(root);
         Directory.CreateDirectory(_root);

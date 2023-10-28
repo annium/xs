@@ -9,17 +9,17 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Commands.New;
 
-public class AppReactCommand : Command<AppReactCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class AppReactCommand
+    : Command<AppReactCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "app.react";
     public static string Description => "Create new app project, using React.";
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public AppReactCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public AppReactCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;

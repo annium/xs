@@ -5,13 +5,14 @@ namespace Xs.Cli.Core.Helpers;
 
 public static class Json
 {
-    private static readonly JsonSerializerOptions Options = new()
-    {
-        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true,
-    };
+    private static readonly JsonSerializerOptions Options =
+        new()
+        {
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+        };
 
     public static T Read<T>(string value)
     {

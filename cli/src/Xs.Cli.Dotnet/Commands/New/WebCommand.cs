@@ -15,20 +15,13 @@ public class WebCommand : Command<WebCommandConfiguration, DiscoverConfiguration
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public WebCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public WebCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;
     }
 
-    public override void Handle(
-        WebCommandConfiguration cfg,
-        DiscoverConfiguration discoverCfg,
-        CancellationToken ct
-    )
+    public override void Handle(WebCommandConfiguration cfg, DiscoverConfiguration discoverCfg, CancellationToken ct)
     {
         var location = discoverCfg.Root;
         var name = cfg.Name;

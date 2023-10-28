@@ -15,9 +15,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
     public string[] IgnorePatterns { get; } = { ConfigFile };
     public ILogger Logger { get; }
 
-    public SpecialConfigurationManager(
-        ILogger logger
-    )
+    public SpecialConfigurationManager(ILogger logger)
     {
         Logger = logger;
     }
@@ -49,7 +47,8 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
     public void Delete(IProject project)
     {
         var path = ConfigFilePath(project);
-        if (File.Exists(path)) File.Delete(path);
+        if (File.Exists(path))
+            File.Delete(path);
     }
 
     private static string ConfigFilePath(IProject project) => Path.Combine(project.Directory, ConfigFile);

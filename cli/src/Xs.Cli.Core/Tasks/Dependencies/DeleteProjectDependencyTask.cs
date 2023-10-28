@@ -8,9 +8,7 @@ public class DeleteProjectDependencyTask : ILogSubject
 {
     public ILogger Logger { get; }
 
-    public DeleteProjectDependencyTask(
-        ILogger logger
-    )
+    public DeleteProjectDependencyTask(ILogger logger)
     {
         Logger = logger;
     }
@@ -22,7 +20,9 @@ public class DeleteProjectDependencyTask : ILogSubject
         {
             if (target.Projects.All(p => p.Value != project))
             {
-                this.Debug($"Skip deleting project {project} as dependency of {target}. {target} doesn't use {project}.");
+                this.Debug(
+                    $"Skip deleting project {project} as dependency of {target}. {target} doesn't use {project}."
+                );
                 continue;
             }
 

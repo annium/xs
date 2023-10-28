@@ -17,7 +17,10 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class UnpublishCommand
+    : AsyncCommand<UnpublishCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "unpublish";
     public static string Description => "Unpublish package from registry.";
@@ -51,10 +54,7 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
         var configuration = _configurationManager.Load(discoverCfg.Root);
 
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterMask(cfg.Mask)
-            .OfType<IPublishableProject>()
-            .ToArray();
+        var projects = allProjects.FilterMask(cfg.Mask).OfType<IPublishableProject>().ToArray();
 
         if (projects.Length == 0)
         {
@@ -74,7 +74,8 @@ internal class UnpublishCommand : AsyncCommand<UnpublishCommandConfiguration, Di
         this.Debug($"Unpublish {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
-            (project, _) => clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
+            (project, _) =>
+                clients[project.Type].DeletePackageAsync(configuration.Token, project.Name, cfg.Version.ToString()),
             new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
             ct
         );

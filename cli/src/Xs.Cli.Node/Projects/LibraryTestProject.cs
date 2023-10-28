@@ -12,9 +12,8 @@ namespace Xs.Cli.Node.Projects;
 // TODO: rewrite into single project view
 internal class LibraryTestProject : SpecialProject, IPublishableProject, ITestableProject
 {
-    public LibraryTestProject(SpecialProjectContext context) : base(context)
-    {
-    }
+    public LibraryTestProject(SpecialProjectContext context)
+        : base(context) { }
 
     public async Task<string> PackAsync(Version version, CancellationToken ct)
     {
@@ -39,7 +38,9 @@ internal class LibraryTestProject : SpecialProject, IPublishableProject, ITestab
             SetVersion(version);
             Projects.Clear();
             foreach (var (type, dependency) in projectDependencies)
-                Packages.Add(new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version)));
+                Packages.Add(
+                    new Dependency<Package>(type, new Package(Constants.ProjectType, dependency.Name, version))
+                );
 
             Save();
 

@@ -13,17 +13,12 @@ internal class ShowCommand : Command<DiscoverConfiguration>, ICommandDescriptor
     public static string Description => "Show information about tracked registry.";
     private readonly IConfigurationManager _configurationManager;
 
-    public ShowCommand(
-        IConfigurationManager configurationManager
-    )
+    public ShowCommand(IConfigurationManager configurationManager)
     {
         _configurationManager = configurationManager;
     }
 
-    public override void Handle(
-        DiscoverConfiguration discoverCfg,
-        CancellationToken ct
-    )
+    public override void Handle(DiscoverConfiguration discoverCfg, CancellationToken ct)
     {
         var dir = discoverCfg.Root;
 

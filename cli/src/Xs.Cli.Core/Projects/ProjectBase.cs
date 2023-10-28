@@ -80,7 +80,9 @@ public abstract class ProjectBase : IProject, ILogSubject
                 throw new InvalidOperationException($"{Directory} already exists.");
 
             // create parent directory, if needed
-            var parentDirectory = Path.GetDirectoryName(Directory) ?? throw new DirectoryNotFoundException($"Directory {Directory} has no parent directory");
+            var parentDirectory =
+                Path.GetDirectoryName(Directory)
+                ?? throw new DirectoryNotFoundException($"Directory {Directory} has no parent directory");
             if (!SysDirectory.Exists(parentDirectory))
             {
                 this.Trace($"Create {Name} missing target parent directory {parentDirectory}");
@@ -114,9 +116,7 @@ public abstract class ProjectBase : IProject, ILogSubject
 
     protected virtual string FixProjectDirectory(string directory) => directory;
 
-    protected virtual void OnNameChangeSave(string oldName, string newName)
-    {
-    }
+    protected virtual void OnNameChangeSave(string oldName, string newName) { }
 
     protected void DeleteDirectory(string path)
     {
@@ -144,6 +144,8 @@ public abstract class ProjectBase : IProject, ILogSubject
         if (result.IsSuccess)
             this.Trace($"Finished {Name} {operation}.");
         else
-            throw new Exception($"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}");
+            throw new Exception(
+                $"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}"
+            );
     }
 }

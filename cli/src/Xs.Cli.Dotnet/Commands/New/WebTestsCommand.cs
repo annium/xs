@@ -8,17 +8,17 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class WebTestsCommand : Command<WebTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class WebTestsCommand
+    : Command<WebTestsCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "web.tests";
     public static string Description => "Create new web tests project.";
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public WebTestsCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public WebTestsCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;

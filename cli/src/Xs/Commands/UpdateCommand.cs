@@ -14,7 +14,10 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class UpdateCommand
+    : AsyncCommand<UpdateCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "update";
     public static string Description => "Update dependencies in projects.";
@@ -68,35 +71,49 @@ internal class UpdateCommand : AsyncCommand<UpdateCommandConfiguration, Discover
             .Distinct()
             .ToDictionary(
                 t => t,
-                t => _dependencyManagers.SingleOrDefault(m => m.Type == t) ??
-                    throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
+                t =>
+                    _dependencyManagers.SingleOrDefault(m => m.Type == t)
+                    ?? throw new InvalidOperationException($"No dependency manager registered for {t} dependencies")
             );
 
         // resolve configuration and available version of all dependencies
         var configuration = _configurationManager.Load(discoverCfg.Root);
 
-        var updates = (await Task.WhenAll(dependencies.Select(async d =>
-        {
-            var dependencyManager = dependencyManagers[d.Type];
-            var registryUri = configuration.Servers.GetValueOrDefault(d.Type);
-            var versions = registryUri is not null && !registryUri.IsFile ? await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration.Token) : Array.Empty<Package>();
+        var updates = (
+            await Task.WhenAll(
+                dependencies.Select(async d =>
+                {
+                    var dependencyManager = dependencyManagers[d.Type];
+                    var registryUri = configuration.Servers.GetValueOrDefault(d.Type);
+                    var versions =
+                        registryUri is not null && !registryUri.IsFile
+                            ? await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration.Token)
+                            : Array.Empty<Package>();
 
-            // fallback to default server result
-            if (versions.Length == 0)
-                versions = await dependencyManager.ResolveVersionsAsync(d, dependencyManager.DefaultServer, string.Empty);
+                    // fallback to default server result
+                    if (versions.Length == 0)
+                        versions = await dependencyManager.ResolveVersionsAsync(
+                            d,
+                            dependencyManager.DefaultServer,
+                            string.Empty
+                        );
 
-            var result = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-            this.Trace($"Resolve: {d} - {versions.Length} version(s)");
+                    var result = cfg.Preview
+                        ? versions.FirstOrDefault()
+                        : versions.FirstOrDefault(v => v.Version.Suffix == "");
+                    this.Trace($"Resolve: {d} - {versions.Length} version(s)");
 
-            if (result is null)
-                this.Warn($"Resolve: {d} unresolved");
-            else if (result == d)
-                this.Debug($"Resolve: {d} unchanged");
-            else
-                this.Debug($"Resolve: {d} -> {result}");
+                    if (result is null)
+                        this.Warn($"Resolve: {d} unresolved");
+                    else if (result == d)
+                        this.Debug($"Resolve: {d} unchanged");
+                    else
+                        this.Debug($"Resolve: {d} -> {result}");
 
-            return result;
-        }))).OfType<Package>().ToArray();
+                    return result;
+                })
+            )
+        ).OfType<Package>().ToArray();
 
         if (cfg.DryRun)
         {

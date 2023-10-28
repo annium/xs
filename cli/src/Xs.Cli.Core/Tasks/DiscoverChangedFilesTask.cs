@@ -11,9 +11,7 @@ public class DiscoverChangedFilesTask
 {
     private readonly IShell _shell;
 
-    public DiscoverChangedFilesTask(
-        IShell shell
-    )
+    public DiscoverChangedFilesTask(IShell shell)
     {
         _shell = shell;
     }

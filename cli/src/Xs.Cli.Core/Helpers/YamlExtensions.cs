@@ -45,8 +45,7 @@ internal class UriTypeConverter : IYamlTypeConverter
 {
     public bool Accepts(Type type) => type == typeof(Uri);
 
-    public object ReadYaml(IParser parser, Type type) =>
-        throw new NotImplementedException();
+    public object ReadYaml(IParser parser, Type type) => throw new NotImplementedException();
 
     public void WriteYaml(IEmitter emitter, object? value, Type type)
     {
@@ -59,8 +58,7 @@ internal class ProjectTypeTypeConverter : IYamlTypeConverter
 {
     public bool Accepts(Type type) => type == typeof(ProjectType);
 
-    public object ReadYaml(IParser parser, Type type) =>
-        throw new NotImplementedException();
+    public object ReadYaml(IParser parser, Type type) => throw new NotImplementedException();
 
     public void WriteYaml(IEmitter emitter, object? value, Type type)
     {

@@ -25,8 +25,12 @@ public sealed record PackageVersionResponse
         Version = package.Version;
         Description = package.Description;
         Main = package.Main;
-        Dependencies = package.Dependencies.Where(d => d.Type == DependencyType.Normal).ToDictionary(d => d.Name, d => d.Version);
-        DevDependencies = package.Dependencies.Where(d => d.Type == DependencyType.Dev).ToDictionary(d => d.Name, d => d.Version);
+        Dependencies = package.Dependencies
+            .Where(d => d.Type == DependencyType.Normal)
+            .ToDictionary(d => d.Name, d => d.Version);
+        DevDependencies = package.Dependencies
+            .Where(d => d.Type == DependencyType.Dev)
+            .ToDictionary(d => d.Name, d => d.Version);
         Distribution = new PackageDistributionResponse(
             urlTool.AbsoluteUrl($"{HttpUtility.UrlEncode(package.Name)}/{package.Version}.tgz").ToString(),
             package.Shasum,

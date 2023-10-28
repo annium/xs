@@ -16,9 +16,7 @@ public class IndexController : ServerController<User>
 {
     private readonly IUrlTool _urlTool;
 
-    public IndexController(
-        IIndex<ProjectType, IUrlTool> urlTools
-    )
+    public IndexController(IIndex<ProjectType, IUrlTool> urlTools)
     {
         _urlTool = urlTools[Constants.ProjectType];
     }

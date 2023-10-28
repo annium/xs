@@ -16,14 +16,14 @@ using SysFile = System.IO.File;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal abstract class SpecialProject :
-    ProjectBase,
-    ISpecialProject,
-    IAuditableProject,
-    ICachingProject,
-    ICleanableProject,
-    IInstallableProject,
-    IBuildableProject
+internal abstract class SpecialProject
+    : ProjectBase,
+        ISpecialProject,
+        IAuditableProject,
+        ICachingProject,
+        ICleanableProject,
+        IInstallableProject,
+        IBuildableProject
 {
     // ReSharper disable once StaticMemberInGenericType
     private static readonly object CacheLocker = new();
@@ -34,7 +34,8 @@ internal abstract class SpecialProject :
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
-    protected SpecialProject(SpecialProjectContext context) : base(context)
+    protected SpecialProject(SpecialProjectContext context)
+        : base(context)
     {
         Config = context.Config;
         TargetFramework = context.TargetFramework;
@@ -43,7 +44,12 @@ internal abstract class SpecialProject :
         _mapper = context.Mapper;
     }
 
-    public IReadOnlyCollection<AuditResult> Audit(IReadOnlyCollection<IProject> projects, string[] rules, bool fix, CancellationToken ct)
+    public IReadOnlyCollection<AuditResult> Audit(
+        IReadOnlyCollection<IProject> projects,
+        string[] rules,
+        bool fix,
+        CancellationToken ct
+    )
     {
         var results = new List<AuditResult>();
 
@@ -57,7 +63,11 @@ internal abstract class SpecialProject :
     {
         this.Debug($"Start {Name} cache clean.");
 
-        var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
+        var cache = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".nuget",
+            "packages"
+        );
         lock (CacheLocker)
         {
             foreach (var (_, (_, name, version)) in Packages)
@@ -102,10 +112,7 @@ internal abstract class SpecialProject :
         if (force)
             DeleteDirectory("bin");
 
-        return RunAsync(
-            "build",
-            $"dotnet build --configuration {configuration} --no-dependencies {File}",
-            ct);
+        return RunAsync("build", $"dotnet build --configuration {configuration} --no-dependencies {File}", ct);
     }
 
     protected override void HandleSave() => _mapper.Save(this);
@@ -123,8 +130,8 @@ internal abstract class SpecialProject :
     }
 
     protected override bool IsRelated(FileInfo file) =>
-        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-        !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName!, ProjectFactory.IgnoredFolders);
+        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith)
+        && !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName!, ProjectFactory.IgnoredFolders);
 
     private string ProjectFileName(string name) => $"{name}{ProjectFactory.ProjectFileExtension}";
 }

@@ -14,15 +14,16 @@ namespace Xs.Cli.Node.Projects;
 
 internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    };
+    private static readonly JsonSerializerOptions JsonSerializerOptions =
+        new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
 
     private const string FilePrefix = "file:";
 
@@ -33,11 +34,9 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
 
         var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(file.FullName), JsonSerializerOptions)!;
 
-        project.Name = info.Name ??
-            throw new InvalidOperationException($"Project {path} is missing name");
+        project.Name = info.Name ?? throw new InvalidOperationException($"Project {path} is missing name");
 
-        var rawVersion = info.Version ??
-            throw new InvalidOperationException($"Project {path} is missing version");
+        var rawVersion = info.Version ?? throw new InvalidOperationException($"Project {path} is missing version");
         if (Version.TryParse(rawVersion, out var version))
             project.Version = version;
         else
@@ -46,8 +45,8 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         if (configuration.SkipChecks)
             project.Description = info.Description;
         else
-            project.Description = info.Description ??
-                throw new InvalidOperationException($"Project {path} is missing description");
+            project.Description =
+                info.Description ?? throw new InvalidOperationException($"Project {path} is missing description");
 
         // is not packable, if is private - when private: true is specified
         project.IsPackable = !info.Private.HasValue || !info.Private.Value;
@@ -79,12 +78,24 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
 
         return project;
 
-        IEnumerable<Dependency<string>> GetProjectDependencies(IReadOnlyDictionary<string, string> value, DependencyType type) =>
+        IEnumerable<Dependency<string>> GetProjectDependencies(
+            IReadOnlyDictionary<string, string> value,
+            DependencyType type
+        ) =>
             value
                 .Where(e => e.Value.StartsWith(FilePrefix))
-                .Select(e => new Dependency<string>(type, ReadProjectDependency(project.Name, file, e.Value.Substring(FilePrefix.Length))));
+                .Select(
+                    e =>
+                        new Dependency<string>(
+                            type,
+                            ReadProjectDependency(project.Name, file, e.Value.Substring(FilePrefix.Length))
+                        )
+                );
 
-        IEnumerable<Dependency<Package>> GetPackageDependencies(IReadOnlyDictionary<string, string> value, DependencyType type) =>
+        IEnumerable<Dependency<Package>> GetPackageDependencies(
+            IReadOnlyDictionary<string, string> value,
+            DependencyType type
+        ) =>
             value
                 .Where(e => !e.Value.StartsWith(FilePrefix))
                 .Select(e => new Dependency<Package>(type, ReadPackageDependency(project.Name, e.Key, e.Value)));
@@ -115,7 +126,13 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         {
             var deps = project.Projects
                 .Where(e => e.Type == type)
-                .Select(e => (name: e.Value.Name, value: FilePrefix + Path.GetRelativePath(project.Directory, e.Value.Directory)))
+                .Select(
+                    e =>
+                        (
+                            name: e.Value.Name,
+                            value: FilePrefix + Path.GetRelativePath(project.Directory, e.Value.Directory)
+                        )
+                )
                 .Concat(
                     project.Packages
                         .Where(e => e.Type == type)
@@ -128,11 +145,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         }
     }
 
-    private string ReadProjectDependency(
-        string project,
-        FileInfo file,
-        string location
-    )
+    private string ReadProjectDependency(string project, FileInfo file, string location)
     {
         var parent = file.DirectoryName ?? throw new DirectoryNotFoundException($"File {file} has no parent directory");
         var path = Path.GetFullPath(Path.Combine(parent, location, ProjectFactory.ProjectFileName));
@@ -142,11 +155,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         return path;
     }
 
-    private static Package ReadPackageDependency(
-        string project,
-        string name,
-        string rawVersion
-    )
+    private static Package ReadPackageDependency(string project, string name, string rawVersion)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new InvalidOperationException($"Project {project} has empty package dependency name.");
@@ -155,7 +164,9 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             throw new InvalidOperationException($"Project {project} has empty package dependency {name} version.");
 
         if (!Version.TryParse(rawVersion, out var version))
-            throw new InvalidOperationException($"Project {project} package dependency {name} version {rawVersion} is invalid.");
+            throw new InvalidOperationException(
+                $"Project {project} package dependency {name} version {rawVersion} is invalid."
+            );
 
         return new Package(Constants.ProjectType, name, version);
     }

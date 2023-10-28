@@ -14,7 +14,10 @@ using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs;
 
-internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class QueryCommand
+    : AsyncCommand<QueryCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     private const string DomainQueryTemplate = "DomainQuery.cs_tpl";
     private const string ApplicationQueryTemplate = "ApplicationQuery.cs_tpl";
@@ -29,11 +32,7 @@ internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverCo
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 
-    public QueryCommand(
-        DiscoverProjectsTask discoverTask,
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public QueryCommand(DiscoverProjectsTask discoverTask, ITemplateWriter templateWriter, ILogger logger)
     {
         _discoverTask = discoverTask;
         _templateWriter = templateWriter;
@@ -99,10 +98,7 @@ internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverCo
         CancellationToken ct
     )
     {
-        var data = new QueryDescription
-        {
-            Entity = CommandLine.Prompt("Entities: "),
-        };
+        var data = new QueryDescription { Entity = CommandLine.Prompt("Entities: "), };
         ct.ThrowIfCancellationRequested();
         data.Name = CommandLine.Prompt("Query name: ");
         ct.ThrowIfCancellationRequested();
@@ -129,14 +125,11 @@ internal class QueryCommand : AsyncCommand<QueryCommandConfiguration, DiscoverCo
         public string Name { get; set; } = string.Empty;
         public string Response { get; set; } = string.Empty;
 
-        public IList<ValueTuple<string, string>> RequestFields { get; set; } =
-            new List<ValueTuple<string, string>>();
+        public IList<ValueTuple<string, string>> RequestFields { get; set; } = new List<ValueTuple<string, string>>();
 
-        public IList<ValueTuple<string, string>> ComposeFields { get; set; } =
-            new List<ValueTuple<string, string>>();
+        public IList<ValueTuple<string, string>> ComposeFields { get; set; } = new List<ValueTuple<string, string>>();
 
-        public IList<ValueTuple<string, string>> ResponseFields { get; set; } =
-            new List<ValueTuple<string, string>>();
+        public IList<ValueTuple<string, string>> ResponseFields { get; set; } = new List<ValueTuple<string, string>>();
 
         public string DomainQueryNamespace { get; set; } = string.Empty;
         public string ApplicationQueryNamespace { get; set; } = string.Empty;

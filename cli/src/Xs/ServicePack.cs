@@ -18,10 +18,7 @@ public class ServicePack : ServicePackBase
         container.AddArguments();
 
         // tasks
-        container.AddAll()
-            .Where(x => x.Name.EndsWith("Task"))
-            .AsSelf()
-            .Singleton();
+        container.AddAll().Where(x => x.Name.EndsWith("Task")).AsSelf().Singleton();
 
         // tools
         container.Add<SyncConfigurator>().AsSelf().Singleton();

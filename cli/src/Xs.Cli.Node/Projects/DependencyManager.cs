@@ -18,22 +18,24 @@ internal class DependencyManager : IDependencyManager
     public Uri DefaultServer { get; } = new(Constants.DefaultServer);
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    private readonly HttpClient _client = new(new HttpClientHandler()
-    {
-        AutomaticDecompression = DecompressionMethods.GZip,
-        MaxConnectionsPerServer = 16,
-    });
+    private readonly HttpClient _client =
+        new(
+            new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip,
+                MaxConnectionsPerServer = 16,
+            }
+        );
 
-    public DependencyManager(
-        IHttpRequestFactory httpRequestFactory
-    )
+    public DependencyManager(IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }
 
     public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
     {
-        var request = _httpRequestFactory.New(serverUri)
+        var request = _httpRequestFactory
+            .New(serverUri)
             .UseClient(_client)
             .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()))
             .BearerAuthorization(accessToken);
@@ -68,7 +70,5 @@ internal class DependencyManager : IDependencyManager
         public Dictionary<string, IndexVersion> Versions { get; set; } = new();
     }
 
-    private class IndexVersion
-    {
-    }
+    private class IndexVersion { }
 }

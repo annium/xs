@@ -19,30 +19,29 @@ internal class DependencyManager : IDependencyManager
     private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    private readonly HttpClient _client = new(new HttpClientHandler
-    {
-        AutomaticDecompression = DecompressionMethods.GZip,
-        MaxConnectionsPerServer = 16,
-    });
+    private readonly HttpClient _client =
+        new(
+            new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip, MaxConnectionsPerServer = 16, }
+        );
 
-    public DependencyManager(
-        IHttpRequestFactory httpRequestFactory
-    )
+    public DependencyManager(IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }
 
     public async Task<Package[]> ResolveVersionsAsync(Package package, Uri serverUri, string accessToken)
     {
-        var serverIndex = await _httpRequestFactory.New(serverUri)
+        var serverIndex = await _httpRequestFactory
+            .New(serverUri)
             .UseClient(_client)
             .Get(Constants.ServerPathSuffix)
             .AsAsync<ServiceIndex>();
         var registrationBaseUrl = serverIndex.Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
 
-        var registrationUrl = registrationBaseUrl +
-            (registrationBaseUrl.EndsWith('/') ? string.Empty : "/") +
-            $"{HttpUtility.UrlEncode(package.Name.ToLowerInvariant())}/index.json";
+        var registrationUrl =
+            registrationBaseUrl
+            + (registrationBaseUrl.EndsWith('/') ? string.Empty : "/")
+            + $"{HttpUtility.UrlEncode(package.Name.ToLowerInvariant())}/index.json";
 
         var index = await LoadIndexAsync(registrationUrl);
         if (index is null)
@@ -74,14 +73,20 @@ internal class DependencyManager : IDependencyManager
 
     private async Task<RegistrationIndex?> LoadIndexAsync(string registrationUrl)
     {
-        var index = await _httpRequestFactory.New().UseClient(_client).Get(registrationUrl).AsAsync(new RegistrationIndex());
-        index.Items = await Task.WhenAll(index.Items.Select(async page =>
-        {
-            if (page.Items.Length > 0)
-                return page;
+        var index = await _httpRequestFactory
+            .New()
+            .UseClient(_client)
+            .Get(registrationUrl)
+            .AsAsync(new RegistrationIndex());
+        index.Items = await Task.WhenAll(
+            index.Items.Select(async page =>
+            {
+                if (page.Items.Length > 0)
+                    return page;
 
-            return await _httpRequestFactory.New().UseClient(_client).Get(page.Id).AsAsync<RegistrationPage>();
-        }));
+                return await _httpRequestFactory.New().UseClient(_client).Get(page.Id).AsAsync<RegistrationPage>();
+            })
+        );
 
         return index;
     }

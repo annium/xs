@@ -10,12 +10,13 @@ namespace Xs.Commands.Sync;
 
 public class SyncConfigurator
 {
-    private readonly string _configFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".xs.sync");
+    private readonly string _configFile = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+        ".xs.sync"
+    );
     private readonly ISerializer<string> _serializer;
 
-    public SyncConfigurator(
-        IIndex<SerializerKey, ISerializer<string>> serializers
-    )
+    public SyncConfigurator(IIndex<SerializerKey, ISerializer<string>> serializers)
     {
         _serializer = serializers[SerializerKey.CreateDefault(Constants.MediaType)];
     }

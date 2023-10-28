@@ -9,9 +9,7 @@ public class DeletePackageDependencyTask : ILogSubject
 {
     public ILogger Logger { get; }
 
-    public DeletePackageDependencyTask(
-        ILogger logger
-    )
+    public DeletePackageDependencyTask(ILogger logger)
     {
         Logger = logger;
     }
@@ -23,7 +21,9 @@ public class DeletePackageDependencyTask : ILogSubject
         {
             if (target.Packages.All(p => p.Value != package))
             {
-                this.Debug($"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}.");
+                this.Debug(
+                    $"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}."
+                );
                 continue;
             }
 

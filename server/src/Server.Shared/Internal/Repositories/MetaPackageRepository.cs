@@ -14,11 +14,8 @@ namespace Server.Shared.Internal.Repositories;
 
 internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageRepository
 {
-    public MetaPackageRepository(
-        Connection db
-    ) : base(db)
-    {
-    }
+    public MetaPackageRepository(Connection db)
+        : base(db) { }
 
     public async Task CreateAsync(MetaPackage metaPackage)
     {
@@ -34,14 +31,13 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
         int count
     )
     {
-        var request = Db.MetaPackages
-            .Where(x =>
-                x.OwnerId == userId ||
-                x.Permissions.Any(p =>
-                    p.Category == PermissionCategory.Owner &&
-                    (p.Permission & Permission.Read) == Permission.Read
+        var request = Db.MetaPackages.Where(
+            x =>
+                x.OwnerId == userId
+                || x.Permissions.Any(
+                    p => p.Category == PermissionCategory.Owner && (p.Permission & Permission.Read) == Permission.Read
                 )
-            );
+        );
 
         if (type is not null)
             request = request.Where(x => x.Type == type);
@@ -64,9 +60,7 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
 
     public async Task<MetaPackage?> TryGetByIdAsync(Guid id)
     {
-        return await Db.MetaPackages
-            .LoadWith(x => x.Permissions)
-            .FirstOrDefaultAsync(x => x.Id == id);
+        return await Db.MetaPackages.LoadWith(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<MetaPackageAccess?> TryGetAccessByIdAsync(Guid id)
@@ -100,10 +94,7 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
 
     public async Task SetDownloadsAsync(Guid id, int downloads)
     {
-        await Db.MetaPackages
-            .Where(x => x.Id == id)
-            .Set(x => x.Downloads, downloads)
-            .UpdateAsync();
+        await Db.MetaPackages.Where(x => x.Id == id).Set(x => x.Downloads, downloads).UpdateAsync();
     }
 
     public async Task UpdatePermissionsAsync(Guid id, IReadOnlyCollection<MetaPackagePermission> permissions)

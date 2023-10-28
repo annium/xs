@@ -8,10 +8,7 @@ public sealed record MetaPackageAccess
     private Guid OwnerId { get; }
     private IReadOnlyCollection<MetaPackagePermission> Permissions { get; }
 
-    public MetaPackageAccess(
-        Guid ownerId,
-        IReadOnlyCollection<MetaPackagePermission> permissions
-    )
+    public MetaPackageAccess(Guid ownerId, IReadOnlyCollection<MetaPackagePermission> permissions)
     {
         OwnerId = ownerId;
         Permissions = permissions;

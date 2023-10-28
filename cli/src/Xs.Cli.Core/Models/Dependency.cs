@@ -7,19 +7,13 @@ public sealed record Dependency<T>
     public DependencyType Type { get; }
     public T Value { get; }
 
-    public Dependency(
-        DependencyType type,
-        T value
-    )
+    public Dependency(DependencyType type, T value)
     {
         Type = type;
         Value = value;
     }
 
-    public void Deconstruct(
-        out DependencyType type,
-        out T value
-    )
+    public void Deconstruct(out DependencyType type, out T value)
     {
         type = Type;
         value = Value;

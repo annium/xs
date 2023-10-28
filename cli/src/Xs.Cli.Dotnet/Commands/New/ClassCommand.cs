@@ -12,7 +12,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class ClassCommand : AsyncCommand<ClassCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class ClassCommand
+    : AsyncCommand<ClassCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     private const string ClassTemplate = "Class.cs_tpl";
 
@@ -22,11 +25,7 @@ public class ClassCommand : AsyncCommand<ClassCommandConfiguration, DiscoverConf
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly ITemplateWriter _templateWriter;
 
-    public ClassCommand(
-        DiscoverProjectsTask discoverTask,
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public ClassCommand(DiscoverProjectsTask discoverTask, ITemplateWriter templateWriter, ILogger logger)
     {
         _discoverTask = discoverTask;
         _templateWriter = templateWriter;
@@ -75,7 +74,8 @@ public class ClassCommand : AsyncCommand<ClassCommandConfiguration, DiscoverConf
             _templateWriter.SetRoot(output);
 
             // setup data
-            var ns = $"{project.Name}.{Path.GetRelativePath(project.Directory, output).Replace(Path.DirectorySeparatorChar, '.')}";
+            var ns =
+                $"{project.Name}.{Path.GetRelativePath(project.Directory, output).Replace(Path.DirectorySeparatorChar, '.')}";
             var data = new { ns, name };
 
             // write files

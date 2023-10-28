@@ -1,4 +1,3 @@
-
 using Annium.Logging;
 using LinqToDB;
 using LinqToDB.Data;
@@ -13,10 +12,8 @@ internal class ServerConnection<TPackage, TPackageDependency> : DataConnection, 
     public ILogger Logger { get; }
     public ITable<TPackage> Packages { get; }
 
-    public ServerConnection(
-        DataOptions<ServerConnection<TPackage, TPackageDependency>> config,
-        ILogger logger
-    ) : base(config.Options)
+    public ServerConnection(DataOptions<ServerConnection<TPackage, TPackageDependency>> config, ILogger logger)
+        : base(config.Options)
     {
         Logger = logger;
         Packages = this.GetTable<TPackage>();

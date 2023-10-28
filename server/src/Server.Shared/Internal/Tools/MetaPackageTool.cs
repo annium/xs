@@ -23,12 +23,13 @@ internal class MetaPackageTool : IMetaPackageTool
             permissions
         );
 
-        permissions.Add(new MetaPackagePermission(metapackage.Id, PermissionCategory.Owner, Permission.Read | Permission.Publish));
+        permissions.Add(
+            new MetaPackagePermission(metapackage.Id, PermissionCategory.Owner, Permission.Read | Permission.Publish)
+        );
         permissions.Add(new MetaPackagePermission(metapackage.Id, PermissionCategory.World, Permission.None));
 
         return metapackage;
     }
 
-    public MetaPackageAccess GetAccess(MetaPackage metaPackage) =>
-        new(metaPackage.OwnerId, metaPackage.Permissions);
+    public MetaPackageAccess GetAccess(MetaPackage metaPackage) => new(metaPackage.OwnerId, metaPackage.Permissions);
 }

@@ -9,11 +9,7 @@ public class ProjectTypeConfiguration
     public string Token { get; }
     public SpecialConfiguration? Special { get; }
 
-    public ProjectTypeConfiguration(
-        Uri server,
-        string token,
-        SpecialConfiguration? special
-    )
+    public ProjectTypeConfiguration(Uri server, string token, SpecialConfiguration? special)
     {
         Server = server;
         Token = token;

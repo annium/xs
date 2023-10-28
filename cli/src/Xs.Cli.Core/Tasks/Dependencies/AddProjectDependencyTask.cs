@@ -9,9 +9,7 @@ public class AddProjectDependencyTask : ILogSubject
 {
     public ILogger Logger { get; }
 
-    public AddProjectDependencyTask(
-        ILogger logger
-    )
+    public AddProjectDependencyTask(ILogger logger)
     {
         Logger = logger;
     }
@@ -25,7 +23,9 @@ public class AddProjectDependencyTask : ILogSubject
         {
             if (target.Projects.Contains(dependency))
             {
-                this.Debug($"Skip adding project {project} as dependency of {target}. {target} already uses {project}.");
+                this.Debug(
+                    $"Skip adding project {project} as dependency of {target}. {target} already uses {project}."
+                );
                 continue;
             }
 

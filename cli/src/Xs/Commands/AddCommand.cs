@@ -15,7 +15,10 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class AddCommand
+    : AsyncCommand<AddCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "add";
     public static string Description => "Add dependency to projects.";
@@ -88,13 +91,15 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
         // if no packages match name and no version given - resolve
         if (packages.Length == 0)
             packages = new[] { await ResolvePackage(discoverCfg, cfg, projectType, name, version) };
-
         // if package already exists: if version exists - check it's same, otherwise - nothing to do.
         else if (version != Version.Empty)
             EnsureNoVersionConflict(packages, version);
 
         foreach (var package in packages)
-            _addPackageDependencyTask.Run(targets.FilterType(package.Type).ToArray(), new Dependency<Package>(dependencyType, package));
+            _addPackageDependencyTask.Run(
+                targets.FilterType(package.Type).ToArray(),
+                new Dependency<Package>(dependencyType, package)
+            );
     }
 
     private ProjectType ResolveProjectType(IProject[] targets, string mask)
@@ -104,11 +109,14 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
         {
             var targetsErrorView = string.Join(
                 Environment.NewLine,
-                targetGroups.Select(x => string.Join(
-                    Environment.NewLine,
-                    $"{x.Key}:",
-                    string.Join(Environment.NewLine, x.Value.Select(p => $" - {p}"))
-                ))
+                targetGroups.Select(
+                    x =>
+                        string.Join(
+                            Environment.NewLine,
+                            $"{x.Key}:",
+                            string.Join(Environment.NewLine, x.Value.Select(p => $" - {p}"))
+                        )
+                )
             );
             throw new InvalidOperationException(
                 $"Projects mask '{mask}' matches projects of different types:{Environment.NewLine}{targetsErrorView}"
@@ -127,7 +135,9 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
             Environment.NewLine,
             packages.Where(x => x.Version != version).Select(x => $" - {x}: {x.Version}")
         );
-        throw new ArgumentException($"Package {packages.First().Name} is already used with different version:{Environment.NewLine}{conflictsErrorView}");
+        throw new ArgumentException(
+            $"Package {packages.First().Name} is already used with different version:{Environment.NewLine}{conflictsErrorView}"
+        );
     }
 
     private async Task<Package> ResolvePackage(
@@ -148,15 +158,19 @@ internal class AddCommand : AsyncCommand<AddCommandConfiguration, DiscoverConfig
 
         var dependencyManager = _dependencyManagers.Single(x => x.Type == packageStub.Type);
 
-
         var registryUri = configuration.Servers.GetValueOrDefault(packageStub.Type);
-        var versions = registryUri is not null && !registryUri.IsFile
-            ? await dependencyManager.ResolveVersionsAsync(packageStub, registryUri, configuration.Token)
-            : Array.Empty<Package>();
+        var versions =
+            registryUri is not null && !registryUri.IsFile
+                ? await dependencyManager.ResolveVersionsAsync(packageStub, registryUri, configuration.Token)
+                : Array.Empty<Package>();
 
         // fallback to default server result
         if (versions.Length == 0)
-            versions = await dependencyManager.ResolveVersionsAsync(packageStub, dependencyManager.DefaultServer, string.Empty);
+            versions = await dependencyManager.ResolveVersionsAsync(
+                packageStub,
+                dependencyManager.DefaultServer,
+                string.Empty
+            );
 
         var package = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
         this.Trace($"Resolve: {packageStub} - {versions.Length} version(s)");

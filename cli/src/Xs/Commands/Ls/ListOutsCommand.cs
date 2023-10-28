@@ -18,9 +18,7 @@ internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, Disc
     public static string Description => "List projects and their project dependents.";
     private readonly DiscoverProjectsTask _discoverTask;
 
-    public ListOutsCommand(
-        DiscoverProjectsTask discoverTask
-    )
+    public ListOutsCommand(DiscoverProjectsTask discoverTask)
     {
         _discoverTask = discoverTask;
     }
@@ -32,10 +30,7 @@ internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, Disc
     )
     {
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterType(cfg.Type)
-            .FilterMask(cfg.Mask)
-            .ToArray();
+        var projects = allProjects.FilterType(cfg.Type).FilterMask(cfg.Mask).ToArray();
 
         // log projects' dependants, if matching projects found
         if (projects.Length > 0)
@@ -87,9 +82,7 @@ internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, Disc
             foreach (var package in packages)
             {
                 Console.WriteLine(package);
-                var dependants = allProjects
-                    .Where(p => p.Packages.Any(d => d.Value == package))
-                    .ToArray();
+                var dependants = allProjects.Where(p => p.Packages.Any(d => d.Value == package)).ToArray();
 
                 var last = dependants.Last();
 
@@ -153,13 +146,7 @@ internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, Disc
         prefix += isLast ? "  " : "│ ";
         var last = dependants.Last();
         foreach (var dependant in dependants)
-            LogProjectWithDependants(
-                dependant,
-                projects,
-                prefix,
-                nest - 1,
-                dependant == last
-            );
+            LogProjectWithDependants(dependant, projects, prefix, nest - 1, dependant == last);
     }
 
     private void LogProject(IProject project, bool writePath, bool writeAttributes)

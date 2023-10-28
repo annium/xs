@@ -28,7 +28,9 @@ internal class ServicePack : ServicePackBase
         container.AddRuntime(GetType().Assembly);
         container.AddConfiguration(new WebHostConfiguration());
         container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
-        container.AddConfiguration<PostgreSqlConfiguration>(x => x.AddYamlFile(Path.Combine("configuration", "db.yml")));
+        container.AddConfiguration<PostgreSqlConfiguration>(
+            x => x.AddYamlFile(Path.Combine("configuration", "db.yml"))
+        );
     }
 
     public override void Register(IServiceContainer container, IServiceProvider provider)
@@ -41,7 +43,8 @@ internal class ServicePack : ServicePackBase
 
         // host
         container.Collection.AddCors();
-        container.Collection.AddControllers()
+        container.Collection
+            .AddControllers()
             .AddApplicationPart(typeof(Main.ServicePack).Assembly)
             .AddApplicationPart(typeof(Dotnet.ServicePack).Assembly)
             .AddApplicationPart(typeof(Node.ServicePack).Assembly)
@@ -56,7 +59,8 @@ internal class ServicePack : ServicePackBase
     private void SetupSwagger(SwaggerGenOptions options)
     {
         options.SwaggerDoc("v1", new OpenApiInfo { Title = "Package server", Version = "v1", });
-        options.AddSecurityDefinition("token",
+        options.AddSecurityDefinition(
+            "token",
             new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -65,21 +69,20 @@ internal class ServicePack : ServicePackBase
                 Type = SecuritySchemeType.Http,
                 BearerFormat = "JWT",
                 Scheme = "Bearer"
-            });
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                new string[] { }
             }
-        });
+        );
+        options.AddSecurityRequirement(
+            new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                    },
+                    new string[] { }
+                }
+            }
+        );
     }
 
     public override void Setup(IServiceProvider provider)

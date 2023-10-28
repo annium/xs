@@ -21,9 +21,7 @@ public class PackagesController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
-    public PackagesController(
-        IPackageService<Package, PackageDependency, PackageRequest> packageService
-    )
+    public PackagesController(IPackageService<Package, PackageDependency, PackageRequest> packageService)
     {
         _packageService = packageService;
     }
@@ -38,8 +36,8 @@ public class PackagesController : ServerController<User>
         return result.Status switch
         {
             PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
-            PackageStatus.Ok        => Ok(result.Data.Select(p => new PackageResponse(p)).ToArray()),
-            _                       => NotFound()
+            PackageStatus.Ok => Ok(result.Data.Select(p => new PackageResponse(p)).ToArray()),
+            _ => NotFound()
         };
     }
 
@@ -52,9 +50,9 @@ public class PackagesController : ServerController<User>
 
         return result.Status switch
         {
-            PackageStatus.NotFound  => NotFound(),
+            PackageStatus.NotFound => NotFound(),
             PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
-            _                       => NoContent()
+            _ => NoContent()
         };
     }
 }

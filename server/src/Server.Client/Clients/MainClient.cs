@@ -11,16 +11,15 @@ public class MainClient : ClientBase
 {
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    public MainClient(
-        IHttpRequestFactory httpRequestFactory
-    )
+    public MainClient(IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }
 
     public async Task<string> LoginAsync(string login, string password)
     {
-        var response = await _httpRequestFactory.New(Uri)
+        var response = await _httpRequestFactory
+            .New(Uri)
             .Post("login")
             .JsonContent(new { login, password })
             .AsResponseAsync<string>();
@@ -33,9 +32,7 @@ public class MainClient : ClientBase
 
     public async Task<Registry> GetRegistryInfoAsync()
     {
-        var response = await _httpRequestFactory.New(Uri)
-            .Get("registry")
-            .AsResponseAsync<Registry>();
+        var response = await _httpRequestFactory.New(Uri).Get("registry").AsResponseAsync<Registry>();
 
         if (response.IsFailure)
             throw new Exception($"Registry info fetch failed with {response.StatusCode} ({response.StatusText}).");
@@ -45,7 +42,8 @@ public class MainClient : ClientBase
 
     public async Task<MetaPackage[]> SearchAsync(string token, string type, string query)
     {
-        var response = await _httpRequestFactory.New(Uri)
+        var response = await _httpRequestFactory
+            .New(Uri)
             .Get("packages/search")
             .BearerAuthorization(token)
             .Param("type", type)

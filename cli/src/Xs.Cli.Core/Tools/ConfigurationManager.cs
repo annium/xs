@@ -51,9 +51,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         var cfgFile = GetConfigurationFile(directory.FullName);
         var credFile = GetCredentialsFile(directory.FullName);
 
-        var config = _configurationBuilderFactory()
-            .AddYamlFile(cfgFile)
-            .Build<Config>();
+        var config = _configurationBuilderFactory().AddYamlFile(cfgFile).Build<Config>();
 
         this.Trace($"Configuration loaded from {folder}");
 
@@ -73,7 +71,9 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
             if (dir.FullName == dir.Root.FullName)
                 return null;
 
-            return GetConfigurationFolder(dir.Parent ?? throw new DirectoryNotFoundException($"Directory {dir} has no parent directory"));
+            return GetConfigurationFolder(
+                dir.Parent ?? throw new DirectoryNotFoundException($"Directory {dir} has no parent directory")
+            );
         }
     }
 
@@ -85,11 +85,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         Write(GetCredentialsFile, configuration.Token);
 
         // save configuration for each project
-        var ignorePatterns = new List<string>
-        {
-            FileManager.IgnoreFile,
-            CredentialsFile
-        };
+        var ignorePatterns = new List<string> { FileManager.IgnoreFile, CredentialsFile };
         foreach ((ProjectType type, Uri uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
         {
             if (!_specialManagers.ContainsKey(type))
@@ -142,7 +138,8 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
             File.WriteAllLines(ignoreFile, new[] { IgnoreHeader }.Concat(ignorePatterns));
         }
 
-        void Write(Func<string, string> resolve, string data) => File.WriteAllText(resolve(configuration.Directory), data);
+        void Write(Func<string, string> resolve, string data) =>
+            File.WriteAllText(resolve(configuration.Directory), data);
     }
 
     public void Delete(string folder, IReadOnlyCollection<IProject> projects)
@@ -157,7 +154,8 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         void DeleteFile(Func<string, string> resolveFile)
         {
             var path = resolveFile(folder);
-            if (File.Exists(path)) File.Delete(path);
+            if (File.Exists(path))
+                File.Delete(path);
         }
     }
 

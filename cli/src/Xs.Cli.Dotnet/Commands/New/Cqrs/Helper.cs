@@ -27,12 +27,13 @@ internal static class Helper
         return fields;
     }
 
-    public static string BuildPath(string projectName, string? area, params string[] parts) => string.IsNullOrWhiteSpace(area)
-        ? Path.Combine(new[] { projectName }.Concat(parts).ToArray())
-        : Path.Combine(new[] { projectName, Areas, area }.Concat(parts).ToArray());
+    public static string BuildPath(string projectName, string? area, params string[] parts) =>
+        string.IsNullOrWhiteSpace(area)
+            ? Path.Combine(new[] { projectName }.Concat(parts).ToArray())
+            : Path.Combine(new[] { projectName, Areas, area }.Concat(parts).ToArray());
 
-    public static string BuildNamespace(string projectName, string? area, params string[] parts)
-        => string.IsNullOrWhiteSpace(area)
+    public static string BuildNamespace(string projectName, string? area, params string[] parts) =>
+        string.IsNullOrWhiteSpace(area)
             ? string.Join('.', new[] { projectName }.Concat(parts))
             : string.Join('.', new[] { projectName, Areas, area }.Concat(parts));
 }

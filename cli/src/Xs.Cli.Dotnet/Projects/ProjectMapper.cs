@@ -56,13 +56,11 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
 
         project.TargetFramework = properties.GetElement(El.TargetFramework)?.Value ?? TargetFramework.Net7;
         if (configuration.SkipChecks)
-            project.OutputType = properties.GetElement(El.OutputType)?.Value == "Exe"
-                ? OutputType.Exe
-                : OutputType.Library;
+            project.OutputType =
+                properties.GetElement(El.OutputType)?.Value == "Exe" ? OutputType.Exe : OutputType.Library;
         else
-            project.OutputType = properties.GetElement(El.OutputType)!.Value == "Exe"
-                ? OutputType.Exe
-                : OutputType.Library;
+            project.OutputType =
+                properties.GetElement(El.OutputType)!.Value == "Exe" ? OutputType.Exe : OutputType.Library;
 
         project.Projects = GetReferenceElements(El.ProjectReference)
             .Select(reference => ReadProjectDependency(project.Name, file, reference))
@@ -73,8 +71,8 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             .Select(reference =>
             {
                 var package = ReadPackageDependency(project.Name, reference, configuration);
-                var dependencyType = reference.GetElements(El.PrivateAssets).Any() ||
-                    reference.Attribute(El.PrivateAssets) is not null
+                var dependencyType =
+                    reference.GetElements(El.PrivateAssets).Any() || reference.Attribute(El.PrivateAssets) is not null
                         ? DependencyType.Dev
                         : DependencyType.Normal;
 
@@ -82,24 +80,24 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             })
             .ToArray();
 
-        project.IsPackable = properties.GetElement(El.IsPackable) is { } &&
-            bool.Parse(properties.GetElement(El.IsPackable)!.Value);
+        project.IsPackable =
+            properties.GetElement(El.IsPackable) is { } && bool.Parse(properties.GetElement(El.IsPackable)!.Value);
 
-        project.IsTestProject = properties.GetElement(El.IsTestProject) is { } &&
-            bool.Parse(properties.GetElement(El.IsTestProject)!.Value);
+        project.IsTestProject =
+            properties.GetElement(El.IsTestProject) is { }
+            && bool.Parse(properties.GetElement(El.IsTestProject)!.Value);
 
         return project;
 
-        IEnumerable<XElement> GetReferenceElements(string referenceType) => info
-            .GetElements(El.ItemGroup)
-            .SelectMany(group => group.GetElements(referenceType));
+        IEnumerable<XElement> GetReferenceElements(string referenceType) =>
+            info.GetElements(El.ItemGroup).SelectMany(group => group.GetElements(referenceType));
     }
 
     public void Save(ISpecialProject project)
     {
         var path = project.File;
-        var parent = Directory.GetParent(path) ??
-            throw new DirectoryNotFoundException($"Path {path} has no parent directory");
+        var parent =
+            Directory.GetParent(path) ?? throw new DirectoryNotFoundException($"Path {path} has no parent directory");
         var dir = parent.FullName;
 
         var info = XElement.Parse(File.ReadAllText(path));
@@ -128,7 +126,8 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             // newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
         }
 
-        var remainingProps = oldProps.Elements()
+        var remainingProps = oldProps
+            .Elements()
             .Where(el => !DisabledProperties.Contains(el.Name.ToString()))
             .Where(el => newProps.Elements().All(newEl => newEl.Name != el.Name))
             .ToList();
@@ -155,17 +154,17 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         info.Save(xw);
     }
 
-    private XElement SaveProjects(XElement info, string dir, char separator, IReadOnlyCollection<Dependency<IProject>> projects)
+    private XElement SaveProjects(
+        XElement info,
+        string dir,
+        char separator,
+        IReadOnlyCollection<Dependency<IProject>> projects
+    )
     {
         // collect target refs
         var refs = projects
             .Select(x => NormalizePath(Path.GetRelativePath(dir, x.Value.File)))
-            .ToDictionary(x => x,
-                x => new XElement(
-                    El.ProjectReference,
-                    new XAttribute(El.Include, x)
-                )
-            );
+            .ToDictionary(x => x, x => new XElement(El.ProjectReference, new XAttribute(El.Include, x)));
 
         // collect existing package references
         var existingRefs = info.GetElements(El.ItemGroup)
@@ -204,12 +203,14 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         // collect target refs
         var refs = packages
             .OrderBy(x => x.Value.Name)
-            .ToDictionary(x => x.Value.Name,
-                x => new XElement(
-                    El.PackageReference,
-                    new XAttribute(El.Include, x.Value.Name),
-                    new XAttribute(El.Version, x.Value.Version)
-                )
+            .ToDictionary(
+                x => x.Value.Name,
+                x =>
+                    new XElement(
+                        El.PackageReference,
+                        new XAttribute(El.Include, x.Value.Name),
+                        new XAttribute(El.Version, x.Value.Version)
+                    )
             );
 
         // collect existing package references
@@ -251,12 +252,14 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         var fileName = Path.GetFileNameWithoutExtension(path);
         if (fileName != name)
             throw new InvalidOperationException(
-                $"Project {path} project file name {fileName} doesn't match declared name {name}.");
+                $"Project {path} project file name {fileName} doesn't match declared name {name}."
+            );
 
         var dirName = Path.GetFileName(Path.GetDirectoryName(path));
         if (dirName != name)
             throw new InvalidOperationException(
-                $"Project {path} project directory name {dirName} doesn't match declared name {name}.");
+                $"Project {path} project directory name {dirName} doesn't match declared name {name}."
+            );
 
         if (properties.GetElement(El.PackageVersion) is null)
             throw new InvalidOperationException($"Project {path} has no {El.PackageVersion} defined.");
@@ -268,23 +271,25 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined.");
 
         if (properties.GetElement(El.DebugType)?.Value != "portable")
-            throw new InvalidOperationException(
-                $"Project {path} has no {El.DebugType} defined or it is not portable.");
+            throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not portable.");
 
         var outputType = properties.GetElement(El.OutputType)?.Value;
         var outputTypes = Enum.GetNames(typeof(OutputType));
         if (!outputTypes.Contains(outputType))
             throw new InvalidOperationException(
-                $"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}.");
+                $"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}."
+            );
 
         if (properties.GetElement(El.LangVersion)?.Value != LanguageVersion)
             throw new InvalidOperationException(
-                $"Project {path} has no {El.LangVersion} defined or it is not {LanguageVersion}.");
+                $"Project {path} has no {El.LangVersion} defined or it is not {LanguageVersion}."
+            );
 
         EnsureValidBoolean(El.WarningsAsErrors);
         if (properties.GetElement(El.WarningsAsErrors)?.Value != "true")
             throw new InvalidOperationException(
-                $"Project {path} has no {El.WarningsAsErrors} defined or it is not true.");
+                $"Project {path} has no {El.WarningsAsErrors} defined or it is not true."
+            );
 
         EnsureValidBoolean(El.IsPackable);
         if (properties.GetElement(El.IsPackable) is null)
@@ -297,18 +302,16 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             var element = properties.GetElement(el);
             if (element is not null && !BooleanStrings.Contains(element.Value))
                 throw new InvalidOperationException(
-                    $"Project {path} {el} must be one of {string.Join(", ", BooleanStrings)}.");
+                    $"Project {path} {el} must be one of {string.Join(", ", BooleanStrings)}."
+                );
         }
     }
 
-    private static string ReadProjectDependency(
-        string project,
-        FileInfo file,
-        XElement reference
-    )
+    private static string ReadProjectDependency(string project, FileInfo file, XElement reference)
     {
-        var relativePath = reference.Attribute(El.Include)?.Value ??
-            throw new InvalidOperationException($"Project {project} has empty project dependency.");
+        var relativePath =
+            reference.Attribute(El.Include)?.Value
+            ?? throw new InvalidOperationException($"Project {project} has empty project dependency.");
 
         relativePath = relativePath.Replace('\\', '/');
 
@@ -325,19 +328,21 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         DiscoverConfiguration configuration
     )
     {
-        var name = reference.Attribute(El.Include)?.Value ??
-            throw new InvalidOperationException($"Project {project} has empty package dependency name.");
+        var name =
+            reference.Attribute(El.Include)?.Value
+            ?? throw new InvalidOperationException($"Project {project} has empty package dependency name.");
 
         if (configuration.SkipChecks && ImplicitPackages.Any(p => p == name))
             return new Package(Constants.ProjectType, name, new Version(1, 0, 0, string.Empty));
 
-        var rawVersion = reference.Attribute(El.Version)?.Value ??
-            throw new InvalidOperationException(
-                $"Project {project} has empty package dependency {name} version.");
+        var rawVersion =
+            reference.Attribute(El.Version)?.Value
+            ?? throw new InvalidOperationException($"Project {project} has empty package dependency {name} version.");
 
         if (!Version.TryParse(rawVersion, out var version))
             throw new InvalidOperationException(
-                $"Project {project} package dependency {name} version {rawVersion} is invalid.");
+                $"Project {project} package dependency {name} version {rawVersion} is invalid."
+            );
 
         return new Package(Constants.ProjectType, name, version);
     }

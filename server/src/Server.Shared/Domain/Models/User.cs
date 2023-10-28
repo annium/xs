@@ -10,11 +10,7 @@ public sealed record User : IIdEntity<Guid>
     public string PasswordHash { get; private set; } = string.Empty;
     public Guid ApiToken { get; private set; }
 
-    public User(
-        string login,
-        string passwordHash,
-        Guid apiToken
-    )
+    public User(string login, string passwordHash, Guid apiToken)
     {
         Id = Guid.NewGuid();
         Login = login;
@@ -22,15 +18,9 @@ public sealed record User : IIdEntity<Guid>
         ApiToken = apiToken;
     }
 
-    internal User()
-    {
-    }
+    internal User() { }
 
-    public void Update(
-        string login,
-        string passwordHash,
-        Guid apiToken
-    )
+    public void Update(string login, string passwordHash, Guid apiToken)
     {
         Login = login;
         PasswordHash = passwordHash;

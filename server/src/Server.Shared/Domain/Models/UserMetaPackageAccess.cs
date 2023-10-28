@@ -12,11 +12,7 @@ public record struct UserMetaPackageAccess
 
     private readonly Permission _permission;
 
-    internal UserMetaPackageAccess(
-        Guid userId,
-        Guid ownerId,
-        IReadOnlyCollection<MetaPackagePermission> permissions
-    )
+    internal UserMetaPackageAccess(Guid userId, Guid ownerId, IReadOnlyCollection<MetaPackagePermission> permissions)
     {
         var category = ownerId == userId ? PermissionCategory.Owner : PermissionCategory.World;
 
@@ -27,5 +23,6 @@ public record struct UserMetaPackageAccess
     }
 
     public bool Has(Permission permission) => _permission.HasFlag(permission);
+
     public override int GetHashCode() => HashCode.Combine(IsOwner, IsWorld, _permission);
 }

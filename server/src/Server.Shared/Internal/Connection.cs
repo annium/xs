@@ -1,4 +1,3 @@
-
 using Annium.Logging;
 using LinqToDB;
 using LinqToDB.Data;
@@ -13,10 +12,8 @@ internal class Connection : DataConnection, ILogSubject
     public ITable<MetaPackagePermission> MetaPackagePermissions { get; set; }
     public ITable<User> Users { get; set; }
 
-    public Connection(
-        DataOptions<Connection> config,
-        ILogger logger
-    ) : base(config.Options)
+    public Connection(DataOptions<Connection> config, ILogger logger)
+        : base(config.Options)
     {
         Logger = logger;
         MetaPackages = this.GetTable<MetaPackage>();

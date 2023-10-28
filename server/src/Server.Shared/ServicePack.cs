@@ -24,7 +24,8 @@ public class ServicePack : ServicePackBase
         container.Add<IMetaPackageTool, MetaPackageTool>().Singleton();
 
         // repositories
-        container.AddAll(GetType().Assembly)
+        container
+            .AddAll(GetType().Assembly)
             .Where(x => x.IsClass && x.Name.EndsWith("Repository"))
             .AsInterfaces()
             .Scoped();
@@ -32,7 +33,8 @@ public class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        Migrator.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Schema)
+        Migrator
+            .ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Schema)
             .WithScriptsFromAssembly(GetType().Assembly)
             .Execute();
     }

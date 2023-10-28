@@ -81,7 +81,12 @@ public class PackageRegistrationController : ServerController<User>
         var lower = packages.Min(e => e.Version)!;
         var upper = packages.Max(e => e.Version)!;
 
-        return new RegistrationPageResponse(_urlTool.AbsoluteUrl($"v3/registration/{id}/page.json"), leafs, lower, upper);
+        return new RegistrationPageResponse(
+            _urlTool.AbsoluteUrl($"v3/registration/{id}/page.json"),
+            leafs,
+            lower,
+            upper
+        );
     }
 
     private RegistrationLeafResponse GetRegistrationLeaf(Package package)
@@ -102,6 +107,10 @@ public class PackageRegistrationController : ServerController<User>
         var name = package.Name;
         var version = package.Version;
 
-        return new CatalogEntryResponse(_urlTool.AbsoluteUrl($"v3/registration/{id}/{version}/catalog-entry.json"), name, version);
+        return new CatalogEntryResponse(
+            _urlTool.AbsoluteUrl($"v3/registration/{id}/{version}/catalog-entry.json"),
+            name,
+            version
+        );
     }
 }

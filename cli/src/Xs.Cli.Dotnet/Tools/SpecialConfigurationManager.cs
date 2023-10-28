@@ -20,9 +20,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
     private readonly string _defaultName = "nuget";
     private readonly Uri _defaultUri = new(Constants.DefaultServer);
 
-    public SpecialConfigurationManager(
-        ILogger logger
-    )
+    public SpecialConfigurationManager(ILogger logger)
     {
         Logger = logger;
     }
@@ -44,7 +42,8 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
     public void Delete(IProject project)
     {
         var path = ConfigFilePath(project.Directory);
-        if (File.Exists(path)) File.Delete(path);
+        if (File.Exists(path))
+            File.Delete(path);
     }
 
     private void Save(string folder, XElement info)
@@ -62,11 +61,15 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
         info.Save(xw);
     }
 
-    private XElement GetAddRule(string name, Uri uri) => new(
-        El.Add,
-        new XAttribute(El.Key, name),
-        new XAttribute(El.Value, uri.IsFile ? uri.AbsolutePath : new Uri(uri, Constants.ServerPathSuffix).ToString())
-    );
+    private XElement GetAddRule(string name, Uri uri) =>
+        new(
+            El.Add,
+            new XAttribute(El.Key, name),
+            new XAttribute(
+                El.Value,
+                uri.IsFile ? uri.AbsolutePath : new Uri(uri, Constants.ServerPathSuffix).ToString()
+            )
+        );
 
     private static string ConfigFilePath(string folder) => Path.Combine(folder, ConfigFile);
 

@@ -18,9 +18,7 @@ internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, Discov
     public static string Description => "List projects and their dependencies.";
     private readonly DiscoverProjectsTask _discoverTask;
 
-    public ListInsCommand(
-        DiscoverProjectsTask discoverTask
-    )
+    public ListInsCommand(DiscoverProjectsTask discoverTask)
     {
         _discoverTask = discoverTask;
     }
@@ -32,10 +30,7 @@ internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, Discov
     )
     {
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterMask(cfg.Mask)
-            .FilterType(cfg.Type)
-            .ToArray();
+        var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).ToArray();
 
         // show deps if explicitly specified, or opposite flag not set
         var showProjects = cfg.Projects || !cfg.Packages;
@@ -71,14 +66,24 @@ internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, Discov
     {
         if (showProjects)
         {
-            var projectDeps = projects.SelectMany(p => p.Projects).Select(d => d.Value).Distinct().OrderBy(e => e.Name).ToArray();
+            var projectDeps = projects
+                .SelectMany(p => p.Projects)
+                .Select(d => d.Value)
+                .Distinct()
+                .OrderBy(e => e.Name)
+                .ToArray();
             foreach (var dependency in projectDeps)
                 LogProject(dependency, cfg.Path, cfg.Attributes);
         }
 
         if (showPackages)
         {
-            var packageDeps = projects.SelectMany(p => p.Packages).Select(d => d.Value).Distinct().OrderBy(e => e.Name).ToArray();
+            var packageDeps = projects
+                .SelectMany(p => p.Packages)
+                .Select(d => d.Value)
+                .Distinct()
+                .OrderBy(e => e.Name)
+                .ToArray();
             foreach (var dependency in packageDeps)
                 Console.WriteLine(dependency);
         }
@@ -123,11 +128,7 @@ internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, Discov
         }
     }
 
-    private void LogPackage(
-        Dependency<Package> package,
-        string prefix,
-        bool isLast
-    )
+    private void LogPackage(Dependency<Package> package, string prefix, bool isLast)
     {
         var node = isLast ? "└─" : "├─";
         Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");

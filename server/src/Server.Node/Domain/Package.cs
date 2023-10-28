@@ -20,7 +20,8 @@ public class Package : IPackage<PackageDependency>, IIdEntity<Guid>
     public string Main { get; private init; } = string.Empty;
     public string Shasum { get; private init; } = string.Empty;
     public string Integrity { get; private init; } = string.Empty;
-    public IReadOnlyCollection<PackageDependency> Dependencies { get; private init; } = Array.Empty<PackageDependency>();
+    public IReadOnlyCollection<PackageDependency> Dependencies { get; private init; } =
+        Array.Empty<PackageDependency>();
 
     public Package(
         Guid id,
@@ -47,8 +48,5 @@ public class Package : IPackage<PackageDependency>, IIdEntity<Guid>
         Dependencies = dependencies;
     }
 
-    internal Package(
-    )
-    {
-    }
+    internal Package() { }
 }

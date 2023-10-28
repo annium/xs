@@ -8,9 +8,7 @@ public class ServerClientFactory
 {
     private readonly IServiceProvider _provider;
 
-    public ServerClientFactory(
-        IServiceProvider provider
-    )
+    public ServerClientFactory(IServiceProvider provider)
     {
         _provider = provider;
     }

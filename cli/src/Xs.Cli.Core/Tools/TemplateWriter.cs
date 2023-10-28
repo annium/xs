@@ -45,9 +45,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
 
     private IList<Resource> _resources = new List<Resource>();
 
-    public TemplateWriter(
-        ILogger logger
-    )
+    public TemplateWriter(ILogger logger)
     {
         Logger = logger;
     }
@@ -75,7 +73,8 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
     public void Write(string resourceName, string fileName, object data)
     {
         var path = Path.GetFullPath(Path.Combine(_root, fileName));
-        var parent = Directory.GetParent(path) ?? throw new DirectoryNotFoundException($"Directory {path} has no parent");
+        var parent =
+            Directory.GetParent(path) ?? throw new DirectoryNotFoundException($"Directory {path} has no parent");
         Directory.CreateDirectory(parent.FullName);
 
         var resource = _resources.First(r => r.Name == resourceName);

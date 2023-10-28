@@ -10,17 +10,17 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class LinkCommand : AsyncCommand<LinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class LinkCommand
+    : AsyncCommand<LinkCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "link";
     public static string Description => "Link project <-> package dependencies.";
     public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
-    public LinkCommand(
-        DiscoverProjectsTask discoverTask,
-        ILogger logger
-    )
+    public LinkCommand(DiscoverProjectsTask discoverTask, ILogger logger)
     {
         _discoverTask = discoverTask;
         Logger = logger;

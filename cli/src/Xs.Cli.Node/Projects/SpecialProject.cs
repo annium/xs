@@ -13,13 +13,14 @@ using SysDirectory = System.IO.Directory;
 
 namespace Xs.Cli.Node.Projects;
 
-internal abstract class SpecialProject : ProjectBase,
-    ISpecialProject,
-    IAuditableProject,
-    ICachingProject,
-    ICleanableProject,
-    IInstallableProject,
-    IBuildableProject
+internal abstract class SpecialProject
+    : ProjectBase,
+        ISpecialProject,
+        IAuditableProject,
+        ICachingProject,
+        ICleanableProject,
+        IInstallableProject,
+        IBuildableProject
 {
     // TODO: rewrite through project options - projects can have different shapes in a moment
     // private static readonly object CacheLocker = new object();
@@ -38,7 +39,8 @@ internal abstract class SpecialProject : ProjectBase,
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
-    public SpecialProject(SpecialProjectContext context) : base(context)
+    public SpecialProject(SpecialProjectContext context)
+        : base(context)
     {
         Config = context.Config;
         Scripts = context.Scripts;
@@ -51,7 +53,12 @@ internal abstract class SpecialProject : ProjectBase,
         //         _StaticShell = context.Shell;
     }
 
-    public IReadOnlyCollection<AuditResult> Audit(IReadOnlyCollection<IProject> projects, string[] rules, bool fix, CancellationToken ct)
+    public IReadOnlyCollection<AuditResult> Audit(
+        IReadOnlyCollection<IProject> projects,
+        string[] rules,
+        bool fix,
+        CancellationToken ct
+    )
     {
         var results = new List<AuditResult>();
 
@@ -128,6 +135,6 @@ internal abstract class SpecialProject : ProjectBase,
     protected override void HandleSave() => _mapper.Save(this);
 
     protected override bool IsRelated(FileInfo file) =>
-        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith) &&
-        !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName!, ProjectFactory.IgnoredFolders);
+        ProjectFactory.TrackedFileExtensions.Any(file.FullName.EndsWith)
+        && !FileManager.IsRootedDirectoryIgnored(Directory, file.DirectoryName!, ProjectFactory.IgnoredFolders);
 }

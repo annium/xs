@@ -17,10 +17,7 @@ public class LoginController : ServerController<User>
     private readonly IUserService _userService;
     private readonly ISecurityService _securityService;
 
-    public LoginController(
-        IUserService userService,
-        ISecurityService securityService
-    )
+    public LoginController(IUserService userService, ISecurityService securityService)
     {
         _userService = userService;
         _securityService = securityService;
@@ -55,6 +52,13 @@ public class LoginController : ServerController<User>
     {
         var user = GetUser();
 
-        return Ok(new { user.Id, Name = user.Login, user.ApiToken });
+        return Ok(
+            new
+            {
+                user.Id,
+                Name = user.Login,
+                user.ApiToken
+            }
+        );
     }
 }

@@ -9,17 +9,17 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class FormatCommand : AsyncCommand<FormatCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class FormatCommand
+    : AsyncCommand<FormatCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "format";
     public static string Description => "Format projects.";
     public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
-    public FormatCommand(
-        DiscoverProjectsTask discoverTask,
-        ILogger logger
-    )
+    public FormatCommand(DiscoverProjectsTask discoverTask, ILogger logger)
     {
         _discoverTask = discoverTask;
         Logger = logger;
@@ -32,10 +32,7 @@ internal class FormatCommand : AsyncCommand<FormatCommandConfiguration, Discover
     )
     {
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterMask(cfg.Mask)
-            .FilterType(cfg.Type)
-            .ToArray();
+        var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).ToArray();
 
         this.Debug($"Format {projects} project(s)");
         foreach (var project in projects)

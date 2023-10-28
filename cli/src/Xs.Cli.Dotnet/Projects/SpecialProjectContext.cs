@@ -34,18 +34,8 @@ internal class SpecialProjectContext : ProjectBaseContext
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
         SpecialConfiguration config,
         ProjectMapper mapper
-    ) : base(
-        type,
-        name,
-        version,
-        description,
-        directory,
-        projects,
-        packages,
-        shell,
-        loggerConfiguration,
-        logger
     )
+        : base(type, name, version, description, directory, projects, packages, shell, loggerConfiguration, logger)
     {
         TargetFramework = targetFramework;
         OutputType = outputType;

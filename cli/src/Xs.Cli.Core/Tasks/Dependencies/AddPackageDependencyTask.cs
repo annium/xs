@@ -9,9 +9,7 @@ public class AddPackageDependencyTask : ILogSubject
 {
     public ILogger Logger { get; }
 
-    public AddPackageDependencyTask(
-        ILogger logger
-    )
+    public AddPackageDependencyTask(ILogger logger)
     {
         Logger = logger;
     }
@@ -25,7 +23,9 @@ public class AddPackageDependencyTask : ILogSubject
         {
             if (target.Packages.Contains(dependency))
             {
-                this.Debug($"Skip adding package {package} as dependency of {target}. {target} already uses {package}.");
+                this.Debug(
+                    $"Skip adding package {package} as dependency of {target}. {target} already uses {package}."
+                );
                 continue;
             }
 

@@ -15,18 +15,13 @@ internal class UserService : IUserService
         _repository = repository;
     }
 
-    public Task CreateAsync(User user) =>
-        _repository.CreateAsync(user);
+    public Task CreateAsync(User user) => _repository.CreateAsync(user);
 
-    public Task<User?> TryFindByNameAsync(string name) =>
-        _repository.TryFindByLoginAsync(name);
+    public Task<User?> TryFindByNameAsync(string name) => _repository.TryFindByLoginAsync(name);
 
-    public Task UpdateAsync(User user) =>
-        _repository.UpdateAsync(user);
+    public Task UpdateAsync(User user) => _repository.UpdateAsync(user);
 
-    public Task UpdateApiTokenAsync(Guid userId, Guid apiToken) =>
-        _repository.UpdateApiTokenAsync(userId, apiToken);
+    public Task UpdateApiTokenAsync(Guid userId, Guid apiToken) => _repository.UpdateApiTokenAsync(userId, apiToken);
 
-    public Task DeleteByIdAsync(Guid id) =>
-        _repository.DeleteByIdAsync(id);
+    public Task DeleteByIdAsync(Guid id) => _repository.DeleteByIdAsync(id);
 }

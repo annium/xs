@@ -11,30 +11,26 @@ namespace Xs.Cli.Dotnet.Projects;
 
 internal class TestProject : SpecialProject, ITestableProject
 {
-    public TestProject(SpecialProjectContext context) : base(context)
-    {
-    }
+    public TestProject(SpecialProjectContext context)
+        : base(context) { }
 
     public Task TestAsync(Env env, string filter, CancellationToken ct)
     {
         var configuration = env == Env.Development ? "Debug" : "Release";
 
-        var cmd = new List<string>()
-        {
-            "dotnet test",
-            $"--configuration {configuration}",
-            $"--no-build {File}",
-        };
+        var cmd = new List<string>() { "dotnet test", $"--configuration {configuration}", $"--no-build {File}", };
 
         if (Packages.Any(d => d.Value.Name == ProjectFactory.TestCoveragePackage))
-            cmd.AddRange(new[]
-            {
-                "/p:CollectCoverage=true",
-                "/p:CoverletOutputFormat=lcov",
-                "/p:CoverletOutput=./lcov",
-                "--",
-                $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)LoggerConfiguration)!.ToLowerInvariant()}"
-            });
+            cmd.AddRange(
+                new[]
+                {
+                    "/p:CollectCoverage=true",
+                    "/p:CoverletOutputFormat=lcov",
+                    "/p:CoverletOutput=./lcov",
+                    "--",
+                    $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)LoggerConfiguration)!.ToLowerInvariant()}"
+                }
+            );
 
         if (!string.IsNullOrWhiteSpace(filter))
             cmd.Add($"filter={filter}");

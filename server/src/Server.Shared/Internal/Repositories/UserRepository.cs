@@ -10,11 +10,8 @@ namespace Server.Shared.Internal.Repositories;
 
 internal class UserRepository : RepositoryBase<Connection>, IUserRepository
 {
-    public UserRepository(
-        Connection db
-    ) : base(db)
-    {
-    }
+    public UserRepository(Connection db)
+        : base(db) { }
 
     public async Task CreateAsync(User user)
     {
@@ -43,10 +40,7 @@ internal class UserRepository : RepositoryBase<Connection>, IUserRepository
 
     public async Task UpdateApiTokenAsync(Guid userId, Guid apiToken)
     {
-        await Db.Users
-            .Where(x => x.Id == userId)
-            .Set(x => x.ApiToken, apiToken)
-            .UpdateAsync();
+        await Db.Users.Where(x => x.Id == userId).Set(x => x.ApiToken, apiToken).UpdateAsync();
     }
 
     public async Task DeleteByIdAsync(Guid id)

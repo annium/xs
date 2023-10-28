@@ -12,17 +12,12 @@ internal class SyncRemoveCommand : AsyncCommand<SyncRemoveCommandConfiguration>,
     public static string Description => "Remove repository from sync config";
     private readonly SyncConfigurator _configurator;
 
-    public SyncRemoveCommand(
-        SyncConfigurator configurator
-    )
+    public SyncRemoveCommand(SyncConfigurator configurator)
     {
         _configurator = configurator;
     }
 
-    public override Task HandleAsync(
-        SyncRemoveCommandConfiguration cfg,
-        CancellationToken ct
-    )
+    public override Task HandleAsync(SyncRemoveCommandConfiguration cfg, CancellationToken ct)
     {
         var projects = _configurator.Read();
 

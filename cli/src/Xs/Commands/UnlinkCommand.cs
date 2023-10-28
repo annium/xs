@@ -9,17 +9,17 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class UnlinkCommand : AsyncCommand<UnlinkCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class UnlinkCommand
+    : AsyncCommand<UnlinkCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "unlink";
     public static string Description => "Unlink project <-> package dependencies.";
     public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
-    public UnlinkCommand(
-        DiscoverProjectsTask discoverTask,
-        ILogger logger
-    )
+    public UnlinkCommand(DiscoverProjectsTask discoverTask, ILogger logger)
     {
         _discoverTask = discoverTask;
         Logger = logger;
@@ -43,9 +43,7 @@ internal class UnlinkCommand : AsyncCommand<UnlinkCommandConfiguration, Discover
 
         foreach (var source in sources)
         {
-            var externalDependencies = source.Projects
-                .Where(x => targets.Any(t => t.File == x.Value.File))
-                .ToList();
+            var externalDependencies = source.Projects.Where(x => targets.Any(t => t.File == x.Value.File)).ToList();
             if (externalDependencies.Count == 0)
                 continue;
 

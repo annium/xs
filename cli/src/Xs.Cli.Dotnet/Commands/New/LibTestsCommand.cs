@@ -8,17 +8,17 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.New;
 
-public class LibTestsCommand : Command<LibTestsCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class LibTestsCommand
+    : Command<LibTestsCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "lib.tests";
     public static string Description => "Create new library tests project.";
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public LibTestsCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public LibTestsCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;

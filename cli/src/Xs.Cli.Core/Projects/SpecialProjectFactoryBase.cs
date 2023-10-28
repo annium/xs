@@ -5,14 +5,14 @@ namespace Xs.Cli.Core.Projects;
 
 public class SpecialProjectFactoryBase
 {
-    protected Dependency<IProject> GetProjectDependencyMock(
-        FileInfo location,
-        Dependency<string> reference
-    )
+    protected Dependency<IProject> GetProjectDependencyMock(FileInfo location, Dependency<string> reference)
     {
-        var locationParent = location.DirectoryName ?? throw new DirectoryNotFoundException($"File {location} has no parent directory");
+        var locationParent =
+            location.DirectoryName ?? throw new DirectoryNotFoundException($"File {location} has no parent directory");
         var file = Path.GetFullPath(Path.Combine(locationParent, reference.Value));
-        var fileParent = Directory.GetParent(file) ?? throw new DirectoryNotFoundException($"File {location} has no parent directory");
+        var fileParent =
+            Directory.GetParent(file)
+            ?? throw new DirectoryNotFoundException($"File {location} has no parent directory");
         var directory = fileParent.FullName;
 
         var dependency = new ProjectMock(

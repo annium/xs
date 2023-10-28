@@ -12,9 +12,7 @@ internal class SecurityService : ISecurityService, IDisposable
     private readonly DisposableBox _disposable;
     private readonly HashAlgorithm _hashAlgorithm;
 
-    public SecurityService(
-        ILogger logger
-    )
+    public SecurityService(ILogger logger)
     {
         _disposable = Disposable.Box(logger);
         _disposable += _hashAlgorithm = SHA512.Create();

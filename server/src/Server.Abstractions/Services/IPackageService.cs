@@ -17,5 +17,10 @@ public interface IPackageService<TPackage, TPackageDependency, TPackageRequest>
     Task<TPackage?> TryFindByNameVersionAsync(string name, string version);
     Task<IStatusResult<PackageStatus>> PublishPackageAsync(User user, TPackageRequest request);
     Task<IStatusResult<PackageStatus>> UnpublishPackageAsync(User user, string name, string version);
-    Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(User? user, string name, string version, bool countDownload);
+    Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(
+        User? user,
+        string name,
+        string version,
+        bool countDownload
+    );
 }

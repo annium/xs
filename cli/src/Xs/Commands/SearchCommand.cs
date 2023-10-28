@@ -10,7 +10,10 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Commands;
 
-internal class SearchCommand : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class SearchCommand
+    : AsyncCommand<SearchCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "search";
     public static string Description => "Search for packages in tracked registry.";

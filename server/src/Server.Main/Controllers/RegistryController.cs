@@ -13,9 +13,7 @@ public class RegistryController : ServerController<User>
 {
     private readonly Configuration _configuration;
 
-    public RegistryController(
-        Configuration configuration
-    )
+    public RegistryController(Configuration configuration)
     {
         _configuration = configuration;
     }
@@ -23,10 +21,7 @@ public class RegistryController : ServerController<User>
     [HttpGet]
     public IActionResult GetRegistries()
     {
-        var response = new
-        {
-            servers = _configuration.Servers.ToDictionary(x => x.Key.ToString(), x => x.Value)
-        };
+        var response = new { servers = _configuration.Servers.ToDictionary(x => x.Key.ToString(), x => x.Value) };
 
         return Ok(response);
     }

@@ -10,16 +10,15 @@ public class ServerClient : ClientBase
 {
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    public ServerClient(
-        IHttpRequestFactory httpRequestFactory
-    )
+    public ServerClient(IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }
 
     public async Task DeletePackageAsync(string token, string name, string version)
     {
-        var response = await _httpRequestFactory.New(Uri)
+        var response = await _httpRequestFactory
+            .New(Uri)
             .Delete($"packages/{HttpUtility.UrlEncode(name)}/{version}")
             .BearerAuthorization(token)
             .RunAsync();

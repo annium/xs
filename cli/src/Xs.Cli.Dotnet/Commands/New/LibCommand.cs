@@ -15,20 +15,13 @@ public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public LibCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public LibCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;
     }
 
-    public override void Handle(
-        LibCommandConfiguration cfg,
-        DiscoverConfiguration discoverCfg,
-        CancellationToken ct
-    )
+    public override void Handle(LibCommandConfiguration cfg, DiscoverConfiguration discoverCfg, CancellationToken ct)
     {
         var location = discoverCfg.Root;
         var name = cfg.Name;

@@ -20,21 +20,12 @@ namespace Server.Dotnet.Controllers;
 [Route("[area]")]
 public class SymbolPublicationController : ServerController<User>
 {
-    private static readonly HashSet<string> ValidExtensions = new()
-    {
-        ".pdb",
-        ".nuspec",
-        ".xml",
-        ".psmdcp",
-        ".rels",
-        ".p7s"
-    };
+    private static readonly HashSet<string> ValidExtensions =
+        new() { ".pdb", ".nuspec", ".xml", ".psmdcp", ".rels", ".p7s" };
 
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
-    public SymbolPublicationController(
-        IPackageService<Package, PackageDependency, PackageRequest> packageService
-    )
+    public SymbolPublicationController(IPackageService<Package, PackageDependency, PackageRequest> packageService)
     {
         _packageService = packageService;
     }
@@ -79,8 +70,8 @@ public class SymbolPublicationController : ServerController<User>
         return filesArray.All(IsValidFile) ? filesArray.Where(e => Path.GetExtension(e) == ".pdb").ToArray() : null;
 
         static bool IsValidFile(string path) =>
-            !string.IsNullOrEmpty(Path.GetFileName(path)) &&
-            !string.IsNullOrEmpty(Path.GetExtension(path)) &&
-            ValidExtensions.Contains(Path.GetExtension(path));
+            !string.IsNullOrEmpty(Path.GetFileName(path))
+            && !string.IsNullOrEmpty(Path.GetExtension(path))
+            && ValidExtensions.Contains(Path.GetExtension(path));
     }
 }

@@ -13,7 +13,10 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Commands;
 
-internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class PublishCommand
+    : AsyncCommand<PublishCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "publish";
     public static string Description => "Publish packages to registry.";
@@ -44,10 +47,7 @@ internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, Discov
         var configuration = _configurationManager.Load(discoverCfg.Root);
 
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var projects = allProjects
-            .FilterMask(cfg.Mask)
-            .OfType<IPublishableProject>()
-            .ToArray();
+        var projects = allProjects.FilterMask(cfg.Mask).OfType<IPublishableProject>().ToArray();
 
         if (projects.Length == 0)
         {
@@ -62,7 +62,8 @@ internal class PublishCommand : AsyncCommand<PublishCommandConfiguration, Discov
         this.Debug($"Publish {projects.Length} projects.");
         await _runner.RunAsync(
             projects,
-            (project, tkn) => project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
+            (project, tkn) =>
+                project.PublishAsync(configuration.Servers[project.Type], configuration.Token, cfg.Version, tkn),
             new ProjectsRunner.Config(cfg.Parallelism, cfg.Deep),
             ct
         );

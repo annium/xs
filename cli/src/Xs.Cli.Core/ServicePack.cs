@@ -24,14 +24,17 @@ public class ServicePack : ServicePackBase
     {
         container.AddTime().WithRealTime().SetDefault();
 
-        container.AddSerializers()
+        container
+            .AddSerializers()
             .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime(), isDefault: true)
-            .WithYaml((s, d) =>
-            {
-                s.WithNamingConvention(CamelCaseNamingConvention.Instance);
-                d.WithNamingConvention(CamelCaseNamingConvention.Instance);
-                s.DisableAliases();
-            });
+            .WithYaml(
+                (s, d) =>
+                {
+                    s.WithNamingConvention(CamelCaseNamingConvention.Instance);
+                    d.WithNamingConvention(CamelCaseNamingConvention.Instance);
+                    s.DisableAliases();
+                }
+            );
         container.AddHttpRequestFactory(true);
         container.AddLogging();
         container.AddShell();
@@ -49,10 +52,7 @@ public class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        provider.UseLogging(route => route
-            .For(BuildLogFilter(provider.Resolve<LoggerConfiguration>()))
-            .UseConsole()
-        );
+        provider.UseLogging(route => route.For(BuildLogFilter(provider.Resolve<LoggerConfiguration>())).UseConsole());
     }
 
     private void RegisterTasks(IServiceContainer container)

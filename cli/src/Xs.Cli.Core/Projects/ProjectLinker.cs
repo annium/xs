@@ -23,9 +23,11 @@ internal class ProjectLinker : IProjectLinker
     )
     {
         if (!configuration.IgnoreConsistency && projects.Select(p => p.Version.ToString()).Distinct().Count() > 1)
-            addError(new InvalidOperationException(
-                $"Projects use multiple versions:{Environment.NewLine}{string.Join(Environment.NewLine, projects.Select(p => $"{p}: {p.Version}"))}."
-            ));
+            addError(
+                new InvalidOperationException(
+                    $"Projects use multiple versions:{Environment.NewLine}{string.Join(Environment.NewLine, projects.Select(p => $"{p}: {p.Version}"))}."
+                )
+            );
 
         var projectsByTypes = projects.GroupBy(p => p.Type).ToDictionary(g => g.Key, g => g.ToArray());
         foreach (var (type, typeProjects) in projectsByTypes)
@@ -43,11 +45,7 @@ internal class ProjectLinker : IProjectLinker
             if (!configuration.IgnoreConsistency)
                 ValidatePackages(typeProjects, packages[type], addError);
 
-            linker.PreLink(
-                typeProjects,
-                configuration,
-                addError
-            );
+            linker.PreLink(typeProjects, configuration, addError);
         }
     }
 
@@ -71,19 +69,15 @@ internal class ProjectLinker : IProjectLinker
             var duplicatePackage = packages.FirstOrDefault(p => p.Name == project.Name);
             if (!(duplicatePackage is null))
             {
-                addError(new InvalidOperationException($"Project {project} name is used by package {duplicatePackage}."));
+                addError(
+                    new InvalidOperationException($"Project {project} name is used by package {duplicatePackage}.")
+                );
                 return;
             }
         }
 
         var linker = _linkers.First(l => l.Type == project.Type);
-        linker.Link(
-            project,
-            projects,
-            packages,
-            configuration,
-            addError
-        );
+        linker.Link(project, projects, packages, configuration, addError);
     }
 
     private void ValidatePackages(
@@ -100,17 +94,21 @@ internal class ProjectLinker : IProjectLinker
                 continue;
 
             var usages = projects
-                .Select(p => (
-                    project: p,
-                    package: p.Packages.FirstOrDefault(d => d.Value.Name.ToLowerInvariant() == name)?.Value
-                ))
+                .Select(
+                    p =>
+                        (
+                            project: p,
+                            package: p.Packages.FirstOrDefault(d => d.Value.Name.ToLowerInvariant() == name)?.Value
+                        )
+                )
                 .Where(p => p.package is not null)
                 .ToArray();
-            var variationsString = string.Join(
-                Environment.NewLine,
-                usages.Select(p => $"- {p.project}: {p.package}")
+            var variationsString = string.Join(Environment.NewLine, usages.Select(p => $"- {p.project}: {p.package}"));
+            addError(
+                new InvalidOperationException(
+                    $"Package {name} is used in different variations:{Environment.NewLine}{variationsString}"
+                )
             );
-            addError(new InvalidOperationException($"Package {name} is used in different variations:{Environment.NewLine}{variationsString}"));
         }
     }
 }

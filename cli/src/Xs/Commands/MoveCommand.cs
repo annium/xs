@@ -12,17 +12,17 @@ using Xs.Cli.Core.Tasks;
 
 namespace Xs.Commands;
 
-internal class MoveCommand : AsyncCommand<MoveCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+internal class MoveCommand
+    : AsyncCommand<MoveCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "move";
     public static string Description => "Move project to different location.";
     public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
 
-    public MoveCommand(
-        DiscoverProjectsTask discoverTask,
-        ILogger logger
-    )
+    public MoveCommand(DiscoverProjectsTask discoverTask, ILogger logger)
     {
         _discoverTask = discoverTask;
         Logger = logger;
@@ -48,7 +48,9 @@ internal class MoveCommand : AsyncCommand<MoveCommandConfiguration, DiscoverConf
         if (cfg.IsRename)
         {
             if (targets.Length > 1)
-                throw new InvalidOperationException($"Filter {cfg.Filter} has ambiguous match between {targets.Length} projects: {Environment.NewLine}{string.Join<IProject>(Environment.NewLine, targets)}.");
+                throw new InvalidOperationException(
+                    $"Filter {cfg.Filter} has ambiguous match between {targets.Length} projects: {Environment.NewLine}{string.Join<IProject>(Environment.NewLine, targets)}."
+                );
 
             var project = targets.Single();
             if (cfg.IsMove)

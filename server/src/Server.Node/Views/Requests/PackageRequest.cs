@@ -38,8 +38,7 @@ public sealed record PackageRequest : IPackageRequest
     public Dictionary<string, PackageAttachmentRequest> Attachments { get; init; } = new();
 
     [JsonIgnore]
-    public Stream Stream =>
-        new MemoryStream(Convert.FromBase64String(Attachments[$"{Name}-{Version}.tgz"].Data));
+    public Stream Stream => new MemoryStream(Convert.FromBase64String(Attachments[$"{Name}-{Version}.tgz"].Data));
 
     [JsonIgnore]
     public Instant Published { get; set; }

@@ -21,9 +21,7 @@ public class PackagesController : ServerController<User>
 {
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 
-    public PackagesController(
-        IPackageService<Package, PackageDependency, PackageRequest> packageService
-    )
+    public PackagesController(IPackageService<Package, PackageDependency, PackageRequest> packageService)
     {
         _packageService = packageService;
     }
@@ -38,22 +36,24 @@ public class PackagesController : ServerController<User>
         return result.Status switch
         {
             PackageStatus.NotFound => NotFound(),
-            PackageStatus.Forbidden => new ObjectResult(result)
-            {
-                StatusCode = (int)HttpStatusCode.Forbidden
-            },
-            PackageStatus.Ok => Ok(result.Data
-                .Select(p => new PackageResponse(
-                    p.Id,
-                    p.Name,
-                    p.Version,
-                    p.Description,
-                    p.Published,
-                    p.Downloads,
-                    p.Dependencies
-                ))
-                .ToArray()
-            ),
+            PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
+            PackageStatus.Ok
+                => Ok(
+                    result.Data
+                        .Select(
+                            p =>
+                                new PackageResponse(
+                                    p.Id,
+                                    p.Name,
+                                    p.Version,
+                                    p.Description,
+                                    p.Published,
+                                    p.Downloads,
+                                    p.Dependencies
+                                )
+                        )
+                        .ToArray()
+                ),
             _ => NotFound()
         };
     }

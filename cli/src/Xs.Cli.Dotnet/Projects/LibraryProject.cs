@@ -12,9 +12,8 @@ namespace Xs.Cli.Dotnet.Projects;
 
 internal class LibraryProject : SpecialProject, IPublishableProject
 {
-    public LibraryProject(SpecialProjectContext context) : base(context)
-    {
-    }
+    public LibraryProject(SpecialProjectContext context)
+        : base(context) { }
 
     public async Task<string> PackAsync(Version version, CancellationToken ct)
     {

@@ -15,20 +15,13 @@ public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration
     public ILogger Logger { get; }
     private readonly ITemplateWriter _templateWriter;
 
-    public ExeCommand(
-        ITemplateWriter templateWriter,
-        ILogger logger
-    )
+    public ExeCommand(ITemplateWriter templateWriter, ILogger logger)
     {
         _templateWriter = templateWriter;
         Logger = logger;
     }
 
-    public override void Handle(
-        ExeCommandConfiguration cfg,
-        DiscoverConfiguration discoverCfg,
-        CancellationToken ct
-    )
+    public override void Handle(ExeCommandConfiguration cfg, DiscoverConfiguration discoverCfg, CancellationToken ct)
     {
         var location = discoverCfg.Root;
         var name = cfg.Name;

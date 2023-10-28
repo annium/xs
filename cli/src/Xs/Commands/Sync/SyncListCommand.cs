@@ -11,16 +11,12 @@ internal class SyncListCommand : AsyncCommand, ICommandDescriptor
     public static string Description => "List repositories for sync";
     private readonly SyncConfigurator _configurator;
 
-    public SyncListCommand(
-        SyncConfigurator configurator
-    )
+    public SyncListCommand(SyncConfigurator configurator)
     {
         _configurator = configurator;
     }
 
-    public override Task HandleAsync(
-        CancellationToken ct
-    )
+    public override Task HandleAsync(CancellationToken ct)
     {
         var projects = _configurator.Read();
         foreach (var project in projects)

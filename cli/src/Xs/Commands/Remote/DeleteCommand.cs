@@ -15,19 +15,13 @@ internal class DeleteCommand : AsyncCommand<DiscoverConfiguration>, ICommandDesc
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IConfigurationManager _configurationManager;
 
-    public DeleteCommand(
-        DiscoverProjectsTask discoverTask,
-        IConfigurationManager configurationManager
-    )
+    public DeleteCommand(DiscoverProjectsTask discoverTask, IConfigurationManager configurationManager)
     {
         _discoverTask = discoverTask;
         _configurationManager = configurationManager;
     }
 
-    public override async Task HandleAsync(
-        DiscoverConfiguration discoverCfg,
-        CancellationToken ct
-    )
+    public override async Task HandleAsync(DiscoverConfiguration discoverCfg, CancellationToken ct)
     {
         var dir = discoverCfg.Root;
 

@@ -2,6 +2,4 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Node.Projects;
 
-internal interface ISpecialProject : IProject
-{
-}
+internal interface ISpecialProject : IProject { }
