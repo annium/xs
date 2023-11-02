@@ -103,9 +103,13 @@ public class DiscoverProjectsTask : ILogSubject
                 root,
                 directory =>
                 {
+                    this.Trace<string>("Try directory {directory}", directory);
                     var factory = _projectFactory.ResolveFactory(directory);
                     if (factory is null)
+                    {
+                        this.Trace<string>("directory {directory} is not a project directory", directory);
                         return false;
+                    }
 
                     results[directory] = factory;
                     this.Debug($"{factory.Type} project candidate discovered at {directory}.");

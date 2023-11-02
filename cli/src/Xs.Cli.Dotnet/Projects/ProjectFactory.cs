@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Annium.Core.DependencyInjection;
 using Annium.Extensions.Shell;
+using Annium.Linq;
 using Annium.Logging;
 using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Commands;
@@ -14,13 +15,14 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactory
+internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactory, ILogSubject
 {
     public const string ProjectFileExtension = ".csproj";
     public const string TestCoveragePackage = "coverlet.msbuild";
     public static readonly string[] TrackedFileExtensions = new[] { ".cs" };
     public static readonly string[] IgnoredFolders = new[] { "bin", "obj" };
     private const string ProjectFileMask = "*.csproj";
+    public ILogger Logger { get; }
     public ProjectType Type => Constants.ProjectType;
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
@@ -29,13 +31,15 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
     private readonly IServiceProvider _provider;
 
     public ProjectFactory(
+        IServiceProvider provider,
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
         ProjectMapper mapper,
         IShell shell,
         LoggerConfiguration loggerConfiguration,
-        IServiceProvider provider
+        ILogger logger
     )
     {
+        Logger = logger;
         _auditRules = auditRules;
         _mapper = mapper;
         _shell = shell;
@@ -45,13 +49,33 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
 
     public bool IsProjectDirectory(string directory)
     {
-        // considered project directory, if in current directory there's single project file
-        // and it's only one in all subdirectories
-        return Directory.Exists(directory)
-            && Directory.GetFiles(directory, ProjectFileMask).Length == 1
-            && !FileManager.FindDirectory(directory, IsMatch, IgnoredFolders);
+        if (!Directory.Exists(directory))
+        {
+            this.Trace<string>("Directory {directory} doesn't exist", directory);
+            return false;
+        }
 
-        static bool IsMatch(string dir) => Directory.GetFiles(dir, ProjectFileMask).Length > 0;
+        var projectFiles = Directory.GetFiles(directory, ProjectFileMask);
+        if (projectFiles.Length != 1)
+        {
+            this.Trace<string, int, string>(
+                "Directory {directory} contains {count}: {list} project files",
+                directory,
+                projectFiles.Length,
+                projectFiles.Join(", ")
+            );
+            return false;
+        }
+
+        if (FileManager.FindDirectory(directory, ContainsProjectFiles, IgnoredFolders))
+        {
+            this.Trace<string>("Directory {directory} contains other project files in it's tree", directory);
+            return false;
+        }
+
+        return true;
+
+        static bool ContainsProjectFiles(string dir) => Directory.GetFiles(dir, ProjectFileMask).Length > 0;
     }
 
     public bool IsProjectFile(string file)
