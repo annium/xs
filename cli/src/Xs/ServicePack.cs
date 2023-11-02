@@ -24,6 +24,6 @@ public class ServicePack : ServicePackBase
         container.Add<SyncConfigurator>().AsSelf().Singleton();
         container.Add<ProjectsRunner>().AsSelf().Singleton();
         container.Add<Watcher>().AsSelf().Singleton();
-        container.Add<WebServerFactory>().AsSelf().Singleton();
+        container.Add<WebServer>().AsSelf().Singleton();
     }
 }

@@ -1,11 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
-using EmbedIO;
+using Annium.Net.Servers.Web;
 using QuikGraph;
 using QuikGraph.Graphviz;
 using Xs.Cli.Core.Commands;
@@ -19,54 +20,65 @@ internal class DepsGraphCommand : AsyncCommand<DiscoverConfiguration>, ICommandD
     public static string Id => "deps-graph";
     public static string Description => "Show dependencies graph.";
     private readonly DiscoverProjectsTask _discoverTask;
-    private readonly WebServerFactory _webServerFactory;
+    private readonly WebServer _webServer;
     private readonly IShell _shell;
 
-    public DepsGraphCommand(DiscoverProjectsTask discoverTask, WebServerFactory webServerFactory, IShell shell)
+    public DepsGraphCommand(DiscoverProjectsTask discoverTask, WebServer webServer, IShell shell)
     {
         _discoverTask = discoverTask;
-        _webServerFactory = webServerFactory;
+        _webServer = webServer;
         _shell = shell;
     }
 
     public override async Task HandleAsync(DiscoverConfiguration discoverCfg, CancellationToken ct)
     {
-        await _webServerFactory.StartAsync(HandleRequest(discoverCfg), ct);
+        await _webServer.RunAsync(new GraphHandler(_discoverTask, discoverCfg, _shell), ct);
+    }
+}
+
+file class GraphHandler : IHttpHandler
+{
+    private readonly DiscoverProjectsTask _discoverTask;
+    private readonly DiscoverConfiguration _discoverCfg;
+    private readonly IShell _shell;
+
+    public GraphHandler(DiscoverProjectsTask discoverTask, DiscoverConfiguration discoverCfg, IShell shell)
+    {
+        _discoverTask = discoverTask;
+        _discoverCfg = discoverCfg;
+        _shell = shell;
     }
 
-    private RequestHandlerCallback HandleRequest(DiscoverConfiguration discoverCfg) =>
-        async ctx =>
+    public async Task HandleAsync(HttpListenerContext ctx, CancellationToken ct)
+    {
+        var projects = await _discoverTask.RunAsync(_discoverCfg);
+
+        var graph = new EdgeListGraph<string, Edge<string>>();
+        foreach (var project in projects)
+            graph.AddVerticesAndEdgeRange(project.Projects.Select(x => new Edge<string>(project.Name, x.Value.Name)));
+
+        var dot = graph.ToGraphviz(algo =>
         {
-            var projects = await _discoverTask.RunAsync(discoverCfg);
-
-            var graph = new EdgeListGraph<string, Edge<string>>();
-            foreach (var project in projects)
-                graph.AddVerticesAndEdgeRange(
-                    project.Projects.Select(x => new Edge<string>(project.Name, x.Value.Name))
-                );
-
-            var dot = graph.ToGraphviz(algo =>
+            algo.FormatVertex += (_, args) =>
             {
-                algo.FormatVertex += (_, args) =>
-                {
-                    args.VertexFormat.Label = args.Vertex;
-                };
-            });
+                args.VertexFormat.Label = args.Vertex;
+            };
+        });
 
-            var tempPath = Path.GetTempPath();
-            var id = Guid.NewGuid().ToString();
-            var dotFile = Path.Combine(tempPath, $"{id}.dot");
-            var svgFile = Path.Combine(tempPath, $"{id}.svg");
+        var tempPath = Path.GetTempPath();
+        var id = Guid.NewGuid().ToString();
+        var dotFile = Path.Combine(tempPath, $"{id}.dot");
+        var svgFile = Path.Combine(tempPath, $"{id}.svg");
 
-            await File.WriteAllTextAsync(dotFile, dot);
+        await File.WriteAllTextAsync(dotFile, dot, CancellationToken.None);
 
-            await _shell.Cmd("dot", "-Tsvg", dotFile, "-o", svgFile).RunAsync();
+        await _shell.Cmd("dot", "-Tsvg", dotFile, "-o", svgFile).RunAsync(CancellationToken.None);
 
-            ctx.Response.ContentType = "image/svg+xml";
-            var content = await File.ReadAllBytesAsync(svgFile);
-            await ctx.Response.OutputStream.WriteAsync(content);
+        ctx.Response.ContentType = "image/svg+xml";
+        var content = await File.ReadAllBytesAsync(svgFile, CancellationToken.None);
+        await ctx.Response.OutputStream.WriteAsync(content, CancellationToken.None);
 
-            File.Delete(dotFile);
-            File.Delete(svgFile);
-        };
+        File.Delete(dotFile);
+        File.Delete(svgFile);
+    }
 }

@@ -1,33 +1,38 @@
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using EmbedIO;
-using EmbedIO.Actions;
-using Swan.Logging;
+using Annium.Logging;
+using Annium.Net.Servers.Web;
 
 namespace Xs.Tools;
 
-public class WebServerFactory
+public class WebServer : ILogSubject
 {
-    public WebServerFactory()
+    private readonly IServiceProvider _sp;
+    public ILogger Logger { get; }
+
+    public WebServer(IServiceProvider sp, ILogger logger)
     {
-        Logger.UnregisterLogger<ConsoleLogger>();
+        _sp = sp;
+        Logger = logger;
     }
 
-    public async Task StartAsync(RequestHandlerCallback callback, CancellationToken ct)
+    public async Task RunAsync(IHttpHandler handler, CancellationToken ct)
     {
-        var url = $"http://localhost:{FreePort()}/";
+        var port = FreePort();
+        var url = $"http://localhost:{port}/";
 
-        using var server = new WebServer(o => o.WithUrlPrefix(url).WithMode(HttpListenerMode.Microsoft)).WithModule(
-            new ActionModule("/", HttpVerbs.Get, callback)
-        );
+        var server = ServerBuilder.New(_sp, port).WithHttpHandler(handler).Build();
 
         var browser = new Process { StartInfo = new ProcessStartInfo(url) { UseShellExecute = true } };
         browser.Start();
 
         await server.RunAsync(ct);
+
+        browser.Kill();
     }
 
     private int FreePort()
