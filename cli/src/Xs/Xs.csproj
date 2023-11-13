@@ -21,7 +21,7 @@
     <ItemGroup>
         <PackageReference Include="Annium.Core.Entrypoint" Version="0.1.0" />
         <PackageReference Include="Annium.Net.Servers.Web" Version="0.1.0" />
-        <PackageReference Include="LibGit2Sharp" Version="0.27.2" />
+        <PackageReference Include="LibGit2Sharp" Version="0.28.0" />
         <PackageReference Include="QuikGraph.Graphviz" Version="2.5.0" />
     </ItemGroup>
 </Project>
