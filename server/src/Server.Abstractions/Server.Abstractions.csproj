@@ -15,6 +15,6 @@
         <ProjectReference Include="../Server.Shared/Server.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.Extensions.Execution" Version="0.1.0" />
+        <PackageReference Include="Annium.Execution.Flow" Version="0.1.0" />
     </ItemGroup>
 </Project>
