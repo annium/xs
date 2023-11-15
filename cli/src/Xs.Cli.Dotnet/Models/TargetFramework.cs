@@ -29,6 +29,13 @@ internal class TargetFramework
     public static TargetFramework Net7MacOs { get; } = new("net7.0-macos");
     public static TargetFramework Net7TvOs { get; } = new("net7.0-tvos");
     public static TargetFramework Net7Windows { get; } = new("net7.0-windows");
+    public static TargetFramework Net8 { get; } = new("net8.0");
+    public static TargetFramework Net8Android { get; } = new("net8.0-android");
+    public static TargetFramework Net8Ios { get; } = new("net8.0-ios");
+    public static TargetFramework Net8MacCatalyst { get; } = new("net8.0-maccatalyst");
+    public static TargetFramework Net8MacOs { get; } = new("net8.0-macos");
+    public static TargetFramework Net8TvOs { get; } = new("net8.0-tvos");
+    public static TargetFramework Net8Windows { get; } = new("net8.0-windows");
 
     public static IReadOnlyList<IReadOnlyList<TargetFramework>> SupportedGroups { get; } =
         new List<IReadOnlyList<TargetFramework>>()
@@ -58,6 +65,17 @@ internal class TargetFramework
                 Net7MacOs,
                 Net7TvOs,
                 Net7Windows
+            },
+            new List<TargetFramework>
+            {
+                NetStandard21,
+                Net8,
+                Net8Android,
+                Net8Ios,
+                Net8MacCatalyst,
+                Net8MacOs,
+                Net8TvOs,
+                Net8Windows
             },
         };
 
