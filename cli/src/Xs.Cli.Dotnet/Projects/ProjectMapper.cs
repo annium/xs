@@ -18,7 +18,6 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
     private static readonly string[] ImplicitPackages = { "Microsoft.AspNetCore.App" };
     private static readonly string[] BooleanStrings = { "true", "false" };
     private static readonly string[] DisabledProperties = { El.PublishReadyToRun, El.PublishReadyToRunShowWarnings };
-    private const string LanguageVersion = "11.0";
 
     public RawProject Load(string path, DiscoverConfiguration configuration)
     {
@@ -115,7 +114,6 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             newProps.Add(new XElement(El.TargetFramework, project.TargetFramework));
             newProps.Add(new XElement(El.OutputType, project.OutputType));
             newProps.Add(new XElement(El.DebugType, "portable"));
-            newProps.Add(new XElement(El.LangVersion, oldProps.GetElement(El.LangVersion)?.Value ?? LanguageVersion));
             newProps.Add(new XElement(El.WarningsAsErrors, "true"));
             newProps.Add(new XElement(El.IsPackable, project is IPublishableProject ? "true" : "false"));
             if (project is TestProject)
@@ -280,11 +278,6 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
                 $"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}."
             );
 
-        if (properties.GetElement(El.LangVersion)?.Value != LanguageVersion)
-            throw new InvalidOperationException(
-                $"Project {path} has no {El.LangVersion} defined or it is not {LanguageVersion}."
-            );
-
         EnsureValidBoolean(El.WarningsAsErrors);
         if (properties.GetElement(El.WarningsAsErrors)?.Value != "true")
             throw new InvalidOperationException(
@@ -356,7 +349,6 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         public const string DebugType = "DebugType";
         public const string OutputType = "OutputType";
         public const string WarningsAsErrors = "WarningsAsErrors";
-        public const string LangVersion = "LangVersion";
         public const string IsPackable = "IsPackable";
         public const string IsTestProject = "IsTestProject";
         public const string Nullable = "Nullable";
