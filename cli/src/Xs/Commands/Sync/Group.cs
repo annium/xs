@@ -13,5 +13,6 @@ internal class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
         Add<SyncListCommand>();
         Add<SyncSetCommand>();
         Add<SyncRemoveCommand>();
+        Add<SyncStateCommand>();
     }
 }

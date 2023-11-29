@@ -10,11 +10,12 @@ using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Linq;
 using LibGit2Sharp;
+using Xs.Cli.Core.Helpers;
 using ConsoleExt = Annium.Extensions.CommandLine.Cli;
 
 namespace Xs.Commands.Sync;
 
-internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDescriptor
+internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>, ICommandDescriptor
 {
     public static string Id => "";
     public static string Description => "Execute repositories sync";
@@ -82,358 +83,292 @@ internal class SyncCommand : AsyncCommand<SyncCommandConfiguration>, ICommandDes
 
         return project is null ? Array.Empty<SyncProject>() : new[] { project };
     }
-}
 
-internal class SyncCommandConfiguration
-{
-    [Position(1, isRequired: false)]
-    [Help("Project repository path or group name.")]
-    public string PathOrGroup { get; set; } = string.Empty;
-}
-
-internal class SyncException(string path, Exception exception) : Exception
-{
-    public string Path { get; } = path;
-    public Exception Exception { get; } = exception;
-}
-
-internal class Synchronizer(IShell shell)
-{
-    private static readonly IReadOnlyCollection<FileStatus> Statuses = Enum.GetValues<FileStatus>()
-        .Except(FileStatus.Unaltered.Yield())
-        .ToArray();
-
-    private static readonly IReadOnlyDictionary<FileStatus, string> StatusLabels;
-    private readonly IShell _shell = shell;
-
-    static Synchronizer()
+    internal class SyncCommandConfiguration
     {
-        var statuses = new Dictionary<FileStatus, string>();
-        statuses[FileStatus.Nonexistent] = "missing";
-        statuses[FileStatus.Unaltered] = "unchanged";
-        statuses[FileStatus.NewInIndex] = "new";
-        statuses[FileStatus.ModifiedInIndex] = "modified";
-        statuses[FileStatus.DeletedFromIndex] = "deleted";
-        statuses[FileStatus.RenamedInIndex] = "renamed";
-        statuses[FileStatus.TypeChangeInIndex] = "modified";
-        statuses[FileStatus.NewInWorkdir] = "new";
-        statuses[FileStatus.ModifiedInWorkdir] = "modified";
-        statuses[FileStatus.DeletedFromWorkdir] = "deleted";
-        statuses[FileStatus.TypeChangeInWorkdir] = "modified";
-        statuses[FileStatus.RenamedInWorkdir] = "renamed";
-        statuses[FileStatus.Unreadable] = "unreadable";
-        statuses[FileStatus.Ignored] = "ignored";
-        statuses[FileStatus.Conflicted] = "conflict";
-        StatusLabels = statuses;
+        [Position(1, isRequired: false)]
+        [Help("Project repository path or group name.")]
+        public string PathOrGroup { get; set; } = string.Empty;
     }
 
-    public async Task<SyncProjectState> SyncProject(SyncProject project)
+    private class Synchronizer(IShell shell)
     {
-        try
+        public async Task<SyncProjectState> SyncProject(SyncProject project)
         {
-            using var repo = new Repository(project.Path);
-
-            var localBranches = repo.Branches.Where(x => !x.IsRemote).ToArray();
-
-            var changes = repo.RetrieveStatus().Where(x => x.State is not FileStatus.Ignored).ToArray();
-            var touchedPaths = changes
-                .SelectMany(
-                    x =>
-                        x.State switch
-                        {
-                            FileStatus.RenamedInIndex
-                                => new[]
-                                {
-                                    x.HeadToIndexRenameDetails.OldFilePath,
-                                    x.HeadToIndexRenameDetails.NewFilePath
-                                },
-                            FileStatus.RenamedInWorkdir
-                                => new[]
-                                {
-                                    x.IndexToWorkDirRenameDetails.OldFilePath,
-                                    x.IndexToWorkDirRenameDetails.NewFilePath
-                                },
-                            _ => x.FilePath.Yield()
-                        }
-                )
-                .ToHashSet();
-
-            var remoteStates = new List<SyncRemoteState>();
-            foreach (var remote in repo.Network.Remotes)
-                remoteStates.Add(await SyncRemote(project, repo, remote, localBranches, touchedPaths));
-
-            var changeStates = new List<SyncFileChange>();
-            if (changes.Length > 0)
+            try
             {
-                foreach (var change in changes)
-                {
-                    var fileChange = change.State switch
-                    {
-                        FileStatus.RenamedInIndex
-                            => $"{change.HeadToIndexRenameDetails.OldFilePath} -> {change.HeadToIndexRenameDetails.NewFilePath}",
-                        FileStatus.RenamedInWorkdir
-                            => $"{change.IndexToWorkDirRenameDetails.OldFilePath} -> {change.IndexToWorkDirRenameDetails.NewFilePath}",
-                        _ => change.FilePath
-                    };
-                    var status = Statuses
-                        .Where(x => change.State.HasFlag(x))
-                        .Select(x => StatusLabels[x])
-                        .Distinct()
-                        .Join(", ");
-                    changeStates.Add(new SyncFileChange(status, fileChange));
-                }
+                using var repo = new Repository(project.Path);
+
+                var localBranches = repo.Branches.Where(x => !x.IsRemote).ToArray();
+
+                var changes = repo.RetrieveStatus().Where(x => x.State is not FileStatus.Ignored).ToArray();
+                var touchedPaths = changes
+                    .SelectMany(
+                        x =>
+                            x.State switch
+                            {
+                                FileStatus.RenamedInIndex
+                                    => new[]
+                                    {
+                                        x.HeadToIndexRenameDetails.OldFilePath,
+                                        x.HeadToIndexRenameDetails.NewFilePath
+                                    },
+                                FileStatus.RenamedInWorkdir
+                                    => new[]
+                                    {
+                                        x.IndexToWorkDirRenameDetails.OldFilePath,
+                                        x.IndexToWorkDirRenameDetails.NewFilePath
+                                    },
+                                _ => x.FilePath.Yield()
+                            }
+                    )
+                    .ToHashSet();
+
+                var remoteStates = new List<SyncRemoteState>();
+                foreach (var remote in repo.Network.Remotes)
+                    remoteStates.Add(await SyncRemote(project, repo, remote, localBranches, touchedPaths));
+
+                var changeStates = Helper.GetProjectChanges(project);
+
+                return new SyncProjectState(project.Path, remoteStates, changeStates);
+            }
+            catch (Exception exception)
+            {
+                throw new SyncException(project.Path, exception);
+            }
+        }
+
+        private async Task<SyncRemoteState> SyncRemote(
+            SyncProject project,
+            Repository repo,
+            LibGit2Sharp.Remote remote,
+            IReadOnlyCollection<Branch> localBranches,
+            IReadOnlyCollection<string> touchedPaths
+        )
+        {
+            await shell.Cmd($"git fetch {remote.Name} -p").At(repo.Info.WorkingDirectory).ExecuteAsync();
+
+            var remoteBranches = repo.Branches.Where(x => x.IsRemote && x.RemoteName == remote.Name).ToArray();
+            var branchStates = new List<SyncBranchState>();
+
+            foreach (var localBranch in localBranches)
+            {
+                var remoteBranch = remoteBranches.SingleOrDefault(
+                    x => x.UpstreamBranchCanonicalName == localBranch.CanonicalName
+                );
+                branchStates.Add(await SyncBranch(project, repo, remote, localBranch, remoteBranch, touchedPaths));
             }
 
-            return new SyncProjectState(project.Path, remoteStates, changeStates);
+            return new SyncRemoteState(remote.Name, branchStates);
         }
-        catch (Exception exception)
+
+        private async Task<SyncBranchState> SyncBranch(
+            SyncProject project,
+            Repository repo,
+            LibGit2Sharp.Remote remote,
+            Branch localBranch,
+            Branch? remoteBranch,
+            IReadOnlyCollection<string> touchedPaths
+        )
         {
-            throw new SyncException(project.Path, exception);
-        }
-    }
+            var name = localBranch.FriendlyName;
+            if (remoteBranch is null)
+            {
+                if (!project.Config.Push)
+                    return new SyncBranchState(name, SyncBranchStatus.KeptLocal);
 
-    private async Task<SyncRemoteState> SyncRemote(
-        SyncProject project,
-        Repository repo,
-        LibGit2Sharp.Remote remote,
-        IReadOnlyCollection<Branch> localBranches,
-        IReadOnlyCollection<string> touchedPaths
-    )
-    {
-        await _shell.Cmd($"git fetch {remote.Name} -p").At(repo.Info.WorkingDirectory).ExecuteAsync();
+                await Push(repo, remote, localBranch);
 
-        var remoteBranches = repo.Branches.Where(x => x.IsRemote && x.RemoteName == remote.Name).ToArray();
-        var branchStates = new List<SyncBranchState>();
+                return new SyncBranchState(name, SyncBranchStatus.Pushed);
+            }
 
-        foreach (var localBranch in localBranches)
-        {
-            var remoteBranch = remoteBranches.SingleOrDefault(
-                x => x.UpstreamBranchCanonicalName == localBranch.CanonicalName
+            var localCommits = localBranch.Commits.ToList();
+            var remoteCommits = remoteBranch.Commits.ToList();
+
+            if (localCommits.Count == 0)
+                return new SyncBranchState(name, SyncBranchStatus.NoLocalCommits);
+
+            if (remoteCommits.Count == 0)
+                return new SyncBranchState(name, SyncBranchStatus.NoRemoteCommits);
+
+            var localHead = localCommits[0];
+            var remoteHead = remoteCommits[0];
+            if (localHead.Id == remoteHead.Id)
+                return new SyncBranchState(name, SyncBranchStatus.UpToDate);
+
+            // if push needed
+            if (localCommits.Contains(remoteHead))
+            {
+                await Push(repo, remote, localBranch);
+                return new SyncBranchState(name, SyncBranchStatus.Pushed);
+            }
+
+            // if pull needed
+            if (remoteCommits.Contains(localHead))
+            {
+                var status = await Pull(repo, remote, localBranch, localHead, remoteHead, touchedPaths);
+                return new SyncBranchState(name, status);
+            }
+
+            return new SyncBranchState(
+                name,
+                SyncBranchStatus.Diverged,
+                DescribeDivergence(localCommits, remoteCommits)
             );
-            branchStates.Add(await SyncBranch(project, repo, remote, localBranch, remoteBranch, touchedPaths));
         }
 
-        return new SyncRemoteState(remote.Name, branchStates);
-    }
-
-    private async Task<SyncBranchState> SyncBranch(
-        SyncProject project,
-        Repository repo,
-        LibGit2Sharp.Remote remote,
-        Branch localBranch,
-        Branch? remoteBranch,
-        IReadOnlyCollection<string> touchedPaths
-    )
-    {
-        var name = localBranch.FriendlyName;
-        if (remoteBranch is null)
+        private async Task<SyncBranchStatus> Pull(
+            Repository repo,
+            LibGit2Sharp.Remote remote,
+            Branch localBranch,
+            Commit localHead,
+            Commit remoteHead,
+            IReadOnlyCollection<string> touchedPaths
+        )
         {
-            if (!project.Config.Push)
-                return new SyncBranchState(name, SyncBranchStatus.KeptLocal);
+            var diff = repo.Diff.Compare<TreeChanges>(localHead.Tree, remoteHead.Tree);
+            var hasIntersections = diff.SelectMany(x => new[] { x.OldPath, x.Path }).Intersect(touchedPaths).Any();
+            if (hasIntersections)
+                return SyncBranchStatus.PullAvoided;
 
-            await Push(repo, remote, localBranch);
+            await shell
+                .Cmd($"git pull {remote.Name} {localBranch.CanonicalName}")
+                .At(repo.Info.WorkingDirectory)
+                .ExecuteAsync();
 
-            return new SyncBranchState(name, SyncBranchStatus.Pushed);
+            return SyncBranchStatus.Pulled;
         }
 
-        var localCommits = localBranch.Commits.ToList();
-        var remoteCommits = remoteBranch.Commits.ToList();
-
-        if (localCommits.Count == 0)
-            return new SyncBranchState(name, SyncBranchStatus.NoLocalCommits);
-
-        if (remoteCommits.Count == 0)
-            return new SyncBranchState(name, SyncBranchStatus.NoRemoteCommits);
-
-        var localHead = localCommits[0];
-        var remoteHead = remoteCommits[0];
-        if (localHead.Id == remoteHead.Id)
-            return new SyncBranchState(name, SyncBranchStatus.UpToDate);
-
-        // if push needed
-        if (localCommits.Contains(remoteHead))
+        private async Task Push(Repository repo, LibGit2Sharp.Remote remote, Branch localBranch)
         {
-            await Push(repo, remote, localBranch);
-            return new SyncBranchState(name, SyncBranchStatus.Pushed);
+            await shell
+                .Cmd($"git push {remote.Name} {localBranch.CanonicalName}")
+                .At(repo.Info.WorkingDirectory)
+                .ExecuteAsync();
         }
 
-        // if pull needed
-        if (remoteCommits.Contains(localHead))
+        private string DescribeDivergence(List<Commit> localCommits, List<Commit> remoteCommits)
         {
-            var status = await Pull(repo, remote, localBranch, localHead, remoteHead, touchedPaths);
-            return new SyncBranchState(name, status);
+            // branches diverged - find common ancestor commit
+            var localIndex = -1;
+            var remoteIndex = -1;
+            for (var i = 0; i < localCommits.Count; i++)
+            {
+                var localCommit = localCommits[i];
+                remoteIndex = remoteCommits.FindIndex(x => x.Id == localCommit.Id);
+                if (remoteIndex == -1)
+                    continue;
+
+                localIndex = i;
+                break;
+            }
+
+            return localIndex == -1
+                ? "local and remote branches have completely diverged"
+                : $"local and remote branches have diverged by {localIndex} and {remoteIndex} commit(s) respectively";
         }
-
-        return new SyncBranchState(name, SyncBranchStatus.Diverged, DescribeDivergence(localCommits, remoteCommits));
     }
 
-    private async Task<SyncBranchStatus> Pull(
-        Repository repo,
-        LibGit2Sharp.Remote remote,
-        Branch localBranch,
-        Commit localHead,
-        Commit remoteHead,
-        IReadOnlyCollection<string> touchedPaths
-    )
+    private sealed record SyncProjectState(
+        string Path,
+        IReadOnlyCollection<SyncRemoteState> Remotes,
+        IReadOnlyCollection<SyncFileChange> Changes
+    );
+
+    private sealed record SyncRemoteState(string Name, IReadOnlyCollection<SyncBranchState> Branches);
+
+    private sealed record SyncBranchState(string Name, SyncBranchStatus Status, string? Description = null);
+
+    private enum SyncBranchStatus
     {
-        var diff = repo.Diff.Compare<TreeChanges>(localHead.Tree, remoteHead.Tree);
-        var hasIntersections = diff.SelectMany(x => new[] { x.OldPath, x.Path }).Intersect(touchedPaths).Any();
-        if (hasIntersections)
-            return SyncBranchStatus.PullAvoided;
-
-        await _shell
-            .Cmd($"git pull {remote.Name} {localBranch.CanonicalName}")
-            .At(repo.Info.WorkingDirectory)
-            .ExecuteAsync();
-
-        return SyncBranchStatus.Pulled;
+        KeptLocal,
+        UpToDate,
+        NoLocalCommits,
+        NoRemoteCommits,
+        Pushed,
+        Pulled,
+        PullAvoided,
+        Diverged
     }
 
-    private async Task Push(Repository repo, LibGit2Sharp.Remote remote, Branch localBranch)
+    private class Visualizer
     {
-        await _shell
-            .Cmd($"git push {remote.Name} {localBranch.CanonicalName}")
-            .At(repo.Info.WorkingDirectory)
-            .ExecuteAsync();
-    }
+        private string Indent => new(' ', _indentation);
+        private int _indentation;
 
-    private string DescribeDivergence(List<Commit> localCommits, List<Commit> remoteCommits)
-    {
-        // branches diverged - find common ancestor commit
-        var localIndex = -1;
-        var remoteIndex = -1;
-        for (var i = 0; i < localCommits.Count; i++)
+        public void Show(SyncProjectState state)
         {
-            var localCommit = localCommits[i];
-            remoteIndex = remoteCommits.FindIndex(x => x.Id == localCommit.Id);
-            if (remoteIndex == -1)
-                continue;
+            Line($"{state.Path}:");
 
-            localIndex = i;
-            break;
+            AddIndent();
+            foreach (var remoteState in state.Remotes)
+                ShowRemote(remoteState);
+            RemoveIndent();
+
+            if (state.Changes.Count == 0)
+                return;
+
+            using var _ = ConsoleExt.SetColors(foreground: ConsoleColor.Magenta);
+            Line("changes in working directory:");
+            foreach (var change in state.Changes)
+                Line($"  {change.Status}: {change.Description}");
         }
 
-        return localIndex == -1
-            ? "local and remote branches have completely diverged"
-            : $"local and remote branches have diverged by {localIndex} and {remoteIndex} commit(s) respectively";
-    }
-}
-
-internal sealed record SyncProjectState(
-    string Path,
-    IReadOnlyCollection<SyncRemoteState> Remotes,
-    IReadOnlyCollection<SyncFileChange> Changes
-);
-
-internal sealed record SyncRemoteState(string Name, IReadOnlyCollection<SyncBranchState> Branches);
-
-internal sealed record SyncBranchState(string Name, SyncBranchStatus Status, string? Description = null);
-
-internal enum SyncBranchStatus
-{
-    KeptLocal,
-    UpToDate,
-    NoLocalCommits,
-    NoRemoteCommits,
-    Pushed,
-    Pulled,
-    PullAvoided,
-    Diverged
-}
-
-internal sealed record SyncFileChange(string Status, string Description);
-
-file class Visualizer
-{
-    private string Indent => new(' ', _indentation);
-    private int _indentation;
-
-    public void Show(SyncProjectState state)
-    {
-        Line($"{state.Path}:");
-
-        AddIndent();
-        foreach (var remoteState in state.Remotes)
-            ShowRemote(remoteState);
-        RemoveIndent();
-
-        if (state.Changes.Count == 0)
-            return;
-
-        using var _ = ConsoleExt.SetColors(foreground: ConsoleColor.Magenta);
-        Line("changes in working directory:");
-        foreach (var change in state.Changes)
-            Line($"  {change.Status}: {change.Description}");
-    }
-
-    private void ShowRemote(SyncRemoteState state)
-    {
-        Pending($"{state.Name}: ");
-        Info("fetched");
-
-        AddIndent();
-        foreach (var branchState in state.Branches)
-            ShowBranch(branchState);
-        RemoveIndent();
-    }
-
-    private void ShowBranch(SyncBranchState state)
-    {
-        Pending($"{state.Name}: ");
-        switch (state.Status)
+        private void ShowRemote(SyncRemoteState state)
         {
-            case SyncBranchStatus.KeptLocal:
-                Info("kept local");
-                break;
-            case SyncBranchStatus.UpToDate:
-                Info("up to date");
-                break;
-            case SyncBranchStatus.NoLocalCommits:
-                Warning("no local commits");
-                break;
-            case SyncBranchStatus.NoRemoteCommits:
-                Warning("no remote commits");
-                break;
-            case SyncBranchStatus.Pushed:
-                Success("pushed");
-                break;
-            case SyncBranchStatus.Pulled:
-                Success("pulled");
-                break;
-            case SyncBranchStatus.PullAvoided:
-                Warning("skipped - local changes will be affected by pull");
-                break;
-            case SyncBranchStatus.Diverged:
-                Warning(state.Description.NotNull());
-                break;
+            Pending($"{state.Name}: ");
+            Info("fetched");
+
+            AddIndent();
+            foreach (var branchState in state.Branches)
+                ShowBranch(branchState);
+            RemoveIndent();
         }
-    }
 
-    private void Pending(string message) => Console.Write($"{Indent}{message}");
+        private void ShowBranch(SyncBranchState state)
+        {
+            Pending($"{state.Name}: ");
+            switch (state.Status)
+            {
+                case SyncBranchStatus.KeptLocal:
+                    Info("kept local");
+                    break;
+                case SyncBranchStatus.UpToDate:
+                    Info("up to date");
+                    break;
+                case SyncBranchStatus.NoLocalCommits:
+                    Warning("no local commits");
+                    break;
+                case SyncBranchStatus.NoRemoteCommits:
+                    Warning("no remote commits");
+                    break;
+                case SyncBranchStatus.Pushed:
+                    Success("pushed");
+                    break;
+                case SyncBranchStatus.Pulled:
+                    Success("pulled");
+                    break;
+                case SyncBranchStatus.PullAvoided:
+                    Warning("skipped - local changes will be affected by pull");
+                    break;
+                case SyncBranchStatus.Diverged:
+                    Warning(state.Description.NotNull());
+                    break;
+            }
+        }
 
-    private void Line(string message) => Console.WriteLine($"{Indent}{message}");
+        private void Pending(string message) => Console.Write($"{Indent}{message}");
 
-    private void Info(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Blue);
+        private void Line(string message) => Console.WriteLine($"{Indent}{message}");
 
-    private void Success(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Green);
+        private void Info(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Blue);
 
-    private void Warning(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Yellow);
+        private void Success(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Green);
 
-    private void AddIndent() => _indentation += 2;
+        private void Warning(string message) => ConsoleExt.WriteLineColored(message, foreground: ConsoleColor.Yellow);
 
-    private void RemoveIndent() => _indentation -= 2;
-}
+        private void AddIndent() => _indentation += 2;
 
-file static class ShellInstanceExtensions
-{
-    public static async Task ExecuteAsync(this IShellInstance shell)
-    {
-        var result = await shell.RunAsync();
-        if (result.IsSuccess)
-            return;
-
-        var command = string.Empty;
-        shell.Configure(info => command = $"{info.FileName} {info.Arguments}");
-        throw new Exception($"{command} failed:{Environment.NewLine}{result.Error}");
+        private void RemoveIndent() => _indentation -= 2;
     }
 }
