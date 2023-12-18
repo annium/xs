@@ -16,9 +16,9 @@ public class IndexController : ServerController<User>
 {
     private readonly IUrlTool _urlTool;
 
-    public IndexController(IIndex<ProjectType, IUrlTool> urlTools)
+    public IndexController(IServiceProvider sp)
     {
-        _urlTool = urlTools[Constants.ProjectType];
+        _urlTool = sp.ResolveKeyed<IUrlTool>(Constants.ProjectType);
     }
 
     [HttpGet("v3/index.json")]

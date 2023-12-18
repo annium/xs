@@ -1,3 +1,4 @@
+using Annium;
 using Annium.Core.DependencyInjection;
 using Server.Abstractions.Db.Repositories;
 using Server.Abstractions.Domain;
@@ -48,8 +49,15 @@ public static class ServiceContainerExtensions
 
         // tools
         container
-            .Add<UrlTool>(sp => new UrlTool(sp.Resolve<Configuration>().Servers[projectType]))
-            .AsKeyed<IUrlTool, ProjectType>(projectType)
+            .Add<UrlTool>(
+                static (sp, projectType) =>
+                {
+                    var config = sp.Resolve<Configuration>();
+                    var uri = config.Servers[projectType.CastTo<ProjectType>()];
+                    return new UrlTool(uri);
+                }
+            )
+            .AsKeyed<IUrlTool>(projectType)
             .Singleton();
 
         return container;

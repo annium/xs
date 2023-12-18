@@ -16,9 +16,10 @@ public class SyncConfigurator
     );
     private readonly ISerializer<string> _serializer;
 
-    public SyncConfigurator(IIndex<SerializerKey, ISerializer<string>> serializers)
+    public SyncConfigurator(IServiceProvider sp)
     {
-        _serializer = serializers[SerializerKey.CreateDefault(Constants.MediaType)];
+        var serializerKey = SerializerKey.CreateDefault(Constants.MediaType);
+        _serializer = sp.ResolveKeyed<ISerializer<string>>(serializerKey);
     }
 
     public List<SyncProject> Read()

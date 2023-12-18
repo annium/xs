@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,12 +23,12 @@ public class PackageRegistrationController : ServerController<User>
     private readonly IUrlTool _urlTool;
 
     public PackageRegistrationController(
-        IPackageService<Package, PackageDependency, PackageRequest> packageService,
-        IIndex<ProjectType, IUrlTool> urlTools
+        IServiceProvider sp,
+        IPackageService<Package, PackageDependency, PackageRequest> packageService
     )
     {
         _packageService = packageService;
-        _urlTool = urlTools[Constants.ProjectType];
+        _urlTool = sp.ResolveKeyed<IUrlTool>(Constants.ProjectType);
     }
 
     [HttpGet("v3/registration/{name}/index.json")]

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Annium.Core.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 using Server.Shared.Auth.TokenAccessors;
 using Server.Shared.Controllers;
 using Server.Shared.Domain.Models;

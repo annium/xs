@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -27,14 +28,14 @@ public class PackageConsumptionController : ServerController<User>
     private readonly IUrlTool _urlTool;
 
     public PackageConsumptionController(
+        IServiceProvider sp,
         IPackageService<Package, PackageDependency, PackageRequest> packageService,
-        IPackageStorage packageStorage,
-        IIndex<ProjectType, IUrlTool> urlTools
+        IPackageStorage packageStorage
     )
     {
         _packageService = packageService;
         _packageStorage = packageStorage;
-        _urlTool = urlTools[Constants.ProjectType];
+        _urlTool = sp.ResolveKeyed<IUrlTool>(Constants.ProjectType);
     }
 
     [HttpGet("{name}")]
