@@ -8,7 +8,7 @@ using Server.Dotnet.Internal.Services;
 using Server.Dotnet.Services;
 using Server.Dotnet.Views.Requests;
 using Server.Shared.Auth.TokenAccessors;
-using Xdb.Core.Migrations;
+using Xdb;
 
 namespace Server.Dotnet;
 
@@ -36,7 +36,7 @@ public class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        Migrator
+        Migrator.Instance
             .ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
             .WithScriptsFromAssembly(GetType().Assembly)
             .Execute();

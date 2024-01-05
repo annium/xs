@@ -9,7 +9,6 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 using SpecialConfiguration = Xs.Cli.Node.Tools.SpecialConfiguration;
-using SysDirectory = System.IO.Directory;
 
 namespace Xs.Cli.Node.Projects;
 

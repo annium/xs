@@ -6,7 +6,7 @@ using Server.Shared.Internal;
 using Server.Shared.Internal.Auth;
 using Server.Shared.Internal.Tools;
 using Server.Shared.Tools;
-using Xdb.Core.Migrations;
+using Xdb;
 
 namespace Server.Shared;
 
@@ -33,7 +33,7 @@ public class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        Migrator
+        Migrator.Instance
             .ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Schema)
             .WithScriptsFromAssembly(GetType().Assembly)
             .Execute();
