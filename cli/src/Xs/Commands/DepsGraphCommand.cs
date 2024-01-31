@@ -15,7 +15,7 @@ using Xs.Tools;
 
 namespace Xs.Commands;
 
-internal class DepsGraphCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescriptor
+internal class DepsGraphCommand : AsyncCommand<DepsGraphCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor
 {
     public static string Id => "deps-graph";
     public static string Description => "Show dependencies graph.";
@@ -30,28 +30,40 @@ internal class DepsGraphCommand : AsyncCommand<DiscoverConfiguration>, ICommandD
         _shell = shell;
     }
 
-    public override async Task HandleAsync(DiscoverConfiguration discoverCfg, CancellationToken ct)
+    public override async Task HandleAsync(
+        DepsGraphCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
     {
-        await _webServer.RunAsync(new GraphHandler(_discoverTask, discoverCfg, _shell), ct);
+        await _webServer.RunAsync(new GraphHandler(_discoverTask, cfg, discoverCfg, _shell), ct);
     }
 }
 
 file class GraphHandler : IHttpHandler
 {
     private readonly DiscoverProjectsTask _discoverTask;
+    private readonly DepsGraphCommandConfiguration _cfg;
     private readonly DiscoverConfiguration _discoverCfg;
     private readonly IShell _shell;
 
-    public GraphHandler(DiscoverProjectsTask discoverTask, DiscoverConfiguration discoverCfg, IShell shell)
+    public GraphHandler(
+        DiscoverProjectsTask discoverTask,
+        DepsGraphCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        IShell shell
+    )
     {
         _discoverTask = discoverTask;
+        _cfg = cfg;
         _discoverCfg = discoverCfg;
         _shell = shell;
     }
 
     public async Task HandleAsync(HttpListenerContext ctx, CancellationToken ct)
     {
-        var projects = await _discoverTask.RunAsync(_discoverCfg);
+        var allProjects = await _discoverTask.RunAsync(_discoverCfg);
+        var projects = string.IsNullOrEmpty(_cfg.Mask) ? allProjects : allProjects.FilterMask(_cfg.Mask);
 
         var graph = new EdgeListGraph<string, Edge<string>>();
         foreach (var project in projects)
@@ -81,4 +93,11 @@ file class GraphHandler : IHttpHandler
         File.Delete(dotFile);
         File.Delete(svgFile);
     }
+}
+
+internal class DepsGraphCommandConfiguration
+{
+    [Position(1)]
+    [Help("Projects mask.")]
+    public string Mask { get; set; } = string.Empty;
 }

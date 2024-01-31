@@ -25,7 +25,13 @@ public static class FilterExtensions
         if (exactMatch is not null && !exactMatch.Equals(default(T)!))
             return new[] { exactMatch };
 
-        return list.Where(p => getName(p).Contains(mask, comparison));
+        var masks = mask.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        return list.Where(x =>
+        {
+            var name = getName(x);
+
+            return masks.Any(m => name.Contains(m, comparison));
+        });
     }
 
     public static IEnumerable<T> FilterType<T>(this IEnumerable<T> projects, ProjectType type)
