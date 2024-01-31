@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Annium.Linq;
 using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Commands;
@@ -26,11 +27,14 @@ public static class FilterExtensions
             return new[] { exactMatch };
 
         var masks = mask.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        var positive = masks.Where(x => !x.StartsWith('-')).ToArray();
+        var negative = masks.Where(x => x.StartsWith('-')).Select(x => x[1..]).ToArray();
+
         return list.Where(x =>
         {
             var name = getName(x);
 
-            return masks.Any(m => name.Contains(m, comparison));
+            return positive.Any(m => name.Contains(m, comparison)) && negative.None(m => name.Contains(m, comparison));
         });
     }
 
