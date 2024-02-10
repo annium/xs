@@ -5,12 +5,12 @@ using Server.Shared.Domain.Models;
 
 namespace Server.Shared.Internal.Configurations;
 
-internal class MetaPackageConfiguration : IdEntityConfiguration<MetaPackage, Guid>
+internal class MetaPackageConfiguration : IIdEntityConfiguration<MetaPackage, Guid>
 {
-    public override void Configure(EntityMappingBuilder<MetaPackage> builder)
+    public void Configure(EntityMappingBuilder<MetaPackage> builder)
     {
+        this.ConfigureId(builder);
         builder.HasSchemaName(Constants.Schema).HasTableName("meta_packages");
-        base.Configure(builder);
         builder
             .Property(x => x.Type)
             .IsColumn()
