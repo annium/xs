@@ -76,7 +76,11 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
         return IsProjectDirectory(directory);
     }
 
-    public IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, PlatformConfigurationBase? projectCfg)
+    public IProject CreateProject(
+        string directory,
+        DiscoverConfiguration discoverCfg,
+        PlatformConfigurationBase? projectCfg
+    )
     {
         var file = new FileInfo(Path.Combine(directory, ProjectFileName));
         var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = _mapper.Load(

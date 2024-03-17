@@ -91,7 +91,9 @@ public class DiscoverProjectsTask : ILogSubject
         }
     }
 
-    private IReadOnlyDictionary<string, IPlatformProjectFactory> FindProjectCandidates(IReadOnlyCollection<string> roots)
+    private IReadOnlyDictionary<string, IPlatformProjectFactory> FindProjectCandidates(
+        IReadOnlyCollection<string> roots
+    )
     {
         var results = new Dictionary<string, IPlatformProjectFactory>();
 
