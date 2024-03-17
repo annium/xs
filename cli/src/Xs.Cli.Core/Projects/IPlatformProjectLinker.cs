@@ -5,7 +5,7 @@ using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects;
 
-public interface ISpecialProjectLinker
+public interface IPlatformProjectLinker
 {
     ProjectType Type { get; }
 
@@ -19,7 +19,6 @@ public interface ISpecialProjectLinker
         IProject project,
         IReadOnlyCollection<IProject> projects,
         IReadOnlyCollection<Package> packages,
-        DiscoverConfiguration configuration,
         Action<Exception> addError
     );
 }

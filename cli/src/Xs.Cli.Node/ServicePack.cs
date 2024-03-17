@@ -14,7 +14,7 @@ public class ServicePack : ServicePackBase
     {
         // projects
         container.Add<IPlatformProjectFactory, ProjectFactory>().Singleton();
-        container.Add<ISpecialProjectLinker, ProjectLinker>().Singleton();
+        container.Add<IPlatformProjectLinker, ProjectLinker>().Singleton();
         container.Add<ProjectMapper>().AsSelf().Singleton();
         container.Add<IDependencyManager, DependencyManager>().Singleton();
 

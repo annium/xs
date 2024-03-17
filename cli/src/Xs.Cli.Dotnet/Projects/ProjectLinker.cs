@@ -8,7 +8,7 @@ using Xs.Cli.Dotnet.Models;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class ProjectLinker : SpecialProjectLinkerBase, ISpecialProjectLinker
+internal class ProjectLinker : PlatformProjectLinkerBase, IPlatformProjectLinker
 {
     public ProjectType Type => Constants.ProjectType;
 
@@ -42,7 +42,6 @@ internal class ProjectLinker : SpecialProjectLinkerBase, ISpecialProjectLinker
         IProject project,
         IReadOnlyCollection<IProject> projects,
         IReadOnlyCollection<Package> packages,
-        DiscoverConfiguration configuration,
         Action<Exception> addError
     )
     {

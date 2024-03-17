@@ -5,7 +5,7 @@ using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects;
 
-public class SpecialProjectLinkerBase
+public class PlatformProjectLinkerBase
 {
     protected Dependency<IProject> ResolveProjectDependency(
         IProject project,

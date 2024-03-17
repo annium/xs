@@ -8,9 +8,9 @@ namespace Xs.Cli.Core.Projects;
 
 internal class ProjectLinker : IProjectLinker
 {
-    private readonly IEnumerable<ISpecialProjectLinker> _linkers;
+    private readonly IEnumerable<IPlatformProjectLinker> _linkers;
 
-    public ProjectLinker(IEnumerable<ISpecialProjectLinker> linkers)
+    public ProjectLinker(IEnumerable<IPlatformProjectLinker> linkers)
     {
         _linkers = linkers;
     }
@@ -77,7 +77,7 @@ internal class ProjectLinker : IProjectLinker
         }
 
         var linker = _linkers.First(l => l.Type == project.Type);
-        linker.Link(project, projects, packages, configuration, addError);
+        linker.Link(project, projects, packages, addError);
     }
 
     private void ValidatePackages(
