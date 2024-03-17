@@ -9,7 +9,10 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands.Sln;
 
-public class RemoveCommand : AsyncCommand<RemoveCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class RemoveCommand
+    : AsyncCommand<RemoveCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
 {
     public static string Id => "remove";
     public static string Description => "Create sln file from project.";
