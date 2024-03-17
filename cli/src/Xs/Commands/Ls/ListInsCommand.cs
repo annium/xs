@@ -36,8 +36,8 @@ internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, Discov
         var showProjects = cfg.Projects || !cfg.Packages;
         var showPackages = cfg.Packages || !cfg.Projects;
 
-        // if plain dependencies list requested - join deps and log them in single list
-        if (cfg.Depth == 0)
+        // if plain/direct dependencies list requested - join deps and log them in single list
+        if (cfg.Plain || cfg.Depth == 0)
         {
             LogPlainDependencies(projects, showProjects, showPackages, cfg);
             return;
@@ -73,7 +73,7 @@ internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, Discov
                 .OrderBy(e => e.Name)
                 .ToArray();
             foreach (var dependency in projectDeps)
-                LogProject(dependency, cfg.Path, cfg.Attributes);
+                Console.WriteLine(dependency.Describe(cfg.Path, cfg.Attributes));
         }
 
         if (showPackages)
@@ -133,27 +133,6 @@ internal class ListInsCommand : AsyncCommand<ListInsCommandConfiguration, Discov
         var node = isLast ? "└─" : "├─";
         Console.WriteLine($"{prefix}{node}─ {package} ({package.Type})");
     }
-
-    private void LogProject(IProject project, bool writePath, bool writeAttributes)
-    {
-        var sb = new StringBuilder();
-
-        if (writePath)
-            sb.Append(project.File);
-        else if (writeAttributes)
-        {
-            sb.Append(project.Name);
-            if (project is IPublishableProject)
-                sb.Append(" [Publish]");
-
-            if (project is ITestableProject)
-                sb.Append(" [Test]");
-        }
-        else
-            sb.Append(project.Name);
-
-        Console.WriteLine(sb.ToString());
-    }
 }
 
 internal class ListInsCommandConfiguration
@@ -181,6 +160,10 @@ internal class ListInsCommandConfiguration
     [Option]
     [Help("Show path instead of name.")]
     public bool Path { get; set; } = false;
+
+    [Option]
+    [Help("Show plain list instead of tree.")]
+    public bool Plain { get; set; } = false;
 
     [Option("a")]
     [Help("Show project attributes.")]

@@ -75,7 +75,7 @@ internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, Disc
                     .OrderBy(p => p.Name)
                     .ToArray();
                 foreach (var dependant in dependants)
-                    LogProject(dependant, cfg.Path, cfg.Attributes);
+                    Console.WriteLine(dependant.Describe(cfg.Path, cfg.Attributes));
                 return;
             }
 
@@ -113,7 +113,7 @@ internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, Disc
             .OrderBy(e => e.Name)
             .ToArray();
         foreach (var dependant in dependants)
-            LogProject(dependant, cfg.Path, cfg.Attributes);
+            Console.WriteLine(dependant.Describe(cfg.Path, cfg.Attributes));
     }
 
     private void LogProjectWithDependants(
@@ -147,27 +147,6 @@ internal class ListOutsCommand : AsyncCommand<ListOutsCommandConfiguration, Disc
         var last = dependants.Last();
         foreach (var dependant in dependants)
             LogProjectWithDependants(dependant, projects, prefix, nest - 1, dependant == last);
-    }
-
-    private void LogProject(IProject project, bool writePath, bool writeAttributes)
-    {
-        var sb = new StringBuilder();
-
-        if (writePath)
-            sb.Append(project.File);
-        else if (writeAttributes)
-        {
-            sb.Append(project.Name);
-            if (project is IPublishableProject)
-                sb.Append(" [Publish]");
-
-            if (project is ITestableProject)
-                sb.Append(" [Test]");
-        }
-        else
-            sb.Append(project.Name);
-
-        Console.WriteLine(sb.ToString());
     }
 }
 
