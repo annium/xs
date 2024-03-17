@@ -11,19 +11,19 @@ using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Dotnet.Projects;
 
-namespace Xs.Cli.Dotnet.Commands;
+namespace Xs.Cli.Dotnet.Commands.Sln;
 
-public class SlnCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class SyncCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     private const string SlnExtension = ".sln";
 
-    public static string Id => "sln";
+    public static string Id => "sync";
     public static string Description => "Create sln file from project.";
     public ILogger Logger { get; }
     private readonly DiscoverProjectsTask _discoverTask;
     private readonly IShell _shell;
 
-    public SlnCommand(DiscoverProjectsTask discoverTask, IShell shell, ILogger logger)
+    public SyncCommand(DiscoverProjectsTask discoverTask, IShell shell, ILogger logger)
     {
         _discoverTask = discoverTask;
         _shell = shell;
