@@ -13,7 +13,7 @@ using Xs.Cli.Dotnet.Projects;
 
 namespace Xs.Cli.Dotnet.Commands;
 
-public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfiguration>, ICommandDescriptor, ILogSubject
+public class SlnCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescriptor, ILogSubject
 {
     private const string SlnExtension = ".sln";
 
@@ -30,25 +30,34 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
         Logger = logger;
     }
 
-    public override async Task HandleAsync(
-        SlnCommandConfiguration cfg,
-        DiscoverConfiguration discoverCfg,
-        CancellationToken ct
-    )
+    public override async Task HandleAsync(DiscoverConfiguration discoverCfg, CancellationToken ct)
     {
         var root = Directory.GetCurrentDirectory();
-        var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var preservedProjects = allProjects.OfType<IPlatformProject>().ToArray();
+        var projects = (await _discoverTask.RunAsync(discoverCfg)).OfType<IPlatformProject>().ToArray();
 
-        var slnFile = SlnFile(root, cfg.Name);
+        await Task.WhenAll(
+            projects
+                .SelectMany(x => x.Solutions)
+                .Distinct()
+                .Select(async name =>
+                {
+                    var solutionProjects = projects.Where(x => x.Solutions.Contains(name)).ToArray();
+                    await SyncSolution(root, name, solutionProjects);
+                })
+        );
+    }
+
+    private async Task SyncSolution(string root, string name, IReadOnlyCollection<IPlatformProject> projects)
+    {
+        var slnFile = SlnFile(root, name);
         this.Debug($"Write solution file {slnFile}");
-        await _shell.Cmd($"dotnet new sln --name {cfg.Name} --output {root} --force").RunAsync();
+        await _shell.Cmd($"dotnet new sln --name {name} --output {root} --force").RunAsync();
 
-        var currentProjects = await GetSolutionProjectPathsAsync(root, cfg.Name);
-        var removedProjects = currentProjects.Where(path => preservedProjects.All(pp => pp.File != path)).ToList();
+        var currentProjects = await GetSolutionProjectPathsAsync(root, name);
+        var removedProjects = currentProjects.Where(path => projects.All(pp => pp.File != path)).ToList();
 
         // add current projects
-        foreach (var project in preservedProjects)
+        foreach (var project in projects)
         {
             var parent =
                 Directory.GetParent(project.Directory)?.FullName
@@ -98,21 +107,4 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
     }
 
     private string SlnFile(string root, string name) => Path.Combine(root, $"{name}{SlnExtension}");
-}
-
-public class SlnCommandConfiguration
-{
-    [Position(1)]
-    [Help("Solution file name.")]
-    public string Name { get; set; } = string.Empty;
-
-    [Option("d")]
-    [Help("Directory to include.")]
-    public string[] Directories
-    {
-        get => _directories;
-        set => _directories = value.Select(Path.GetFullPath).ToArray();
-    }
-
-    private string[] _directories = { Directory.GetCurrentDirectory() };
 }
