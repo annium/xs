@@ -12,7 +12,7 @@ public sealed record Configuration(
     Uri Registry,
     string Token,
     IReadOnlyDictionary<ProjectType, Uri> Servers,
-    SpecialConfiguration[] Types
+    PlatformConfigurationBase[] Types
 )
 {
     public static Configuration Empty { get; } =
@@ -21,7 +21,7 @@ public sealed record Configuration(
             new Uri("http://localhost"),
             string.Empty,
             new Dictionary<ProjectType, Uri>(),
-            Array.Empty<SpecialConfiguration>()
+            Array.Empty<PlatformConfigurationBase>()
         );
 
     public Uri Registry { get; private set; } = Registry;

@@ -76,7 +76,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
         return IsProjectDirectory(directory);
     }
 
-    public IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, SpecialConfiguration? projectCfg)
+    public IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, PlatformConfigurationBase? projectCfg)
     {
         var file = new FileInfo(Path.Combine(directory, ProjectFileName));
         var (name, version, description, projectDeps, packageDeps, scripts, isPackable) = _mapper.Load(
@@ -116,7 +116,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
                 _loggerConfiguration,
                 _provider.Resolve<ILogger>(),
                 _auditRules,
-                projectCfg as Tools.SpecialConfiguration ?? new Tools.SpecialConfiguration(),
+                projectCfg as Tools.PlatformConfiguration ?? new Tools.PlatformConfiguration(),
                 _mapper
             );
     }

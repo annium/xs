@@ -12,5 +12,5 @@ public interface ISpecialProjectFactory
 
     bool IsProjectFile(string file);
 
-    IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, SpecialConfiguration? projectCfg);
+    IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, PlatformConfigurationBase? projectCfg);
 }

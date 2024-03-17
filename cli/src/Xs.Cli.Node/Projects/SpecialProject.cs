@@ -8,7 +8,7 @@ using Xs.Cli.Core.Audit;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
-using SpecialConfiguration = Xs.Cli.Node.Tools.SpecialConfiguration;
+using PlatformConfiguration = Xs.Cli.Node.Tools.PlatformConfiguration;
 
 namespace Xs.Cli.Node.Projects;
 
@@ -32,7 +32,7 @@ internal abstract class SpecialProject
     //         return _StaticShell!.Cmd("yarn cache dir").RunAsync().GetAwaiter().GetResult().Output.Trim();
     // }
 
-    public SpecialConfiguration Config { get; set; }
+    public PlatformConfiguration Config { get; set; }
     public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);
     protected readonly IReadOnlyDictionary<string, string> Scripts;
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;

@@ -6,7 +6,7 @@ namespace Xs.Cli.Dotnet.Projects;
 
 internal interface ISpecialProject : IProject
 {
-    SpecialConfiguration Config { get; }
+    PlatformConfiguration Config { get; }
     TargetFramework TargetFramework { get; }
     OutputType OutputType { get; }
 }

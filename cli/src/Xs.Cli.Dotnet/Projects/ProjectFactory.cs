@@ -92,7 +92,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
         return IsProjectDirectory(directory);
     }
 
-    public IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, SpecialConfiguration? projectCfg)
+    public IProject CreateProject(string directory, DiscoverConfiguration discoverCfg, PlatformConfigurationBase? projectCfg)
     {
         var file = new FileInfo(Directory.GetFiles(directory, ProjectFileMask, SearchOption.TopDirectoryOnly).First());
         var (
@@ -134,7 +134,7 @@ internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactor
                 targetFramework,
                 outputType,
                 _auditRules,
-                projectCfg as Tools.SpecialConfiguration ?? new Tools.SpecialConfiguration(),
+                projectCfg as Tools.PlatformConfiguration ?? new Tools.PlatformConfiguration(),
                 _mapper
             );
     }

@@ -10,7 +10,7 @@ using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tools;
 using Xs.Cli.Dotnet.Models;
-using SpecialConfiguration = Xs.Cli.Dotnet.Tools.SpecialConfiguration;
+using PlatformConfiguration = Xs.Cli.Dotnet.Tools.PlatformConfiguration;
 using SysDirectory = System.IO.Directory;
 using SysFile = System.IO.File;
 
@@ -30,7 +30,7 @@ internal abstract class SpecialProject
     public override string File => Path.Combine(Directory, ProjectFileName(Name));
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
-    public SpecialConfiguration Config { get; }
+    public PlatformConfiguration Config { get; }
     private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 

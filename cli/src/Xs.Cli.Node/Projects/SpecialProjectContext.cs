@@ -13,7 +13,7 @@ internal class SpecialProjectContext : ProjectBaseContext
 {
     public IReadOnlyDictionary<string, string> Scripts { get; }
     public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
-    public SpecialConfiguration Config { get; }
+    public PlatformConfiguration Config { get; }
     public ProjectMapper Mapper { get; }
 
     public SpecialProjectContext(
@@ -29,7 +29,7 @@ internal class SpecialProjectContext : ProjectBaseContext
         LoggerConfiguration loggerConfiguration,
         ILogger logger,
         IEnumerable<IAuditRule<ISpecialProject>> auditRules,
-        SpecialConfiguration config,
+        PlatformConfiguration config,
         ProjectMapper mapper
     )
         : base(type, name, version, description, directory, projects, packages, shell, loggerConfiguration, logger)
