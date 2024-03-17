@@ -35,8 +35,6 @@ public class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfigur
             .FilterMask(setCfg.Mask)
             .ToArray();
 
-        Console.WriteLine($"Set sln {setCfg.Name} for projects: {projects.Select(x=>x.Name).Join(", ")}");
-
         foreach (var project in projects)
         {
             project.Solutions.Add(setCfg.Name);
