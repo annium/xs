@@ -19,7 +19,7 @@ public class ServicePack : ServicePackBase
         container.Add<IDependencyManager, DependencyManager>().Singleton();
 
         // tools
-        container.Add<ISpecialConfigurationManager, SpecialConfigurationManager>().Singleton();
+        container.Add<IPlatformConfigurationManager, PlatformConfigurationManager>().Singleton();
 
         // audit rules
         container.AddAuditRule<FindInconsistentDependenciesRule<IPlatformProject>, IPlatformProject>();

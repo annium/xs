@@ -8,14 +8,14 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Node.Tools;
 
-internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
+internal class PlatformConfigurationManager : IPlatformConfigurationManager, ILogSubject
 {
     private const string ConfigFile = ".npmrc";
     public ProjectType Type => Constants.ProjectType;
     public string[] IgnorePatterns { get; } = { ConfigFile };
     public ILogger Logger { get; }
 
-    public SpecialConfigurationManager(ILogger logger)
+    public PlatformConfigurationManager(ILogger logger)
     {
         Logger = logger;
     }
@@ -35,8 +35,8 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
         var sb = new StringBuilder();
         sb.AppendLine($"@{scope}:registry={configuration.Server}");
         // add all private scopes
-        if (configuration.Special is not null)
-            foreach (var privateScope in ((PlatformConfiguration)configuration.Special).PrivateScopes.ToHashSet())
+        if (configuration.Platform is not null)
+            foreach (var privateScope in ((PlatformConfiguration)configuration.Platform).PrivateScopes.ToHashSet())
                 sb.AppendLine($"@{privateScope}:registry={configuration.Server}");
         sb.AppendLine($"//{configuration.Server.Authority}/:_authToken=\"{configuration.Token}\"");
         File.WriteAllText(ConfigFilePath(project), sb.ToString());

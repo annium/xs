@@ -10,7 +10,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Tools;
 
-internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogSubject
+internal class PlatformConfigurationManager : IPlatformConfigurationManager, ILogSubject
 {
     private const string ConfigFile = "nuget.config";
     public ProjectType Type => Constants.ProjectType;
@@ -20,7 +20,7 @@ internal class SpecialConfigurationManager : ISpecialConfigurationManager, ILogS
     private readonly string _defaultName = "nuget";
     private readonly Uri _defaultUri = new(Constants.DefaultServer);
 
-    public SpecialConfigurationManager(ILogger logger)
+    public PlatformConfigurationManager(ILogger logger)
     {
         Logger = logger;
     }

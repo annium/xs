@@ -7,12 +7,12 @@ public class ProjectTypeConfiguration
 {
     public Uri Server { get; }
     public string Token { get; }
-    public PlatformConfigurationBase? Special { get; }
+    public PlatformConfigurationBase? Platform { get; }
 
-    public ProjectTypeConfiguration(Uri server, string token, PlatformConfigurationBase? special)
+    public ProjectTypeConfiguration(Uri server, string token, PlatformConfigurationBase? platform)
     {
         Server = server;
         Token = token;
-        Special = special;
+        Platform = platform;
     }
 }

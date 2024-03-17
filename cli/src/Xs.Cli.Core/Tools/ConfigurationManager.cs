@@ -19,18 +19,18 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
     private const string IgnoreHeader = "# xs ignore patterns";
     private const string IgnoreFile = ".gitignore";
     public ILogger Logger { get; }
-    private readonly IReadOnlyDictionary<ProjectType, ISpecialConfigurationManager> _specialManagers;
+    private readonly IReadOnlyDictionary<ProjectType, IPlatformConfigurationManager> _platformManagers;
     private readonly Func<IConfigurationBuilder> _configurationBuilderFactory;
     private readonly IMapper _mapper;
 
     public ConfigurationManager(
-        IEnumerable<ISpecialConfigurationManager> specialManagers,
+        IEnumerable<IPlatformConfigurationManager> platformManagers,
         Func<IConfigurationBuilder> configurationBuilderFactory,
         IMapper mapper,
         ILogger logger
     )
     {
-        _specialManagers = specialManagers.ToDictionary(e => e.Type, e => e);
+        _platformManagers = platformManagers.ToDictionary(e => e.Type, e => e);
         _configurationBuilderFactory = configurationBuilderFactory;
         _mapper = mapper;
         Logger = logger;
@@ -88,7 +88,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         var ignorePatterns = new List<string> { FileManager.IgnoreFile, CredentialsFile };
         foreach ((ProjectType type, Uri uri) in configuration.Servers.OrderBy(s => s.Key.ToString()))
         {
-            if (!_specialManagers.ContainsKey(type))
+            if (!_platformManagers.ContainsKey(type))
             {
                 this.Trace($"{type} configuration manager not found");
                 continue;
@@ -102,14 +102,14 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
             }
 
             this.Trace($"Save {type} -> {uri} configuration");
-            ignorePatterns.AddRange(_specialManagers[type].IgnorePatterns);
+            ignorePatterns.AddRange(_platformManagers[type].IgnorePatterns);
             var typeConfiguration = new ProjectTypeConfiguration(
                 uri,
                 configuration.Token,
                 configuration.Types.FirstOrDefault(c => c.Type.Equals(type))
             );
             foreach (var project in targets)
-                _specialManagers[type].Save(project, typeConfiguration);
+                _platformManagers[type].Save(project, typeConfiguration);
         }
 
         this.Trace($"Update ignore file in {configuration.Directory}");
@@ -148,8 +148,8 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         DeleteFile(GetCredentialsFile);
 
         foreach (var project in projects)
-            if (_specialManagers.ContainsKey(project.Type))
-                _specialManagers[project.Type].Delete(project);
+            if (_platformManagers.ContainsKey(project.Type))
+                _platformManagers[project.Type].Delete(project);
 
         void DeleteFile(Func<string, string> resolveFile)
         {

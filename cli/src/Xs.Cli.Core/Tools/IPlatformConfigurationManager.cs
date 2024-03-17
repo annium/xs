@@ -3,7 +3,7 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Core.Tools;
 
-public interface ISpecialConfigurationManager
+public interface IPlatformConfigurationManager
 {
     ProjectType Type { get; }
     string[] IgnorePatterns { get; }
