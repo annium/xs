@@ -15,7 +15,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class ProjectFactory : SpecialProjectFactoryBase, ISpecialProjectFactory, ILogSubject
+internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFactory, ILogSubject
 {
     public const string ProjectFileExtension = ".csproj";
     public const string TestCoveragePackage = "coverlet.msbuild";

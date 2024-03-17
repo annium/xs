@@ -4,7 +4,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Projects;
 
-public interface ISpecialProjectFactory
+public interface IPlatformProjectFactory
 {
     ProjectType Type { get; }
 

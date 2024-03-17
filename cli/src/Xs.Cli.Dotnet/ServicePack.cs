@@ -13,7 +13,7 @@ public class ServicePack : ServicePackBase
     public override void Register(IServiceContainer container, IServiceProvider provider)
     {
         // projects
-        container.Add<ISpecialProjectFactory, ProjectFactory>().Singleton();
+        container.Add<IPlatformProjectFactory, ProjectFactory>().Singleton();
         container.Add<ISpecialProjectLinker, ProjectLinker>().Singleton();
         container.Add<ProjectMapper>().AsSelf().Singleton();
         container.Add<IDependencyManager, DependencyManager>().Singleton();

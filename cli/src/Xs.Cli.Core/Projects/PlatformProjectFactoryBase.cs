@@ -3,7 +3,7 @@ using Xs.Cli.Core.Models;
 
 namespace Xs.Cli.Core.Projects;
 
-public class SpecialProjectFactoryBase
+public class PlatformProjectFactoryBase
 {
     protected Dependency<IProject> GetProjectDependencyMock(FileInfo location, Dependency<string> reference)
     {

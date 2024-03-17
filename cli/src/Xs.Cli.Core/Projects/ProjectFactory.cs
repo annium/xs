@@ -5,14 +5,14 @@ namespace Xs.Cli.Core.Projects;
 
 internal class ProjectFactory : IProjectFactory
 {
-    private readonly IEnumerable<ISpecialProjectFactory> _factories;
+    private readonly IEnumerable<IPlatformProjectFactory> _factories;
 
-    public ProjectFactory(IEnumerable<ISpecialProjectFactory> factories)
+    public ProjectFactory(IEnumerable<IPlatformProjectFactory> factories)
     {
         _factories = factories;
     }
 
-    public ISpecialProjectFactory? ResolveFactory(string directory)
+    public IPlatformProjectFactory? ResolveFactory(string directory)
     {
         return _factories.FirstOrDefault(e => e.IsProjectDirectory(directory));
     }

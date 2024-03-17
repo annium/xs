@@ -91,9 +91,9 @@ public class DiscoverProjectsTask : ILogSubject
         }
     }
 
-    private IReadOnlyDictionary<string, ISpecialProjectFactory> FindProjectCandidates(IReadOnlyCollection<string> roots)
+    private IReadOnlyDictionary<string, IPlatformProjectFactory> FindProjectCandidates(IReadOnlyCollection<string> roots)
     {
-        var results = new Dictionary<string, ISpecialProjectFactory>();
+        var results = new Dictionary<string, IPlatformProjectFactory>();
 
         foreach (var root in roots)
         {
@@ -161,7 +161,7 @@ public class DiscoverProjectsTask : ILogSubject
 
     private IProject? CreateProject(
         string directory,
-        ISpecialProjectFactory factory,
+        IPlatformProjectFactory factory,
         DiscoverConfiguration discoverCfg,
         SolutionConfiguration solutionCfg,
         Action<Exception> addError
