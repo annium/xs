@@ -10,9 +10,9 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class LibraryProject : SpecialProject, IPublishableProject
+internal class LibraryProject : PlatformProject, IPublishableProject
 {
-    public LibraryProject(SpecialProjectContext context)
+    public LibraryProject(PlatformProjectContext context)
         : base(context) { }
 
     public async Task<string> PackAsync(Version version, CancellationToken ct)

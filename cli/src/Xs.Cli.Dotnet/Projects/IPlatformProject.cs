@@ -4,7 +4,7 @@ using Xs.Cli.Dotnet.Tools;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal interface ISpecialProject : IProject
+internal interface IPlatformProject : IProject
 {
     PlatformConfiguration Config { get; }
     TargetFramework TargetFramework { get; }

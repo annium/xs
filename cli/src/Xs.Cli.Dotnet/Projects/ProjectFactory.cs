@@ -24,7 +24,7 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
     private const string ProjectFileMask = "*.csproj";
     public ILogger Logger { get; }
     public ProjectType Type => Constants.ProjectType;
-    private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+    private readonly IEnumerable<IAuditRule<IPlatformProject>> _auditRules;
     private readonly ProjectMapper _mapper;
     private readonly IShell _shell;
     private readonly LoggerConfiguration _loggerConfiguration;
@@ -32,7 +32,7 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
 
     public ProjectFactory(
         IServiceProvider provider,
-        IEnumerable<IAuditRule<ISpecialProject>> auditRules,
+        IEnumerable<IAuditRule<IPlatformProject>> auditRules,
         ProjectMapper mapper,
         IShell shell,
         LoggerConfiguration loggerConfiguration,
@@ -117,9 +117,9 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
         if (isTestProject)
             return new TestProject(GetContext());
 
-        return new SealedProject(GetContext());
+        return new InternalProject(GetContext());
 
-        SpecialProjectContext GetContext() =>
+        PlatformProjectContext GetContext() =>
             new(
                 Constants.ProjectType,
                 name,

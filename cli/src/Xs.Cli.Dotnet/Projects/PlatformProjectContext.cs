@@ -10,15 +10,15 @@ using Xs.Cli.Dotnet.Tools;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class SpecialProjectContext : ProjectBaseContext
+internal class PlatformProjectContext : ProjectBaseContext
 {
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
-    public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
+    public IEnumerable<IAuditRule<IPlatformProject>> AuditRules { get; }
     public PlatformConfiguration Config { get; }
     public ProjectMapper Mapper { get; }
 
-    public SpecialProjectContext(
+    public PlatformProjectContext(
         ProjectType type,
         string name,
         Version version,
@@ -31,7 +31,7 @@ internal class SpecialProjectContext : ProjectBaseContext
         ILogger logger,
         TargetFramework targetFramework,
         OutputType outputType,
-        IEnumerable<IAuditRule<ISpecialProject>> auditRules,
+        IEnumerable<IAuditRule<IPlatformProject>> auditRules,
         PlatformConfiguration config,
         ProjectMapper mapper
     )

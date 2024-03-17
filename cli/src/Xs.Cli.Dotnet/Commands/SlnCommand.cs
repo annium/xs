@@ -38,7 +38,7 @@ public class SlnCommand : AsyncCommand<SlnCommandConfiguration, DiscoverConfigur
     {
         var root = Directory.GetCurrentDirectory();
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
-        var preservedProjects = allProjects.OfType<ISpecialProject>().ToArray();
+        var preservedProjects = allProjects.OfType<IPlatformProject>().ToArray();
 
         var slnFile = SlnFile(root, cfg.Name);
         this.Debug($"Write solution file {slnFile}");

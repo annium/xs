@@ -13,7 +13,7 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
+internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 {
     private static readonly string[] ImplicitPackages = { "Microsoft.AspNetCore.App" };
     private static readonly string[] BooleanStrings = { "true", "false" };
@@ -92,7 +92,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
             info.GetElements(El.ItemGroup).SelectMany(group => group.GetElements(referenceType));
     }
 
-    public void Save(ISpecialProject project)
+    public void Save(IPlatformProject project)
     {
         var path = project.File;
         var parent =

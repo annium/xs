@@ -9,9 +9,9 @@ using Xs.Cli.Core.Projects;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal class TestProject : SpecialProject, ITestableProject
+internal class TestProject : PlatformProject, ITestableProject
 {
-    public TestProject(SpecialProjectContext context)
+    public TestProject(PlatformProjectContext context)
         : base(context) { }
 
     public Task TestAsync(Env env, string filter, CancellationToken ct)

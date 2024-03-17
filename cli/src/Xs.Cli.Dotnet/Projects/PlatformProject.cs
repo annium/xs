@@ -16,9 +16,9 @@ using SysFile = System.IO.File;
 
 namespace Xs.Cli.Dotnet.Projects;
 
-internal abstract class SpecialProject
+internal abstract class PlatformProject
     : ProjectBase,
-        ISpecialProject,
+        IPlatformProject,
         IAuditableProject,
         ICachingProject,
         ICleanableProject,
@@ -31,10 +31,10 @@ internal abstract class SpecialProject
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
     public PlatformConfiguration Config { get; }
-    private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+    private readonly IEnumerable<IAuditRule<IPlatformProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
-    protected SpecialProject(SpecialProjectContext context)
+    protected PlatformProject(PlatformProjectContext context)
         : base(context)
     {
         Config = context.Config;

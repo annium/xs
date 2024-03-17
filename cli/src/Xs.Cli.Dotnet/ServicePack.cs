@@ -22,7 +22,7 @@ public class ServicePack : ServicePackBase
         container.Add<ISpecialConfigurationManager, SpecialConfigurationManager>().Singleton();
 
         // audit rules
-        container.AddAuditRule<FindInconsistentDependenciesRule<ISpecialProject>, ISpecialProject>();
-        container.AddAuditRule<FindUselessDependenciesRule<ISpecialProject>, ISpecialProject>();
+        container.AddAuditRule<FindInconsistentDependenciesRule<IPlatformProject>, IPlatformProject>();
+        container.AddAuditRule<FindUselessDependenciesRule<IPlatformProject>, IPlatformProject>();
     }
 }

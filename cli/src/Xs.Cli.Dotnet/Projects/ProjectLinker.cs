@@ -21,7 +21,7 @@ internal class ProjectLinker : PlatformProjectLinkerBase, IPlatformProjectLinker
         if (!configuration.SkipChecks)
         {
             // check TargetFramework consistency
-            var typeProjects = projects.OfType<ISpecialProject>().ToArray();
+            var typeProjects = projects.OfType<IPlatformProject>().ToArray();
             var frameworks = typeProjects.Select(p => p.TargetFramework).Distinct();
             if (!TargetFramework.SupportedGroups.Any(g => frameworks.All(g.Contains)))
             {
