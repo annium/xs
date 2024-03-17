@@ -29,7 +29,7 @@ internal abstract class PlatformProject
     private static readonly object CacheLocker = new();
     public override string File => Path.Combine(Directory, ProjectFileName(Name));
     public PlatformConfiguration Config { get; }
-    public IReadOnlyCollection<string> Solutions { get; set; }
+    public HashSet<string> Solutions { get; set; }
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
     private readonly IEnumerable<IAuditRule<IPlatformProject>> _auditRules;
@@ -39,7 +39,7 @@ internal abstract class PlatformProject
         : base(context)
     {
         Config = context.Config;
-        Solutions = context.Solutions;
+        Solutions = context.Solutions.ToHashSet();
         TargetFramework = context.TargetFramework;
         OutputType = context.OutputType;
         _auditRules = context.AuditRules;
