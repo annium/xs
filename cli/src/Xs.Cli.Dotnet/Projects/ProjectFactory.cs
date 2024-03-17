@@ -99,6 +99,7 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
             name,
             version,
             description,
+            solutions,
             targetFramework,
             outputType,
             projectDeps,
@@ -128,14 +129,15 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
                 directory,
                 projectDependencies,
                 packageDependencies,
-                _shell,
-                _loggerConfiguration,
-                _provider.Resolve<ILogger>(),
+                projectCfg as Tools.PlatformConfiguration ?? new Tools.PlatformConfiguration(),
+                solutions,
                 targetFramework,
                 outputType,
                 _auditRules,
-                projectCfg as Tools.PlatformConfiguration ?? new Tools.PlatformConfiguration(),
-                _mapper
+                _mapper,
+                _shell,
+                _loggerConfiguration,
+                _provider.Resolve<ILogger>()
             );
     }
 }

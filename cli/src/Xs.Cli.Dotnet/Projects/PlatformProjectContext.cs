@@ -12,10 +12,11 @@ namespace Xs.Cli.Dotnet.Projects;
 
 internal class PlatformProjectContext : ProjectBaseContext
 {
+    public PlatformConfiguration Config { get; }
+    public IReadOnlyCollection<string> Solutions { get; }
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
     public IEnumerable<IAuditRule<IPlatformProject>> AuditRules { get; }
-    public PlatformConfiguration Config { get; }
     public ProjectMapper Mapper { get; }
 
     public PlatformProjectContext(
@@ -26,14 +27,15 @@ internal class PlatformProjectContext : ProjectBaseContext
         string directory,
         HashSet<Dependency<IProject>> projects,
         HashSet<Dependency<Package>> packages,
-        IShell shell,
-        LoggerConfiguration loggerConfiguration,
-        ILogger logger,
+        PlatformConfiguration config,
+        IReadOnlyCollection<string> solutions,
         TargetFramework targetFramework,
         OutputType outputType,
         IEnumerable<IAuditRule<IPlatformProject>> auditRules,
-        PlatformConfiguration config,
-        ProjectMapper mapper
+        ProjectMapper mapper,
+        IShell shell,
+        LoggerConfiguration loggerConfiguration,
+        ILogger logger
     )
         : base(type, name, version, description, directory, projects, packages, shell, loggerConfiguration, logger)
     {
@@ -41,6 +43,7 @@ internal class PlatformProjectContext : ProjectBaseContext
         OutputType = outputType;
         AuditRules = auditRules;
         Config = config;
+        Solutions = solutions;
         Mapper = mapper;
     }
 }

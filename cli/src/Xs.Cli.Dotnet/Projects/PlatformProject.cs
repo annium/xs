@@ -28,9 +28,10 @@ internal abstract class PlatformProject
     // ReSharper disable once StaticMemberInGenericType
     private static readonly object CacheLocker = new();
     public override string File => Path.Combine(Directory, ProjectFileName(Name));
+    public PlatformConfiguration Config { get; }
+    public IReadOnlyCollection<string> Solutions { get; set; }
     public TargetFramework TargetFramework { get; }
     public OutputType OutputType { get; }
-    public PlatformConfiguration Config { get; }
     private readonly IEnumerable<IAuditRule<IPlatformProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
@@ -38,6 +39,7 @@ internal abstract class PlatformProject
         : base(context)
     {
         Config = context.Config;
+        Solutions = context.Solutions;
         TargetFramework = context.TargetFramework;
         OutputType = context.OutputType;
         _auditRules = context.AuditRules;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Annium.Linq;
 using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Models;
 using Xs.Cli.Core.Projects;
@@ -53,6 +54,9 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
             project.Description = properties.GetElement(El.Description)?.Value ?? string.Empty;
         }
 
+        project.Solutions =
+            properties.GetElement(El.Solutions)?.Value.Split(';').WhereNot(string.IsNullOrWhiteSpace).ToArray()
+            ?? Array.Empty<string>();
         project.TargetFramework = properties.GetElement(El.TargetFramework)?.Value ?? TargetFramework.Net7;
         if (configuration.SkipChecks)
             project.OutputType =
@@ -111,6 +115,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
             newProps.Add(new XElement(El.PackageId, project.Name));
             newProps.Add(new XElement(El.PackageVersion, project.Version));
             newProps.Add(new XElement(El.Description, project.Description));
+            newProps.Add(new XElement(El.Solutions, project.Solutions.Join(";")));
             newProps.Add(new XElement(El.TargetFramework, project.TargetFramework));
             newProps.Add(new XElement(El.OutputType, project.OutputType));
             newProps.Add(new XElement(El.DebugType, "portable"));
@@ -345,6 +350,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         public const string PackageId = "PackageId";
         public const string PackageVersion = "PackageVersion";
         public const string Description = "Description";
+        public const string Solutions = "Solutions";
         public const string TargetFramework = "TargetFramework";
         public const string DebugType = "DebugType";
         public const string OutputType = "OutputType";
