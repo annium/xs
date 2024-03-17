@@ -10,9 +10,9 @@ using Version = Xs.Cli.Core.Models.Version;
 namespace Xs.Cli.Node.Projects;
 
 // TODO: rewrite into single project view
-internal class LibraryTestProject : SpecialProject, IPublishableProject, ITestableProject
+internal class LibraryTestProject : PlatformProject, IPublishableProject, ITestableProject
 {
-    public LibraryTestProject(SpecialProjectContext context)
+    public LibraryTestProject(PlatformProjectContext context)
         : base(context) { }
 
     public async Task<string> PackAsync(Version version, CancellationToken ct)

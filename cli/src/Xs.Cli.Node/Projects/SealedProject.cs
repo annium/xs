@@ -1,7 +1,7 @@
 namespace Xs.Cli.Node.Projects;
 
-internal class SealedProject : SpecialProject
+internal class SealedProject : PlatformProject
 {
-    public SealedProject(SpecialProjectContext context)
+    public SealedProject(PlatformProjectContext context)
         : base(context) { }
 }

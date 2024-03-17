@@ -12,7 +12,7 @@ using Version = Xs.Cli.Core.Models.Version;
 
 namespace Xs.Cli.Node.Projects;
 
-internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
+internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions =
         new()
@@ -101,7 +101,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
                 .Select(e => new Dependency<Package>(type, ReadPackageDependency(project.Name, e.Key, e.Value)));
     }
 
-    public void Save(ISpecialProject project)
+    public void Save(IPlatformProject project)
     {
         var path = project.File;
 
@@ -122,7 +122,7 @@ internal class ProjectMapper : IProjectMapper<ISpecialProject, RawProject>
         File.WriteAllText(path, JsonSerializer.Serialize(info, JsonSerializerOptions));
         File.AppendAllText(path, Environment.NewLine);
 
-        static Dictionary<string, string>? GetDeps(ISpecialProject project, DependencyType type)
+        static Dictionary<string, string>? GetDeps(IPlatformProject project, DependencyType type)
         {
             var deps = project.Projects
                 .Where(e => e.Type == type)

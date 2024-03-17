@@ -9,14 +9,14 @@ using Xs.Cli.Node.Tools;
 
 namespace Xs.Cli.Node.Projects;
 
-internal class SpecialProjectContext : ProjectBaseContext
+internal class PlatformProjectContext : ProjectBaseContext
 {
     public IReadOnlyDictionary<string, string> Scripts { get; }
-    public IEnumerable<IAuditRule<ISpecialProject>> AuditRules { get; }
+    public IEnumerable<IAuditRule<IPlatformProject>> AuditRules { get; }
     public PlatformConfiguration Config { get; }
     public ProjectMapper Mapper { get; }
 
-    public SpecialProjectContext(
+    public PlatformProjectContext(
         ProjectType type,
         string name,
         Version version,
@@ -28,7 +28,7 @@ internal class SpecialProjectContext : ProjectBaseContext
         IShell shell,
         LoggerConfiguration loggerConfiguration,
         ILogger logger,
-        IEnumerable<IAuditRule<ISpecialProject>> auditRules,
+        IEnumerable<IAuditRule<IPlatformProject>> auditRules,
         PlatformConfiguration config,
         ProjectMapper mapper
     )

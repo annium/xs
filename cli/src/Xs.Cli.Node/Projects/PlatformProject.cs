@@ -12,9 +12,9 @@ using PlatformConfiguration = Xs.Cli.Node.Tools.PlatformConfiguration;
 
 namespace Xs.Cli.Node.Projects;
 
-internal abstract class SpecialProject
+internal abstract class PlatformProject
     : ProjectBase,
-        ISpecialProject,
+        IPlatformProject,
         IAuditableProject,
         ICachingProject,
         ICleanableProject,
@@ -35,10 +35,10 @@ internal abstract class SpecialProject
     public PlatformConfiguration Config { get; set; }
     public override string File => Path.Combine(Directory, ProjectFactory.ProjectFileName);
     protected readonly IReadOnlyDictionary<string, string> Scripts;
-    private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+    private readonly IEnumerable<IAuditRule<IPlatformProject>> _auditRules;
     private readonly ProjectMapper _mapper;
 
-    public SpecialProject(SpecialProjectContext context)
+    public PlatformProject(PlatformProjectContext context)
         : base(context)
     {
         Config = context.Config;

@@ -22,14 +22,14 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
     public const string ModulesDirectory = "node_modules";
     public const string ProjectFileName = "package.json";
     public const string LockFileName = "pnpm-lock.yaml";
-    private readonly IEnumerable<IAuditRule<ISpecialProject>> _auditRules;
+    private readonly IEnumerable<IAuditRule<IPlatformProject>> _auditRules;
     private readonly ProjectMapper _mapper;
     private readonly LoggerConfiguration _loggerConfiguration;
     private readonly IShell _shell;
     private readonly IServiceProvider _provider;
 
     public ProjectFactory(
-        IEnumerable<IAuditRule<ISpecialProject>> auditRules,
+        IEnumerable<IAuditRule<IPlatformProject>> auditRules,
         ProjectMapper mapper,
         LoggerConfiguration loggerConfiguration,
         IShell shell,
@@ -101,8 +101,8 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
 
         return new SealedProject(GetContext<SealedProject>());
 
-        SpecialProjectContext GetContext<TProject>()
-            where TProject : SpecialProject =>
+        PlatformProjectContext GetContext<TProject>()
+            where TProject : PlatformProject =>
             new(
                 Constants.ProjectType,
                 name,
