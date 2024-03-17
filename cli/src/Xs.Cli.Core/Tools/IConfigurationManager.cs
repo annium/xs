@@ -6,9 +6,9 @@ namespace Xs.Cli.Core.Tools;
 
 public interface IConfigurationManager
 {
-    Configuration Load(string folder);
+    SolutionConfiguration Load(string folder);
 
-    void Save(Configuration configuration, IReadOnlyCollection<IProject> projects);
+    void Save(SolutionConfiguration configuration, IReadOnlyCollection<IProject> projects);
 
     void Delete(string folder, IReadOnlyCollection<IProject> projects);
 }

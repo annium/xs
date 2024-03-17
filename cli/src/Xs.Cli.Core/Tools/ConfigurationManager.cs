@@ -36,7 +36,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         Logger = logger;
     }
 
-    public Configuration Load(string folder)
+    public SolutionConfiguration Load(string folder)
     {
         this.Trace($"Load configuration from {folder}");
         var directory = GetConfigurationFolder(new DirectoryInfo(folder));
@@ -44,7 +44,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         if (directory is null)
         {
             this.Trace($"Configuration missing in {folder}. Returning default");
-            return Configuration.Empty;
+            return SolutionConfiguration.Empty;
         }
 
         this.Trace($"Loaded configuration from {directory}");
@@ -55,7 +55,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
 
         this.Trace($"Configuration loaded from {folder}");
 
-        return new Configuration(
+        return new SolutionConfiguration(
             directory.FullName,
             config.Registry,
             File.Exists(credFile) ? File.ReadAllText(credFile) : string.Empty,
@@ -77,7 +77,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         }
     }
 
-    public void Save(Configuration configuration, IReadOnlyCollection<IProject> projects)
+    public void Save(SolutionConfiguration configuration, IReadOnlyCollection<IProject> projects)
     {
         this.Trace($"Save configuration in {configuration.Directory}");
         var cfg = _mapper.Map<Config>(configuration);

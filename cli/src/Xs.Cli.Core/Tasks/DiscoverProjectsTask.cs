@@ -129,7 +129,7 @@ public class DiscoverProjectsTask : ILogSubject
         IReadOnlyCollection<string> directories,
         IProject project,
         DiscoverConfiguration discoverCfg,
-        Configuration solutionCfg,
+        SolutionConfiguration solutionCfg,
         Action<IProject> addProject,
         Action<Exception> addError
     )
@@ -163,7 +163,7 @@ public class DiscoverProjectsTask : ILogSubject
         string directory,
         ISpecialProjectFactory factory,
         DiscoverConfiguration discoverCfg,
-        Configuration solutionCfg,
+        SolutionConfiguration solutionCfg,
         Action<Exception> addError
     )
     {

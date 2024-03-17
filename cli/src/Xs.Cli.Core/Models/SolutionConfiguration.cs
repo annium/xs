@@ -7,7 +7,7 @@ using Xs.Cli.Core.Tools;
 
 namespace Xs.Cli.Core.Models;
 
-public sealed record Configuration(
+public sealed record SolutionConfiguration(
     string Directory,
     Uri Registry,
     string Token,
@@ -15,7 +15,7 @@ public sealed record Configuration(
     PlatformConfigurationBase[] Types
 )
 {
-    public static Configuration Empty { get; } =
+    public static SolutionConfiguration Empty { get; } =
         new(
             string.Empty,
             new Uri("http://localhost"),
