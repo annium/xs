@@ -208,12 +208,11 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
             .OrderBy(x => x.Value.Name)
             .ToDictionary(
                 x => x.Value.Name,
-                x =>
-                    new XElement(
-                        El.PackageReference,
-                        new XAttribute(El.Include, x.Value.Name),
-                        new XAttribute(El.Version, x.Value.Version)
-                    )
+                x => new XElement(
+                    El.PackageReference,
+                    new XAttribute(El.Include, x.Value.Name),
+                    new XAttribute(El.Version, x.Value.Version)
+                )
             );
 
         // collect existing package references

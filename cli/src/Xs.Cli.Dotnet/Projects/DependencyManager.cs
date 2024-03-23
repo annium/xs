@@ -47,8 +47,8 @@ internal class DependencyManager : IDependencyManager
         if (index is null)
             return Array.Empty<Package>();
 
-        var registrations = index.Items
-            .SelectMany(i => i.Items)
+        var registrations = index
+            .Items.SelectMany(i => i.Items)
             .Select(i => i.CatalogEntry)
             .Select(e =>
             {

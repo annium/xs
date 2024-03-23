@@ -94,12 +94,11 @@ internal class ProjectLinker : IProjectLinker
                 continue;
 
             var usages = projects
-                .Select(
-                    p =>
-                        (
-                            project: p,
-                            package: p.Packages.FirstOrDefault(d => d.Value.Name.ToLowerInvariant() == name)?.Value
-                        )
+                .Select(p =>
+                    (
+                        project: p,
+                        package: p.Packages.FirstOrDefault(d => d.Value.Name.ToLowerInvariant() == name)?.Value
+                    )
                 )
                 .Where(p => p.package is not null)
                 .ToArray();

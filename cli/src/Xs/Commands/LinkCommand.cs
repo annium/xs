@@ -41,8 +41,8 @@ internal class LinkCommand
 
         foreach (var src in sources)
         {
-            var externalDependencies = src.Packages
-                .Select(x =>
+            var externalDependencies = src
+                .Packages.Select(x =>
                 {
                     var nameLower = x.Value.Name.ToLowerInvariant();
 

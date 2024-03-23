@@ -36,8 +36,8 @@ public class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        Migrator.Instance
-            .ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
+        Migrator
+            .Instance.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
             .WithScriptsFromAssembly(GetType().Assembly)
             .Execute();
     }

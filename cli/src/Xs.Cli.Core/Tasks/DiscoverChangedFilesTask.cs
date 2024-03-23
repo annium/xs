@@ -30,8 +30,8 @@ public class DiscoverChangedFilesTask
         if (!result.IsSuccess)
             throw new Exception($"Failed to get repo status at {root}");
 
-        var files = result.Output
-            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+        var files = result
+            .Output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(x => x.Trim())
             .SelectMany(ParseLine)
             .ToArray();

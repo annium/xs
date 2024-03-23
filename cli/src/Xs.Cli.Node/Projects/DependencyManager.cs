@@ -41,8 +41,8 @@ internal class DependencyManager : IDependencyManager
             .BearerAuthorization(accessToken);
 
         var index = await request.AsAsync(new Index());
-        var registrations = index.Versions.Keys
-            .Select(v =>
+        var registrations = index
+            .Versions.Keys.Select(v =>
             {
                 try
                 {

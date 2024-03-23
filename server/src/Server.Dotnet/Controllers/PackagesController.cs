@@ -39,19 +39,16 @@ public class PackagesController : ServerController<User>
             PackageStatus.Forbidden => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden },
             PackageStatus.Ok
                 => Ok(
-                    result.Data
-                        .Select(
-                            p =>
-                                new PackageResponse(
-                                    p.Id,
-                                    p.Name,
-                                    p.Version,
-                                    p.Description,
-                                    p.Published,
-                                    p.Downloads,
-                                    p.Dependencies
-                                )
-                        )
+                    result
+                        .Data.Select(p => new PackageResponse(
+                            p.Id,
+                            p.Name,
+                            p.Version,
+                            p.Description,
+                            p.Published,
+                            p.Downloads,
+                            p.Dependencies
+                        ))
                         .ToArray()
                 ),
             _ => NotFound()

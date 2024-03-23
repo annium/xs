@@ -31,12 +31,11 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
         int count
     )
     {
-        var request = Db.MetaPackages.Where(
-            x =>
-                x.OwnerId == userId
-                || x.Permissions.Any(
-                    p => p.Category == PermissionCategory.Owner && (p.Permission & Permission.Read) == Permission.Read
-                )
+        var request = Db.MetaPackages.Where(x =>
+            x.OwnerId == userId
+            || x.Permissions.Any(p =>
+                p.Category == PermissionCategory.Owner && (p.Permission & Permission.Read) == Permission.Read
+            )
         );
 
         if (type is not null)
@@ -65,8 +64,8 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
 
     public async Task<MetaPackageAccess?> TryGetAccessByIdAsync(Guid id)
     {
-        var data = await Db.MetaPackages
-            .LoadWith(x => x.Permissions)
+        var data = await Db
+            .MetaPackages.LoadWith(x => x.Permissions)
             .Where(x => x.Id == id)
             .Select(x => new { owner = x.OwnerId, permissions = x.Permissions })
             .FirstOrDefaultAsync();
@@ -76,15 +75,15 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
 
     public async Task<MetaPackage?> TryFindByTypeNameAsync(ProjectType type, string name)
     {
-        return await Db.MetaPackages
-            .LoadWith(x => x.Permissions)
+        return await Db
+            .MetaPackages.LoadWith(x => x.Permissions)
             .FirstOrDefaultAsync(x => x.Type == type && x.Name == name);
     }
 
     public async Task UpdateInfoAsync(Guid id, IPackageInfo info)
     {
-        await Db.MetaPackages
-            .Where(x => x.Id == id)
+        await Db
+            .MetaPackages.Where(x => x.Id == id)
             .Set(x => x.Name, info.Name)
             .Set(x => x.Version, info.Version)
             .Set(x => x.Description, info.Description)
@@ -100,8 +99,8 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
     public async Task UpdatePermissionsAsync(Guid id, IReadOnlyCollection<MetaPackagePermission> permissions)
     {
         foreach (var permission in permissions)
-            await Db.MetaPackagePermissions
-                .Where(p => p.MetaPackageId == id && p.Category == permission.Category)
+            await Db
+                .MetaPackagePermissions.Where(p => p.MetaPackageId == id && p.Category == permission.Category)
                 .Set(x => x.Permission, permission.Permission)
                 .UpdateAsync();
     }

@@ -5,8 +5,8 @@ using Annium.Extensions.Arguments;
 using Xs.Cli.Node;
 using Group = Xs.Commands.Group;
 
-await using var entry = Entrypoint.Default
-    .UseServicePack<Xs.ServicePack>()
+await using var entry = Entrypoint
+    .Default.UseServicePack<Xs.ServicePack>()
     .UseServicePack<Server.Client.ServicePack>()
     .UseServicePack<Xs.Cli.Core.ServicePack>()
     .UseServicePack<Xs.Cli.Dotnet.ServicePack>()

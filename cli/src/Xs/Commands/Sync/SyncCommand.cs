@@ -103,24 +103,23 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
 
                 var changes = repo.RetrieveStatus().Where(x => x.State is not FileStatus.Ignored).ToArray();
                 var touchedPaths = changes
-                    .SelectMany(
-                        x =>
-                            x.State switch
-                            {
-                                FileStatus.RenamedInIndex
-                                    => new[]
-                                    {
-                                        x.HeadToIndexRenameDetails.OldFilePath,
-                                        x.HeadToIndexRenameDetails.NewFilePath
-                                    },
-                                FileStatus.RenamedInWorkdir
-                                    => new[]
-                                    {
-                                        x.IndexToWorkDirRenameDetails.OldFilePath,
-                                        x.IndexToWorkDirRenameDetails.NewFilePath
-                                    },
-                                _ => x.FilePath.Yield()
-                            }
+                    .SelectMany(x =>
+                        x.State switch
+                        {
+                            FileStatus.RenamedInIndex
+                                => new[]
+                                {
+                                    x.HeadToIndexRenameDetails.OldFilePath,
+                                    x.HeadToIndexRenameDetails.NewFilePath
+                                },
+                            FileStatus.RenamedInWorkdir
+                                => new[]
+                                {
+                                    x.IndexToWorkDirRenameDetails.OldFilePath,
+                                    x.IndexToWorkDirRenameDetails.NewFilePath
+                                },
+                            _ => x.FilePath.Yield()
+                        }
                     )
                     .ToHashSet();
 
@@ -153,8 +152,8 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
 
             foreach (var localBranch in localBranches)
             {
-                var remoteBranch = remoteBranches.SingleOrDefault(
-                    x => x.UpstreamBranchCanonicalName == localBranch.CanonicalName
+                var remoteBranch = remoteBranches.SingleOrDefault(x =>
+                    x.UpstreamBranchCanonicalName == localBranch.CanonicalName
                 );
                 branchStates.Add(await SyncBranch(project, repo, remote, localBranch, remoteBranch, touchedPaths));
             }

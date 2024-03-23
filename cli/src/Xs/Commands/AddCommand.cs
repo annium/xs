@@ -109,13 +109,12 @@ internal class AddCommand
         {
             var targetsErrorView = string.Join(
                 Environment.NewLine,
-                targetGroups.Select(
-                    x =>
-                        string.Join(
-                            Environment.NewLine,
-                            $"{x.Key}:",
-                            string.Join(Environment.NewLine, x.Value.Select(p => $" - {p}"))
-                        )
+                targetGroups.Select(x =>
+                    string.Join(
+                        Environment.NewLine,
+                        $"{x.Key}:",
+                        string.Join(Environment.NewLine, x.Value.Select(p => $" - {p}"))
+                    )
                 )
             );
             throw new InvalidOperationException(

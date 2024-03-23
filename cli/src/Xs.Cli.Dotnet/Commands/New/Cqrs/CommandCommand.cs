@@ -9,8 +9,8 @@ using Xs.Cli.Core.Commands;
 using Xs.Cli.Core.Projects;
 using Xs.Cli.Core.Tasks;
 using Xs.Cli.Core.Tools;
-using CommandLine = Annium.Extensions.CommandLine.Cli;
 using static Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
+using CommandLine = Annium.Extensions.CommandLine.Cli;
 
 namespace Xs.Cli.Dotnet.Commands.New.Cqrs;
 

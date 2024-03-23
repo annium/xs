@@ -28,8 +28,8 @@ internal class ServicePack : ServicePackBase
         container.AddRuntime(GetType().Assembly);
         container.AddConfiguration(new WebHostConfiguration());
         container.AddConfiguration<Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
-        container.AddConfiguration<PostgreSqlConfiguration>(
-            x => x.AddYamlFile(Path.Combine("configuration", "db.yml"))
+        container.AddConfiguration<PostgreSqlConfiguration>(x =>
+            x.AddYamlFile(Path.Combine("configuration", "db.yml"))
         );
     }
 
@@ -43,8 +43,8 @@ internal class ServicePack : ServicePackBase
 
         // host
         container.Collection.AddCors();
-        container.Collection
-            .AddControllers()
+        container
+            .Collection.AddControllers()
             .AddApplicationPart(typeof(Main.ServicePack).Assembly)
             .AddApplicationPart(typeof(Dotnet.ServicePack).Assembly)
             .AddApplicationPart(typeof(Node.ServicePack).Assembly)

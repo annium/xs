@@ -13,12 +13,15 @@ internal class PackageRequestParser : IPackageRequestParser<Package, PackageDepe
     {
         var version = request.Versions[request.Version];
         var packageId = Guid.NewGuid();
-        var dependencies = version.Dependencies
-            .Select(d => new PackageDependency(packageId, DependencyType.Normal, d.Key, d.Value))
+        var dependencies = version
+            .Dependencies.Select(d => new PackageDependency(packageId, DependencyType.Normal, d.Key, d.Value))
             .Concat(
-                version.DevDependencies.Select(
-                    d => new PackageDependency(packageId, DependencyType.Dev, d.Key, d.Value)
-                )
+                version.DevDependencies.Select(d => new PackageDependency(
+                    packageId,
+                    DependencyType.Dev,
+                    d.Key,
+                    d.Value
+                ))
             )
             .ToArray();
 

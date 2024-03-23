@@ -84,13 +84,10 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         ) =>
             value
                 .Where(e => e.Value.StartsWith(FilePrefix))
-                .Select(
-                    e =>
-                        new Dependency<string>(
-                            type,
-                            ReadProjectDependency(project.Name, file, e.Value.Substring(FilePrefix.Length))
-                        )
-                );
+                .Select(e => new Dependency<string>(
+                    type,
+                    ReadProjectDependency(project.Name, file, e.Value.Substring(FilePrefix.Length))
+                ));
 
         IEnumerable<Dependency<Package>> GetPackageDependencies(
             IReadOnlyDictionary<string, string> value,
@@ -124,18 +121,14 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 
         static Dictionary<string, string>? GetDeps(IPlatformProject project, DependencyType type)
         {
-            var deps = project.Projects
-                .Where(e => e.Type == type)
-                .Select(
-                    e =>
-                        (
-                            name: e.Value.Name,
-                            value: FilePrefix + Path.GetRelativePath(project.Directory, e.Value.Directory)
-                        )
+            var deps = project
+                .Projects.Where(e => e.Type == type)
+                .Select(e =>
+                    (name: e.Value.Name, value: FilePrefix + Path.GetRelativePath(project.Directory, e.Value.Directory))
                 )
                 .Concat(
-                    project.Packages
-                        .Where(e => e.Type == type)
+                    project
+                        .Packages.Where(e => e.Type == type)
                         .Select(e => (name: e.Value.Name, value: e.Value.Version.ToString()))
                 )
                 .OrderBy(e => e.name)

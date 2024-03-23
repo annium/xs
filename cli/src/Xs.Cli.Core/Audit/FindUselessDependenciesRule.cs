@@ -18,8 +18,8 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject>
 
         // check project dependencies
         foreach (
-            var dependency in project.Projects
-                .Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer)
+            var dependency in project
+                .Projects.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer)
                 .ToArray()
         )
         {
@@ -40,8 +40,8 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject>
 
         // check package dependencies
         foreach (
-            var dependency in project.Packages
-                .Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer)
+            var dependency in project
+                .Packages.Where(d => d.Type != DependencyType.Dev && d.Type != DependencyType.Peer)
                 .ToArray()
         )
         {

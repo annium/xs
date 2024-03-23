@@ -72,15 +72,12 @@ public class PackagePublicationController : ServerController<User>
             {
                 var framework = dependencyGroup.TargetFramework.GetShortFolderName();
 
-                return dependencyGroup.Packages.Select(
-                    dependency =>
-                        new PackageDependency(
-                            packageId,
-                            framework,
-                            dependency.Id,
-                            dependency.VersionRange.ToNormalizedString()
-                        )
-                );
+                return dependencyGroup.Packages.Select(dependency => new PackageDependency(
+                    packageId,
+                    framework,
+                    dependency.Id,
+                    dependency.VersionRange.ToNormalizedString()
+                ));
             })
             .ToArray();
 

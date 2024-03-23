@@ -29,8 +29,8 @@ internal class PackageRepository<TPackage, TPackageDependency>
     public async Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
     {
         var upperName = name.ToUpperInvariant();
-        var entities = await Db.Packages
-            .Where(x => x.Name.ToUpper() == upperName)
+        var entities = await Db
+            .Packages.Where(x => x.Name.ToUpper() == upperName)
             .LoadWith(x => x.Dependencies)
             .OrderByDescending(p => p.Version)
             .ToArrayAsync();
@@ -41,8 +41,8 @@ internal class PackageRepository<TPackage, TPackageDependency>
     public async Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
     {
         var upperName = name.ToUpperInvariant();
-        var entity = await Db.Packages
-            .Where(x => x.Name.ToUpper() == upperName && x.Version == version)
+        var entity = await Db
+            .Packages.Where(x => x.Name.ToUpper() == upperName && x.Version == version)
             .LoadWith(x => x.Dependencies)
             .FirstOrDefaultAsync();
 
