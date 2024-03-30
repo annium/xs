@@ -1,6 +1,6 @@
 PROJECT_NAME := pkg
 TAG_PREFIX := registry.annium.com/$(PROJECT_NAME)
-TFM := net7.0
+TFM := net8.0
 BIN_DEBUG := bin/Debug/$(TFM)
 
 format:
@@ -47,7 +47,7 @@ deconfigure:
 
 
 run:
-	cd server/src/Server.Host && ./bin/Debug/net7.0/Server.Host
+	cd server/src/Server.Host && ./bin/Debug/$(TFM)/Server.Host
 
 publish-all: publish-server
 
