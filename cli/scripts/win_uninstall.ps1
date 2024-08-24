@@ -1,2 +1,2 @@
 Write-Output "Uninstall."
-dotnet tool uninstall -g xs
+dotnet tool uninstall -g xx

@@ -2,8 +2,8 @@
     <PropertyGroup>
         <PackageId>Server.Shared</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
-        <Description>XS registry shared project. Contains all shared between main and project servers, except separated DB stuff.</Description>
-        <Solutions>Xs</Solutions>
+        <Description>XX registry shared project. Contains all shared between main and project servers, except separated DB stuff.</Description>
+        <Solutions>Xx</Solutions>
         <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
         <DebugType>portable</DebugType>

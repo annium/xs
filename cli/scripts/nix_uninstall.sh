@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 echo "Uninstall."
-dotnet tool uninstall -g xs
+dotnet tool uninstall -g xx

@@ -4,18 +4,18 @@ TFM := net8.0
 BIN_DEBUG := bin/Debug/$(TFM)
 
 format:
-	xs format -sc -ic
+	xx format -sc -ic
 	dotnet csharpier .
 
 setup:
-	xs remote restore -user $(user) -password $(pass)
+	xx remote restore -user $(user) -password $(pass)
 	dotnet tool restore
 
 update:
-	xs update all dotnet -sc -ic
+	xx update all dotnet -sc -ic
 
 clean:
-	xs clean -sc -ic
+	xx clean -sc -ic
 
 build:
 	dotnet build --nologo -v q
@@ -58,11 +58,11 @@ publish-local: publish-server-local
 
 publish-server-local:
 	$(shell,find .. -type f -name nuget.config | xargs rm)
-	$(call publish,server,..,xs/server/src/Server.Host/app.local.dockerfile)
+	$(call publish,server,..,xx/server/src/Server.Host/app.local.dockerfile)
 
 db-drop:
 	docker-compose rm -vfs db
-	docker volume rm -f xs_db
+	docker volume rm -f xx_db
 	docker-compose up -d db
 
 link:

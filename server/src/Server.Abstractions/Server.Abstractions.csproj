@@ -2,8 +2,8 @@
     <PropertyGroup>
         <PackageId>Server.Abstractions</PackageId>
         <PackageVersion>0.1.0</PackageVersion>
-        <Description>XS registry abstract server project. Contains all stuff, shared between project servers. Is not intended to be used in main server.</Description>
-        <Solutions>Xs</Solutions>
+        <Description>XX registry abstract server project. Contains all stuff, shared between project servers. Is not intended to be used in main server.</Description>
+        <Solutions>Xx</Solutions>
         <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
         <DebugType>portable</DebugType>

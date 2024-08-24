@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageId>Xx</PackageId>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Description>Xx cli main project. Entrypoint, contains all commands and tasks. Uses registry client and type-related projects for work.</Description>
+        <Solutions>Xx</Solutions>
+        <TargetFramework>net8.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <DebugType>portable</DebugType>
+        <WarningsAsErrors>true</WarningsAsErrors>
+        <IsPackable>true</IsPackable>
+        <Nullable>enable</Nullable>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>xx</ToolCommandName>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../../server/src/Server.Client/Server.Client.csproj" />
+        <ProjectReference Include="../Xx.Cli.Dotnet/Xx.Cli.Dotnet.csproj" />
+        <ProjectReference Include="../Xx.Cli.Node/Xx.Cli.Node.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Annium.Core.Entrypoint" Version="0.1.0" />
+        <PackageReference Include="Annium.Net.Servers.Web" Version="0.1.0" />
+        <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+        <PackageReference Include="QuikGraph.Graphviz" Version="2.5.0" />
+    </ItemGroup>
+</Project>
