@@ -18,7 +18,18 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 {
     private static readonly string[] ImplicitPackages = { "Microsoft.AspNetCore.App" };
     private static readonly string[] BooleanStrings = { "true", "false" };
-    private static readonly string[] DisabledProperties = { El.PublishReadyToRun, El.PublishReadyToRunShowWarnings };
+    private static readonly string[] DisabledProperties =
+    {
+        El.PublishReadyToRun,
+        El.PublishReadyToRunShowWarnings,
+        El.PackageId,
+        El.PackageVersion,
+        El.Description,
+        El.TargetFramework,
+        El.DebugType,
+        El.WarningsAsErrors,
+        El.Nullable,
+    };
 
     public RawProject Load(string path, DiscoverConfiguration configuration)
     {
@@ -112,19 +123,19 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 
         if (project.Config.AddPreferredAttributes)
         {
-            newProps.Add(new XElement(El.PackageId, project.Name));
-            newProps.Add(new XElement(El.PackageVersion, project.Version));
-            newProps.Add(new XElement(El.Description, project.Description));
+            // newProps.Add(new XElement(El.PackageId, project.Name));
+            // newProps.Add(new XElement(El.PackageVersion, project.Version));
+            // newProps.Add(new XElement(El.Description, project.Description));
             newProps.Add(new XElement(El.Solutions, project.Solutions.Join(";")));
-            newProps.Add(new XElement(El.TargetFramework, project.TargetFramework));
+            // newProps.Add(new XElement(El.TargetFramework, project.TargetFramework));
             newProps.Add(new XElement(El.OutputType, project.OutputType));
-            newProps.Add(new XElement(El.DebugType, "portable"));
-            newProps.Add(new XElement(El.WarningsAsErrors, "true"));
+            // newProps.Add(new XElement(El.DebugType, "portable"));
+            // newProps.Add(new XElement(El.WarningsAsErrors, "true"));
             newProps.Add(new XElement(El.IsPackable, project is IPublishableProject ? "true" : "false"));
             if (project is TestProject)
                 newProps.Add(new XElement(El.IsTestProject, "true"));
 
-            newProps.Add(new XElement(El.Nullable, "enable"));
+            // newProps.Add(new XElement(El.Nullable, "enable"));
             // newProps.Add(new XElement(El.PublishReadyToRun, "true"));
             // newProps.Add(new XElement(El.PublishReadyToRunShowWarnings, "true"));
         }

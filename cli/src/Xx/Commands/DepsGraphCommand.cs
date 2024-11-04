@@ -84,7 +84,7 @@ file class GraphHandler : IHttpHandler
 
         await File.WriteAllTextAsync(dotFile, dot, CancellationToken.None);
 
-        await _shell.Cmd("dot", "-Tsvg", dotFile, "-o", svgFile).RunAsync(CancellationToken.None);
+        await _shell.Cmd($"dot -Tsvg {dotFile}-o {svgFile}").RunAsync(CancellationToken.None);
 
         ctx.Response.ContentType = "image/svg+xml";
         var content = await File.ReadAllBytesAsync(svgFile, CancellationToken.None);

@@ -30,6 +30,16 @@ internal class DataContractTypeInspector : TypeInspectorSkeleton
         _innerTypeInspector = innerTypeInspector;
     }
 
+    public override string GetEnumName(Type enumType, string name)
+    {
+        return name;
+    }
+
+    public override string GetEnumValue(object enumValue)
+    {
+        return enumValue.ToString() ?? string.Empty;
+    }
+
     public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
     {
         var properties = _innerTypeInspector.GetProperties(type, container);
@@ -45,9 +55,12 @@ internal class UriTypeConverter : IYamlTypeConverter
 {
     public bool Accepts(Type type) => type == typeof(Uri);
 
-    public object ReadYaml(IParser parser, Type type) => throw new NotImplementedException();
+    public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
+    {
+        throw new NotImplementedException();
+    }
 
-    public void WriteYaml(IEmitter emitter, object? value, Type type)
+    public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
     {
         var @event = new Scalar(null, null, ((Uri)value!).ToString(), ScalarStyle.Any, true, false);
         emitter.Emit(@event);
@@ -58,9 +71,12 @@ internal class ProjectTypeTypeConverter : IYamlTypeConverter
 {
     public bool Accepts(Type type) => type == typeof(ProjectType);
 
-    public object ReadYaml(IParser parser, Type type) => throw new NotImplementedException();
+    public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
+    {
+        throw new NotImplementedException();
+    }
 
-    public void WriteYaml(IEmitter emitter, object? value, Type type)
+    public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
     {
         var @event = new Scalar(null, null, ((ProjectType)value!).ToString(), ScalarStyle.Any, true, false);
         emitter.Emit(@event);
