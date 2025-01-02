@@ -24,7 +24,7 @@ public static class FilterExtensions
 
         var exactMatch = list.FirstOrDefault(i => getName(i).Equals(mask, comparison));
         if (exactMatch is not null && !exactMatch.Equals(default(T)!))
-            return new[] { exactMatch };
+            return [exactMatch];
 
         var masks = mask.Split(',', StringSplitOptions.RemoveEmptyEntries);
         var positive = masks.Where(x => !x.StartsWith('-')).ToArray();

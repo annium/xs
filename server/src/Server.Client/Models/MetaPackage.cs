@@ -14,5 +14,5 @@ public class MetaPackage
     public int Downloads { get; init; }
     public Guid OwnerId { get; init; }
     public string Owner { get; init; } = string.Empty;
-    public MetaPackagePermission[] Permissions { get; init; } = Array.Empty<MetaPackagePermission>();
+    public MetaPackagePermission[] Permissions { get; init; } = [];
 }

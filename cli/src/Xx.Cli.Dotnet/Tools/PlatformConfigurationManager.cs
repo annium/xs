@@ -14,7 +14,7 @@ internal class PlatformConfigurationManager : IPlatformConfigurationManager, ILo
 {
     private const string ConfigFile = "nuget.config";
     public ProjectType Type => Constants.ProjectType;
-    public string[] IgnorePatterns { get; } = { ConfigFile, "lcov.info" };
+    public string[] IgnorePatterns { get; } = [ConfigFile, "lcov.info"];
     public ILogger Logger { get; }
     private readonly string _registryName = "registry";
     private readonly string _defaultName = "nuget";

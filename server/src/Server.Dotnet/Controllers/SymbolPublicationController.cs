@@ -21,7 +21,7 @@ namespace Server.Dotnet.Controllers;
 public class SymbolPublicationController : ServerController<User>
 {
     private static readonly HashSet<string> _validExtensions =
-        new() { ".pdb", ".nuspec", ".xml", ".psmdcp", ".rels", ".p7s" };
+        [".pdb", ".nuspec", ".xml", ".psmdcp", ".rels", ".p7s"];
 
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
 

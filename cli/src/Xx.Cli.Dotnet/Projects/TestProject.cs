@@ -22,14 +22,13 @@ internal class TestProject : PlatformProject, ITestableProject
 
         if (Packages.Any(d => d.Value.Name == ProjectFactory.TestCoveragePackage))
             cmd.AddRange(
-                new[]
-                {
+                [
                     "/p:CollectCoverage=true",
                     "/p:CoverletOutputFormat=lcov",
                     "/p:CoverletOutput=./lcov",
                     "--",
                     $"logLevel={Enum.GetName(typeof(LogLevel), (LogLevel)LoggerConfiguration)!.ToLowerInvariant()}"
-                }
+                ]
             );
 
         if (!string.IsNullOrWhiteSpace(filter))

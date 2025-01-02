@@ -40,9 +40,9 @@ internal class AuditRulesCommandConfiguration
 {
     [Option("i")]
     [Help("Include specific rules.")]
-    public string[] Include { get; set; } = Array.Empty<string>();
+    public string[] Include { get; set; } = [];
 
     [Option("e")]
     [Help("Exclude specific rules.")]
-    public string[] Exclude { get; set; } = Array.Empty<string>();
+    public string[] Exclude { get; set; } = [];
 }

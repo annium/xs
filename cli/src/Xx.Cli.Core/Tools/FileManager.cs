@@ -7,7 +7,7 @@ namespace Xx.Cli.Core.Tools;
 public static class FileManager
 {
     public const string IgnoreFile = ".xx.ignore";
-    private static readonly string[] _globallyIgnoredDirectories = { ".git" };
+    private static readonly string[] _globallyIgnoredDirectories = [".git"];
 
     public static bool FindDirectory(
         string directory,

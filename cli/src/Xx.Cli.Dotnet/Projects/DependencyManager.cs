@@ -44,7 +44,7 @@ internal class DependencyManager : IDependencyManager
 
         var index = await LoadIndexAsync(registrationUrl);
         if (index is null)
-            return Array.Empty<Package>();
+            return [];
 
         var registrations = index
             .Items.SelectMany(i => i.Items)
@@ -97,7 +97,7 @@ internal class DependencyManager : IDependencyManager
 
     private class ServiceIndex
     {
-        public ServiceIndexResource[] Resources { get; set; } = Array.Empty<ServiceIndexResource>();
+        public ServiceIndexResource[] Resources { get; set; } = [];
     }
 
     private class ServiceIndexResource
@@ -111,7 +111,7 @@ internal class DependencyManager : IDependencyManager
 
     private class RegistrationIndex
     {
-        public RegistrationPage[] Items { get; set; } = Array.Empty<RegistrationPage>();
+        public RegistrationPage[] Items { get; set; } = [];
     }
 
     private class RegistrationPage
@@ -119,7 +119,7 @@ internal class DependencyManager : IDependencyManager
         [JsonPropertyName("@id")]
         public string Id { get; set; } = string.Empty;
 
-        public RegistrationLeaf[] Items { get; set; } = Array.Empty<RegistrationLeaf>();
+        public RegistrationLeaf[] Items { get; set; } = [];
     }
 
     private class RegistrationLeaf

@@ -69,7 +69,7 @@ public class FindUselessDependenciesRule<TProject> : IAuditRule<TProject>
     private IProject[] FindProjectDependenciesDeep(IProject project, Func<IProject, bool> isMatch)
     {
         if (project.Projects.Count == 0)
-            return Array.Empty<IProject>();
+            return [];
 
         var matches = new List<IProject>();
         foreach (var dependency in project.Projects)

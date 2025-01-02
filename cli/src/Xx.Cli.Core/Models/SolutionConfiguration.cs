@@ -21,7 +21,7 @@ public sealed record SolutionConfiguration(
             new Uri("http://localhost"),
             string.Empty,
             new Dictionary<ProjectType, Uri>(),
-            Array.Empty<PlatformConfigurationBase>()
+            []
         );
 
     public Uri Registry { get; private set; } = Registry;

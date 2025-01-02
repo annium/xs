@@ -172,6 +172,6 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         public Dictionary<ProjectType, Uri> Servers { get; private set; } = new();
 
         [DataMember(Order = 2)]
-        public PlatformConfigurationBase[] Types { get; private set; } = Array.Empty<PlatformConfigurationBase>();
+        public PlatformConfigurationBase[] Types { get; private set; } = [];
     }
 }

@@ -16,10 +16,10 @@ namespace Xx.Cli.Dotnet.Projects;
 
 internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 {
-    private static readonly string[] _implicitPackages = { "Microsoft.AspNetCore.App" };
-    private static readonly string[] _booleanStrings = { "true", "false" };
+    private static readonly string[] _implicitPackages = ["Microsoft.AspNetCore.App"];
+    private static readonly string[] _booleanStrings = ["true", "false"];
     private static readonly string[] _disabledProperties =
-    {
+    [
         El.PublishReadyToRun,
         El.PublishReadyToRunShowWarnings,
         El.PackageId,
@@ -28,8 +28,8 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         El.TargetFramework,
         El.DebugType,
         El.WarningsAsErrors,
-        El.Nullable,
-    };
+        El.Nullable
+    ];
 
     public RawProject Load(string path, DiscoverConfiguration configuration)
     {
@@ -67,7 +67,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 
         project.Solutions =
             properties.GetElement(El.Solutions)?.Value.Split(';').WhereNot(string.IsNullOrWhiteSpace).ToArray()
-            ?? Array.Empty<string>();
+            ?? [];
         project.TargetFramework = properties.GetElement(El.TargetFramework)?.Value ?? TargetFramework.Net7;
         if (configuration.SkipChecks)
             project.OutputType =

@@ -38,7 +38,7 @@ internal class WatchCommand
     private string _testFilter = string.Empty;
     private DiscoverConfiguration _discoverCfg = new();
     private CancellationToken _token;
-    private IProject[] _projects = Array.Empty<IProject>();
+    private IProject[] _projects = [];
 
     public WatchCommand(
         IProjectFactory projectFactory,

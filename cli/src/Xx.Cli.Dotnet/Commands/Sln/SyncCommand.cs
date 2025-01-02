@@ -90,7 +90,7 @@ public class SyncCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescript
 
         var result = await _shell.Cmd($"dotnet sln {slnFile} list").RunAsync();
         if (!result.IsSuccess)
-            return Enumerable.Empty<string>();
+            return [];
 
         var output = result.Output.Trim().Split(Environment.NewLine);
 

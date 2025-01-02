@@ -18,7 +18,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
     private string _root = Directory.GetCurrentDirectory();
 
     private string[] _extensions =
-    {
+    [
         "conf",
         "cs",
         "cshtml",
@@ -40,8 +40,8 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
         "scss",
         "sh",
         "ts",
-        "tsx",
-    };
+        "tsx"
+    ];
 
     private IList<Resource> _resources = new List<Resource>();
 

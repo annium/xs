@@ -106,16 +106,16 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
                     .SelectMany(x =>
                         x.State switch
                         {
-                            FileStatus.RenamedInIndex => new[]
-                            {
+                            FileStatus.RenamedInIndex =>
+                            [
                                 x.HeadToIndexRenameDetails.OldFilePath,
-                                x.HeadToIndexRenameDetails.NewFilePath,
-                            },
-                            FileStatus.RenamedInWorkdir => new[]
-                            {
+                                x.HeadToIndexRenameDetails.NewFilePath
+                            ],
+                            FileStatus.RenamedInWorkdir =>
+                            [
                                 x.IndexToWorkDirRenameDetails.OldFilePath,
-                                x.IndexToWorkDirRenameDetails.NewFilePath,
-                            },
+                                x.IndexToWorkDirRenameDetails.NewFilePath
+                            ],
                             _ => x.FilePath.Yield(),
                         }
                     )

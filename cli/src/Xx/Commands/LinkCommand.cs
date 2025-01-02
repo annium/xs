@@ -32,9 +32,9 @@ internal class LinkCommand
         CancellationToken ct
     )
     {
-        discoverCfg.Roots = new[] { cfg.Source };
+        discoverCfg.Roots = [cfg.Source];
         var sources = await _discoverTask.RunAsync(discoverCfg);
-        discoverCfg.Roots = new[] { cfg.Target };
+        discoverCfg.Roots = [cfg.Target];
         var targets = await _discoverTask.RunAsync(discoverCfg);
 
         this.Debug("Link {sourcesCount} projects to {targetsCount} external projects.", sources.Count, targets.Count);

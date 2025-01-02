@@ -20,8 +20,8 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
 {
     public const string ProjectFileExtension = ".csproj";
     public const string TestCoveragePackage = "coverlet.msbuild";
-    public static readonly string[] TrackedFileExtensions = new[] { ".cs" };
-    public static readonly string[] IgnoredFolders = new[] { "bin", "obj" };
+    public static readonly string[] TrackedFileExtensions = [".cs"];
+    public static readonly string[] IgnoredFolders = ["bin", "obj"];
     private const string ProjectFileMask = "*.csproj";
     public ILogger Logger { get; }
     public ProjectType Type => Constants.ProjectType;

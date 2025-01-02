@@ -18,8 +18,8 @@ namespace Xx.Cli.Node.Projects;
 internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFactory
 {
     public ProjectType Type => Constants.ProjectType;
-    public static readonly string[] TrackedFileExtensions = { ".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json" };
-    public static readonly string[] IgnoredFolders = { "build", "dist", ModulesDirectory };
+    public static readonly string[] TrackedFileExtensions = [".html", ".ts", ".tsx", ".js", ".scss", ".css", ".json"];
+    public static readonly string[] IgnoredFolders = ["build", "dist", ModulesDirectory];
     public const string ModulesDirectory = "node_modules";
     public const string ProjectFileName = "package.json";
     public const string LockFileName = "pnpm-lock.yaml";

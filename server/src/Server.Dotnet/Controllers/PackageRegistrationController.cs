@@ -39,7 +39,7 @@ public class PackageRegistrationController : ServerController<User>
         if (packages.Count == 0)
             return NotFound();
 
-        return Ok(new RegistrationIndexResponse(new[] { GetRegistrationPage(packages) }));
+        return Ok(new RegistrationIndexResponse([GetRegistrationPage(packages)]));
     }
 
     [HttpGet("v3/registration/{name}/page.json")]

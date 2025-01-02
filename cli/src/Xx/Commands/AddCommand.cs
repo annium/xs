@@ -95,7 +95,7 @@ internal class AddCommand
 
         // if no packages match name and no version given - resolve
         if (packages.Length == 0)
-            packages = new[] { await ResolvePackageAsync(discoverCfg, cfg, projectType, name, version) };
+            packages = [await ResolvePackageAsync(discoverCfg, cfg, projectType, name, version)];
         // if package already exists: if version exists - check it's same, otherwise - nothing to do.
         else if (version != Version.Empty)
             EnsureNoVersionConflict(packages, version);
@@ -166,7 +166,7 @@ internal class AddCommand
         var versions =
             registryUri is not null && !registryUri.IsFile
                 ? await dependencyManager.ResolveVersionsAsync(packageStub, registryUri, configuration.Token)
-                : Array.Empty<Package>();
+                : [];
 
         // fallback to default server result
         if (versions.Length == 0)

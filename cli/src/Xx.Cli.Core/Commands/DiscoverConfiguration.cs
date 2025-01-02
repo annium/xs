@@ -11,7 +11,7 @@ public class DiscoverConfiguration
     [Help("Allows to run command in specific folder.")]
     public string[] Roots
     {
-        get => _roots.Length > 0 ? _roots : new[] { Directory.GetCurrentDirectory() };
+        get => _roots.Length > 0 ? _roots : [Directory.GetCurrentDirectory()];
         set
         {
             var strings = value.Select(Path.GetFullPath).ToArray();
@@ -37,5 +37,5 @@ public class DiscoverConfiguration
     [Help("Allows to ignore inconsistency to fix fursther.")]
     public bool IgnoreConsistency { get; set; }
 
-    private string[] _roots = Array.Empty<string>();
+    private string[] _roots = [];
 }

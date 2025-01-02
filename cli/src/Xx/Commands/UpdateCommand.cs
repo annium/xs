@@ -92,7 +92,7 @@ internal class UpdateCommand
                     var versions =
                         registryUri is not null && !registryUri.IsFile
                             ? await dependencyManager.ResolveVersionsAsync(d, registryUri, configuration.Token)
-                            : Array.Empty<Package>();
+                            : [];
 
                     // fallback to default server result
                     if (versions.Length == 0)
