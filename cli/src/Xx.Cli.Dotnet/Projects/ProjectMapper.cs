@@ -5,16 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Annium;
 using Annium.Linq;
 using Xx.Cli.Core.Commands;
 using Xx.Cli.Core.Models;
 using Xx.Cli.Core.Projects;
+using Xx.Cli.Dotnet.Extensions;
 using Xx.Cli.Dotnet.Models;
 using Version = Xx.Cli.Core.Models.Version;
 
 namespace Xx.Cli.Dotnet.Projects;
 
-internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
+internal class ProjectMapper(IPackageVersionsManager packageVersionsManager)
+    : IProjectMapper<IPlatformProject, RawProject>
 {
     private static readonly string[] _implicitPackages = ["Microsoft.AspNetCore.App"];
     private static readonly string[] _booleanStrings = ["true", "false"];
@@ -25,7 +28,6 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         El.PackageId,
         El.PackageVersion,
         El.Description,
-        El.TargetFramework,
         El.DebugType,
         El.WarningsAsErrors,
         El.Nullable,
@@ -66,7 +68,12 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         project.Packages = GetReferenceElements(El.PackageReference)
             .Select(reference =>
             {
-                var package = ReadPackageDependency(project.Name, reference, configuration);
+                var package = ReadPackageDependency(
+                    Path.GetDirectoryName(path).NotNull(),
+                    project.Name,
+                    reference,
+                    configuration
+                );
                 var dependencyType =
                     reference.GetElements(El.PrivateAssets).Any() || reference.Attribute(El.PrivateAssets) is not null
                         ? DependencyType.Dev
@@ -130,7 +137,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         newProps.Add(remainingProps);
 
         // add package references group
-        newProps.AddAfterSelf(SavePackages(info, project.Packages));
+        newProps.AddAfterSelf(SavePackages(info, project.Directory, project.Packages));
 
         // add project references group
         newProps.AddAfterSelf(SaveProjects(info, dir, project.Config.DirectorySeparator[0], project.Projects));
@@ -194,7 +201,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         string NormalizePath(string path) => path.Replace('\\', '/').Replace('/', separator);
     }
 
-    private XElement SavePackages(XElement info, IReadOnlyCollection<Dependency<Package>> packages)
+    private XElement SavePackages(XElement info, string directory, IReadOnlyCollection<Dependency<Package>> packages)
     {
         // collect target refs
         var refs = packages
@@ -226,8 +233,14 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
             {
                 refs[include] = existingRef;
                 var newVersion = newRef.Attribute(El.Version);
-                if (newVersion is not null)
+                if (newVersion is null)
+                    continue;
+
+                // update inline version if defined
+                if (existingRef.Attribute(El.Version) is not null)
                     existingRef.SetAttributeValue(El.Version, newVersion.Value);
+                else
+                    packageVersionsManager.SaveVersion(directory, include, newVersion.Value);
             }
 
         var sortedRefs = refs.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase).ToArray();
@@ -280,7 +293,8 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         return path;
     }
 
-    private static Package ReadPackageDependency(
+    private Package ReadPackageDependency(
+        string directory,
         string project,
         XElement reference,
         DiscoverConfiguration configuration
@@ -293,52 +307,25 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         if (configuration.SkipChecks && _implicitPackages.Any(p => p == name))
             return new Package(Constants.ProjectType, name, new Version(1, 0, 0, string.Empty));
 
-        var rawVersion =
-            reference.Attribute(El.Version)?.Value
-            ?? throw new InvalidOperationException($"Project {project} has empty package dependency {name} version.");
+        var rawVersion = reference.Attribute(El.Version)?.Value ?? string.Empty;
 
-        if (!Version.TryParse(rawVersion, out var version))
-            throw new InvalidOperationException(
-                $"Project {project} package dependency {name} version {rawVersion} is invalid."
-            );
+        if (rawVersion == string.Empty)
+        {
+            var version =
+                packageVersionsManager.ResolveVersion(directory, name)
+                ?? throw new InvalidOperationException(
+                    $"Project {project} package dependency {name} version is defined not locally neither in Directory.Packages.props file(s)."
+                );
+            return new Package(Constants.ProjectType, name, version);
+        }
 
-        return new Package(Constants.ProjectType, name, version);
-    }
+        {
+            if (!Version.TryParse(rawVersion, out var version))
+                throw new InvalidOperationException(
+                    $"Project {project} package dependency {name} version {rawVersion} is invalid."
+                );
 
-    private static class El
-    {
-        public const string PackageId = "PackageId";
-        public const string PackageVersion = "PackageVersion";
-        public const string Description = "Description";
-        public const string Solutions = "Solutions";
-        public const string TargetFramework = "TargetFramework";
-        public const string DebugType = "DebugType";
-        public const string OutputType = "OutputType";
-        public const string WarningsAsErrors = "WarningsAsErrors";
-        public const string IsPackable = "IsPackable";
-        public const string IsTestProject = "IsTestProject";
-        public const string Nullable = "Nullable";
-        public const string PublishReadyToRun = "PublishReadyToRun";
-        public const string PublishReadyToRunShowWarnings = "PublishReadyToRunShowWarnings";
-        public const string PropertyGroup = "PropertyGroup";
-        public const string ItemGroup = "ItemGroup";
-        public const string PackageReference = "PackageReference";
-        public const string ProjectReference = "ProjectReference";
-        public const string PrivateAssets = "PrivateAssets";
-        public const string Include = "Include";
-        public const string Version = "Version";
-    }
-}
-
-internal static class XElementExtensions
-{
-    public static XElement? GetElement(this XElement container, string name)
-    {
-        return container.Element(XName.Get(name, container.Name.NamespaceName));
-    }
-
-    public static IEnumerable<XElement> GetElements(this XElement container, string name)
-    {
-        return container.Elements(XName.Get(name, container.Name.NamespaceName));
+            return new Package(Constants.ProjectType, name, version);
+        }
     }
 }
