@@ -28,7 +28,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         El.TargetFramework,
         El.DebugType,
         El.WarningsAsErrors,
-        El.Nullable
+        El.Nullable,
     ];
 
     public RawProject Load(string path, DiscoverConfiguration configuration)
@@ -46,28 +46,10 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
             ValidateProperties(path, properties);
 
         project.Name = Path.GetFileNameWithoutExtension(file.Name);
-        if (configuration.SkipChecks)
-        {
-            var rawVersion = properties.GetElement(El.PackageVersion)?.Value ?? "0.1.0";
-            if (!Version.TryParse(rawVersion, out var version))
-                throw new ArgumentException($"Project {project.Name} version {rawVersion} is invalid");
-
-            project.Version = version;
-            project.Description = properties.GetElement(El.Description)?.Value ?? string.Empty;
-        }
-        else
-        {
-            var rawVersion = properties.GetElement(El.PackageVersion)?.Value ?? string.Empty;
-            if (!Version.TryParse(rawVersion, out var version))
-                throw new ArgumentException($"Project {project.Name} version {rawVersion} is invalid");
-
-            project.Version = version;
-            project.Description = properties.GetElement(El.Description)?.Value ?? string.Empty;
-        }
+        project.Description = properties.GetElement(El.Description)?.Value ?? string.Empty;
 
         project.Solutions =
-            properties.GetElement(El.Solutions)?.Value.Split(';').WhereNot(string.IsNullOrWhiteSpace).ToArray()
-            ?? [];
+            properties.GetElement(El.Solutions)?.Value.Split(';').WhereNot(string.IsNullOrWhiteSpace).ToArray() ?? [];
         project.TargetFramework = properties.GetElement(El.TargetFramework)?.Value ?? TargetFramework.Net7;
         if (configuration.SkipChecks)
             project.OutputType =
@@ -257,34 +239,12 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 
     private static void ValidateProperties(string path, XElement properties)
     {
-        if (properties.GetElement(El.PackageId) is null)
-            throw new InvalidOperationException($"Project {path} has no {El.PackageId} defined.");
-
-        var name = properties.GetElement(El.PackageId)!.Value;
-
         var fileName = Path.GetFileNameWithoutExtension(path);
-        if (fileName != name)
-            throw new InvalidOperationException(
-                $"Project {path} project file name {fileName} doesn't match declared name {name}."
-            );
-
         var dirName = Path.GetFileName(Path.GetDirectoryName(path));
-        if (dirName != name)
+        if (dirName != fileName)
             throw new InvalidOperationException(
-                $"Project {path} project directory name {dirName} doesn't match declared name {name}."
+                $"Project {path} project directory name {dirName} doesn't match declared name {fileName}."
             );
-
-        if (properties.GetElement(El.PackageVersion) is null)
-            throw new InvalidOperationException($"Project {path} has no {El.PackageVersion} defined.");
-
-        if (properties.GetElement(El.Description) is null)
-            throw new InvalidOperationException($"Project {path} has no {El.Description} defined.");
-
-        if (properties.GetElement(El.TargetFramework) is null)
-            throw new InvalidOperationException($"Project {path} has no {El.TargetFramework} defined.");
-
-        if (properties.GetElement(El.DebugType)?.Value != "portable")
-            throw new InvalidOperationException($"Project {path} has no {El.DebugType} defined or it is not portable.");
 
         var outputType = properties.GetElement(El.OutputType)?.Value;
         var outputTypes = Enum.GetNames(typeof(OutputType));
@@ -292,16 +252,6 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
             throw new InvalidOperationException(
                 $"Project {path} has no {El.OutputType} or it is not in {string.Join(", ", outputTypes)}."
             );
-
-        EnsureValidBoolean(El.WarningsAsErrors);
-        if (properties.GetElement(El.WarningsAsErrors)?.Value != "true")
-            throw new InvalidOperationException(
-                $"Project {path} has no {El.WarningsAsErrors} defined or it is not true."
-            );
-
-        EnsureValidBoolean(El.IsPackable);
-        if (properties.GetElement(El.IsPackable) is null)
-            throw new InvalidOperationException($"Project {path} has no {El.IsPackable} defined.");
 
         EnsureValidBoolean(El.IsTestProject);
 

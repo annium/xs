@@ -102,7 +102,6 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
         var file = new FileInfo(Directory.GetFiles(directory, ProjectFileMask, SearchOption.TopDirectoryOnly).First());
         var (
             name,
-            version,
             description,
             solutions,
             targetFramework,
@@ -129,7 +128,6 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
             new(
                 Constants.ProjectType,
                 name,
-                version,
                 description,
                 directory,
                 projectDependencies,

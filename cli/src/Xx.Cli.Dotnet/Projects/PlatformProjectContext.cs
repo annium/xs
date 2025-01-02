@@ -22,7 +22,6 @@ internal class PlatformProjectContext : ProjectBaseContext
     public PlatformProjectContext(
         ProjectType type,
         string name,
-        Version version,
         string description,
         string directory,
         HashSet<Dependency<IProject>> projects,
@@ -37,7 +36,18 @@ internal class PlatformProjectContext : ProjectBaseContext
         LoggerConfiguration loggerConfiguration,
         ILogger logger
     )
-        : base(type, name, version, description, directory, projects, packages, shell, loggerConfiguration, logger)
+        : base(
+            type,
+            name,
+            new Version(0, 0, 0, string.Empty),
+            description,
+            directory,
+            projects,
+            packages,
+            shell,
+            loggerConfiguration,
+            logger
+        )
     {
         TargetFramework = targetFramework;
         OutputType = outputType;

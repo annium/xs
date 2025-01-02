@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using Xx.Cli.Core.Models;
 using Xx.Cli.Dotnet.Models;
-using Version = Xx.Cli.Core.Models.Version;
 
 namespace Xx.Cli.Dotnet.Projects;
 
 internal class RawProject
 {
     public string Name { get; set; } = string.Empty;
-    public Version Version { get; set; } = Version.Empty;
     public string Description { get; set; } = string.Empty;
     public IReadOnlyCollection<string> Solutions { get; set; } = Array.Empty<string>();
     public TargetFramework TargetFramework { get; set; } = TargetFramework.NetStandard21;
@@ -21,7 +19,6 @@ internal class RawProject
 
     public void Deconstruct(
         out string name,
-        out Version version,
         out string description,
         out IReadOnlyCollection<string> solutions,
         out TargetFramework targetFramework,
@@ -33,7 +30,6 @@ internal class RawProject
     )
     {
         name = Name;
-        version = Version;
         description = Description;
         solutions = Solutions;
         targetFramework = TargetFramework;
