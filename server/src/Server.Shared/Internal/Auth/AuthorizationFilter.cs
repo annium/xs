@@ -37,7 +37,7 @@ public class AuthorizationFilter : IAsyncAuthorizationFilter
         var userRepository = scope.ServiceProvider.Resolve<IUserRepository>();
 
         // try get token
-        Guid token = default(Guid);
+        Guid token = default;
         IActionResult? result = null;
         foreach (var tokenAccessor in tokenAccessors)
         {

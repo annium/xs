@@ -38,22 +38,22 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
 
     public SolutionConfiguration Load(string folder)
     {
-        this.Trace($"Load configuration from {folder}");
+        this.Trace<string>("Load configuration from {folder}", folder);
         var directory = GetConfigurationFolder(new DirectoryInfo(folder));
 
         if (directory is null)
         {
-            this.Trace($"Configuration missing in {folder}. Returning default");
+            this.Trace<string>("Configuration missing in {folder}. Returning default", folder);
             return SolutionConfiguration.Empty;
         }
 
-        this.Trace($"Loaded configuration from {directory}");
+        this.Trace("Loaded configuration from {directory}", directory);
         var cfgFile = GetConfigurationFile(directory.FullName);
         var credFile = GetCredentialsFile(directory.FullName);
 
         var config = _configurationBuilderFactory().AddYamlFile(cfgFile).Build<Config>();
 
-        this.Trace($"Configuration loaded from {folder}");
+        this.Trace<string>("Configuration loaded from {folder}", folder);
 
         return new SolutionConfiguration(
             directory.FullName,
@@ -79,7 +79,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
 
     public void Save(SolutionConfiguration configuration, IReadOnlyCollection<IProject> projects)
     {
-        this.Trace($"Save configuration in {configuration.Directory}");
+        this.Trace<string>("Save configuration in {directory}", configuration.Directory);
         var cfg = _mapper.Map<Config>(configuration);
         Write(GetConfigurationFile, Yaml.Serializer.Serialize(cfg));
         Write(GetCredentialsFile, configuration.Token);
@@ -90,18 +90,18 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         {
             if (!_platformManagers.ContainsKey(type))
             {
-                this.Trace($"{type} configuration manager not found");
+                this.Trace("{type} configuration manager not found", type);
                 continue;
             }
 
             var targets = projects.Where(p => p.Type.Equals(type)).ToArray();
             if (!targets.Any())
             {
-                this.Trace($"No {type} projects discovered to save configuration for");
+                this.Trace("No {type} projects discovered to save configuration for", type);
                 continue;
             }
 
-            this.Trace($"Save {type} -> {uri} configuration");
+            this.Trace("Save {type} -> {uri} configuration", type, uri);
             ignorePatterns.AddRange(_platformManagers[type].IgnorePatterns);
             var typeConfiguration = new ProjectTypeConfiguration(
                 uri,
@@ -112,7 +112,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
                 _platformManagers[type].Save(project, typeConfiguration);
         }
 
-        this.Trace($"Update ignore file in {configuration.Directory}");
+        this.Trace<string>("Update ignore file in {directory}", configuration.Directory);
         var ignoreFile = Path.Combine(configuration.Directory, IgnoreFile);
 
         if (File.Exists(ignoreFile))

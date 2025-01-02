@@ -1,21 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <PackageId>Server.Dotnet</PackageId>
-        <PackageVersion>0.1.0</PackageVersion>
-        <Description>XX registry .NET project. Handles interaction with NuGet.</Description>
         <Solutions>Xx</Solutions>
-        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
-        <DebugType>portable</DebugType>
-        <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
-        <Nullable>enable</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Server.Abstractions/Server.Abstractions.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="NuGet.Packaging" Version="6.8.0" />
+        <PackageReference Include="NuGet.Packaging" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Scripts/**/*.sql" />

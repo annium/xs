@@ -27,7 +27,7 @@ public class LibCommand : Command<LibCommandConfiguration, DiscoverConfiguration
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Debug($"Create library project {name} at {location}");
+        this.Debug<string, string>("Create library project {name} at {location}", name, location);
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.Lib");
         _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));

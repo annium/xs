@@ -24,7 +24,7 @@ public sealed record PackagesResponse
 
         Name = latest.Name;
         Description = latest.Description;
-        DistributionTags = new Dictionary<string, string>() { { "latest", latest.Version } };
+        DistributionTags = new Dictionary<string, string> { { "latest", latest.Version } };
         Versions = packages.Select(e => new PackageVersionResponse(e, urlTool)).ToDictionary(e => e.Version, e => e);
 
         var times = packages.ToDictionary(

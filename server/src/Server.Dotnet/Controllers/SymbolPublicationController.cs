@@ -20,7 +20,7 @@ namespace Server.Dotnet.Controllers;
 [Route("[area]")]
 public class SymbolPublicationController : ServerController<User>
 {
-    private static readonly HashSet<string> ValidExtensions =
+    private static readonly HashSet<string> _validExtensions =
         new() { ".pdb", ".nuspec", ".xml", ".psmdcp", ".rels", ".p7s" };
 
     private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
@@ -72,6 +72,6 @@ public class SymbolPublicationController : ServerController<User>
         static bool IsValidFile(string path) =>
             !string.IsNullOrEmpty(Path.GetFileName(path))
             && !string.IsNullOrEmpty(Path.GetExtension(path))
-            && ValidExtensions.Contains(Path.GetExtension(path));
+            && _validExtensions.Contains(Path.GetExtension(path));
     }
 }

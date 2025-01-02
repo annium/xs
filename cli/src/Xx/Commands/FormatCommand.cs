@@ -34,10 +34,10 @@ internal class FormatCommand
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
         var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).ToArray();
 
-        this.Debug($"Format {projects} project(s)");
+        this.Debug("Format {projects} project(s)", projects.Length);
         foreach (var project in projects)
         {
-            this.Debug($"Format {project}");
+            this.Debug("Format {project}", project);
             project.Save();
         }
     }

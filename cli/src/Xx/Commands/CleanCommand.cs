@@ -38,7 +38,7 @@ internal class CleanCommand
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
         var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).OfType<ICleanableProject>().ToArray();
 
-        this.Debug($"Clean {projects.Length} projects.");
+        this.Debug("Clean {length} projects.", projects.Length);
         await _runner.RunAsync(
             projects,
             (project, tkn) => project.CleanAsync(cfg.Force, tkn),

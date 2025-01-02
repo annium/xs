@@ -7,7 +7,6 @@ namespace Server.Shared.Repositories;
 internal interface IUserRepository
 {
     Task CreateAsync(User user);
-    Task<User?> TryGetById(Guid id);
     Task<User?> TryFindByLoginAsync(string login);
     Task<User?> TryFindByApiTokenAsync(Guid token);
     Task UpdateAsync(User user);

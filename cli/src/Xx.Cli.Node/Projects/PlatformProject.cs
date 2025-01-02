@@ -69,7 +69,7 @@ internal abstract class PlatformProject
 
     public Task ClearCacheAsync(CancellationToken ct)
     {
-        this.Debug($"Start {Name} cache clean.");
+        this.Debug<string>("Start {name} cache clean.", Name);
 
         // lock (CacheLocker)
         // {
@@ -84,14 +84,14 @@ internal abstract class PlatformProject
         //     }
         // }
 
-        this.Debug($"Finished {Name} cache clean.");
+        this.Debug<string>("Finished {name} cache clean.", Name);
 
         return Task.CompletedTask;
     }
 
     public async Task CleanAsync(bool force, CancellationToken ct)
     {
-        this.Debug($"Start {Name} clean.");
+        this.Debug<string>("Start {name} clean.", Name);
 
         DeleteDirectory(ProjectFactory.ModulesDirectory);
         DeleteFiles("*.tgz");
@@ -103,7 +103,7 @@ internal abstract class PlatformProject
         if (Scripts.ContainsKey("clean"))
             await RunAsync("pnpm clean", "pnpm run clean", ct);
 
-        this.Debug($"Finished {Name} clean.");
+        this.Debug<string>("Finished {name} clean.", Name);
     }
 
     public Task InstallAsync(bool force, CancellationToken ct)
@@ -114,7 +114,7 @@ internal abstract class PlatformProject
             DeleteFiles(ProjectFactory.LockFileName);
         }
 
-        return RunAsync("install", $"pnpm install --silent", ct);
+        return RunAsync("install", "pnpm install --silent", ct);
     }
 
     public async Task BuildAsync(Env env, bool force, CancellationToken ct)

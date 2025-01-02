@@ -8,6 +8,7 @@ using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Logging;
 using Xx.Cli.Core.Commands;
+using Xx.Cli.Core.Projects;
 using Xx.Cli.Core.Tasks;
 using Xx.Cli.Dotnet.Projects;
 
@@ -42,15 +43,15 @@ public class SyncCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescript
                 .Select(async name =>
                 {
                     var solutionProjects = projects.Where(x => x.Solutions.Contains(name)).ToArray();
-                    await SyncSolution(root, name, solutionProjects);
+                    await SyncSolutionAsync(root, name, solutionProjects);
                 })
         );
     }
 
-    private async Task SyncSolution(string root, string name, IReadOnlyCollection<IPlatformProject> projects)
+    private async Task SyncSolutionAsync(string root, string name, IReadOnlyCollection<IPlatformProject> projects)
     {
         var slnFile = SlnFile(root, name);
-        this.Debug($"Write solution file {slnFile}");
+        this.Debug<string>("Write solution file {slnFile}", slnFile);
         await _shell.Cmd($"dotnet new sln --name {name} --output {root} --force").RunAsync();
 
         var currentProjects = await GetSolutionProjectPathsAsync(root, name);
@@ -64,13 +65,13 @@ public class SyncCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescript
                 ?? throw new DirectoryNotFoundException($"Directory {project.Directory} has no parent directory");
             if (parent == root)
             {
-                this.Debug($"Add {project} to solution file at root");
+                this.Debug("Add {project} to solution file at root", project);
                 await _shell.Cmd($"dotnet sln {slnFile} add {project.File}").RunAsync();
             }
             else
             {
                 var folder = Path.GetRelativePath(root, parent);
-                this.Debug($"Add {project} to solution file at {folder}");
+                this.Debug<IProject, string>("Add {project} to solution file at {folder}", project, folder);
                 await _shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
             }
         }
@@ -78,7 +79,7 @@ public class SyncCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescript
         // delete missing projects
         foreach (var path in removedProjects)
         {
-            this.Debug($"Remove {path} from solution file");
+            this.Debug<string>("Remove {path} from solution file", path);
             await _shell.Cmd($"dotnet sln {slnFile} remove {path}").RunAsync();
         }
     }

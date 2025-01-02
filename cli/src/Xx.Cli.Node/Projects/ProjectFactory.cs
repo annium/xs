@@ -11,6 +11,7 @@ using Xx.Cli.Core.Logging;
 using Xx.Cli.Core.Models;
 using Xx.Cli.Core.Projects;
 using Xx.Cli.Core.Tools;
+using Xx.Cli.Node.Tools;
 
 namespace Xx.Cli.Node.Projects;
 
@@ -120,7 +121,7 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
                 _loggerConfiguration,
                 _provider.Resolve<ILogger>(),
                 _auditRules,
-                projectCfg as Tools.PlatformConfiguration ?? new Tools.PlatformConfiguration(),
+                projectCfg as PlatformConfiguration ?? new PlatformConfiguration(),
                 _mapper
             );
     }

@@ -20,7 +20,7 @@ internal class DependencyManager : IDependencyManager
 
     private readonly HttpClient _client =
         new(
-            new HttpClientHandler()
+            new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip,
                 MaxConnectionsPerServer = 16,

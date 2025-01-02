@@ -18,24 +18,37 @@ public class AddPackageDependencyTask : ILogSubject
     {
         var (_, package) = dependency;
 
-        this.Debug($"Add package {package} as {package.Type} dependency to {targets.Length} projects.");
+        this.Debug(
+            "Add package {package} as {package.Type} dependency to {targets.Length} projects.",
+            package,
+            package.Type,
+            targets.Length
+        );
         foreach (var target in targets)
         {
             if (target.Packages.Contains(dependency))
             {
                 this.Debug(
-                    $"Skip adding package {package} as dependency of {target}. {target} already uses {package}."
+                    "Skip adding package {package} as dependency of {target}. {target} already uses {package}.",
+                    package,
+                    target,
+                    target,
+                    package
                 );
                 continue;
             }
 
             if (target.Packages.Any(p => p.Value == package))
             {
-                this.Debug($"Delete package {package} as dependency of {target} due to dependency type change.");
+                this.Debug(
+                    "Delete package {package} as dependency of {target} due to dependency type change.",
+                    package,
+                    target
+                );
                 target.Packages.RemoveWhere(p => p.Value == package);
             }
 
-            this.Debug($"Add package {package} as dependency of {target}.");
+            this.Debug("Add package {package} as dependency of {target}.", package, target);
             target.Packages.Add(dependency);
             target.Save();
         }

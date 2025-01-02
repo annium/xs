@@ -78,19 +78,24 @@ internal class AddCommand
         {
             foreach (var project in projects)
             {
-                this.Debug($"Add '{projectType}' project dependency '{name}' to {targets.Length} projects.");
+                this.Debug(
+                    "Add '{projectType}' project dependency '{name}' to {targetsLength} projects.",
+                    projectType,
+                    project.Name,
+                    targets.Length
+                );
                 _addProjectDependencyTask.Run(targets, new Dependency<IProject>(dependencyType, project));
             }
 
             return;
         }
 
-        this.Debug($"Assume dependency {name} is package.");
+        this.Debug<string>("Assume dependency {name} is package.", name);
         var packages = allPackages.FilterMask(name).ToArray();
 
         // if no packages match name and no version given - resolve
         if (packages.Length == 0)
-            packages = new[] { await ResolvePackage(discoverCfg, cfg, projectType, name, version) };
+            packages = new[] { await ResolvePackageAsync(discoverCfg, cfg, projectType, name, version) };
         // if package already exists: if version exists - check it's same, otherwise - nothing to do.
         else if (version != Version.Empty)
             EnsureNoVersionConflict(packages, version);
@@ -139,7 +144,7 @@ internal class AddCommand
         );
     }
 
-    private async Task<Package> ResolvePackage(
+    private async Task<Package> ResolvePackageAsync(
         DiscoverConfiguration discoverCfg,
         AddCommandConfiguration cfg,
         ProjectType projectType,
@@ -172,12 +177,12 @@ internal class AddCommand
             );
 
         var package = cfg.Preview ? versions.FirstOrDefault() : versions.FirstOrDefault(v => v.Version.Suffix == "");
-        this.Trace($"Resolve: {packageStub} - {versions.Length} version(s)");
+        this.Trace("Resolve: {packageStub} - {versionsLength} version(s)", packageStub, versions.Length);
 
         if (package is null)
             throw new InvalidOperationException($"Resolve: {packageStub} unresolved");
 
-        this.Debug($"Resolve: {packageStub} -> {package}");
+        this.Debug("Resolve: {packageStub} -> {package}", packageStub, package);
 
         return package;
     }

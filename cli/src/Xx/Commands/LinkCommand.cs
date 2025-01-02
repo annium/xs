@@ -37,7 +37,7 @@ internal class LinkCommand
         discoverCfg.Roots = new[] { cfg.Target };
         var targets = await _discoverTask.RunAsync(discoverCfg);
 
-        this.Debug($"Link {sources.Count} projects to {targets.Count} external projects.");
+        this.Debug("Link {sourcesCount} projects to {targetsCount} external projects.", sources.Count, targets.Count);
 
         foreach (var src in sources)
         {
@@ -56,13 +56,13 @@ internal class LinkCommand
             foreach (var (package, project) in externalDependencies)
             {
                 // otherwise - it's external and it's reference is converted to project
-                this.Trace($"Update {src}: replace {package} with {project}.");
+                this.Trace("Update {src}: replace {package} with {project}.", src, package, project);
 
                 src.Packages.Remove(package);
                 src.Projects.Add(new Dependency<IProject>(package.Type, project!));
             }
 
-            this.Debug($"Updated {src}.");
+            this.Debug("Updated {src}.", src);
 
             src.Save();
         }

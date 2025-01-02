@@ -44,7 +44,7 @@ public class PackagePublicationController : ServerController<User>
         if (packageStream is null)
             return BadRequest("Use multipart/form-data to upload package.");
 
-        var request = await ReadPackageFromStream(packageStream);
+        var request = await ReadPackageFromStreamAsync(packageStream);
 
         var result = await _packageService.PublishPackageAsync(GetUser(), request);
         switch (result.Status)
@@ -58,7 +58,7 @@ public class PackagePublicationController : ServerController<User>
         }
     }
 
-    private async Task<PackageRequest> ReadPackageFromStream(Stream packageStream)
+    private async Task<PackageRequest> ReadPackageFromStreamAsync(Stream packageStream)
     {
         using var packageReader = new PackageArchiveReader(packageStream, leaveStreamOpen: true);
 

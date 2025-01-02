@@ -5,18 +5,18 @@ namespace Server.Shared.Domain.Models;
 
 public sealed record ProjectType
 {
-    private static readonly List<ProjectType> Types = new();
+    private static readonly List<ProjectType> _types = new();
 
     public static ProjectType Register(string name)
     {
-        if (Types.FindIndex(e => e._name == name) < 0)
-            Types.Add(new ProjectType(name));
+        if (_types.FindIndex(e => e._name == name) < 0)
+            _types.Add(new ProjectType(name));
 
         return Get(name);
     }
 
     public static ProjectType Get(string name) =>
-        Types.Find(e => e._name == name) ?? throw new Exception($"Project type {name} is not registered.");
+        _types.Find(e => e._name == name) ?? throw new Exception($"Project type {name} is not registered.");
 
     private readonly string _name;
 

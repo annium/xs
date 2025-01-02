@@ -56,7 +56,7 @@ internal class UseCommand
 
         if (targets.Length == 0)
         {
-            this.Info($"No projects found to update.");
+            this.Info("No projects found to update.");
             return;
         }
 

@@ -36,7 +36,7 @@ public class Version : Comparable<Version>
 
             // drop scm hash
             var hasHash = parts[2].Contains('+');
-            var suffix = patchParts.Length == 1 || hasHash ? string.Empty : parts[2].Substring(patchParts[0].Length);
+            var suffix = patchParts.Length == 1 || hasHash ? string.Empty : parts[2][patchParts[0].Length..];
 
             version = new Version(major, minor, patch, suffix);
 

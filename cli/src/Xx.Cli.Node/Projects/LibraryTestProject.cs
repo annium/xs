@@ -23,7 +23,7 @@ internal class LibraryTestProject : PlatformProject, IPublishableProject, ITesta
         var fileName = $"{Name}-{version}.tgz";
         if (Name.StartsWith('@'))
         {
-            var parts = Name.Substring(1).Split('/');
+            var parts = Name[1..].Split('/');
             fileName = $"{parts[0]}-{parts[1]}-{version}.tgz";
         }
 
@@ -73,6 +73,6 @@ internal class LibraryTestProject : PlatformProject, IPublishableProject, ITesta
 
     public Task TestAsync(Env env, string filter, CancellationToken ct) =>
         string.IsNullOrWhiteSpace(filter)
-            ? RunAsync("test", $"pnpm test", ct)
+            ? RunAsync("test", "pnpm test", ct)
             : RunAsync("test", $"pnpm test --testNamePattern {filter}", ct);
 }

@@ -22,7 +22,7 @@ internal class LibraryProject : PlatformProject, IPublishableProject
         var fileName = $"{Name}-{version}.tgz";
         if (Name.StartsWith('@'))
         {
-            var parts = Name.Substring(1).Split('/');
+            var parts = Name[1..].Split('/');
             fileName = $"{parts[0]}-{parts[1]}-{version}.tgz";
         }
 

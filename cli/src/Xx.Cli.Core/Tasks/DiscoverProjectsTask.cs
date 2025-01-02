@@ -39,7 +39,7 @@ public class DiscoverProjectsTask : ILogSubject
         var roots = discoverCfg.Roots;
         var solutionCfg = _configurationManager.Load(discoverCfg.Root);
 
-        this.Debug($"Start discovery of {string.Join(", ", roots)}.");
+        this.Debug<string>("Start discovery of {roots}.", string.Join(", ", roots));
 
         var candidates = FindProjectCandidates(roots);
         var errors = new List<Exception>();
@@ -71,13 +71,13 @@ public class DiscoverProjectsTask : ILogSubject
         LinkProjects(projects, packages, discoverCfg, errors.Add, ThrowIfAnyErrors);
         ThrowIfAnyErrors();
 
-        this.Debug($"Discovery finished. Found {projects.Count} projects.");
+        this.Debug("Discovery finished. Found {projectsCount} projects.", projects.Count);
 
         if (!discoverCfg.Changed)
             return result;
 
         // filter project with changed files only.
-        this.Debug($"Discovery finished. Found {projects.Count} projects.");
+        this.Debug("Discovery finished. Found {projectsCount} projects.", projects.Count);
         var changes = await new DiscoverChangedFilesTask(_shell).RunAsync(roots);
 
         var filteredProjects = result.Where(x => changes.Any(c => c.Contains(x.Directory))).ToArray();
@@ -99,7 +99,7 @@ public class DiscoverProjectsTask : ILogSubject
 
         foreach (var root in roots)
         {
-            this.Debug($"Start project candidates lookup at {root}.");
+            this.Debug<string>("Start project candidates lookup at {root}.", root);
 
             FileManager.WalkDirectories(
                 root,
@@ -114,14 +114,18 @@ public class DiscoverProjectsTask : ILogSubject
                     }
 
                     results[directory] = factory;
-                    this.Debug($"{factory.Type} project candidate discovered at {directory}.");
+                    this.Debug<ProjectType, string>(
+                        "{factoryType} project candidate discovered at {directory}.",
+                        factory.Type,
+                        directory
+                    );
 
                     return true;
                 },
                 SearchOptions.IgnoreChildrenOnMatch
             );
 
-            this.Debug($"{results.Count} project candidate(s) found.");
+            this.Debug("{resultsCount} project candidate(s) found.", results.Count);
         }
 
         return results;
@@ -136,7 +140,7 @@ public class DiscoverProjectsTask : ILogSubject
         Action<Exception> addError
     )
     {
-        this.Debug($"Discover {project} referenced projects.");
+        this.Debug("Discover {project} referenced projects.", project);
         var lookupDirectories = project.Projects.Select(x => x.Value.Directory).ToArray();
 
         foreach (var directory in lookupDirectories)
@@ -173,7 +177,12 @@ public class DiscoverProjectsTask : ILogSubject
         {
             var projectCfg = solutionCfg.Types.SingleOrDefault(x => x.Type == factory.Type);
             var project = factory.CreateProject(directory, discoverCfg, projectCfg);
-            this.Debug($"{project.Type} {project} created at {directory}");
+            this.Debug<ProjectType, IProject, string>(
+                "{projectType} {project} created at {directory}",
+                project.Type,
+                project,
+                directory
+            );
             return project;
         }
         catch (Exception exception)

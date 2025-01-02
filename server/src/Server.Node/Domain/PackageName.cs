@@ -12,7 +12,7 @@ public class PackageName
         if (!value.StartsWith('@'))
             return new PackageName(null, value);
 
-        var parts = value.Substring(1).Split('/');
+        var parts = value[1..].Split('/');
         if (parts.Length != 2)
             Fail();
 

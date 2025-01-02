@@ -34,7 +34,7 @@ public class AppReactCommand
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Debug($"Create app project {name} at {location}");
+        this.Debug<string, string>("Create app project {name} at {location}", name, location);
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.AppReact");
         _templateWriter.SetRoot(Path.Combine(location, PackageName.GetPlainName(name)));

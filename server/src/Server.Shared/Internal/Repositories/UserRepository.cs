@@ -18,11 +18,6 @@ internal class UserRepository : RepositoryBase<Connection>, IUserRepository
         await Db.Users.InsertAsync(user);
     }
 
-    public async Task<User?> TryGetById(Guid id)
-    {
-        return await Db.Users.FirstOrDefaultAsync(x => x.Id == id);
-    }
-
     public async Task<User?> TryFindByLoginAsync(string login)
     {
         return await Db.Users.FirstOrDefaultAsync(x => x.Login == login);

@@ -33,7 +33,7 @@ public class WebAssemblyAppCommand
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Debug($"Create WebAssembly Application project {name} at {location}");
+        this.Debug<string, string>("Create WebAssembly Application project {name} at {location}", name, location);
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.WebAssemblyApplication");
         _templateWriter.SetRoot(Path.Combine(location, name));

@@ -12,6 +12,6 @@ internal class TestProject : PlatformProject, ITestableProject
 
     public Task TestAsync(Env env, string filter, CancellationToken ct) =>
         string.IsNullOrWhiteSpace(filter)
-            ? RunAsync("test", $"pnpm test", ct)
+            ? RunAsync("test", "pnpm test", ct)
             : RunAsync("test", $"pnpm test --testNamePattern {filter}", ct);
 }

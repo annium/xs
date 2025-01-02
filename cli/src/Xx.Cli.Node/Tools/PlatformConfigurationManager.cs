@@ -22,13 +22,17 @@ internal class PlatformConfigurationManager : IPlatformConfigurationManager, ILo
 
     public void Save(IProject project, ProjectTypeConfiguration configuration)
     {
-        this.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+        this.Trace("Save configuration for {projectType} project {project}", Constants.ProjectType, project);
 
         // with NPM currently it's not possible to publish unscoped packages privately
         var scope = GetScope(project.Name);
         if (string.IsNullOrWhiteSpace(scope))
         {
-            this.Trace($"Skip configuration save for {Constants.ProjectType} project {project}: no scope defined");
+            this.Trace(
+                "Skip configuration save for {projectType} project {project}: no scope defined",
+                Constants.ProjectType,
+                project
+            );
             return;
         }
 

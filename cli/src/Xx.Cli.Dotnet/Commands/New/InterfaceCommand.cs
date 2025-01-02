@@ -62,13 +62,13 @@ public class InterfaceCommand
         if (names.Count == 0)
             return;
 
-        this.Debug($"{names.Count} interface(s) to create");
+        this.Debug("{namesCount} interface(s) to create", names.Count);
 
         Directory.CreateDirectory(output);
 
         foreach (var name in names)
         {
-            this.Debug($"Create interface {name} at {output}");
+            this.Debug<string, string>("Create interface {name} at {output}", name, output);
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Interface");
             _templateWriter.SetRoot(output);

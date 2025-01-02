@@ -45,7 +45,7 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
             await Task.WhenAll(
                 projects.Select(async project =>
                 {
-                    states.Add(await _synchronizer.SyncProject(project));
+                    states.Add(await _synchronizer.SyncProjectAsync(project));
                     Console.Write('.');
                 })
             );
@@ -93,7 +93,7 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
 
     private class Synchronizer(IShell shell)
     {
-        public async Task<SyncProjectState> SyncProject(SyncProject project)
+        public async Task<SyncProjectState> SyncProjectAsync(SyncProject project)
         {
             try
             {
@@ -106,26 +106,24 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
                     .SelectMany(x =>
                         x.State switch
                         {
-                            FileStatus.RenamedInIndex
-                                => new[]
-                                {
-                                    x.HeadToIndexRenameDetails.OldFilePath,
-                                    x.HeadToIndexRenameDetails.NewFilePath
-                                },
-                            FileStatus.RenamedInWorkdir
-                                => new[]
-                                {
-                                    x.IndexToWorkDirRenameDetails.OldFilePath,
-                                    x.IndexToWorkDirRenameDetails.NewFilePath
-                                },
-                            _ => x.FilePath.Yield()
+                            FileStatus.RenamedInIndex => new[]
+                            {
+                                x.HeadToIndexRenameDetails.OldFilePath,
+                                x.HeadToIndexRenameDetails.NewFilePath,
+                            },
+                            FileStatus.RenamedInWorkdir => new[]
+                            {
+                                x.IndexToWorkDirRenameDetails.OldFilePath,
+                                x.IndexToWorkDirRenameDetails.NewFilePath,
+                            },
+                            _ => x.FilePath.Yield(),
                         }
                     )
                     .ToHashSet();
 
                 var remoteStates = new List<SyncRemoteState>();
                 foreach (var remote in repo.Network.Remotes)
-                    remoteStates.Add(await SyncRemote(project, repo, remote, localBranches, touchedPaths));
+                    remoteStates.Add(await SyncRemoteAsync(project, repo, remote, localBranches, touchedPaths));
 
                 var changeStates = Helper.GetProjectChanges(project);
 
@@ -137,7 +135,7 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
             }
         }
 
-        private async Task<SyncRemoteState> SyncRemote(
+        private async Task<SyncRemoteState> SyncRemoteAsync(
             SyncProject project,
             Repository repo,
             LibGit2Sharp.Remote remote,
@@ -155,13 +153,13 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
                 var remoteBranch = remoteBranches.SingleOrDefault(x =>
                     x.UpstreamBranchCanonicalName == localBranch.CanonicalName
                 );
-                branchStates.Add(await SyncBranch(project, repo, remote, localBranch, remoteBranch, touchedPaths));
+                branchStates.Add(await SyncBranchAsync(project, repo, remote, localBranch, remoteBranch, touchedPaths));
             }
 
             return new SyncRemoteState(remote.Name, branchStates);
         }
 
-        private async Task<SyncBranchState> SyncBranch(
+        private async Task<SyncBranchState> SyncBranchAsync(
             SyncProject project,
             Repository repo,
             LibGit2Sharp.Remote remote,
@@ -176,7 +174,7 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
                 if (!project.Config.Push)
                     return new SyncBranchState(name, SyncBranchStatus.KeptLocal);
 
-                await Push(repo, remote, localBranch);
+                await PushAsync(repo, remote, localBranch);
 
                 return new SyncBranchState(name, SyncBranchStatus.Pushed);
             }
@@ -198,14 +196,14 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
             // if push needed
             if (localCommits.Contains(remoteHead))
             {
-                await Push(repo, remote, localBranch);
+                await PushAsync(repo, remote, localBranch);
                 return new SyncBranchState(name, SyncBranchStatus.Pushed);
             }
 
             // if pull needed
             if (remoteCommits.Contains(localHead))
             {
-                var status = await Pull(repo, remote, localBranch, localHead, remoteHead, touchedPaths);
+                var status = await PullAsync(repo, remote, localBranch, localHead, remoteHead, touchedPaths);
                 return new SyncBranchState(name, status);
             }
 
@@ -216,7 +214,7 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
             );
         }
 
-        private async Task<SyncBranchStatus> Pull(
+        private async Task<SyncBranchStatus> PullAsync(
             Repository repo,
             LibGit2Sharp.Remote remote,
             Branch localBranch,
@@ -238,7 +236,7 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
             return SyncBranchStatus.Pulled;
         }
 
-        private async Task Push(Repository repo, LibGit2Sharp.Remote remote, Branch localBranch)
+        private async Task PushAsync(Repository repo, LibGit2Sharp.Remote remote, Branch localBranch)
         {
             await shell
                 .Cmd($"git push {remote.Name} {localBranch.CanonicalName}")
@@ -287,7 +285,7 @@ internal class SyncCommand : AsyncCommand<SyncCommand.SyncCommandConfiguration>,
         Pushed,
         Pulled,
         PullAvoided,
-        Diverged
+        Diverged,
     }
 
     private class Visualizer

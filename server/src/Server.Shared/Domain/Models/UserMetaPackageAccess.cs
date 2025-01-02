@@ -5,7 +5,7 @@ using Server.Shared.Domain.Enums;
 
 namespace Server.Shared.Domain.Models;
 
-public record struct UserMetaPackageAccess
+public readonly record struct UserMetaPackageAccess
 {
     public bool IsOwner { get; }
     public bool IsWorld { get; }

@@ -2,15 +2,15 @@
 using System.Linq;
 using Annium.Core.Entrypoint;
 using Annium.Extensions.Arguments;
-using Xx;
+using Xx.Cli.Node;
 using Group = Xx.Commands.Group;
 
 await using var entry = Entrypoint
-    .Default.UseServicePack<ServicePack>()
+    .Default.UseServicePack<Xx.ServicePack>()
     .UseServicePack<Server.Client.ServicePack>()
     .UseServicePack<Xx.Cli.Core.ServicePack>()
     .UseServicePack<Xx.Cli.Dotnet.ServicePack>()
-    .UseServicePack<Xx.Cli.Node.ServicePack>()
+    .UseServicePack<ServicePack>()
     .Setup();
 
 var (provider, ct) = entry;
@@ -18,7 +18,7 @@ var verbose = args.Contains("-verbose");
 
 try
 {
-    Commander.Run<Group>(provider, args, ct);
+    await Commander.RunAsync<Group>(provider, args, ct);
 }
 catch (AggregateException exception)
 {

@@ -33,7 +33,7 @@ public class LibTestsCommand
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Debug($"Create library tests project {name} at {location}");
+        this.Debug<string, string>("Create library tests project {name} at {location}", name, location);
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.LibTests");
         _templateWriter.SetRoot(Path.Combine(location, name));

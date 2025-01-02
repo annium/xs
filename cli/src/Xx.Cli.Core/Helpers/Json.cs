@@ -5,7 +5,7 @@ namespace Xx.Cli.Core.Helpers;
 
 public static class Json
 {
-    private static readonly JsonSerializerOptions Options =
+    private static readonly JsonSerializerOptions _options =
         new()
         {
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
@@ -16,7 +16,7 @@ public static class Json
 
     public static T Read<T>(string value)
     {
-        return JsonSerializer.Deserialize<T>(value, Options)!;
+        return JsonSerializer.Deserialize<T>(value, _options)!;
     }
 
     public static T ReadFile<T>(string file)
@@ -26,7 +26,7 @@ public static class Json
 
     public static string Write<T>(T data)
     {
-        return JsonSerializer.Serialize(data, Options);
+        return JsonSerializer.Serialize(data, _options);
     }
 
     public static void WriteFile<T>(string file, T data)

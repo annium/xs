@@ -49,11 +49,11 @@ internal class DeleteCommand
         var targets = allProjects.FilterMask(cfg.Mask).ToArray();
         if (targets.Length == 0)
         {
-            this.Info($"No projects found to add dependency to.");
+            this.Info("No projects found to add dependency to.");
             return;
         }
 
-        this.Debug($"Try delete dependency {name} from {targets.Length} projects.");
+        this.Debug("Try delete dependency {name} from {targetsLength} projects.", name, targets.Length);
 
         var projects = allProjects.FilterMask(name).ToArray();
         if (projects.Length > 0)
@@ -69,7 +69,7 @@ internal class DeleteCommand
         // if no packages found
         if (packages.Length == 0)
         {
-            this.Info($"Dependency {name} is neither project nor project dependency. Nothing to do.");
+            this.Info<string>("Dependency {name} is neither project nor project dependency. Nothing to do.", name);
             return;
         }
 

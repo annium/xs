@@ -85,11 +85,15 @@ public abstract class ProjectBase : IProject, ILogSubject
                 ?? throw new DirectoryNotFoundException($"Directory {Directory} has no parent directory");
             if (!SysDirectory.Exists(parentDirectory))
             {
-                this.Trace($"Create {Name} missing target parent directory {parentDirectory}");
+                this.Trace<string, string>(
+                    "Create {name} missing target parent directory {parentDirectory}",
+                    Name,
+                    parentDirectory
+                );
                 SysDirectory.CreateDirectory(parentDirectory);
             }
 
-            this.Debug($"Move {Name} to {Directory}");
+            this.Debug<string, string>("Move {name} to {directory}", Name, Directory);
 
             SysDirectory.Move(_currentDirectory, Directory);
 
@@ -133,7 +137,7 @@ public abstract class ProjectBase : IProject, ILogSubject
 
     protected async Task RunAsync(string operation, string command, CancellationToken ct)
     {
-        this.Trace($"Start {Name} {operation}.");
+        this.Trace<string, string>("Start {name} {operation}.", Name, operation);
 
         var result = await Shell
             .Cmd(command)
@@ -142,7 +146,7 @@ public abstract class ProjectBase : IProject, ILogSubject
             .RunAsync(ct);
 
         if (result.IsSuccess)
-            this.Trace($"Finished {Name} {operation}.");
+            this.Trace<string, string>("Finished {name} {operation}.", Name, operation);
         else
             throw new Exception(
                 $"Failed {Name} {operation}:{Environment.NewLine}{result.Output}{Environment.NewLine}{result.Error}"

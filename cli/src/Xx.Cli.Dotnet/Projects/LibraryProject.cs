@@ -26,9 +26,9 @@ internal class LibraryProject : PlatformProject, IPublishableProject
 
         var cmd = new List<string>();
         cmd.Add($"dotnet pack {File}");
-        cmd.Add($"--output .");
+        cmd.Add("--output .");
         cmd.Add($"-p:PackageVersion={version}");
-        cmd.Add($"-p:SymbolPackageFormat=snupkg");
+        cmd.Add("-p:SymbolPackageFormat=snupkg");
 
         await RunAsync("pack", string.Join(' ', cmd), ct);
 
@@ -37,7 +37,7 @@ internal class LibraryProject : PlatformProject, IPublishableProject
 
     public async Task PublishAsync(Uri registry, string accessToken, Version version, CancellationToken ct)
     {
-        this.Info($"Start {Name}@{Version} publish.");
+        this.Info("Start {name}@{version} publish.", Name, Version);
 
         var packageFile = await PackAsync(version, ct);
 
@@ -49,7 +49,7 @@ internal class LibraryProject : PlatformProject, IPublishableProject
 
         await RunAsync("publish", cmd, ct);
 
-        this.Info($"Done {Name}@{Version} publish.");
+        this.Info("Done {name}@{version} publish.", Name, Version);
 
         SysFile.Delete(packageFile);
     }

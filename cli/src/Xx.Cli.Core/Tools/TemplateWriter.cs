@@ -40,7 +40,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
         "scss",
         "sh",
         "ts",
-        "tsx"
+        "tsx",
     };
 
     private IList<Resource> _resources = new List<Resource>();
@@ -80,7 +80,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
         var resource = _resources.First(r => r.Name == resourceName);
         if (resourceName.EndsWith(TemplateExtension))
         {
-            this.Trace($"Write template {resourceName} -> {path}");
+            this.Trace<string, string>("Write template {resourceName} -> {path}", resourceName, path);
             var scriptObject = new ScriptObject();
             scriptObject.Import(data);
             scriptObject.Import(typeof(StringExtensions));
@@ -92,7 +92,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
         }
         else
         {
-            this.Trace($"Write as is {resourceName} -> {path}");
+            this.Trace<string, string>("Write as is {resourceName} -> {path}", resourceName, path);
             using var fs = File.Create(path);
             resource.Content.CopyTo(fs);
         }
@@ -126,7 +126,7 @@ internal class TemplateWriter : ITemplateWriter, ILogSubject
             if (name.Length == extension.Length)
                 return string.Empty;
 
-            return name.Substring(0, name.Length - extension.Length - 1);
+            return name[..(name.Length - extension.Length - 1)];
         }
 
         static bool EndsWithExtension(string name, string extension)

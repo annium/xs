@@ -12,6 +12,7 @@ using Xx.Cli.Core.Logging;
 using Xx.Cli.Core.Models;
 using Xx.Cli.Core.Projects;
 using Xx.Cli.Core.Tools;
+using Xx.Cli.Dotnet.Tools;
 
 namespace Xx.Cli.Dotnet.Projects;
 
@@ -133,7 +134,7 @@ internal class ProjectFactory : PlatformProjectFactoryBase, IPlatformProjectFact
                 directory,
                 projectDependencies,
                 packageDependencies,
-                projectCfg as Tools.PlatformConfiguration ?? new Tools.PlatformConfiguration(),
+                projectCfg as PlatformConfiguration ?? new PlatformConfiguration(),
                 solutions,
                 targetFramework,
                 outputType,

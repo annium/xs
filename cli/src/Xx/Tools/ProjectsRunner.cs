@@ -38,7 +38,7 @@ internal class ProjectsRunner : ILogSubject
         var running = new List<TProject>();
         var errors = new List<Exception>();
 
-        this.Trace($"Start run with {pending.Count} project(s).");
+        this.Trace("Start run with {count} project(s).", pending.Count);
 
         while (pending.Count > 0)
         {
@@ -60,8 +60,11 @@ internal class ProjectsRunner : ILogSubject
                         $"Deadlock: none of {string.Join(", ", starting.Select(e => e.Name))} can be run."
                     );
 
-                this.Trace(
-                    $"Selected {starting.Length} for execution: {Environment.NewLine}{string.Join(Environment.NewLine, starting.Select(e => e.Name))}"
+                this.Trace<int, string, string>(
+                    "Selected {startingLength} for execution: {newLine}{projects}",
+                    starting.Length,
+                    Environment.NewLine,
+                    string.Join(Environment.NewLine, starting.Select(e => e.Name))
                 );
 
                 running.AddRange(starting);
@@ -69,51 +72,60 @@ internal class ProjectsRunner : ILogSubject
 
             // run each of starting projects
             foreach (var project in starting)
-                Task.Run(async () =>
-                {
-                    try
-                    {
-                        this.Trace($"Starting run for {project}");
+                Task.Run(
+                        async () =>
+                        {
+                            try
+                            {
+                                this.Trace("Starting run for {project}", project);
 
-                        // handle project
-                        await handle(project, ct);
+                                // handle project
+                                await handle(project, ct);
 
-                        // if succeed - remove from pending
-                        lock (locker)
-                            pending.Remove(project);
+                                // if succeed - remove from pending
+                                lock (locker)
+                                    pending.Remove(project);
 
-                        this.Trace($"Finished run for {project}");
-                    }
-                    catch (Exception e) when (e is TaskCanceledException || e is OperationCanceledException)
-                    {
-                        // if canceled - clear pending
-                        lock (locker)
-                            pending.Clear();
+                                this.Trace("Finished run for {project}", project);
+                            }
+                            catch (Exception e) when (e is TaskCanceledException || e is OperationCanceledException)
+                            {
+                                // if canceled - clear pending
+                                lock (locker)
+                                    pending.Clear();
 
-                        this.Trace($"Cancelled run for {project}");
-                    }
-                    catch (Exception exception)
-                    {
-                        // if failed - add exception and clear pending to avoid next iterations
-                        errors.Add(exception);
-                        lock (locker)
-                            pending.Clear();
+                                this.Trace("Cancelled run for {project}", project);
+                            }
+                            catch (Exception exception)
+                            {
+                                // if failed - add exception and clear pending to avoid next iterations
+                                errors.Add(exception);
+                                lock (locker)
+                                    pending.Clear();
 
-                        this.Trace($"Failed run for {project}:{Environment.NewLine}{exception.Message}");
-                    }
-                    finally
-                    {
-                        // remove from running ones
-                        lock (locker)
-                            running.Remove(project);
+                                this.Trace<IProject, string, string>(
+                                    "Failed run for {project}:{newLine}{exception}",
+                                    project,
+                                    Environment.NewLine,
+                                    exception.Message
+                                );
+                            }
+                            finally
+                            {
+                                // remove from running ones
+                                lock (locker)
+                                    running.Remove(project);
 
-                        this.Trace($"Finalized run for {project}. Signal.");
+                                this.Trace("Finalized run for {project}. Signal.", project);
 
-                        // signal for next iteration
-                        // ReSharper disable once AccessToDisposedClosure
-                        gate.Set();
-                    }
-                });
+                                // signal for next iteration
+                                // ReSharper disable once AccessToDisposedClosure
+                                gate.Set();
+                            }
+                        },
+                        ct
+                    )
+                    .GetAwaiter();
 
             // wait for next iteration
             this.Trace("Waiting for a signal.");
@@ -121,7 +133,7 @@ internal class ProjectsRunner : ILogSubject
             gate.Reset();
         }
 
-        this.Trace($"Finished run of {projects.Count} with {errors.Count} error(s).");
+        this.Trace("Finished run of {projectsCount} with {errorsCount} error(s).", projects.Count, errors.Count);
 
         if (errors.Count > 0)
             throw new AggregateException(errors);

@@ -26,7 +26,7 @@ internal abstract class PlatformProject
         IBuildableProject
 {
     // ReSharper disable once StaticMemberInGenericType
-    private static readonly object CacheLocker = new();
+    private static readonly Lock _cacheLocker = new();
     public override string File => Path.Combine(Directory, ProjectFileName(Name));
     public PlatformConfiguration Config { get; }
     public HashSet<string> Solutions { get; set; }
@@ -63,14 +63,14 @@ internal abstract class PlatformProject
 
     public Task ClearCacheAsync(CancellationToken ct)
     {
-        this.Debug($"Start {Name} cache clean.");
+        this.Debug<string>("Start {name} cache clean.", Name);
 
         var cache = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".nuget",
             "packages"
         );
-        lock (CacheLocker)
+        lock (_cacheLocker)
         {
             foreach (var (_, (_, name, version)) in Packages)
             {
@@ -80,14 +80,14 @@ internal abstract class PlatformProject
             }
         }
 
-        this.Debug($"Finished {Name} cache clean.");
+        this.Debug<string>("Finished {name} cache clean.", Name);
 
         return Task.CompletedTask;
     }
 
     public Task CleanAsync(bool force, CancellationToken ct)
     {
-        this.Debug($"Start {Name} clean.");
+        this.Debug<string>("Start {name} clean.", Name);
 
         DeleteDirectory("bin");
         DeleteDirectory("obj");
@@ -95,7 +95,7 @@ internal abstract class PlatformProject
         DeleteFiles("*.nupkg");
         DeleteFiles("*.snupkg");
 
-        this.Debug($"Finished {Name} clean.");
+        this.Debug<string>("Finished {name} clean.", Name);
 
         return Task.CompletedTask;
     }

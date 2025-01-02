@@ -5,7 +5,7 @@ namespace Xx.Cli.Dotnet.Models;
 
 internal class TargetFramework
 {
-    private static readonly IDictionary<string, TargetFramework> Values = new Dictionary<string, TargetFramework>();
+    private static readonly IDictionary<string, TargetFramework> _values = new Dictionary<string, TargetFramework>();
 
     public static TargetFramework NetStandard20 { get; } = new("netstandard2.0");
     public static TargetFramework NetStandard21 { get; } = new("netstandard2.1");
@@ -38,7 +38,7 @@ internal class TargetFramework
     public static TargetFramework Net8Windows { get; } = new("net8.0-windows");
 
     public static IReadOnlyList<IReadOnlyList<TargetFramework>> SupportedGroups { get; } =
-        new List<IReadOnlyList<TargetFramework>>()
+        new List<IReadOnlyList<TargetFramework>>
         {
             new List<TargetFramework> { NetStandard20, NetCoreApp20, NetCoreApp21, NetCoreApp22 },
             new List<TargetFramework> { NetStandard20, NetStandard21, NetCoreApp30 },
@@ -84,7 +84,7 @@ internal class TargetFramework
     private TargetFramework(string moniker)
     {
         _moniker = moniker;
-        Values[moniker] = this;
+        _values[moniker] = this;
     }
 
     public override string ToString() => _moniker;
@@ -93,7 +93,7 @@ internal class TargetFramework
 
     public static implicit operator TargetFramework(string value)
     {
-        if (Values.TryGetValue(value, out var tfm))
+        if (_values.TryGetValue(value, out var tfm))
             return tfm;
 
         throw new ArgumentException($"Given value '{value}' is not a supported ({nameof(TargetFramework)}) moniker.");

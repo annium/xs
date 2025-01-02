@@ -39,7 +39,11 @@ internal class UnlinkCommand
             .ToArray();
         var version = cfg.Version;
 
-        this.Debug($"Unlink {sources.Length} projects from {targets.Count} external projects.");
+        this.Debug(
+            "Unlink {sourcesLength} projects from {targetsCount} external projects.",
+            sources.Length,
+            targets.Count
+        );
 
         foreach (var source in sources)
         {
@@ -50,13 +54,13 @@ internal class UnlinkCommand
             foreach (var project in externalDependencies)
             {
                 var package = new Package(project.Value.Type, project.Value.Name, version);
-                this.Trace($"Update {source}: replace {project} with {package}.");
+                this.Trace("Update {source}: replace {project} with {package}.", source, project, package);
 
                 source.Projects.Remove(project);
                 source.Packages.Add(new Dependency<Package>(project.Type, package));
             }
 
-            this.Debug($"Updated {source}.");
+            this.Debug("Updated {source}.", source);
 
             source.Save();
         }

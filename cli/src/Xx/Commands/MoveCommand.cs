@@ -71,13 +71,13 @@ internal class MoveCommand
     private void Move(IProject project, string directory)
     {
         var target = Path.GetFullPath(Path.Combine(directory, Path.GetFileName(project.Directory)));
-        this.Debug($"Move {project.Directory} -> {target}");
+        this.Debug<string, string>("Move {projectDirectory} -> {target}", project.Directory, target);
         project.SetDirectory(target);
     }
 
     private void Rename(IProject project, string name)
     {
-        this.Debug($"Rename {project.Name} -> {name}");
+        this.Debug<string, string>("Rename {projectName} -> {name}", project.Name, name);
         project.SetName(name);
     }
 

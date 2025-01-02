@@ -17,7 +17,7 @@ public static class ResourceLoader
             .Where(r => r.StartsWith(prefix))
             .Select(r =>
             {
-                var name = r.Substring(prefix.Length);
+                var name = r[prefix.Length..];
                 var rs = assembly.GetManifestResourceStream(r)!;
                 rs.Seek(0, SeekOrigin.Begin);
 

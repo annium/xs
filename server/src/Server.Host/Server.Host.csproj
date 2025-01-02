@@ -1,15 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
-        <PackageId>Server.Host</PackageId>
-        <PackageVersion>0.1.0</PackageVersion>
-        <Description>XX registry main server. Generic management and project-independent endpoints.</Description>
         <Solutions>Xx</Solutions>
-        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Exe</OutputType>
-        <DebugType>portable</DebugType>
-        <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
-        <Nullable>enable</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Server.Dotnet/Server.Dotnet.csproj" />
@@ -17,6 +11,6 @@
         <ProjectReference Include="../Server.Node/Server.Node.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" />
     </ItemGroup>
 </Project>

@@ -71,7 +71,7 @@ internal class CommandCommand
 
         var data = GetCommandDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-        this.Debug($"Create command {data.Entity}:{data.Name}");
+        this.Debug<string, string>("Create command {entity}:{name}", data.Entity, data.Name);
 
         // write files
         _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Commands, data.Entity));
@@ -91,7 +91,7 @@ internal class CommandCommand
         CancellationToken ct
     )
     {
-        var data = new CommandDescription { Entity = CommandLine.Prompt("Entities: "), };
+        var data = new CommandDescription { Entity = CommandLine.Prompt("Entities: ") };
         ct.ThrowIfCancellationRequested();
         data.Name = CommandLine.Prompt("Command name: ");
         ct.ThrowIfCancellationRequested();

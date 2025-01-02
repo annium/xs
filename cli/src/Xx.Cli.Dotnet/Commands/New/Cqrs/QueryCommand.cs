@@ -72,7 +72,7 @@ internal class QueryCommand
 
         var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
 
-        this.Debug($"Create query {data.Entity}:{data.Name}");
+        this.Debug<string, string>("Create query {entity}:{name}", data.Entity, data.Name);
 
         // write files
         _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Queries, data.Entity));
@@ -98,7 +98,7 @@ internal class QueryCommand
         CancellationToken ct
     )
     {
-        var data = new QueryDescription { Entity = CommandLine.Prompt("Entities: "), };
+        var data = new QueryDescription { Entity = CommandLine.Prompt("Entities: ") };
         ct.ThrowIfCancellationRequested();
         data.Name = CommandLine.Prompt("Query name: ");
         ct.ThrowIfCancellationRequested();

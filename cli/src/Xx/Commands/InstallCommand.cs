@@ -42,7 +42,7 @@ internal class InstallCommand
 
         if (force)
         {
-            this.Debug($"Clear {projects.Length} projects cache.");
+            this.Debug("Clear {projectsLength} projects cache.", projects.Length);
             await _runner.RunAsync(
                 projects.OfType<ICachingProject>().ToArray(),
                 (project, tkn) => project.ClearCacheAsync(tkn),
@@ -51,7 +51,7 @@ internal class InstallCommand
             );
         }
 
-        this.Debug($"Install {projects.Length} projects.");
+        this.Debug("Install {projectsLength} projects.", projects.Length);
         await _runner.RunAsync(
             projects.OfType<IInstallableProject>().ToArray(),
             (project, tkn) => project.InstallAsync(force, tkn),

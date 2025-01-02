@@ -61,7 +61,7 @@ internal class Watcher : ILogSubject
                 gate.Wait(ct);
             }
 
-            this.Trace($"Pending {tasks.Count} task(s).");
+            this.Trace("Pending {count} task(s).", tasks.Count);
             // get and execute task
             var (task, path) = tasks.Dequeue();
             try
@@ -81,7 +81,7 @@ internal class Watcher : ILogSubject
                 return;
 
             var task = File.Exists(path) ? handleChange : handleDelete;
-            this.Trace($"Enqueue task for {path}");
+            this.Trace<string>("Enqueue task for {path}", path);
             tasks.Enqueue((task, path));
             // ReSharper disable once AccessToDisposedClosure
             gate.Set();

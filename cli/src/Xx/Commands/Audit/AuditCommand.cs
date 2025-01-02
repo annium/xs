@@ -38,7 +38,7 @@ internal class AuditCommand
     {
         var projects = await _discoverTask.RunAsync(discoverCfg);
         var auditedProjects = projects.FilterMask(cfg.Mask).OfType<IAuditableProject>().ToArray();
-        this.Debug($"Audit {auditedProjects.Length} projects.");
+        this.Debug("Audit {length} projects.", auditedProjects.Length);
 
         var usedRules = (cfg.Include.Length > 0 ? _rules.Where(r => cfg.Include.Contains(r.Code)) : _rules)
             .Where(r => !cfg.Exclude.Contains(r.Code))
@@ -51,7 +51,7 @@ internal class AuditCommand
             return;
         }
 
-        this.Debug($"Use {usedRules.Length} rule(s):");
+        this.Debug("Use {length} rule(s):", usedRules.Length);
         foreach (var rule in usedRules)
             this.Debug(rule);
 

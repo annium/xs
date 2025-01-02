@@ -1,31 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
     <PropertyGroup>
-        <PackageId>{{name}}</PackageId>
-        <PackageVersion>0.1.0</PackageVersion>
-        <Description>{{name}}</Description>
-        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Exe</OutputType>
-        <DebugType>portable</DebugType>
-        <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
-        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.Blazor.Ant" Version="0.1.0" />
-        <PackageReference Include="Annium.Blazor.Core" Version="0.1.0" />
-        <PackageReference Include="Annium.Blazor.Css" Version="0.1.0" />
-        <PackageReference Include="Annium.Blazor.Net" Version="0.1.0" />
-        <PackageReference Include="Annium.Blazor.Routing" Version="0.1.0" />
-        <PackageReference Include="Annium.Blazor.State" Version="0.1.0" />
-        <PackageReference Include="Annium.Configuration.Yaml" Version="0.1.0" />
-        <PackageReference Include="Annium.Core.DependencyInjection" Version="0.1.0" />
-        <PackageReference Include="Annium.Data.Operations.Serialization.Json" Version="0.1.0" />
-        <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
-        <PackageReference Include="Annium.Logging.Microsoft" Version="0.1.0" />
-        <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
-        <PackageReference Include="Annium.NodaTime.Serialization.Json" Version="0.1.0" />
-        <PackageReference Include="Annium.Serialization.Json" Version="0.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" />
+        <PackageReference Include="Annium.Blazor.Ant" />
+        <PackageReference Include="Annium.Blazor.Core" />
+        <PackageReference Include="Annium.Blazor.Css" />
+        <PackageReference Include="Annium.Blazor.Net" />
+        <PackageReference Include="Annium.Blazor.Routing" />
+        <PackageReference Include="Annium.Blazor.State" />
+        <PackageReference Include="Annium.Configuration.Yaml" />
+        <PackageReference Include="Annium.Core.DependencyInjection" />
+        <PackageReference Include="Annium.Data.Operations.Serialization.Json" />
+        <PackageReference Include="Annium.Logging.Console" />
+        <PackageReference Include="Annium.Logging.Microsoft" />
+        <PackageReference Include="Annium.Net.Http" />
+        <PackageReference Include="Annium.NodaTime.Serialization.Json" />
+        <PackageReference Include="Annium.Serialization.Json" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" />
     </ItemGroup>
 </Project>

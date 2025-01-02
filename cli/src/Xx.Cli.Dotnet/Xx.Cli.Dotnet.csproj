@@ -1,15 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <PackageId>Xx.Cli.Dotnet</PackageId>
-        <PackageVersion>0.1.0</PackageVersion>
-        <Description>Xx cli .NET project. All staff for .NET related things: project parsing, building, publishing, etc.</Description>
         <Solutions>Xx</Solutions>
-        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
-        <DebugType>portable</DebugType>
-        <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
-        <Nullable>enable</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Xx.Cli.Core/Xx.Cli.Core.csproj" />
@@ -17,8 +11,5 @@
     <ItemGroup>
         <EmbeddedResource Include="Templates/**" />
         <EmbeddedResource Remove="Templates/.*" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="Templates\WebAssemblyApplication\Pages\Home\HomePage.razor_tpl" />
     </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ internal class TestProject : PlatformProject, ITestableProject
     {
         var configuration = env == Env.Development ? "Debug" : "Release";
 
-        var cmd = new List<string>() { "dotnet test", $"--configuration {configuration}", $"--no-build {File}", };
+        var cmd = new List<string> { "dotnet test", $"--configuration {configuration}", $"--no-build {File}", };
 
         if (Packages.Any(d => d.Value.Name == ProjectFactory.TestCoveragePackage))
             cmd.AddRange(

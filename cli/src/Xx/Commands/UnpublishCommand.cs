@@ -58,7 +58,7 @@ internal class UnpublishCommand
 
         if (projects.Length == 0)
         {
-            this.Info($"No projects found unpublish.");
+            this.Info("No projects found unpublish.");
             return;
         }
 
@@ -71,7 +71,7 @@ internal class UnpublishCommand
                 throw new InvalidOperationException($"Registry doesn't support project type '{type}'.");
         }
 
-        this.Debug($"Unpublish {projects.Length} projects.");
+        this.Debug("Unpublish {projectsLength} projects.", projects.Length);
         await _runner.RunAsync(
             projects,
             (project, _) =>

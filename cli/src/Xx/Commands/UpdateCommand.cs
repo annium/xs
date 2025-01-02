@@ -63,7 +63,11 @@ internal class UpdateCommand
             return;
         }
 
-        this.Debug($"Update {dependencies.Length} dependencies in {projects.Length} projects.");
+        this.Debug(
+            "Update {dependenciesLength} dependencies in {projectsLength} projects.",
+            dependencies.Length,
+            projects.Length
+        );
 
         // resolve dependency managers for types
         var dependencyManagers = dependencies
@@ -101,14 +105,14 @@ internal class UpdateCommand
                     var result = cfg.Preview
                         ? versions.FirstOrDefault()
                         : versions.FirstOrDefault(v => v.Version.Suffix == "");
-                    this.Trace($"Resolve: {d} - {versions.Length} version(s)");
+                    this.Trace("Resolve: {dependency} - {versionsLength} version(s)", d, versions.Length);
 
                     if (result is null)
-                        this.Warn($"Resolve: {d} unresolved");
+                        this.Warn("Resolve: {dependency} unresolved", d);
                     else if (result == d)
-                        this.Debug($"Resolve: {d} unchanged");
+                        this.Debug("Resolve: {dependency} unchanged", d);
                     else
-                        this.Debug($"Resolve: {d} -> {result}");
+                        this.Debug("Resolve: {dependency} -> {result}", d, result);
 
                     return result;
                 })
@@ -119,7 +123,7 @@ internal class UpdateCommand
         {
             foreach (var project in projects)
                 if (UpdateProject(project, updates))
-                    this.Debug($"{project} is to be updated.");
+                    this.Debug("{project} is to be updated.", project);
 
             return;
         }
@@ -140,7 +144,7 @@ internal class UpdateCommand
         }
 
         // install installable updates
-        this.Debug($"Clear {updated.Count} projects cache.");
+        this.Debug("Clear {updatedCount} projects cache.", updated.Count);
         await _runner.RunAsync(
             updated.OfType<ICachingProject>().ToArray(),
             (project, tkn) => project.ClearCacheAsync(tkn),
@@ -148,7 +152,7 @@ internal class UpdateCommand
             ct
         );
 
-        this.Debug($"Install {updated.Count} projects.");
+        this.Debug("Install {updatedCount} projects.", updated.Count);
         await _runner.RunAsync(
             updated.OfType<IInstallableProject>().ToArray(),
             (project, tkn) => project.InstallAsync(true, tkn),
@@ -156,7 +160,7 @@ internal class UpdateCommand
             ct
         );
 
-        this.Info($"{updated.Count} projects updated.");
+        this.Info("{updatedCount} projects updated.", updated.Count);
     }
 
     private bool UpdateProject(IProject project, Package[] updates)

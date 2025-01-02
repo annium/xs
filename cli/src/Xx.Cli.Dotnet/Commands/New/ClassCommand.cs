@@ -62,13 +62,13 @@ public class ClassCommand
         if (names.Count == 0)
             return;
 
-        this.Debug($"{names.Count} class(es) to create");
+        this.Debug("{namesCount} class(es) to create", names.Count);
 
         Directory.CreateDirectory(output);
 
         foreach (var name in names)
         {
-            this.Debug($"Create class {name} at {output}");
+            this.Debug<string, string>("Create class {name} at {output}", name, output);
 
             _templateWriter.LoadResources($"{Group.TemplatesDir}.Class");
             _templateWriter.SetRoot(output);

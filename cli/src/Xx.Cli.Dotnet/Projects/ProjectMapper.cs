@@ -16,9 +16,9 @@ namespace Xx.Cli.Dotnet.Projects;
 
 internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 {
-    private static readonly string[] ImplicitPackages = { "Microsoft.AspNetCore.App" };
-    private static readonly string[] BooleanStrings = { "true", "false" };
-    private static readonly string[] DisabledProperties =
+    private static readonly string[] _implicitPackages = { "Microsoft.AspNetCore.App" };
+    private static readonly string[] _booleanStrings = { "true", "false" };
+    private static readonly string[] _disabledProperties =
     {
         El.PublishReadyToRun,
         El.PublishReadyToRunShowWarnings,
@@ -142,7 +142,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 
         var remainingProps = oldProps
             .Elements()
-            .Where(el => !DisabledProperties.Contains(el.Name.ToString()))
+            .Where(el => !_disabledProperties.Contains(el.Name.ToString()))
             .Where(el => newProps.Elements().All(newEl => newEl.Name != el.Name))
             .ToList();
         newProps.Add(remainingProps);
@@ -308,9 +308,9 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         void EnsureValidBoolean(string el)
         {
             var element = properties.GetElement(el);
-            if (element is not null && !BooleanStrings.Contains(element.Value))
+            if (element is not null && !_booleanStrings.Contains(element.Value))
                 throw new InvalidOperationException(
-                    $"Project {path} {el} must be one of {string.Join(", ", BooleanStrings)}."
+                    $"Project {path} {el} must be one of {string.Join(", ", _booleanStrings)}."
                 );
         }
     }
@@ -340,7 +340,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
             reference.Attribute(El.Include)?.Value
             ?? throw new InvalidOperationException($"Project {project} has empty package dependency name.");
 
-        if (configuration.SkipChecks && ImplicitPackages.Any(p => p == name))
+        if (configuration.SkipChecks && _implicitPackages.Any(p => p == name))
             return new Package(Constants.ProjectType, name, new Version(1, 0, 0, string.Empty));
 
         var rawVersion =

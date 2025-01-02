@@ -16,18 +16,27 @@ public class DeletePackageDependencyTask : ILogSubject
 
     public void Run(IProject[] targets, Package package)
     {
-        this.Debug($"Delete package {package} as {package.Type} dependency from {targets.Length} projects.");
+        this.Debug(
+            "Delete package {package} as {packageType} dependency from {targetsLength} projects.",
+            package,
+            package.Type,
+            targets.Length
+        );
         foreach (var target in targets)
         {
             if (target.Packages.All(p => p.Value != package))
             {
                 this.Debug(
-                    $"Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}."
+                    "Skip deleting package {package} as dependency of {target}. {target} doesn't use {package}.",
+                    package,
+                    target,
+                    target,
+                    package
                 );
                 continue;
             }
 
-            this.Debug($"Delete package {package} from dependencies of {target}.");
+            this.Debug("Delete package {package} from dependencies of {target}.", package, target);
             target.Packages.RemoveWhere(p => p.Value == package);
             target.Save();
         }

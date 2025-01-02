@@ -38,7 +38,7 @@ internal class TestCommand
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
         var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).OfType<ITestableProject>().ToArray();
 
-        this.Debug($"Test {projects.Length} projects.");
+        this.Debug("Test {projectsLength} projects.", projects.Length);
         await _runner.RunAsync(
             projects,
             (project, tkn) => project.TestAsync(cfg.Env, cfg.TestFilter, tkn),

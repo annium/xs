@@ -22,7 +22,7 @@ public class IndexController : ServerController<User>
     }
 
     [HttpGet("v3/index.json")]
-    public IActionResult GetIndexAsync()
+    public IActionResult GetIndex()
     {
         var resources = new List<ServiceIndexResourceResponse>();
 

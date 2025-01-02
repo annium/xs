@@ -27,7 +27,7 @@ internal class PlatformConfigurationManager : IPlatformConfigurationManager, ILo
 
     public void Save(IProject project, ProjectTypeConfiguration configuration)
     {
-        this.Trace($"Save configuration for {Constants.ProjectType} project {project}");
+        this.Trace("Save configuration for {projectType} project {project}", Constants.ProjectType, project);
 
         var sources = new XElement(El.PackageSources);
         sources.Add(new XElement(El.Clear));

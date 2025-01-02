@@ -18,24 +18,37 @@ public class AddProjectDependencyTask : ILogSubject
     {
         var (_, project) = dependency;
 
-        this.Debug($"Add project {project} as {project.Type} dependency to {targets.Length} projects.");
+        this.Debug(
+            "Add project {project} as {projectType} dependency to {targetsLength} projects.",
+            project,
+            project.Type,
+            targets.Length
+        );
         foreach (var target in targets)
         {
             if (target.Projects.Contains(dependency))
             {
                 this.Debug(
-                    $"Skip adding project {project} as dependency of {target}. {target} already uses {project}."
+                    "Skip adding project {project} as dependency of {target}. {target} already uses {project}.",
+                    project,
+                    target,
+                    target,
+                    project
                 );
                 continue;
             }
 
             if (target.Projects.Any(p => p.Value == project))
             {
-                this.Debug($"Delete project {project} as dependency of {target} due to dependency type change.");
+                this.Debug(
+                    "Delete project {project} as dependency of {target} due to dependency type change.",
+                    project,
+                    target
+                );
                 target.Projects.RemoveWhere(p => p.Value == project);
             }
 
-            this.Debug($"Add project {project} as dependency of {target}.");
+            this.Debug("Add project {project} as dependency of {target}.", project, target);
             target.Projects.Add(dependency);
             target.Save();
         }

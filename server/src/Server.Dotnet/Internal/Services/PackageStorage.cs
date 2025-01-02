@@ -27,13 +27,11 @@ internal class PackageStorage : IPackageStorage
             stream.Position = 0;
         await _storage.SaveAsync(GetPackagePath(name, version), stream);
 
-        using (var packageReader = new PackageArchiveReader(stream, leaveStreamOpen: true))
-        {
-            var nuspecStream = packageReader.GetNuspec();
-            if (nuspecStream.CanSeek)
-                nuspecStream.Position = 0;
-            await _storage.SaveAsync(GetNuspecPath(name, version), nuspecStream);
-        }
+        using var packageReader = new PackageArchiveReader(stream, leaveStreamOpen: true);
+        var nuspecStream = packageReader.GetNuspec();
+        if (nuspecStream.CanSeek)
+            nuspecStream.Position = 0;
+        await _storage.SaveAsync(GetNuspecPath(name, version), nuspecStream);
     }
 
     public async Task DeleteAsync(string name, string version)

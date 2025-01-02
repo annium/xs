@@ -8,11 +8,11 @@ namespace Xx.Commands.Sync;
 
 internal static class Helper
 {
-    private static readonly IReadOnlyCollection<FileStatus> Statuses = Enum.GetValues<FileStatus>()
+    private static readonly IReadOnlyCollection<FileStatus> _statuses = Enum.GetValues<FileStatus>()
         .Except(FileStatus.Unaltered.Yield())
         .ToArray();
 
-    private static readonly IReadOnlyDictionary<FileStatus, string> StatusLabels;
+    private static readonly IReadOnlyDictionary<FileStatus, string> _statusLabels;
 
     static Helper()
     {
@@ -32,7 +32,7 @@ internal static class Helper
         statuses[FileStatus.Unreadable] = "unreadable";
         statuses[FileStatus.Ignored] = "ignored";
         statuses[FileStatus.Conflicted] = "conflict";
-        StatusLabels = statuses;
+        _statusLabels = statuses;
     }
 
     public static IReadOnlyCollection<SyncFileChange> GetProjectChanges(SyncProject project)
@@ -56,9 +56,9 @@ internal static class Helper
                         => $"{change.IndexToWorkDirRenameDetails.OldFilePath} -> {change.IndexToWorkDirRenameDetails.NewFilePath}",
                     _ => change.FilePath
                 };
-                var status = Statuses
+                var status = _statuses
                     .Where(x => change.State.HasFlag(x))
-                    .Select(x => StatusLabels[x])
+                    .Select(x => _statusLabels[x])
                     .Distinct()
                     .Join(", ");
                 changeStates.Add(new SyncFileChange(status, description));

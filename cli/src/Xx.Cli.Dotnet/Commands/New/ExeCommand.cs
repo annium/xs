@@ -26,7 +26,7 @@ public class ExeCommand : Command<ExeCommandConfiguration, DiscoverConfiguration
         var location = discoverCfg.Root;
         var name = cfg.Name;
 
-        this.Debug($"Create executable project {name} at {location}");
+        this.Debug<string, string>("Create executable project {name} at {location}", name, location);
 
         _templateWriter.LoadResources($"{Group.TemplatesDir}.Exe");
         _templateWriter.SetRoot(Path.Combine(location, name));

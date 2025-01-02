@@ -74,26 +74,26 @@ internal class WatchCommand
         _discoverCfg = discoverCfg;
         _token = ct;
 
-        await Discover();
+        await DiscoverAsync();
 
         if (string.IsNullOrWhiteSpace(_command))
-            await _watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChange, HandleDelete, ct);
+            await _watcher.WatchAsync(discoverCfg.Root, FilterChange, HandleChangeAsync, HandleDeleteAsync, ct);
         else
-            await _watcher.WatchAsync(discoverCfg.Root, FilterChange, CallCommand, CallCommand, ct);
+            await _watcher.WatchAsync(discoverCfg.Root, FilterChange, CallCommandAsync, CallCommandAsync, ct);
     }
 
     private bool FilterChange(string path) =>
         _projectFactory.IsProjectFile(path) || _projects.Any(e => e.IsRelated(path));
 
-    private async Task HandleChange(string path)
+    private async Task HandleChangeAsync(string path)
     {
         var isProjectFile = _projectFactory.IsProjectFile(path);
         IProject? project;
 
         if (isProjectFile)
         {
-            this.Info($"Changed project file: {path}");
-            await Discover();
+            this.Info<string>("Changed project file: {path}", path);
+            await DiscoverAsync();
 
             project = GetProjectByPath(path);
             if (project is not null)
@@ -105,24 +105,24 @@ internal class WatchCommand
         if (project is null)
             return;
 
-        this.Info($"Changed {project} related file: {path}");
+        this.Info<IProject, string>("Changed {project} related file: {path}", project, path);
 
         await BuildAsync(project, includeSelf: true);
         if (_runTests)
             await TestAsync(project, includeSelf: true);
 
-        this.Info($"Done.");
+        this.Info("Done.");
     }
 
-    private async Task HandleDelete(string path)
+    private async Task HandleDeleteAsync(string path)
     {
         var project = GetProjectByPath(path);
         var isProjectFile = project is not null;
 
         if (isProjectFile)
         {
-            this.Info($"Deleted project file: {path}");
-            await Discover();
+            this.Info<string>("Deleted project file: {path}", path);
+            await DiscoverAsync();
 
             await InstallAsync(project!, includeSelf: false);
         }
@@ -132,13 +132,13 @@ internal class WatchCommand
         if (project is null)
             return;
 
-        this.Info($"Deleted {project} related file: {path}");
+        this.Info<IProject, string>("Deleted {project} related file: {path}", project, path);
 
         await BuildAsync(project, includeSelf: !isProjectFile);
         if (_runTests)
             await TestAsync(project, includeSelf: !isProjectFile);
 
-        this.Info($"Done.");
+        this.Info("Done.");
     }
 
     private Task InstallAsync(IProject project, bool includeSelf) =>
@@ -176,15 +176,15 @@ internal class WatchCommand
         return list.Distinct();
     }
 
-    private Task CallCommand(string path)
+    private Task CallCommandAsync(string path)
     {
         var result = _shell
             .Cmd(_command.Replace("%", path))
             .Pipe((LogLevel)_loggerConfiguration <= LogLevel.Debug)
             .Start();
 
-        Task.Run(() => Pipe(result.Output));
-        Task.Run(() => Pipe(result.Error));
+        Task.Run(() => Pipe(result.Output)).GetAwaiter();
+        Task.Run(() => Pipe(result.Error)).GetAwaiter();
 
         return result.Result;
 
@@ -195,7 +195,7 @@ internal class WatchCommand
         }
     }
 
-    private async Task Discover()
+    private async Task DiscoverAsync()
     {
         var allProjects = await _discoverTask.RunAsync(_discoverCfg);
         var targets = allProjects.FilterMask(_mask).FilterType(_type).OrderByDescending(p => p.Name.Length).ToArray();
@@ -206,7 +206,7 @@ internal class WatchCommand
 
         _projects = result.ToArray();
 
-        this.Debug($"Discovered {_projects.Length} project(s) to watch:");
+        this.Debug("Discovered {count} project(s) to watch:", _projects.Length);
         foreach (var project in _projects)
             this.Debug(project.Name);
     }

@@ -14,7 +14,7 @@ namespace Xx.Cli.Node.Projects;
 
 internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions =
+    private static readonly JsonSerializerOptions _jsonSerializerOptions =
         new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -32,7 +32,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         var project = new RawProject();
         var file = new FileInfo(path);
 
-        var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(file.FullName), JsonSerializerOptions)!;
+        var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(file.FullName), _jsonSerializerOptions)!;
 
         project.Name = info.Name ?? throw new InvalidOperationException($"Project {path} is missing name");
 
@@ -86,7 +86,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
                 .Where(e => e.Value.StartsWith(FilePrefix))
                 .Select(e => new Dependency<string>(
                     type,
-                    ReadProjectDependency(project.Name, file, e.Value.Substring(FilePrefix.Length))
+                    ReadProjectDependency(project.Name, file, e.Value[FilePrefix.Length..])
                 ));
 
         IEnumerable<Dependency<Package>> GetPackageDependencies(
@@ -102,7 +102,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
     {
         var path = project.File;
 
-        var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(path), JsonSerializerOptions)!;
+        var info = JsonSerializer.Deserialize<Raw>(File.ReadAllText(path), _jsonSerializerOptions)!;
 
         info.Name = project.Name;
         info.Version = project.Version.ToString();
@@ -116,7 +116,7 @@ internal class ProjectMapper : IProjectMapper<IPlatformProject, RawProject>
         info.DevDependencies = GetDeps(project, DependencyType.Dev);
         info.PeerDependencies = GetDeps(project, DependencyType.Peer);
 
-        File.WriteAllText(path, JsonSerializer.Serialize(info, JsonSerializerOptions));
+        File.WriteAllText(path, JsonSerializer.Serialize(info, _jsonSerializerOptions));
         File.AppendAllText(path, Environment.NewLine);
 
         static Dictionary<string, string>? GetDeps(IPlatformProject project, DependencyType type)

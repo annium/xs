@@ -1,31 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <PackageId>Server.Shared</PackageId>
-        <PackageVersion>0.1.0</PackageVersion>
-        <Description>XX registry shared project. Contains all shared between main and project servers, except separated DB stuff.</Description>
         <Solutions>Xx</Solutions>
-        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
-        <DebugType>portable</DebugType>
-        <WarningsAsErrors>true</WarningsAsErrors>
         <IsPackable>false</IsPackable>
-        <Nullable>enable</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Annium.AspNetCore.Extensions" Version="0.1.0" />
-        <PackageReference Include="Annium.Configuration.Yaml" Version="0.1.0" />
-        <PackageReference Include="Annium.Infrastructure.Hosting" Version="0.1.0" />
-        <PackageReference Include="Annium.linq2db.PostgreSql" Version="0.1.0" />
-        <PackageReference Include="Annium.Logging.Console" Version="0.1.0" />
-        <PackageReference Include="Annium.Logging.Microsoft" Version="0.1.0" />
-        <PackageReference Include="Annium.Net.Http" Version="0.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-        <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.1.0" />
-        <PackageReference Include="NSwag.AspNetCore" Version="14.0.2" />
-        <PackageReference Include="Xdb.PostgreSql" Version="0.1.0" />
+        <PackageReference Include="Annium.AspNetCore.Extensions" />
+        <PackageReference Include="Annium.Configuration.Yaml" />
+        <PackageReference Include="Annium.Infrastructure.Hosting" />
+        <PackageReference Include="Annium.linq2db.PostgreSql" />
+        <PackageReference Include="Annium.Logging.Console" />
+        <PackageReference Include="Annium.Logging.Microsoft" />
+        <PackageReference Include="Annium.Net.Http" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+        <PackageReference Include="NodaTime.Serialization.JsonNet" />
+        <PackageReference Include="NSwag.AspNetCore" />
+        <PackageReference Include="Xdb.PostgreSql" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Scripts/**/*.sql" />

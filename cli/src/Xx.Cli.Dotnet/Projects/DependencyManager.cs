@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
+using Annium;
 using Annium.Net.Http;
 using Xx.Cli.Core.Models;
 using Xx.Cli.Core.Projects;
@@ -20,9 +21,7 @@ internal class DependencyManager : IDependencyManager
     private readonly IHttpRequestFactory _httpRequestFactory;
 
     private readonly HttpClient _client =
-        new(
-            new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip, MaxConnectionsPerServer = 16, }
-        );
+        new(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip, MaxConnectionsPerServer = 16 });
 
     public DependencyManager(IHttpRequestFactory httpRequestFactory)
     {
@@ -36,7 +35,7 @@ internal class DependencyManager : IDependencyManager
             .UseClient(_client)
             .Get(Constants.ServerPathSuffix)
             .AsAsync<ServiceIndex>();
-        var registrationBaseUrl = serverIndex.Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
+        var registrationBaseUrl = serverIndex.NotNull().Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
 
         var registrationUrl =
             registrationBaseUrl
@@ -84,7 +83,12 @@ internal class DependencyManager : IDependencyManager
                 if (page.Items.Length > 0)
                     return page;
 
-                return await _httpRequestFactory.New().UseClient(_client).Get(page.Id).AsAsync<RegistrationPage>();
+                var result = await _httpRequestFactory
+                    .New()
+                    .UseClient(_client)
+                    .Get(page.Id)
+                    .AsAsync<RegistrationPage>();
+                return result.NotNull();
             })
         );
 

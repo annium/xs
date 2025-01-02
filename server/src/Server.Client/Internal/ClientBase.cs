@@ -16,7 +16,7 @@ public abstract class ClientBase
     public void SetUri(Uri uri)
     {
         if (!Uri.IsLoopback)
-            throw new InvalidOperationException($"Uri already assigned.");
+            throw new InvalidOperationException("Uri already assigned.");
 
         foreach (var client in _clients)
             client.SetUri(uri);

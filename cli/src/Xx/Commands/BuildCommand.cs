@@ -37,7 +37,7 @@ internal class BuildCommand
     {
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
         var projects = allProjects.FilterMask(cfg.Mask).FilterType(cfg.Type).OfType<IBuildableProject>().ToArray();
-        this.Debug($"Build {projects.Length} projects.");
+        this.Debug("Build {length} projects.", projects.Length);
         await _runner.RunAsync(
             projects,
             (project, tkn) => project.BuildAsync(cfg.Env, cfg.Force, tkn),

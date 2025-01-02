@@ -12,6 +12,6 @@ public class ServerController<TUser> : ControllerBase
         if (ControllerContext.ActionDescriptor.Properties.TryGetValue(UserProperty, out var raw))
             return (TUser)raw!;
 
-        throw new InvalidOperationException($"User is not authenticated.");
+        throw new InvalidOperationException("User is not authenticated.");
     }
 }

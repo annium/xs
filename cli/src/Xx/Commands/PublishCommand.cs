@@ -51,7 +51,7 @@ internal class PublishCommand
 
         if (projects.Length == 0)
         {
-            this.Info($"No projects found publish.");
+            this.Info("No projects found publish.");
             return;
         }
 
@@ -59,7 +59,7 @@ internal class PublishCommand
             if (!configuration.Servers.ContainsKey(project.Type))
                 throw new InvalidOperationException($"Registry doesn't support project type '{project.Type}'.");
 
-        this.Debug($"Publish {projects.Length} projects.");
+        this.Debug("Publish {projectsLength} projects.", projects.Length);
         await _runner.RunAsync(
             projects,
             (project, tkn) =>

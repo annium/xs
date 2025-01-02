@@ -7,6 +7,6 @@ internal static class PackageName
         if (!name.StartsWith('@'))
             return name;
 
-        return string.Join('-', name.Substring(1).Split('/'));
+        return string.Join('-', name[1..].Split('/'));
     }
 }
