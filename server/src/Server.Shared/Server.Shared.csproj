@@ -13,10 +13,10 @@
         <PackageReference Include="Annium.Logging.Console" />
         <PackageReference Include="Annium.Logging.Microsoft" />
         <PackageReference Include="Annium.Net.Http" />
+        <PackageReference Include="dbup-postgresql" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" />
         <PackageReference Include="NodaTime.Serialization.JsonNet" />
         <PackageReference Include="NSwag.AspNetCore" />
-        <PackageReference Include="Xdb.PostgreSql" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Scripts/**/*.sql" />
