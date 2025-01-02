@@ -13,9 +13,9 @@ keys/
 *.blob
 *.log
 
-# xs ignore patterns
-.xs.ignore
-.xs.credentials
+# xx ignore patterns
+.xx.ignore
+.xx.credentials
 nuget.config
 lcov.info
 .npmrc
