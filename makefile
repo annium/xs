@@ -1,6 +1,6 @@
 PROJECT_NAME := pkg
 TAG_PREFIX := registry.annium.com/$(PROJECT_NAME)
-TFM := net8.0
+TFM := net9.0
 BIN_DEBUG := bin/Debug/$(TFM)
 
 format:

@@ -1,4 +1,4 @@
-FROM registry.annium.com/dotnet/sdk:8.0-alpine as builder
+FROM registry.annium.com/dotnet/sdk:9.0-alpine as builder
 COPY . /code
 RUN dotnet publish -c Release -o /dist /code
 
