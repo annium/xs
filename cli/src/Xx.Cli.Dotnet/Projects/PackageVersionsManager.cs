@@ -104,12 +104,15 @@ internal class PackageVersionsManager : IPackageVersionsManager
         var xws = new XmlWriterSettings
         {
             Indent = true,
-            IndentChars = new string(' ', 4),
+            IndentChars = new string(' ', 2),
             OmitXmlDeclaration = true,
             Encoding = Encoding.UTF8,
+            NewLineChars = "\n",
+            NewLineHandling = NewLineHandling.Replace,
         };
 
-        using var xw = XmlWriter.Create(file, xws);
-        element.Save(xw);
+        using (var xw = XmlWriter.Create(file, xws))
+            element.Save(xw);
+        File.AppendAllText(file, "\n");
     }
 }

@@ -148,13 +148,16 @@ internal class ProjectMapper(IPackageVersionsManager packageVersionsManager)
         var xws = new XmlWriterSettings
         {
             Indent = true,
-            IndentChars = new string(' ', 4),
+            IndentChars = new string(' ', 2),
             OmitXmlDeclaration = true,
             Encoding = Encoding.UTF8,
+            NewLineChars = "\n",
+            NewLineHandling = NewLineHandling.Replace,
         };
 
-        using var xw = XmlWriter.Create(path, xws);
-        info.Save(xw);
+        using (var xw = XmlWriter.Create(path, xws))
+            info.Save(xw);
+        File.AppendAllText(path, "\n");
     }
 
     private XElement SaveProjects(
