@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-dir=$(dirname $(dirname "${BASH_SOURCE[0]}"))/src/Xx
+dir=$(dirname $(dirname "${BASH_SOURCE[0]}"))/src/Annium.Xs.Cli
 
 echo "Compile."
 dotnet pack $dir --configuration release --output . -p:DefineConstants=\"LOG_CORE\;LOG_DEBUG\;LOG_TRACE\"
 
-if [ $(dotnet tool list -g | tail -n +3 | grep xx | wc -l) -eq 1 ]; then
+if [ $(dotnet tool list -g | tail -n +3 | grep annium.xs.cli | wc -l) -eq 1 ]; then
     echo "Uninstall."
-    dotnet tool uninstall -g xx
+    dotnet tool uninstall -g annium.xs.cli
 fi
 
 echo "Install."
-dotnet tool install -g xx --add-source .
+dotnet tool install -g annium.xs.cli --add-source .
 
 echo "Cleanup."
 find . -type f -name '*.nupkg' | xargs rm -f

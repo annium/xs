@@ -1,21 +1,20 @@
 PROJECT_NAME := pkg
 TAG_PREFIX := registry.annium.com/$(PROJECT_NAME)
 TFM := net9.0
-BIN_DEBUG := bin/Debug/$(TFM)
-
-format:
-	xx format -sc -ic
-	dotnet csharpier .
+BIN_RELEASE := bin/Release/$(TFM)
 
 setup:
-	xx remote restore -user $(user) -password $(pass)
 	dotnet tool restore
 
+format:
+	dotnet csharpier format .
+	xs format -sc -ic
+
 update:
-	xx update all dotnet -sc -ic
+	xs update all dotnet -sc -ic
 
 clean:
-	xx clean -sc -ic
+	xs clean -sc -ic
 
 buildNumber?=0
 build:
@@ -28,7 +27,7 @@ pack:
 	dotnet pack --no-build -o . -c Release -p:SymbolPackageFormat=snupkg
 
 publish:
-	dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key $(shell cat .xx.credentials)
+	dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key $(shell cat .xs.credentials)
 	find . -type f -name '*.nupkg' | xargs rm
 
 install-cli:
@@ -39,9 +38,9 @@ uninstall-cli:
 
 configure:
 	@# host
-	$(call copy,shared,main.yml,run/server/configuration server/src/Server.Host/configuration)
+	$(call copy,shared,main.yml,run/server/configuration server/src/Annium.Xs.Server.Host/configuration)
 	$(call copy,docker,db.yml,run/server/configuration)
-	$(call copy,local,db.yml,server/src/Server.Host/configuration)
+	$(call copy,local,db.yml,server/src/Annium.Xs.Server.Host/configuration)
 
 	@# db
 	$(call copy,docker,db.env,run/db)
@@ -52,22 +51,22 @@ deconfigure:
 
 
 run:
-	cd server/src/Server.Host && ./bin/Debug/$(TFM)/Server.Host
+	cd server/src/Annium.Xs.Server.Host && ./$(BIN_RELEASE)/Annium.Xs.Server.Host
 
 publish-all: publish-server
 
 publish-server:
-	$(call publish,server,.,server/src/Server.Host/app.dockerfile)
+	$(call publish,server,.,server/src/Annium.Xs.Server.Host/app.dockerfile)
 
 publish-local: publish-server-local
 
 publish-server-local:
 	$(shell,find .. -type f -name nuget.config | xargs rm)
-	$(call publish,server,..,xx/server/src/Server.Host/app.local.dockerfile)
+	$(call publish,server,..,xs/server/src/Annium.Xs.Server.Host/app.local.dockerfile)
 
 db-drop:
 	docker-compose rm -vfs db
-	docker volume rm -f xx_db
+	docker volume rm -f xs_db
 	docker-compose up -d db
 
 link:

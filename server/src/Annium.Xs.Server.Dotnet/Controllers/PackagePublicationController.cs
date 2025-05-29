@@ -1,0 +1,94 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using Annium.Xs.Server.Abstractions.Domain;
+using Annium.Xs.Server.Abstractions.Services;
+using Annium.Xs.Server.Dotnet.Domain;
+using Annium.Xs.Server.Dotnet.Internal;
+using Annium.Xs.Server.Dotnet.Internal.Extensions;
+using Annium.Xs.Server.Dotnet.Views.Requests;
+using Annium.Xs.Server.Shared.Auth;
+using Annium.Xs.Server.Shared.Controllers;
+using Annium.Xs.Server.Shared.Domain.Models;
+using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging;
+
+namespace Annium.Xs.Server.Dotnet.Controllers;
+
+[Area(Constants.Project)]
+[Route("[area]")]
+public class PackagePublicationController : ServerController<User>
+{
+    private readonly ITimeProvider _timeProvider;
+    private readonly IPackageService<Package, PackageDependency, PackageRequest> _packageService;
+
+    public PackagePublicationController(
+        ITimeProvider timeProvider,
+        IPackageService<Package, PackageDependency, PackageRequest> packageService
+    )
+    {
+        _timeProvider = timeProvider;
+        _packageService = packageService;
+    }
+
+    [HttpPut("api/v2/package")]
+    [Authorize]
+    public async Task<IActionResult> PublishPackageAsync()
+    {
+        await using var packageStream = await Request.GetUploadStreamOrNullAsync(CancellationToken.None);
+
+        if (packageStream is null)
+            return BadRequest("Use multipart/form-data to upload package.");
+
+        var request = await ReadPackageFromStreamAsync(packageStream);
+
+        var result = await _packageService.PublishPackageAsync(GetUser(), request);
+        switch (result.Status)
+        {
+            case PackageStatus.Forbidden:
+                return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.Forbidden };
+            case PackageStatus.Conflict:
+                return Conflict(result);
+            default:
+                return NoContent();
+        }
+    }
+
+    private async Task<PackageRequest> ReadPackageFromStreamAsync(Stream packageStream)
+    {
+        using var packageReader = new PackageArchiveReader(packageStream, leaveStreamOpen: true);
+
+        await packageReader.ValidatePackageEntriesAsync(CancellationToken.None);
+
+        var packageId = Guid.NewGuid();
+        var nuspec = packageReader.NuspecReader;
+        var dependencies = nuspec
+            .GetDependencyGroups()
+            .SelectMany(dependencyGroup =>
+            {
+                var framework = dependencyGroup.TargetFramework.GetShortFolderName();
+
+                return dependencyGroup.Packages.Select(dependency => new PackageDependency(
+                    packageId,
+                    framework,
+                    dependency.Id,
+                    dependency.VersionRange.ToNormalizedString()
+                ));
+            })
+            .ToArray();
+
+        return new PackageRequest(
+            packageId,
+            nuspec.GetId(),
+            nuspec.GetVersion().ToNormalizedString(),
+            nuspec.GetDescription(),
+            _timeProvider.Now,
+            dependencies,
+            packageStream,
+            packageReader.GetNuspec()
+        );
+    }
+}

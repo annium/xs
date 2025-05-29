@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <Solutions>Annium.Xs</Solutions>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Annium.Xs.Server.Dotnet/Annium.Xs.Server.Dotnet.csproj" />
+    <ProjectReference Include="../Annium.Xs.Server.Main/Annium.Xs.Server.Main.csproj" />
+    <ProjectReference Include="../Annium.Xs.Server.Node/Annium.Xs.Server.Node.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+</Project>

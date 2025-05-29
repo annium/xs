@@ -1,0 +1,35 @@
+using System.Collections.Generic;
+using Annium.Xs.Server.Shared.Domain.Enums;
+using Annium.Xs.Server.Shared.Domain.Interfaces;
+using Annium.Xs.Server.Shared.Domain.Models;
+using Annium.Xs.Server.Shared.Tools;
+
+namespace Annium.Xs.Server.Shared.Internal.Tools;
+
+internal class MetaPackageTool : IMetaPackageTool
+{
+    public MetaPackage Generate(User user, ProjectType type, IPackageInfo package)
+    {
+        var permissions = new List<MetaPackagePermission>();
+        var metapackage = new MetaPackage(
+            type,
+            package.Name,
+            package.Version,
+            package.Description,
+            package.Published,
+            0,
+            user.Id,
+            user,
+            permissions
+        );
+
+        permissions.Add(
+            new MetaPackagePermission(metapackage.Id, PermissionCategory.Owner, Permission.Read | Permission.Publish)
+        );
+        permissions.Add(new MetaPackagePermission(metapackage.Id, PermissionCategory.World, Permission.None));
+
+        return metapackage;
+    }
+
+    public MetaPackageAccess GetAccess(MetaPackage metaPackage) => new(metaPackage.OwnerId, metaPackage.Permissions);
+}

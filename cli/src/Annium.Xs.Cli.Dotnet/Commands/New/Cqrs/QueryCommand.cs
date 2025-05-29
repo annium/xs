@@ -1,0 +1,159 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Annium.Extensions.Arguments;
+using Annium.Logging;
+using Annium.Xs.Cli.Core.Commands;
+using Annium.Xs.Cli.Core.Projects;
+using Annium.Xs.Cli.Core.Tasks;
+using Annium.Xs.Cli.Core.Tools;
+using static Annium.Xs.Cli.Dotnet.Commands.New.Cqrs.Helper;
+
+namespace Annium.Xs.Cli.Dotnet.Commands.New.Cqrs;
+
+internal class QueryCommand
+    : AsyncCommand<QueryCommandConfiguration, DiscoverConfiguration>,
+        ICommandDescriptor,
+        ILogSubject
+{
+    private const string DomainQueryTemplate = "DomainQuery.cs_tpl";
+    private const string ApplicationQueryTemplate = "ApplicationQuery.cs_tpl";
+    private const string RequestTemplate = "Request.cs_tpl";
+    private const string ResponseTemplate = "Response.cs_tpl";
+    private const string Queries = "Queries";
+    private const string Requests = "Requests";
+    private const string Responses = "Responses";
+    public ILogger Logger { get; }
+    public static string Id => "query";
+    public static string Description => "Create query.";
+    private readonly DiscoverProjectsTask _discoverTask;
+    private readonly ITemplateWriter _templateWriter;
+
+    public QueryCommand(DiscoverProjectsTask discoverTask, ITemplateWriter templateWriter, ILogger logger)
+    {
+        _discoverTask = discoverTask;
+        _templateWriter = templateWriter;
+        Logger = logger;
+    }
+
+    public override async Task HandleAsync(
+        QueryCommandConfiguration cfg,
+        DiscoverConfiguration discoverCfg,
+        CancellationToken ct
+    )
+    {
+        var projects = await _discoverTask.RunAsync(discoverCfg);
+
+        var domainProject = projects.FilterMask(cfg.DomainProject).SingleOrDefault();
+        if (domainProject is null)
+        {
+            Console.WriteLine($"Domain project {cfg.DomainProject} not found");
+            return;
+        }
+
+        var applicationProject = projects.FilterMask(cfg.ApplicationProject).SingleOrDefault();
+        if (applicationProject is null)
+        {
+            Console.WriteLine($"Application project {cfg.ApplicationProject} not found");
+            return;
+        }
+
+        var viewModelProject = projects.FilterMask(cfg.ViewModelProject).SingleOrDefault();
+        if (viewModelProject is null)
+        {
+            Console.WriteLine($"ViewModel project {cfg.ViewModelProject} not found");
+            return;
+        }
+
+        _templateWriter.LoadResources($"{Group.TemplatesDir}.Query");
+
+        var data = GetQueryDescription(domainProject, applicationProject, viewModelProject, cfg.Area, ct);
+
+        this.Debug<string, string>("Create query {entity}:{name}", data.Entity, data.Name);
+
+        // write files
+        _templateWriter.SetRoot(BuildPath(domainProject.Directory, cfg.Area, Queries, data.Entity));
+        _templateWriter.Write(DomainQueryTemplate, $"{data.Name}Query.cs", data);
+        _templateWriter.SetRoot(BuildPath(applicationProject.Directory, cfg.Area, Queries, data.Entity));
+        _templateWriter.Write(ApplicationQueryTemplate, $"{data.Name}Query.cs", data);
+        _templateWriter.SetRoot(BuildPath(viewModelProject.Directory, cfg.Area, Requests, data.Entity));
+        _templateWriter.Write(RequestTemplate, $"{data.Name}Request.cs", data);
+        if (!string.IsNullOrWhiteSpace(data.Response))
+        {
+            _templateWriter.SetRoot(BuildPath(viewModelProject.Directory, cfg.Area, Responses, data.Entity));
+            _templateWriter.Write(ResponseTemplate, $"{data.Response}Response.cs", data);
+        }
+
+        _templateWriter.EnsureAllWritten();
+    }
+
+    private QueryDescription GetQueryDescription(
+        IProject domainProject,
+        IProject applicationProject,
+        IProject viewModelProject,
+        string? area,
+        CancellationToken ct
+    )
+    {
+        var data = new QueryDescription { Entity = Annium.Extensions.CommandLine.Cli.Prompt("Entities: ") };
+        ct.ThrowIfCancellationRequested();
+        data.Name = Annium.Extensions.CommandLine.Cli.Prompt("Query name: ");
+        ct.ThrowIfCancellationRequested();
+        data.Response = Annium.Extensions.CommandLine.Cli.Confirm("Add response")
+            ? Annium.Extensions.CommandLine.Cli.Prompt("Response name: ")
+            : string.Empty;
+        ct.ThrowIfCancellationRequested();
+        data.RequestFields = PromptFields("Request field");
+        ct.ThrowIfCancellationRequested();
+        data.ComposeFields = PromptFields("Compose field");
+        ct.ThrowIfCancellationRequested();
+        if (!string.IsNullOrWhiteSpace(data.Response))
+            data.ResponseFields = PromptFields("Response field");
+        ct.ThrowIfCancellationRequested();
+        data.DomainQueryNamespace = BuildNamespace(domainProject.Name, area, Queries, data.Entity);
+        data.ApplicationQueryNamespace = BuildNamespace(applicationProject.Name, area, Queries, data.Entity);
+        data.RequestNamespace = BuildNamespace(viewModelProject.Name, area, Requests, data.Entity);
+        data.ResponseNamespace = BuildNamespace(viewModelProject.Name, area, Responses, data.Entity);
+
+        return data;
+    }
+
+    private class QueryDescription
+    {
+        public string Entity { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Response { get; set; } = string.Empty;
+
+        public IList<ValueTuple<string, string>> RequestFields { get; set; } = new List<ValueTuple<string, string>>();
+
+        public IList<ValueTuple<string, string>> ComposeFields { get; set; } = new List<ValueTuple<string, string>>();
+
+        public IList<ValueTuple<string, string>> ResponseFields { get; set; } = new List<ValueTuple<string, string>>();
+
+        public string DomainQueryNamespace { get; set; } = string.Empty;
+        public string ApplicationQueryNamespace { get; set; } = string.Empty;
+        public string RequestNamespace { get; set; } = string.Empty;
+        public string ResponseNamespace { get; set; } = string.Empty;
+    }
+}
+
+internal class QueryCommandConfiguration
+{
+    [Option("domain")]
+    [Help("Domain layer to add query to.")]
+    public string DomainProject { get; set; } = "Domain";
+
+    [Option("app")]
+    [Help("Application layer to add query to.")]
+    public string ApplicationProject { get; set; } = "Application";
+
+    [Option("view")]
+    [Help("View model layer to add request/response to.")]
+    public string ViewModelProject { get; set; } = "ViewModel";
+
+    [Option("area")]
+    [Help("Optional area to generate within.")]
+    public string? Area { get; set; }
+}

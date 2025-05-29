@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Annium.Logging;
+using NodaTime;
+
+namespace Annium.Xs.Cli.Tools;
+
+internal class Watcher : ILogSubject
+{
+    public ILogger Logger { get; }
+    private readonly ITimeProvider _timeProvider;
+
+    public Watcher(ITimeProvider timeProvider, ILogger logger)
+    {
+        _timeProvider = timeProvider;
+        Logger = logger;
+    }
+
+    public async Task WatchAsync(
+        string root,
+        Func<string, bool> filter,
+        Func<string, Task> handleChange,
+        Func<string, Task> handleDelete,
+        CancellationToken ct
+    )
+    {
+        var semaphore = new PathSemaphore(_timeProvider, Duration.FromMilliseconds(100));
+        var tasks = new Queue<ValueTuple<Func<string, Task>, string>>();
+
+        using var watcher = new FileSystemWatcher(root);
+        using var gate = new ManualResetEventSlim(false);
+
+        watcher.EnableRaisingEvents = true;
+        watcher.IncludeSubdirectories = true;
+        watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite;
+
+        watcher.Created += (_, args) => AddTask(args.FullPath);
+        watcher.Renamed += (_, args) =>
+        {
+            AddTask(args.OldFullPath);
+            AddTask(args.FullPath);
+        };
+        watcher.Changed += (_, args) => AddTask(args.FullPath);
+        watcher.Deleted += (_, args) => AddTask(args.FullPath);
+        watcher.Error += (_, args) => this.Error(args.GetException());
+
+        // no tasks -> reset -> wait
+        // add task -> set
+        // problems: task was added after check and set was called before reset
+
+        while (!ct.IsCancellationRequested)
+        {
+            gate.Reset();
+            if (tasks.Count == 0)
+            {
+                this.Trace("Wait for tasks.");
+                gate.Wait(ct);
+            }
+
+            this.Trace("Pending {count} task(s).", tasks.Count);
+            // get and execute task
+            var (task, path) = tasks.Dequeue();
+            try
+            {
+                await task(path);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception exception)
+            {
+                this.Error(exception);
+            }
+        }
+
+        void AddTask(string path)
+        {
+            if (!semaphore.IsAvailable(path) || !filter(path))
+                return;
+
+            var task = File.Exists(path) ? handleChange : handleDelete;
+            this.Trace<string>("Enqueue task for {path}", path);
+            tasks.Enqueue((task, path));
+            // ReSharper disable once AccessToDisposedClosure
+            gate.Set();
+        }
+    }
+
+    private class PathSemaphore
+    {
+        private readonly IDictionary<string, Instant> _data = new Dictionary<string, Instant>();
+
+        private readonly ITimeProvider _timeProvider;
+
+        private readonly Duration _duration;
+
+        public PathSemaphore(ITimeProvider timeProvider, Duration duration)
+        {
+            _timeProvider = timeProvider;
+            _duration = duration;
+        }
+
+        public bool IsAvailable(string path)
+        {
+            var now = _timeProvider.Now;
+
+            // if cached, and not yet expired - it's not available
+            if (_data.ContainsKey(path) && _data[path] >= now)
+                return false;
+
+            // else, if not used yet, or expired - it's available
+            _data[path] = _timeProvider.Now + _duration;
+
+            return true;
+        }
+    }
+}

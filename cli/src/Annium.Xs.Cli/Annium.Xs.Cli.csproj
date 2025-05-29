@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Solutions>Annium.Xs</Solutions>
+    <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>xs</ToolCommandName>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../server/src/Annium.Xs.Server.Client/Annium.Xs.Server.Client.csproj" />
+    <ProjectReference Include="../Annium.Xs.Cli.Dotnet/Annium.Xs.Cli.Dotnet.csproj" />
+    <ProjectReference Include="../Annium.Xs.Cli.Node/Annium.Xs.Cli.Node.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Annium.Core.Entrypoint" />
+    <PackageReference Include="Annium.Net.Servers.Web" />
+    <PackageReference Include="LibGit2Sharp" />
+    <PackageReference Include="QuikGraph.Graphviz" />
+  </ItemGroup>
+</Project>
