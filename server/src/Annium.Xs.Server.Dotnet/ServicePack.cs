@@ -1,6 +1,7 @@
 using System;
-using System.Reflection;
 using Annium.Core.DependencyInjection;
+using Annium.DbUp.Core;
+using Annium.DbUp.PostgreSql;
 using Annium.linq2db.PostgreSql;
 using Annium.Xs.Server.Abstractions;
 using Annium.Xs.Server.Dotnet.Domain;
@@ -9,7 +10,6 @@ using Annium.Xs.Server.Dotnet.Internal.Services;
 using Annium.Xs.Server.Dotnet.Services;
 using Annium.Xs.Server.Dotnet.Views.Requests;
 using Annium.Xs.Server.Shared.Auth.TokenAccessors;
-using DbUp;
 
 namespace Annium.Xs.Server.Dotnet;
 
@@ -37,14 +37,9 @@ public class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        var result = DeployChanges
-            .To.PostgresqlDatabase(provider.Resolve<PostgreSqlConfiguration>().ConnectionString)
-            .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), x => x.Contains(".Migrations."))
-            .WithTransactionPerScript()
-            .LogToConsole()
-            .Build()
-            .PerformUpgrade();
-        if (!result.Successful)
-            throw new ApplicationException($"{result.ErrorScript}: {result.Error}");
+        Migrator
+            .Instance.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
+            .WithScriptsFromAssembly(GetType().Assembly)
+            .Execute();
     }
 }

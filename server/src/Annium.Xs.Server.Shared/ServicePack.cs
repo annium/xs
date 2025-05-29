@@ -1,12 +1,12 @@
 using System;
-using System.Reflection;
 using Annium.Core.DependencyInjection;
+using Annium.DbUp.Core;
+using Annium.DbUp.PostgreSql;
 using Annium.linq2db.PostgreSql;
 using Annium.Xs.Server.Shared.Internal;
 using Annium.Xs.Server.Shared.Internal.Auth;
 using Annium.Xs.Server.Shared.Internal.Tools;
 using Annium.Xs.Server.Shared.Tools;
-using DbUp;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Annium.Xs.Server.Shared;
@@ -34,14 +34,9 @@ public class ServicePack : ServicePackBase
 
     public override void Setup(IServiceProvider provider)
     {
-        var result = DeployChanges
-            .To.PostgresqlDatabase(provider.Resolve<PostgreSqlConfiguration>().ConnectionString)
-            .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), x => x.Contains(".Migrations."))
-            .WithTransactionPerScript()
-            .LogToConsole()
-            .Build()
-            .PerformUpgrade();
-        if (!result.Successful)
-            throw new ApplicationException($"{result.ErrorScript}: {result.Error}");
+        Migrator
+            .Instance.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Schema)
+            .WithScriptsFromAssembly(GetType().Assembly)
+            .Execute();
     }
 }

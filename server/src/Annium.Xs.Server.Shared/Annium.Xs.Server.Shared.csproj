@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Annium.AspNetCore.Extensions" />
     <PackageReference Include="Annium.Configuration.Yaml" />
+    <PackageReference Include="Annium.DbUp.PostgreSql" />
     <PackageReference Include="Annium.Infrastructure.Hosting" />
     <PackageReference Include="Annium.linq2db.PostgreSql" />
     <PackageReference Include="Annium.Logging.Console" />

@@ -9,6 +9,9 @@
     <ProjectReference Include="../Annium.Xs.Server.Abstractions/Annium.Xs.Server.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
+      <PackageReference Include="Annium.DbUp.PostgreSql" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Scripts/**/*.sql" />
   </ItemGroup>
 </Project>
