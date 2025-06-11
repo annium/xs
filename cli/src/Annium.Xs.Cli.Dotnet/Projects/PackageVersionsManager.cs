@@ -84,7 +84,10 @@ internal class PackageVersionsManager : IPackageVersionsManager
             var element = Read(file);
             var succeed = handle(element);
             if (!succeed)
+            {
+                dir = Directory.GetParent(dir)?.FullName;
                 continue;
+            }
 
             Write(file, element);
             return true;
