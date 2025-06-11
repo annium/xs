@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
-using Annium.Core.DependencyInjection;
+using Annium.Core.DependencyInjection.Extensions;
 using Annium.Xs.Server.Abstractions.Domain;
 using Annium.Xs.Server.Abstractions.Services;
 using Annium.Xs.Server.Abstractions.Tools;

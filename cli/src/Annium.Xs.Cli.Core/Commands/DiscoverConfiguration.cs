@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using Annium.Extensions.Arguments;
+using Annium.Extensions.Arguments.Attributes;
 
 namespace Annium.Xs.Cli.Core.Commands;
 

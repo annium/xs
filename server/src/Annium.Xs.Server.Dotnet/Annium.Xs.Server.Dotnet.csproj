@@ -9,7 +9,7 @@
     <ProjectReference Include="../Annium.Xs.Server.Abstractions/Annium.Xs.Server.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
-      <PackageReference Include="Annium.DbUp.PostgreSql" />
+    <PackageReference Include="Annium.DbUp.PostgreSql" />
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
   <ItemGroup>

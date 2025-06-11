@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Annium.Core.DependencyInjection;
+using Annium.Core.DependencyInjection.Extensions;
 using Annium.Xs.Server.Abstractions.Tools;
 using Annium.Xs.Server.Dotnet.Internal;
 using Annium.Xs.Server.Dotnet.Views.Responses;

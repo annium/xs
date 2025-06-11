@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using Annium.Configuration.Abstractions;
+using Annium.Configuration.Yaml;
 using Annium.Core.Mapper;
 using Annium.Logging;
 using Annium.Xs.Cli.Core.Helpers;

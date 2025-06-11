@@ -1,4 +1,4 @@
-using Annium.linq2db.Extensions;
+using Annium.linq2db.Extensions.Configuration;
 using Annium.Xs.Server.Node.Domain;
 using LinqToDB.Mapping;
 

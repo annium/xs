@@ -1,4 +1,6 @@
-using Annium.Core.DependencyInjection;
+using Annium.AspNetCore.Extensions.Extensions;
+using Annium.Infrastructure.Hosting.Extensions;
+using Annium.Logging.Microsoft;
 using Annium.Xs.Server.Host;
 using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.Swagger;

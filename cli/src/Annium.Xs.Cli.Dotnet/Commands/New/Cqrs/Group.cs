@@ -1,8 +1,8 @@
-using Annium.Extensions.Arguments;
+using Annium.Extensions.Arguments.Commands;
 
 namespace Annium.Xs.Cli.Dotnet.Commands.New.Cqrs;
 
-internal class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
+internal class Group : Annium.Extensions.Arguments.Commands.Group, ICommandDescriptor
 {
     internal const string TemplatesDir = "Templates.CQRS";
     public static string Id => "cqrs";

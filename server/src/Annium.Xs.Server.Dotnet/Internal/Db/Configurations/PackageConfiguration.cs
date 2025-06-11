@@ -1,5 +1,5 @@
 using System;
-using Annium.linq2db.Extensions;
+using Annium.linq2db.Extensions.Configuration;
 using Annium.Xs.Server.Dotnet.Domain;
 using LinqToDB.Mapping;
 

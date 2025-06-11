@@ -1,5 +1,7 @@
 using System;
-using Annium.Core.DependencyInjection;
+using Annium.Core.DependencyInjection.Container;
+using Annium.Core.DependencyInjection.Extensions;
+using Annium.Core.DependencyInjection.Packs;
 using Annium.Xs.Server.Client.Clients;
 
 namespace Annium.Xs.Server.Client;

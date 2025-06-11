@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Extensions.Arguments;
+using Annium.Extensions.Arguments.Commands;
 using Annium.Extensions.Shell;
 using Annium.Logging;
 using Annium.Xs.Cli.Core.Commands;

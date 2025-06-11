@@ -1,8 +1,8 @@
-using Annium.Extensions.Arguments;
+using Annium.Extensions.Arguments.Commands;
 
 namespace Annium.Xs.Cli.Dotnet.Commands.New;
 
-public class Group : Annium.Extensions.Arguments.Group, ICommandDescriptor
+public class Group : Annium.Extensions.Arguments.Commands.Group, ICommandDescriptor
 {
     internal const string TemplatesDir = "Templates";
     internal const string ProjectTemplate = "project_tpl";

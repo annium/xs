@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Annium.Core.DependencyInjection;
+using Annium.Core.DependencyInjection.Extensions;
 using Annium.Xs.Server.Shared.Auth.TokenAccessors;
 using Annium.Xs.Server.Shared.Controllers;
 using Annium.Xs.Server.Shared.Domain.Models;

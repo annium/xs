@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Extensions.Arguments;
+using Annium.Extensions.Arguments.Commands;
 using Annium.Xs.Cli.Core.Commands;
 using Annium.Xs.Cli.Core.Tasks;
 using Annium.Xs.Cli.Core.Tools;
