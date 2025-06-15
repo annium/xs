@@ -15,8 +15,7 @@ using Version = Annium.Xs.Cli.Core.Models.Version;
 
 namespace Annium.Xs.Cli.Dotnet.Projects;
 
-internal class ProjectMapper(IPackageVersionsManager packageVersionsManager)
-    : IProjectMapper<IPlatformProject, RawProject>
+internal class ProjectMapper(IPropsFilesManager propsFilesManager) : IProjectMapper<IPlatformProject, RawProject>
 {
     private static readonly string[] _implicitPackages = ["Microsoft.AspNetCore.App"];
     private static readonly string[] _booleanStrings = ["true", "false"];
@@ -35,6 +34,7 @@ internal class ProjectMapper(IPackageVersionsManager packageVersionsManager)
     public RawProject Load(string path, DiscoverConfiguration configuration)
     {
         var project = new RawProject();
+        var dir = Path.GetFullPath(Path.GetDirectoryName(path).NotNull());
         var file = new FileInfo(path);
 
         var info = XElement.Load(file.OpenRead());
@@ -51,7 +51,10 @@ internal class ProjectMapper(IPackageVersionsManager packageVersionsManager)
 
         project.Solutions =
             properties.GetElement(El.Solutions)?.Value.Split(';').WhereNot(string.IsNullOrWhiteSpace).ToArray() ?? [];
-        project.TargetFramework = properties.GetElement(El.TargetFramework)?.Value ?? TargetFramework.Net7;
+        project.TargetFramework =
+            properties.GetElement(El.TargetFramework)?.Value
+            ?? propsFilesManager.ResolveTarggetFramework(dir)
+            ?? TargetFramework.NetStandard20;
         if (configuration.SkipChecks)
             project.OutputType =
                 properties.GetElement(El.OutputType)?.Value == "Exe" ? OutputType.Exe : OutputType.Library;
@@ -242,7 +245,7 @@ internal class ProjectMapper(IPackageVersionsManager packageVersionsManager)
                 if (existingRef.Attribute(El.Version) is not null)
                     existingRef.SetAttributeValue(El.Version, newVersion.Value);
                 else
-                    packageVersionsManager.SaveVersion(directory, include, newVersion.Value);
+                    propsFilesManager.SaveVersion(directory, include, newVersion.Value);
             }
 
         var sortedRefs = refs.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase).ToArray();
@@ -314,7 +317,7 @@ internal class ProjectMapper(IPackageVersionsManager packageVersionsManager)
         if (rawVersion == string.Empty)
         {
             var version =
-                packageVersionsManager.ResolveVersion(directory, name)
+                propsFilesManager.ResolveVersion(directory, name)
                 ?? throw new InvalidOperationException(
                     $"Project {project} package dependency {name} version is defined not locally neither in Directory.Packages.props file(s)."
                 );

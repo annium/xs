@@ -5,25 +5,49 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Annium.Xs.Cli.Dotnet.Extensions;
+using Annium.Xs.Cli.Dotnet.Models;
 using Version = Annium.Xs.Cli.Core.Models.Version;
 
 namespace Annium.Xs.Cli.Dotnet.Projects;
 
-internal interface IPackageVersionsManager
+internal interface IPropsFilesManager
 {
+    TargetFramework? ResolveTarggetFramework(string directory);
     Version? ResolveVersion(string directory, string name);
     void SaveVersion(string directory, string name, string version);
 }
 
-internal class PackageVersionsManager : IPackageVersionsManager
+internal class PropsFilesManager : IPropsFilesManager
 {
-    private const string PackageVersionsFileName = "Directory.Packages.props";
+    private const string DirectoryBuildFileName = "Directory.Build.props";
+    private const string DirectoryPackagesFileName = "Directory.Packages.props";
+
+    public TargetFramework? ResolveTarggetFramework(string directory)
+    {
+        TargetFramework? result = null;
+        ExecuteHierarchically(
+            directory,
+            DirectoryBuildFileName,
+            el =>
+            {
+                var rawTargetFramework = el.GetElement(El.PropertyGroup)?.GetElement(El.TargetFramework);
+                if (rawTargetFramework is null)
+                    return false;
+
+                result = rawTargetFramework.Value;
+                return true;
+            }
+        );
+
+        return result;
+    }
 
     public Version? ResolveVersion(string directory, string name)
     {
         Version? result = null;
         ExecuteHierarchically(
             directory,
+            DirectoryPackagesFileName,
             el =>
             {
                 var rawVersions = el.GetElement(El.ItemGroup)?.GetElements(El.PackageVersion).ToArray();
@@ -52,6 +76,7 @@ internal class PackageVersionsManager : IPackageVersionsManager
     {
         var succeed = ExecuteHierarchically(
             directory,
+            DirectoryPackagesFileName,
             el =>
             {
                 var rawVersion = el.GetElement(El.ItemGroup)
@@ -69,12 +94,12 @@ internal class PackageVersionsManager : IPackageVersionsManager
             throw new InvalidOperationException($"Failed to save {name}@{version} from {directory}");
     }
 
-    private bool ExecuteHierarchically(string directory, Func<XElement, bool> handle)
+    private bool ExecuteHierarchically(string directory, string fileName, Func<XElement, bool> handle)
     {
         var dir = directory;
         while (dir is not null)
         {
-            var file = Path.Combine(dir, PackageVersionsFileName);
+            var file = Path.Combine(dir, fileName);
             if (!File.Exists(file))
             {
                 dir = Directory.GetParent(dir)?.FullName;

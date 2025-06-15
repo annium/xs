@@ -22,7 +22,7 @@ public class ServicePack : ServicePackBase
 
         // tools
         container.Add<IPlatformConfigurationManager, PlatformConfigurationManager>().Singleton();
-        container.Add<IPackageVersionsManager, PackageVersionsManager>().Singleton();
+        container.Add<IPropsFilesManager, PropsFilesManager>().Singleton();
 
         // audit rules
         container.AddAuditRule<FindInconsistentDependenciesRule<IPlatformProject>, IPlatformProject>();
