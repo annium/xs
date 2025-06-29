@@ -10,6 +10,7 @@ public class Group : Annium.Extensions.Arguments.Commands.Group, ICommandDescrip
     public Group()
     {
         Add<New.Group>();
+        Add<Nuget.Group>();
         Add<Sln.Group>();
     }
 }

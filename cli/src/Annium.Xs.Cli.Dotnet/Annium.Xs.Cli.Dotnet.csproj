@@ -9,6 +9,10 @@
     <ProjectReference Include="../Annium.Xs.Cli.Core/Annium.Xs.Cli.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Humanizer" />
+    <PackageReference Include="NuGet.Packaging" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Templates/**" />
     <EmbeddedResource Remove="Templates/.*" />
   </ItemGroup>
