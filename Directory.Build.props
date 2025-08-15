@@ -1,9 +1,10 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <DebugType>portable</DebugType>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>true</WarningsAsErrors>
     <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
   </PropertyGroup>
@@ -16,11 +17,7 @@
     <AnalysisMode>Default</AnalysisMode>
   </PropertyGroup>
   <PropertyGroup>
-    <VersionMajor>1</VersionMajor>
-    <VersionMinor>1</VersionMinor>
-    <BuildNumber>$(BuildNumber)</BuildNumber>
-    <BuildNumber Condition="'$(BuildNumber)' == ''">0</BuildNumber>
-    <PackageVersion>$(VersionMajor).$(VersionMinor).$(BuildNumber)$(VersionTag)</PackageVersion>
+    <PackageVersion>$(PackageVersion)</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="all">
