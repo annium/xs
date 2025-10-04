@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Annium.Extensions.Arguments.Attributes;
-using Annium.Extensions.Arguments.Commands;
+using Annium.Extensions.Arguments;
 using ConsoleExt = Annium.Extensions.CommandLine.Cli;
 
 namespace Annium.Xs.Cli.Commands.Sync;

@@ -1,7 +1,5 @@
 using System;
-using Annium.Core.DependencyInjection.Container;
-using Annium.Core.DependencyInjection.Extensions;
-using Annium.Core.DependencyInjection.Packs;
+using Annium.Core.DependencyInjection;
 using Annium.Xs.Cli.Core.Audit;
 using Annium.Xs.Cli.Core.Projects;
 using Annium.Xs.Cli.Core.Tools;

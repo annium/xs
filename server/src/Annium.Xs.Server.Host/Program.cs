@@ -1,5 +1,5 @@
-using Annium.AspNetCore.Extensions.Extensions;
-using Annium.Infrastructure.Hosting.Extensions;
+using Annium.AspNetCore.Extensions;
+using Annium.Infrastructure.Hosting;
 using Annium.Logging.Microsoft;
 using Annium.Xs.Server.Host;
 using Microsoft.AspNetCore.Builder;

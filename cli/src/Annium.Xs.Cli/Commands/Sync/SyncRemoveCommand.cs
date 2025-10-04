@@ -2,8 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Annium.Extensions.Arguments.Attributes;
-using Annium.Extensions.Arguments.Commands;
+using Annium.Extensions.Arguments;
 
 namespace Annium.Xs.Cli.Commands.Sync;
 

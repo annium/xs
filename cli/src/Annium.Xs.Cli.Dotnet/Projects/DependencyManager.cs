@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
-using Annium.Net.Http.Extensions;
 using Annium.Xs.Cli.Core.Models;
 using Annium.Xs.Cli.Core.Projects;
 using Version = Annium.Xs.Cli.Core.Models.Version;

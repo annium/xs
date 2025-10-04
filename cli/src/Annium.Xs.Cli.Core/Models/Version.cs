@@ -6,7 +6,7 @@ using Annium.Data.Models;
 
 namespace Annium.Xs.Cli.Core.Models;
 
-public class Version : Comparable<Version>
+public sealed record Version : Comparable<Version>
 {
     public static Version Empty { get; } = new(0, 0, 0, string.Empty);
 

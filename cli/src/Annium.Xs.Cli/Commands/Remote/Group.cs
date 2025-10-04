@@ -1,8 +1,8 @@
-using Annium.Extensions.Arguments.Commands;
+using Annium.Extensions.Arguments;
 
 namespace Annium.Xs.Cli.Commands.Remote;
 
-internal class Group : Extensions.Arguments.Commands.Group, ICommandDescriptor
+internal class Group : Extensions.Arguments.Group, ICommandDescriptor
 {
     public static string Id => "remote";
     public static string Description => "Manage tracked registries.";

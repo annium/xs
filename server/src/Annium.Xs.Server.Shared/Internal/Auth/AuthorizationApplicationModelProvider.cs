@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Annium.Core.DependencyInjection.Extensions;
+using Annium.Core.DependencyInjection;
 using Annium.Xs.Server.Shared.Auth;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 

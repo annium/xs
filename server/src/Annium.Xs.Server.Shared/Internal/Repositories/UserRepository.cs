@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Annium.linq2db.Extensions.Extensions;
+using Annium.linq2db.Extensions;
 using Annium.Xs.Server.Shared.Domain.Models;
 using Annium.Xs.Server.Shared.Repositories;
 using LinqToDB;

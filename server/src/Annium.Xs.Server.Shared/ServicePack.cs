@@ -1,7 +1,5 @@
 using System;
-using Annium.Core.DependencyInjection.Container;
-using Annium.Core.DependencyInjection.Extensions;
-using Annium.Core.DependencyInjection.Packs;
+using Annium.Core.DependencyInjection;
 using Annium.Core.Runtime;
 using Annium.DbUp.Core;
 using Annium.DbUp.PostgreSql;

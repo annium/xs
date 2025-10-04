@@ -1,9 +1,7 @@
 using System;
 using Annium.Configuration.Abstractions;
 using Annium.Configuration.CommandLine;
-using Annium.Core.DependencyInjection.Container;
-using Annium.Core.DependencyInjection.Extensions;
-using Annium.Core.DependencyInjection.Packs;
+using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
 using Annium.Core.Runtime;
 using Annium.Data.Operations.Serialization.Json;
