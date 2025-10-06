@@ -28,7 +28,7 @@ ensure-no-changes:
 update:
 	$(call header)
 	dotnet tool list --format json | jq -r '.data[] | "\(.packageId)"' | xargs -I% dotnet tool install %
-	dotnet tool run xs update all -sc -ic
+	dotnet tool run xs update all dotnet -sc -ic
 
 clean:
 	$(call header)
