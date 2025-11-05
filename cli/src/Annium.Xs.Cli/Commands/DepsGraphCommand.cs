@@ -8,6 +8,7 @@ using Annium.Extensions.Arguments;
 using Annium.Extensions.Shell;
 using Annium.Net.Servers.Web;
 using Annium.Xs.Cli.Core.Commands;
+using Annium.Xs.Cli.Core.Projects;
 using Annium.Xs.Cli.Core.Tasks;
 using Annium.Xs.Cli.Tools;
 using QuikGraph;
@@ -65,9 +66,9 @@ file class GraphHandler : IHttpHandler
         var allProjects = await _discoverTask.RunAsync(_discoverCfg);
         var projects = string.IsNullOrEmpty(_cfg.Mask) ? allProjects : allProjects.FilterMask(_cfg.Mask);
 
-        var graph = new EdgeListGraph<string, Edge<string>>();
+        var graph = new EdgeListGraph<string, Edge<string>>(true, false);
         foreach (var project in projects)
-            graph.AddVerticesAndEdgeRange(project.Projects.Select(x => new Edge<string>(project.Name, x.Value.Name)));
+            BuildGraph(graph, project);
 
         var dot = graph.ToGraphviz(algo =>
         {
@@ -92,6 +93,16 @@ file class GraphHandler : IHttpHandler
 
         File.Delete(dotFile);
         File.Delete(svgFile);
+    }
+
+    private static void BuildGraph(EdgeListGraph<string, Edge<string>> graph, IProject project)
+    {
+        var edges = project.Projects.Select(x => new Edge<string>(project.Name, x.Value.Name)).ToArray();
+        foreach (var edge in edges)
+            graph.AddVerticesAndEdge(edge);
+
+        foreach (var dep in project.Projects)
+            BuildGraph(graph, dep.Value);
     }
 }
 
