@@ -72,6 +72,20 @@ internal class TargetFramework
     public static TargetFramework Net9TvOs { get; } = new("net9-tvos");
     public static TargetFramework Net9_0Windows { get; } = new("net9.0-windows");
     public static TargetFramework Net9Windows { get; } = new("net9-windows");
+    public static TargetFramework Net10_0 { get; } = new("net10.0");
+    public static TargetFramework Net10 { get; } = new("net10");
+    public static TargetFramework Net10_0Android { get; } = new("net10.0-android");
+    public static TargetFramework Net10Android { get; } = new("net10-android");
+    public static TargetFramework Net10_0Ios { get; } = new("net10.0-ios");
+    public static TargetFramework Net10Ios { get; } = new("net10-ios");
+    public static TargetFramework Net10_0MacCatalyst { get; } = new("net10.0-maccatalyst");
+    public static TargetFramework Net10MacCatalyst { get; } = new("net10-maccatalyst");
+    public static TargetFramework Net10_0MacOs { get; } = new("net10.0-macos");
+    public static TargetFramework Net10MacOs { get; } = new("net10-macos");
+    public static TargetFramework Net10_0TvOs { get; } = new("net10.0-tvos");
+    public static TargetFramework Net10TvOs { get; } = new("net10-tvos");
+    public static TargetFramework Net10_0Windows { get; } = new("net10.0-windows");
+    public static TargetFramework Net10Windows { get; } = new("net10-windows");
 
     public static IReadOnlyList<IReadOnlyList<TargetFramework>> SupportedGroups { get; } =
         new List<IReadOnlyList<TargetFramework>>
@@ -151,6 +165,24 @@ internal class TargetFramework
                 Net9_0TvOs,
                 Net9Windows,
                 Net9_0Windows,
+            },
+            new List<TargetFramework>
+            {
+                NetStandard21,
+                Net10,
+                Net10_0,
+                Net10Android,
+                Net10_0Android,
+                Net10Ios,
+                Net10_0Ios,
+                Net10MacCatalyst,
+                Net10_0MacCatalyst,
+                Net10MacOs,
+                Net10_0MacOs,
+                Net10TvOs,
+                Net10_0TvOs,
+                Net10Windows,
+                Net10_0Windows,
             },
         };
 

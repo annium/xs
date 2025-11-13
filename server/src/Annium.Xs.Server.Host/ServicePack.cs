@@ -13,9 +13,8 @@ using Annium.Net.Http;
 using Annium.Serialization.Abstractions;
 using Annium.Serialization.Json;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Annium.Xs.Server.Host;
@@ -61,7 +60,6 @@ internal class ServicePack : ServicePackBase
 
         // host helpers
         container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
-        container.Add<IActionContextAccessor, ActionContextAccessor>().Singleton();
     }
 
     private void SetupSwagger(SwaggerGenOptions options)
@@ -77,18 +75,6 @@ internal class ServicePack : ServicePackBase
                 Type = SecuritySchemeType.Http,
                 BearerFormat = "JWT",
                 Scheme = "Bearer",
-            }
-        );
-        options.AddSecurityRequirement(
-            new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
-                    },
-                    []
-                },
             }
         );
     }

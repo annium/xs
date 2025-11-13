@@ -10,13 +10,13 @@ public class DiscoverConfiguration
     [Help("Allows to run command in specific folder.")]
     public string[] Roots
     {
-        get => _roots.Length > 0 ? _roots : [Directory.GetCurrentDirectory()];
+        get => field.Length > 0 ? field : [Directory.GetCurrentDirectory()];
         set
         {
             var strings = value.Select(Path.GetFullPath).ToArray();
-            _roots = strings;
+            field = strings;
         }
-    }
+    } = [];
 
     [Option("c")]
     [Help("Filters only projects with changes in VCS.")]
@@ -35,6 +35,4 @@ public class DiscoverConfiguration
     [Option("ic")]
     [Help("Allows to ignore inconsistency to fix fursther.")]
     public bool IgnoreConsistency { get; set; }
-
-    private string[] _roots = [];
 }

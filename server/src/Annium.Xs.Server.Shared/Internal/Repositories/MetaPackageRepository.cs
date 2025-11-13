@@ -50,6 +50,7 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
         var entities = await request
             .LoadWith(x => x.Owner)
             .LoadWith(x => x.Permissions)
+            .AsQueryable()
             .Skip((page - 1) * count)
             .Take(count)
             .ToArrayAsync();
@@ -59,13 +60,14 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
 
     public async Task<MetaPackage?> TryGetByIdAsync(Guid id)
     {
-        return await Db.MetaPackages.LoadWith(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == id);
+        return await Db.MetaPackages.LoadWith(x => x.Permissions).AsQueryable().FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<MetaPackageAccess?> TryGetAccessByIdAsync(Guid id)
     {
         var data = await Db
             .MetaPackages.LoadWith(x => x.Permissions)
+            .AsQueryable()
             .Where(x => x.Id == id)
             .Select(x => new { owner = x.OwnerId, permissions = x.Permissions })
             .FirstOrDefaultAsync();
@@ -77,6 +79,7 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
     {
         return await Db
             .MetaPackages.LoadWith(x => x.Permissions)
+            .AsQueryable()
             .FirstOrDefaultAsync(x => x.Type == type && x.Name == name);
     }
 

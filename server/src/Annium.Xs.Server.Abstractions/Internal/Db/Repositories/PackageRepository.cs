@@ -44,6 +44,7 @@ internal class PackageRepository<TPackage, TPackageDependency>
         var entity = await Db
             .Packages.Where(x => x.Name.ToUpper() == upperName && x.Version == version)
             .LoadWith(x => x.Dependencies)
+            .AsQueryable()
             .FirstOrDefaultAsync();
 
         return entity;
