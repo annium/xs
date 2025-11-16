@@ -72,7 +72,11 @@ public class SyncCommand : AsyncCommand<DiscoverConfiguration>, ICommandDescript
             {
                 var folder = Path.GetRelativePath(root, parent);
                 this.Debug<IProject, string>("Add {project} to solution file at {folder}", project, folder);
-                await _shell.Cmd($"dotnet sln {slnFile} add --solution-folder {folder} {project.File}").RunAsync();
+                await _shell
+                    .Cmd(
+                        $"dotnet sln {slnFile} add {project.File} --solution-folder {folder} --include-references false"
+                    )
+                    .RunAsync();
             }
         }
 
