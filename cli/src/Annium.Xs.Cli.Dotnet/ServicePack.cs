@@ -2,7 +2,11 @@ using System;
 using System.Net;
 using System.Net.Http;
 using Annium.Core.DependencyInjection;
+using Annium.Data.Operations.Serialization.Json;
 using Annium.Net.Http;
+using Annium.NodaTime.Serialization.Json;
+using Annium.Serialization.Abstractions;
+using Annium.Serialization.Json;
 using Annium.Xs.Cli.Core.Audit;
 using Annium.Xs.Cli.Core.Projects;
 using Annium.Xs.Cli.Core.Tools;
@@ -20,9 +24,8 @@ public class ServicePack : ServicePackBase
         container.Add<IPlatformProjectLinker, ProjectLinker>().Singleton();
         container.Add<ProjectMapper>().AsSelf().Singleton();
         container.Add<IDependencyManager, DependencyManager>().Singleton();
-        container.AddHttpRequestFactory("dotnet");
         container.AddHttpRequestFactory(
-            "dotnet",
+            Constants.Type,
             (_, _) =>
                 new HttpClient(
                     new HttpClientHandler
@@ -32,6 +35,9 @@ public class ServicePack : ServicePackBase
                     }
                 )
         );
+        container
+            .AddSerializers(Constants.Type)
+            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime());
 
         // tools
         container.Add<IPlatformConfigurationManager, PlatformConfigurationManager>().Singleton();

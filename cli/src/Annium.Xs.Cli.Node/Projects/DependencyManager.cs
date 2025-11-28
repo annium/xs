@@ -17,7 +17,7 @@ internal class DependencyManager : IDependencyManager
     public Uri DefaultServer { get; } = new(Constants.DefaultServer);
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    public DependencyManager([FromKeyedServices("node")] IHttpRequestFactory httpRequestFactory)
+    public DependencyManager([FromKeyedServices(Constants.Type)] IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }

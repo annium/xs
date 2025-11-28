@@ -18,7 +18,7 @@ internal class DependencyManager : IDependencyManager
     private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    public DependencyManager([FromKeyedServices("node")] IHttpRequestFactory httpRequestFactory)
+    public DependencyManager([FromKeyedServices(Constants.Type)] IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }
