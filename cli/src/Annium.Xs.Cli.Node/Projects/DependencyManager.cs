@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
 using Annium.Xs.Cli.Core.Models;
 using Annium.Xs.Cli.Core.Projects;
+using Microsoft.Extensions.DependencyInjection;
 using Version = Annium.Xs.Cli.Core.Models.Version;
 
 namespace Annium.Xs.Cli.Node.Projects;
@@ -18,11 +17,7 @@ internal class DependencyManager : IDependencyManager
     public Uri DefaultServer { get; } = new(Constants.DefaultServer);
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    private readonly HttpClient _client = new(
-        new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip, MaxConnectionsPerServer = 16 }
-    );
-
-    public DependencyManager(IHttpRequestFactory httpRequestFactory)
+    public DependencyManager([FromKeyedServices("node")] IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }
@@ -31,7 +26,6 @@ internal class DependencyManager : IDependencyManager
     {
         var request = _httpRequestFactory
             .New(serverUri)
-            .UseClient(_client)
             .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()))
             .BearerAuthorization(accessToken);
 

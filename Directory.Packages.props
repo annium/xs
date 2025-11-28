@@ -3,25 +3,25 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Annium.AspNetCore.Extensions" Version="1.1.22" />
-    <PackageVersion Include="Annium.Configuration.CommandLine" Version="1.1.24" />
-    <PackageVersion Include="Annium.Configuration.Yaml" Version="1.1.24" />
-    <PackageVersion Include="Annium.Core.Entrypoint" Version="1.1.24" />
-    <PackageVersion Include="Annium.Data.Operations.Serialization.Json" Version="1.1.24" />
-    <PackageVersion Include="Annium.DbUp.PostgreSql" Version="1.1.22" />
-    <PackageVersion Include="Annium.Execution.Flow" Version="1.1.24" />
-    <PackageVersion Include="Annium.Extensions.Arguments" Version="1.1.24" />
-    <PackageVersion Include="Annium.Extensions.CommandLine" Version="1.1.24" />
-    <PackageVersion Include="Annium.Extensions.Shell" Version="1.1.24" />
-    <PackageVersion Include="Annium.Infrastructure.Hosting" Version="1.1.22" />
-    <PackageVersion Include="Annium.Logging.Console" Version="1.1.24" />
-    <PackageVersion Include="Annium.Logging.Microsoft" Version="1.1.24" />
-    <PackageVersion Include="Annium.Net.Http" Version="1.1.24" />
-    <PackageVersion Include="Annium.Net.Servers.Web" Version="1.1.24" />
-    <PackageVersion Include="Annium.NodaTime.Serialization.Json" Version="1.1.24" />
-    <PackageVersion Include="Annium.Serialization.Json" Version="1.1.24" />
-    <PackageVersion Include="Annium.Serialization.Yaml" Version="1.1.24" />
-    <PackageVersion Include="Annium.linq2db.PostgreSql" Version="1.1.22" />
+    <PackageVersion Include="Annium.AspNetCore.Extensions" Version="1.1.24" />
+    <PackageVersion Include="Annium.Configuration.CommandLine" Version="1.1.27" />
+    <PackageVersion Include="Annium.Configuration.Yaml" Version="1.1.27" />
+    <PackageVersion Include="Annium.Core.Entrypoint" Version="1.1.27" />
+    <PackageVersion Include="Annium.Data.Operations.Serialization.Json" Version="1.1.27" />
+    <PackageVersion Include="Annium.DbUp.PostgreSql" Version="1.1.24" />
+    <PackageVersion Include="Annium.Execution.Flow" Version="1.1.27" />
+    <PackageVersion Include="Annium.Extensions.Arguments" Version="1.1.27" />
+    <PackageVersion Include="Annium.Extensions.CommandLine" Version="1.1.27" />
+    <PackageVersion Include="Annium.Extensions.Shell" Version="1.1.27" />
+    <PackageVersion Include="Annium.Infrastructure.Hosting" Version="1.1.24" />
+    <PackageVersion Include="Annium.Logging.Console" Version="1.1.27" />
+    <PackageVersion Include="Annium.Logging.Microsoft" Version="1.1.27" />
+    <PackageVersion Include="Annium.Net.Http" Version="1.1.27" />
+    <PackageVersion Include="Annium.Net.Servers.Web" Version="1.1.27" />
+    <PackageVersion Include="Annium.NodaTime.Serialization.Json" Version="1.1.27" />
+    <PackageVersion Include="Annium.Serialization.Json" Version="1.1.27" />
+    <PackageVersion Include="Annium.Serialization.Yaml" Version="1.1.27" />
+    <PackageVersion Include="Annium.linq2db.PostgreSql" Version="1.1.24" />
     <PackageVersion Include="dbup-postgresql" Version="6.1.5" />
     <PackageVersion Include="Humanizer" Version="3.0.1" />
     <PackageVersion Include="LibGit2Sharp" Version="0.31.0" />
@@ -29,10 +29,10 @@
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" />
     <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.2.0" />
-    <PackageVersion Include="NuGet.Packaging" Version="7.0.0" />
+    <PackageVersion Include="NuGet.Packaging" Version="7.0.1" />
     <PackageVersion Include="NSwag.AspNetCore" Version="14.6.3" />
     <PackageVersion Include="QuikGraph.Graphviz" Version="2.5.0" />
-    <PackageVersion Include="Scriban" Version="6.5.1" />
+    <PackageVersion Include="Scriban" Version="6.5.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.0.1" />
   </ItemGroup>
 </Project>

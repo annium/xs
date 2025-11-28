@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
 using Annium.Xs.Cli.Core.Models;
 using Annium.Xs.Cli.Core.Projects;
+using Microsoft.Extensions.DependencyInjection;
 using Version = Annium.Xs.Cli.Core.Models.Version;
 
 namespace Annium.Xs.Cli.Dotnet.Projects;
@@ -19,11 +18,7 @@ internal class DependencyManager : IDependencyManager
     private const string RegistrationsBaseUrlService = "RegistrationsBaseUrl/Versioned";
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    private readonly HttpClient _client = new(
-        new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip, MaxConnectionsPerServer = 16 }
-    );
-
-    public DependencyManager(IHttpRequestFactory httpRequestFactory)
+    public DependencyManager([FromKeyedServices("node")] IHttpRequestFactory httpRequestFactory)
     {
         _httpRequestFactory = httpRequestFactory;
     }
@@ -32,7 +27,6 @@ internal class DependencyManager : IDependencyManager
     {
         var serverIndex = await _httpRequestFactory
             .New(serverUri)
-            .UseClient(_client)
             .Get(Constants.ServerPathSuffix)
             .AsAsync<ServiceIndex>();
         var registrationBaseUrl = serverIndex.NotNull().Resources.First(r => r.Type == RegistrationsBaseUrlService).Id;
@@ -72,22 +66,14 @@ internal class DependencyManager : IDependencyManager
 
     private async Task<RegistrationIndex?> LoadIndexAsync(string registrationUrl)
     {
-        var index = await _httpRequestFactory
-            .New()
-            .UseClient(_client)
-            .Get(registrationUrl)
-            .AsAsync(new RegistrationIndex());
+        var index = await _httpRequestFactory.New().Get(registrationUrl).AsAsync(new RegistrationIndex());
         index.Items = await Task.WhenAll(
             index.Items.Select(async page =>
             {
                 if (page.Items.Length > 0)
                     return page;
 
-                var result = await _httpRequestFactory
-                    .New()
-                    .UseClient(_client)
-                    .Get(page.Id)
-                    .AsAsync<RegistrationPage>();
+                var result = await _httpRequestFactory.New().Get(page.Id).AsAsync<RegistrationPage>();
                 return result.NotNull();
             })
         );

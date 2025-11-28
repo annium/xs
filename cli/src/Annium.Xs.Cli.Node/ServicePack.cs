@@ -1,5 +1,8 @@
 using System;
+using System.Net;
+using System.Net.Http;
 using Annium.Core.DependencyInjection;
+using Annium.Net.Http;
 using Annium.Xs.Cli.Core.Audit;
 using Annium.Xs.Cli.Core.Projects;
 using Annium.Xs.Cli.Core.Tools;
@@ -17,6 +20,17 @@ public class ServicePack : ServicePackBase
         container.Add<IPlatformProjectLinker, ProjectLinker>().Singleton();
         container.Add<ProjectMapper>().AsSelf().Singleton();
         container.Add<IDependencyManager, DependencyManager>().Singleton();
+        container.AddHttpRequestFactory(
+            "node",
+            (_, _) =>
+                new HttpClient(
+                    new HttpClientHandler
+                    {
+                        AutomaticDecompression = DecompressionMethods.GZip,
+                        MaxConnectionsPerServer = 16,
+                    }
+                )
+        );
 
         // tools
         container.Add<IPlatformConfigurationManager, PlatformConfigurationManager>().Singleton();
