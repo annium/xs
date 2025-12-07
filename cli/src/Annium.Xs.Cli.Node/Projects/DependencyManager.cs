@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Annium.Logging;
 using Annium.Net.Http;
 using Annium.Xs.Cli.Core.Models;
 using Annium.Xs.Cli.Core.Projects;
@@ -11,14 +12,16 @@ using Version = Annium.Xs.Cli.Core.Models.Version;
 
 namespace Annium.Xs.Cli.Node.Projects;
 
-internal class DependencyManager : IDependencyManager
+internal class DependencyManager : IDependencyManager, ILogSubject
 {
+    public ILogger Logger { get; }
     public ProjectType Type => Constants.ProjectType;
     public Uri DefaultServer { get; } = new(Constants.DefaultServer);
     private readonly IHttpRequestFactory _httpRequestFactory;
 
-    public DependencyManager([FromKeyedServices(Constants.Type)] IHttpRequestFactory httpRequestFactory)
+    public DependencyManager([FromKeyedServices(Constants.Type)] IHttpRequestFactory httpRequestFactory, ILogger logger)
     {
+        Logger = logger;
         _httpRequestFactory = httpRequestFactory;
     }
 
@@ -27,6 +30,7 @@ internal class DependencyManager : IDependencyManager
         var request = _httpRequestFactory
             .New(serverUri)
             .Get(HttpUtility.UrlEncode(package.Name.ToLowerInvariant()))
+            .WithLogFrom(this)
             .BearerAuthorization(accessToken);
 
         var index = await request.AsAsync(new Index());

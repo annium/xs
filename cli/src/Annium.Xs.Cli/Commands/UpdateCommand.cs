@@ -87,6 +87,7 @@ internal class UpdateCommand
             await Task.WhenAll(
                 dependencies.Select(async d =>
                 {
+                    this.Trace("Resolve: {dependency} - fetch versions", d);
                     var dependencyManager = dependencyManagers[d.Type];
                     var registryUri = configuration.Servers.GetValueOrDefault(d.Type);
                     var versions =
