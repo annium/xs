@@ -12,7 +12,7 @@ if [ $(dotnet tool list -g | tail -n +3 | grep annium.xs.cli | wc -l) -eq 1 ]; t
 fi
 
 echo "Install."
-dotnet tool install -g annium.xs.cli --add-source .
+dotnet tool install -g annium.xs.cli --source .
 
 echo "Cleanup."
 find . -type f -name '*.nupkg' | xargs rm -f

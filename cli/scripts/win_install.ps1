@@ -9,7 +9,7 @@ if ( (dotnet tool list -g | Select-Object -skip 2 | Measure-Object).Count -eq 1 
 }
 
 Write-Output "Install."
-dotnet tool install -g annium.xs.cli --add-source .
+dotnet tool install -g annium.xs.cli --source .
 
 Write-Output "Cleanup."
 Get-ChildItem . -File -Filter '*.nupkg' | Remove-Item
