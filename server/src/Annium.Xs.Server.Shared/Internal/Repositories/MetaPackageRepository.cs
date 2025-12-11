@@ -8,6 +8,7 @@ using Annium.Xs.Server.Shared.Domain.Interfaces;
 using Annium.Xs.Server.Shared.Domain.Models;
 using Annium.Xs.Server.Shared.Repositories;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 
 namespace Annium.Xs.Server.Shared.Internal.Repositories;

@@ -5,6 +5,7 @@ using Annium.linq2db.Extensions;
 using Annium.Xs.Server.Shared.Domain.Models;
 using Annium.Xs.Server.Shared.Repositories;
 using LinqToDB;
+using LinqToDB.Async;
 
 namespace Annium.Xs.Server.Shared.Internal.Repositories;
 

@@ -35,9 +35,7 @@ public class ServicePack : ServicePackBase
                     }
                 )
         );
-        container
-            .AddSerializers(Constants.Type)
-            .WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime());
+        container.AddSerializers(Constants.Type).WithJson(opts => opts.ConfigureForOperations().ConfigureForNodaTime());
 
         // tools
         container.Add<IPlatformConfigurationManager, PlatformConfigurationManager>().Singleton();
