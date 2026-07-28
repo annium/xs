@@ -77,6 +77,10 @@ internal class ServicePack : ServicePackBase
                 Scheme = "Bearer",
             }
         );
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("token", document)] = [],
+        });
     }
 
     public override void Setup(IServiceProvider provider)
