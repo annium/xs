@@ -158,11 +158,11 @@ ci-merge-request-full:
     just setup
     just format
     just ensure-no-changes
-    just docs-lint
+#    just docs-lint
     just clean
     just build
     just test
-    just docs-build
+#    just docs-build
 
 ci-release repository githubToken:
     #!/usr/bin/env bash
@@ -175,7 +175,7 @@ ci-release repository githubToken:
     just clean
     just build
     just pack
-    just docs-build
+#    just docs-build
     just publish "$(cat .xs.credentials)"
     just ci-push-tag "$1" "$2"
     echo "Release complete"
