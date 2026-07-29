@@ -81,7 +81,7 @@ internal class UpdateCommand
             );
 
         // resolve configuration and available version of all dependencies
-        var configuration = _configurationManager.Load(discoverCfg.Root);
+        var configuration = await _configurationManager.LoadAsync(discoverCfg.Root, ct);
 
         var updates = (
             await Task.WhenAll(

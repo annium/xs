@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.Core.DependencyInjection;
 using Annium.Data.Operations.Serialization.Json;
 using Annium.Net.Http;
@@ -17,7 +19,7 @@ namespace Annium.Xs.Cli.Dotnet;
 
 public class ServicePack : ServicePackBase
 {
-    public override void Register(IServiceContainer container, IServiceProvider provider)
+    public override Task RegisterAsync(IServiceContainer container, IServiceProvider provider, CancellationToken ct)
     {
         // projects
         container.Add<IPlatformProjectFactory, ProjectFactory>().Singleton();
@@ -44,5 +46,7 @@ public class ServicePack : ServicePackBase
         // audit rules
         container.AddAuditRule<FindInconsistentDependenciesRule<IPlatformProject>, IPlatformProject>();
         container.AddAuditRule<FindUselessDependenciesRule<IPlatformProject>, IPlatformProject>();
+
+        return Task.CompletedTask;
     }
 }

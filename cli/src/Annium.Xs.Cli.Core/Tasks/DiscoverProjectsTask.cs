@@ -37,7 +37,7 @@ public class DiscoverProjectsTask : ILogSubject
     public async Task<IReadOnlyCollection<IProject>> RunAsync(DiscoverConfiguration discoverCfg)
     {
         var roots = discoverCfg.Roots;
-        var solutionCfg = _configurationManager.Load(discoverCfg.Root);
+        var solutionCfg = await _configurationManager.LoadAsync(discoverCfg.Root);
 
         this.Debug<string>("Start discovery of {roots}.", string.Join(", ", roots));
 

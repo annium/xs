@@ -53,7 +53,7 @@ internal class AuditCommand
 
         this.Debug("Use {length} rule(s):", usedRules.Length);
         foreach (var rule in usedRules)
-            this.Debug(rule);
+            this.Debug<string>("{rule}", rule);
 
         foreach (var project in auditedProjects)
         {

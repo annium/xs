@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.Core.DependencyInjection;
 using Annium.Xs.Server.Main.Internal.Services;
 using Annium.Xs.Server.Main.Services;
@@ -8,7 +10,7 @@ namespace Annium.Xs.Server.Main;
 
 public class ServicePack : ServicePackBase
 {
-    public override void Register(IServiceContainer container, IServiceProvider provider)
+    public override Task RegisterAsync(IServiceContainer container, IServiceProvider provider, CancellationToken ct)
     {
         // auth
         container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsInterfaces().Singleton();
@@ -19,5 +21,7 @@ public class ServicePack : ServicePackBase
 
         // tools
         container.Add<ISecurityService, SecurityService>().Singleton();
+
+        return Task.CompletedTask;
     }
 }

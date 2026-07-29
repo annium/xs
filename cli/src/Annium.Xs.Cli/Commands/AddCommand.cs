@@ -95,7 +95,7 @@ internal class AddCommand
 
         // if no packages match name and no version given - resolve
         if (packages.Length == 0)
-            packages = [await ResolvePackageAsync(discoverCfg, cfg, projectType, name, version)];
+            packages = [await ResolvePackageAsync(discoverCfg, cfg, projectType, name, version, ct)];
         // if package already exists: if version exists - check it's same, otherwise - nothing to do.
         else if (version != Version.Empty)
             EnsureNoVersionConflict(packages, version);
@@ -149,7 +149,8 @@ internal class AddCommand
         AddCommandConfiguration cfg,
         ProjectType projectType,
         string name,
-        Version version
+        Version version,
+        CancellationToken ct
     )
     {
         if (version != Version.Empty)
@@ -158,7 +159,7 @@ internal class AddCommand
         var packageStub = new Package(projectType, name, Version.Empty);
 
         // resolve configuration and available version of all dependencies
-        var configuration = _configurationManager.Load(discoverCfg.Root);
+        var configuration = await _configurationManager.LoadAsync(discoverCfg.Root, ct);
 
         var dependencyManager = _dependencyManagers.Single(x => x.Type == packageStub.Type);
 

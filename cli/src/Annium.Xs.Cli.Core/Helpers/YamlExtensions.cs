@@ -40,6 +40,16 @@ internal class DataContractTypeInspector : TypeInspectorSkeleton
         return enumValue.ToString() ?? string.Empty;
     }
 
+    public override bool HasParseMethod(Type type)
+    {
+        return _innerTypeInspector.HasParseMethod(type);
+    }
+
+    public override object? Parse(string value, Type expectedType)
+    {
+        return _innerTypeInspector.Parse(value, expectedType);
+    }
+
     public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
     {
         var properties = _innerTypeInspector.GetProperties(type, container);

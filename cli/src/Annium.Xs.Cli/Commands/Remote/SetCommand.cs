@@ -46,7 +46,7 @@ internal class SetCommand : AsyncCommand<SetCommandConfiguration, DiscoverConfig
             ? Extensions.CommandLine.Cli.ReadSecure("Password: ")
             : cfg.Password;
 
-        var configuration = _configurationManager.Load(dir);
+        var configuration = await _configurationManager.LoadAsync(dir, ct);
         configuration.SetRegistry(location);
         var token = await client.LoginAsync(user, password);
         configuration.SetToken(token);

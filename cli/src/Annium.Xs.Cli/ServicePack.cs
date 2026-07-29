@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Mapper;
 using Annium.Core.Runtime;
@@ -10,12 +12,14 @@ namespace Annium.Xs.Cli;
 
 public class ServicePack : ServicePackBase
 {
-    public override void Configure(IServiceContainer container)
+    public override Task ConfigureAsync(IServiceContainer container, CancellationToken ct)
     {
         container.AddRuntime(GetType().Assembly);
+
+        return Task.CompletedTask;
     }
 
-    public override void Register(IServiceContainer container, IServiceProvider provider)
+    public override Task RegisterAsync(IServiceContainer container, IServiceProvider provider, CancellationToken ct)
     {
         container.AddMapper();
         container.AddArguments();
@@ -28,5 +32,7 @@ public class ServicePack : ServicePackBase
         container.Add<ProjectsRunner>().AsSelf().Singleton();
         container.Add<Watcher>().AsSelf().Singleton();
         container.Add<WebServer>().AsSelf().Singleton();
+
+        return Task.CompletedTask;
     }
 }

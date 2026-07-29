@@ -208,7 +208,7 @@ internal class WatchCommand
 
         this.Debug("Discovered {count} project(s) to watch:", _projects.Length);
         foreach (var project in _projects)
-            this.Debug(project.Name);
+            this.Debug<string>("{name}", project.Name);
     }
 
     private void CollectTargets(IProject project, HashSet<IProject> targets)

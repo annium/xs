@@ -5,13 +5,13 @@ using Annium.Extensions.Arguments;
 using Annium.Xs.Cli.Node;
 using Group = Annium.Xs.Cli.Commands.Group;
 
-await using var entry = Entrypoint
+await using var entry = await Entrypoint
     .Default.UseServicePack<Annium.Xs.Cli.ServicePack>()
     .UseServicePack<Annium.Xs.Server.Client.ServicePack>()
     .UseServicePack<Annium.Xs.Cli.Core.ServicePack>()
     .UseServicePack<Annium.Xs.Cli.Dotnet.ServicePack>()
     .UseServicePack<ServicePack>()
-    .Setup();
+    .SetupAsync();
 
 var (provider, ct) = entry;
 var verbose = args.Contains("-verbose");

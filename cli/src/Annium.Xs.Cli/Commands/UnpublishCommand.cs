@@ -51,7 +51,7 @@ internal class UnpublishCommand
         CancellationToken ct
     )
     {
-        var configuration = _configurationManager.Load(discoverCfg.Root);
+        var configuration = await _configurationManager.LoadAsync(discoverCfg.Root, ct);
 
         var allProjects = await _discoverTask.RunAsync(discoverCfg);
         var projects = allProjects.FilterMask(cfg.Mask).OfType<IPublishableProject>().ToArray();

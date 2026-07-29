@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.Configuration.Abstractions;
 using Annium.Configuration.Yaml;
 using Annium.Core.Mapper;
@@ -37,7 +39,7 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         Logger = logger;
     }
 
-    public SolutionConfiguration Load(string folder)
+    public async Task<SolutionConfiguration> LoadAsync(string folder, CancellationToken ct = default)
     {
         this.Trace<string>("Load configuration from {folder}", folder);
         var directory = GetConfigurationFolder(new DirectoryInfo(folder));
@@ -52,7 +54,12 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
         var cfgFile = GetConfigurationFile(directory.FullName);
         var credFile = GetCredentialsFile(directory.FullName);
 
-        var config = _configurationBuilderFactory().AddYamlFile(cfgFile).Build<Config>();
+        var cfgContainer = ConfigurationFactory.CreateContainer().AddYamlFile(cfgFile);
+        await cfgContainer.BuildAsync(ct);
+
+        var builder = _configurationBuilderFactory();
+        builder.Add(cfgContainer.Get());
+        var config = builder.Build<Config>();
 
         this.Trace<string>("Configuration loaded from {folder}", folder);
 

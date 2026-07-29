@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.Configuration.Abstractions;
 using Annium.Configuration.CommandLine;
 using Annium.Core.DependencyInjection;
@@ -25,13 +27,19 @@ namespace Annium.Xs.Cli.Core;
 
 public class ServicePack : ServicePackBase
 {
-    public override void Configure(IServiceContainer container)
+    public override async Task ConfigureAsync(IServiceContainer container, CancellationToken ct)
     {
         container.AddMapper();
-        container.AddConfiguration<LoggerConfiguration>(builder => builder.AddCommandLineArgs());
+        await container.AddConfigurationAsync<LoggerConfiguration>(
+            x =>
+            {
+                x.AddCommandLineArgs();
+            },
+            ct
+        );
     }
 
-    public override void Register(IServiceContainer container, IServiceProvider provider)
+    public override Task RegisterAsync(IServiceContainer container, IServiceProvider provider, CancellationToken ct)
     {
         container.AddTime().WithRealTime().SetDefault();
 
@@ -59,11 +67,15 @@ public class ServicePack : ServicePackBase
         // tools
         container.Add<IConfigurationManager, ConfigurationManager>().Singleton();
         container.Add<ITemplateWriter, TemplateWriter>().Transient();
+
+        return Task.CompletedTask;
     }
 
-    public override void Setup(IServiceProvider provider)
+    public override Task SetupAsync(IServiceProvider provider, CancellationToken ct)
     {
         provider.UseLogging(route => route.For(BuildLogFilter(provider.Resolve<LoggerConfiguration>())).UseConsole());
+
+        return Task.CompletedTask;
     }
 
     private void RegisterTasks(IServiceContainer container)

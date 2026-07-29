@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.AspNetCore.Extensions;
 using Annium.Configuration.Abstractions;
 using Annium.Configuration.Yaml;
@@ -30,17 +32,27 @@ internal class ServicePack : ServicePackBase
         Add<Node.ServicePack>();
     }
 
-    public override void Configure(IServiceContainer container)
+    public override async Task ConfigureAsync(IServiceContainer container, CancellationToken ct)
     {
         container.AddRuntime(GetType().Assembly);
         container.AddConfiguration(new WebHostConfiguration());
-        container.AddConfiguration<Shared.Configuration>(x => x.AddYamlFile(Path.Combine("configuration", "main.yml")));
-        container.AddConfiguration<PostgreSqlConfiguration>(x =>
-            x.AddYamlFile(Path.Combine("configuration", "db.yml"))
+        await container.AddConfigurationAsync<Shared.Configuration>(
+            x =>
+            {
+                x.AddYamlFile(Path.Combine("configuration", "main.yml"));
+            },
+            ct
+        );
+        await container.AddConfigurationAsync<PostgreSqlConfiguration>(
+            x =>
+            {
+                x.AddYamlFile(Path.Combine("configuration", "db.yml"));
+            },
+            ct
         );
     }
 
-    public override void Register(IServiceContainer container, IServiceProvider provider)
+    public override Task RegisterAsync(IServiceContainer container, IServiceProvider provider, CancellationToken ct)
     {
         container.AddTime().WithRealTime().SetDefault();
         container.AddHttpRequestFactory(true);
@@ -60,6 +72,8 @@ internal class ServicePack : ServicePackBase
 
         // host helpers
         container.Add<IHttpContextAccessor, HttpContextAccessor>().Singleton();
+
+        return Task.CompletedTask;
     }
 
     private void SetupSwagger(SwaggerGenOptions options)
@@ -83,8 +97,10 @@ internal class ServicePack : ServicePackBase
         });
     }
 
-    public override void Setup(IServiceProvider provider)
+    public override Task SetupAsync(IServiceProvider provider, CancellationToken ct)
     {
         provider.UseLogging(route => route.UseConsole());
+
+        return Task.CompletedTask;
     }
 }

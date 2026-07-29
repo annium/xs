@@ -38,7 +38,7 @@ internal class SearchCommand
         CancellationToken ct
     )
     {
-        var configuration = _configurationManager.Load(discoverCfg.Root);
+        var configuration = await _configurationManager.LoadAsync(discoverCfg.Root, ct);
 
         var client = _mainClientFactory.Create(configuration.Registry);
         var packages = await client.SearchAsync(configuration.Token, cfg.Type.ToString(), cfg.Query);

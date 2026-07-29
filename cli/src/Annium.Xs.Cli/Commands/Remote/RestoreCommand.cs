@@ -39,7 +39,7 @@ internal class RestoreCommand : AsyncCommand<RestoreCommandConfiguration, Discov
         var user = cfg.User;
         var dir = discoverCfg.Root;
 
-        var configuration = _configurationManager.Load(dir);
+        var configuration = await _configurationManager.LoadAsync(dir, ct);
         if (configuration == SolutionConfiguration.Empty)
         {
             Console.WriteLine("No configuration file, skip restore");

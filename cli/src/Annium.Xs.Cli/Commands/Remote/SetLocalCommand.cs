@@ -33,7 +33,7 @@ internal class SetLocalCommand : AsyncCommand<SetLocalCommandConfiguration, Disc
         var location = cfg.Registry;
         var dir = discoverCfg.Root;
 
-        var configuration = _configurationManager.Load(dir);
+        var configuration = await _configurationManager.LoadAsync(dir, ct);
         configuration.SetRegistry(location);
         configuration.SetToken(string.Empty);
         configuration.SetServers(

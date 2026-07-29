@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.Core.DependencyInjection;
 using Annium.DbUp.Core;
 using Annium.DbUp.PostgreSql;
@@ -15,12 +17,14 @@ namespace Annium.Xs.Server.Dotnet;
 
 public class ServicePack : ServicePackBase
 {
-    public override void Configure(IServiceContainer container)
+    public override Task ConfigureAsync(IServiceContainer container, CancellationToken ct)
     {
         container.Add(new Configuration()).AsSelf().Singleton();
+
+        return Task.CompletedTask;
     }
 
-    public override void Register(IServiceContainer container, IServiceProvider provider)
+    public override Task RegisterAsync(IServiceContainer container, IServiceProvider provider, CancellationToken ct)
     {
         // TODO: setup with index
 
@@ -33,13 +37,17 @@ public class ServicePack : ServicePackBase
             Constants.ProjectType
         );
         container.Add<ISymbolStorage, SymbolStorage>().Singleton();
+
+        return Task.CompletedTask;
     }
 
-    public override void Setup(IServiceProvider provider)
+    public override Task SetupAsync(IServiceProvider provider, CancellationToken ct)
     {
         Migrator
             .Instance.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Project)
             .WithScriptsFromAssembly(GetType().Assembly)
             .Execute();
+
+        return Task.CompletedTask;
     }
 }

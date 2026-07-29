@@ -125,14 +125,14 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
         var executor = Executor.Batch();
 
         // delete from storage
-        executor.With(() => _packageStorage.DeleteAsync(name, version));
+        executor.With(async () => await _packageStorage.DeleteAsync(name, version));
 
         // delete from db
-        executor.With(() => _packageRepository.DeleteByNameVersionAsync(name, version));
+        executor.With(async () => await _packageRepository.DeleteByNameVersionAsync(name, version));
 
         // if it was last package - delete metaPackage
         if (versions.Count == 1)
-            executor.With(() => _metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
+            executor.With(async () => await _metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
         // else - update metaPackage
         else
         {
@@ -141,7 +141,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
 
             // if latest changed - need to update metaPackage
             if (latest.Version != metaPackage.Version)
-                executor.With(() => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, latest));
+                executor.With(async () => await _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, latest));
 
             // and anyway - recount downloads
             executor.With(async () =>
@@ -193,7 +193,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
     )
     {
         // commit stage is missing, cause manually called earlier; so just deletion stage
-        executor.Stage(() => { }, () => _metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
+        executor.Stage(() => { }, async () => await _metaPackageRepository.DeleteByIdAsync(metaPackage.Id));
 
         return await PublishPackageVersionAsync(executor, metaPackage, access, request);
     }
@@ -239,13 +239,13 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
         var pkg = _packageRequestParser.Parse(metaPackage, request);
 
         executor.Stage(
-            () => _packageStorage.SaveAsync(pkg.Name, pkg.Version, request.Stream),
-            () => _packageStorage.DeleteAsync(pkg.Name, pkg.Version)
+            async () => await _packageStorage.SaveAsync(pkg.Name, pkg.Version, request.Stream),
+            async () => await _packageStorage.DeleteAsync(pkg.Name, pkg.Version)
         );
 
         executor.Stage(
-            () => _packageRepository.CreateAsync(pkg),
-            () => _packageRepository.DeleteByNameVersionAsync(pkg.Name, pkg.Version)
+            async () => await _packageRepository.CreateAsync(pkg),
+            async () => await _packageRepository.DeleteByNameVersionAsync(pkg.Name, pkg.Version)
         );
 
         executor.Stage(
@@ -263,8 +263,8 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
 
         if (string.Compare(pkg.Version, metaPackage.Version, StringComparison.Ordinal) >= 0)
             executor.Stage(
-                () => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, request),
-                () => _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, metaPackage)
+                async () => await _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, request),
+                async () => await _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, metaPackage)
             );
 
         await executor.RunAsync();

@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Annium.Core.DependencyInjection;
 using Annium.Core.Runtime;
 using Annium.DbUp.Core;
@@ -14,7 +16,7 @@ namespace Annium.Xs.Server.Shared;
 
 public class ServicePack : ServicePackBase
 {
-    public override void Register(IServiceContainer container, IServiceProvider provider)
+    public override Task RegisterAsync(IServiceContainer container, IServiceProvider provider, CancellationToken ct)
     {
         container.AddPostgreSql<Connection>();
 
@@ -31,13 +33,17 @@ public class ServicePack : ServicePackBase
             .Where(x => x.IsClass && x.Name.EndsWith("Repository"))
             .AsInterfaces()
             .Scoped();
+
+        return Task.CompletedTask;
     }
 
-    public override void Setup(IServiceProvider provider)
+    public override Task SetupAsync(IServiceProvider provider, CancellationToken ct)
     {
         Migrator
             .Instance.ForPostgresql(provider.Resolve<PostgreSqlConfiguration>().ConnectionString, Constants.Schema)
             .WithScriptsFromAssembly(GetType().Assembly)
             .Execute();
+
+        return Task.CompletedTask;
     }
 }
