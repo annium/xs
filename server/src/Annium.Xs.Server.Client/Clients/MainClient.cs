@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Annium.Net.Http;
-using Annium.Xs.Server.Client.Internal;
 using Annium.Xs.Server.Client.Models;
 
 namespace Annium.Xs.Server.Client.Clients;

@@ -13,6 +13,7 @@ keys/
 *.blob
 *.log
 *.nupkg
+*.trx
 
 # xs ignore patterns
 .xs.ignore

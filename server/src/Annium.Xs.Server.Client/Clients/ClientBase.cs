@@ -1,6 +1,6 @@
 using System;
 
-namespace Annium.Xs.Server.Client.Internal;
+namespace Annium.Xs.Server.Client.Clients;
 
 public abstract class ClientBase
 {

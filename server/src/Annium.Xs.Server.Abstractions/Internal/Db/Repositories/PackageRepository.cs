@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Annium.linq2db.Extensions;
-using Annium.Xs.Server.Abstractions.Db.Repositories;
 using Annium.Xs.Server.Shared.Domain.Interfaces;
 using Annium.Xs.Server.Shared.Internal.Repositories;
 using LinqToDB;

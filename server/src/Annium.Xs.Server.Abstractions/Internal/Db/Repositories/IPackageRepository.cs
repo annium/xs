@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Annium.Xs.Server.Shared.Domain.Interfaces;
 
-namespace Annium.Xs.Server.Abstractions.Db.Repositories;
+namespace Annium.Xs.Server.Abstractions.Internal.Db.Repositories;
 
 internal interface IPackageRepository<TPackage, TPackageDependency>
     where TPackage : class, IPackage<TPackageDependency>
