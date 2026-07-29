@@ -37,17 +37,11 @@ internal class ServicePack : ServicePackBase
         container.AddRuntime(GetType().Assembly);
         container.AddConfiguration(new WebHostConfiguration());
         await container.AddConfigurationAsync<Shared.Configuration>(
-            x =>
-            {
-                x.AddYamlFile(Path.Combine("configuration", "main.yml"));
-            },
+            x => x.AddYamlFile(Path.Combine("configuration", "main.yml")),
             ct
         );
         await container.AddConfigurationAsync<PostgreSqlConfiguration>(
-            x =>
-            {
-                x.AddYamlFile(Path.Combine("configuration", "db.yml"));
-            },
+            x => x.AddYamlFile(Path.Combine("configuration", "db.yml")),
             ct
         );
     }
