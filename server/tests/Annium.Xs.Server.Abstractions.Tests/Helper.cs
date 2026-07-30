@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Annium.Core.DependencyInjection;
 using Annium.Xs.Server.Abstractions.Domain;
 using Annium.Xs.Server.Abstractions.Internal.Db.Repositories;
 using Annium.Xs.Server.Abstractions.Internal.Services;
@@ -66,8 +67,9 @@ internal sealed class FakePackageRepository : IPackageRepository<TestPackage, Te
     public IReadOnlyCollection<TestPackage> Packages => _packages;
 
     /// <summary>
-    /// When set, <see cref="CreateAsync"/> throws this exception instead of storing the package —
-    /// used to simulate a mid-pipeline commit failure.
+    /// When set, the next <see cref="CreateAsync"/> call throws this exception instead of storing the
+    /// package, then clears itself — used to simulate a single mid-pipeline commit failure without
+    /// also failing a later rollback's restorative <see cref="CreateAsync"/> call.
     /// </summary>
     public Exception? ThrowOnCreate { get; set; }
 
@@ -81,7 +83,11 @@ internal sealed class FakePackageRepository : IPackageRepository<TestPackage, Te
     public Task CreateAsync(TestPackage package)
     {
         if (ThrowOnCreate is not null)
-            throw ThrowOnCreate;
+        {
+            var exception = ThrowOnCreate;
+            ThrowOnCreate = null;
+            throw exception;
+        }
 
         _packages.Add(package);
         _log.Add($"Repo.Create:{package.Name}:{package.Version}");
@@ -139,36 +145,97 @@ internal sealed class FakePackageRepository : IPackageRepository<TestPackage, Te
 internal sealed class FakePackageStorage : IPackageStorage<TestPackage, TestPackageDependency>
 {
     private readonly List<string> _log;
-    private readonly HashSet<(string Name, string Version)> _files = new();
+    private readonly Dictionary<(string Name, string Version), byte[]> _files = new();
 
     /// <summary>
     /// The value returned by <see cref="ExistsAsync"/>. Defaults to <c>true</c>.
     /// </summary>
     public bool FileExists { get; set; } = true;
 
+    /// <summary>
+    /// When set, <see cref="DeleteAsync"/> throws this exception instead of removing the file —
+    /// used to simulate a mid-batch delete failure.
+    /// </summary>
+    public Exception? ThrowOnDelete { get; set; }
+
+    /// <summary>
+    /// When set, <see cref="GetAsync"/> throws this exception instead of returning the file content —
+    /// used to simulate a mid-pipeline read failure.
+    /// </summary>
+    public Exception? ThrowOnGet { get; set; }
+
+    /// <summary>
+    /// When set, <see cref="SaveAsync"/> writes the given bytes to the backing store (simulating a
+    /// partial physical write that already landed before the failure) and then throws this exception
+    /// instead of completing normally, then clears itself — used to simulate an ecosystem-specific save
+    /// (e.g. deriving a manifest from an uploaded archive) that fails after the artifact bytes are
+    /// already persisted, leaving an orphan at the (name, version) key.
+    /// </summary>
+    public Exception? ThrowOnSave { get; set; }
+
     public FakePackageStorage(List<string> log)
     {
         _log = log;
     }
 
-    public bool Contains(string name, string version) => _files.Contains((name, version));
+    public bool Contains(string name, string version) => _files.ContainsKey((name, version));
+
+    /// <summary>
+    /// Returns the raw bytes stored at (name, version), for tests that need to assert restored
+    /// content byte-for-byte rather than just key presence.
+    /// </summary>
+    public byte[] GetBytes(string name, string version) => _files[(name, version)];
 
     public Task<bool> ExistsAsync(string name, string version) => Task.FromResult(FileExists);
 
-    public Task SaveAsync(string name, string version, Stream stream)
+    /// <summary>
+    /// Mirrors the real <c>FileStorage.SaveAsync</c>'s use of <see cref="FileMode.CreateNew"/>: saving
+    /// over an existing (name, version) key throws instead of silently overwriting, so tests can
+    /// reproduce collisions between a rollback's restorative save and an orphaned artifact.
+    /// </summary>
+    public async Task SaveAsync(string name, string version, Stream stream)
     {
-        _files.Add((name, version));
-        _log.Add($"Storage.Save:{name}:{version}");
+        using var buffer = new MemoryStream();
+        await stream.CopyToAsync(buffer);
+        var bytes = buffer.ToArray();
 
-        return Task.CompletedTask;
+        if (ThrowOnSave is not null)
+        {
+            var exception = ThrowOnSave;
+            ThrowOnSave = null;
+            _files[(name, version)] = bytes;
+            _log.Add($"Storage.Save:{name}:{version}");
+            throw exception;
+        }
+
+        if (!_files.TryAdd((name, version), bytes))
+            throw new IOException($"File already exists: {name}:{version}");
+
+        _log.Add($"Storage.Save:{name}:{version}");
     }
 
     public Task DeleteAsync(string name, string version)
     {
+        if (ThrowOnDelete is not null)
+            throw ThrowOnDelete;
+
         _files.Remove((name, version));
         _log.Add($"Storage.Delete:{name}:{version}");
 
         return Task.CompletedTask;
+    }
+
+    public Task<Stream> GetAsync(string name, string version)
+    {
+        if (ThrowOnGet is not null)
+            throw ThrowOnGet;
+
+        if (!_files.TryGetValue((name, version), out var content))
+            throw new InvalidOperationException($"File not found: {name}:{version}");
+
+        _log.Add($"Storage.Get:{name}:{version}");
+
+        return Task.FromResult<Stream>(new MemoryStream(content, writable: false));
     }
 }
 
@@ -184,6 +251,13 @@ internal sealed class FakeMetaPackageRepository : IMetaPackageRepository
     public List<Guid> Deleted { get; } = new();
     public List<(Guid Id, IPackageInfo Info)> InfoUpdates { get; } = new();
     public List<(Guid Id, int Downloads)> DownloadsSet { get; } = new();
+
+    /// <summary>
+    /// When set, the next <see cref="UpdateInfoAsync"/> call throws this exception instead of recording
+    /// the update, then clears itself — used to simulate a mid-pipeline info-update commit failure so a
+    /// test can reach the rollback of an earlier stage that would otherwise never be exercised.
+    /// </summary>
+    public Exception? ThrowOnUpdateInfo { get; set; }
 
     public FakeMetaPackageRepository(List<string> log)
     {
@@ -233,6 +307,13 @@ internal sealed class FakeMetaPackageRepository : IMetaPackageRepository
 
     public Task UpdateInfoAsync(Guid id, IPackageInfo info)
     {
+        if (ThrowOnUpdateInfo is not null)
+        {
+            var exception = ThrowOnUpdateInfo;
+            ThrowOnUpdateInfo = null;
+            throw exception;
+        }
+
         InfoUpdates.Add((id, info));
         _log.Add($"Meta.UpdateInfo:{id}:{info.Name}:{info.Version}");
 
@@ -404,4 +485,47 @@ internal sealed class PackageServiceFixture
             Description = "description",
             Published = Instant.FromUtc(2024, 1, 1, 0, 0),
         };
+}
+
+/// <summary>
+/// Concrete <see cref="PackageServicePackBase{TPackage,TPackageDependency,TPackageRequest}"/> closed over
+/// the <see cref="TestPackage"/>/<see cref="TestPackageDependency"/>/<see cref="TestPackageRequest"/> stand-ins,
+/// used to exercise the base class's <c>RegisterAsync</c> DI wiring directly. Spies on whether its two
+/// abstract hooks were invoked instead of registering anything ecosystem-real, since neither hook's
+/// registration is itself under test here.
+/// </summary>
+internal sealed class TestPackageServicePack
+    : PackageServicePackBase<TestPackage, TestPackageDependency, TestPackageRequest>
+{
+    /// <summary>
+    /// Whether <see cref="RegisterPackageRequestParser"/> was invoked by <c>RegisterAsync</c>.
+    /// </summary>
+    public bool RequestParserRegistered { get; private set; }
+
+    /// <summary>
+    /// Whether <see cref="RegisterPackageStorage"/> was invoked by <c>RegisterAsync</c>.
+    /// </summary>
+    public bool PackageStorageRegistered { get; private set; }
+
+    protected override ProjectType ProjectType => PackageServiceFixture.ProjectType;
+
+    protected override void RegisterPackageRequestParser(IServiceContainer container)
+    {
+        RequestParserRegistered = true;
+
+        container
+            .Add(new FakePackageRequestParser())
+            .As<IPackageRequestParser<TestPackage, TestPackageDependency, TestPackageRequest>>()
+            .Singleton();
+    }
+
+    protected override void RegisterPackageStorage(IServiceContainer container)
+    {
+        PackageStorageRegistered = true;
+
+        container
+            .Add(new FakePackageStorage(new List<string>()))
+            .As<IPackageStorage<TestPackage, TestPackageDependency>>()
+            .Singleton();
+    }
 }

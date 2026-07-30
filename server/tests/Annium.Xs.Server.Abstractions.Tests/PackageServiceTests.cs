@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Annium.Testing;
@@ -97,6 +98,32 @@ public class PackageServiceTests : TestBase
         fixture.PackageStorage.Contains("pkg-a", "1.0.0").IsTrue();
     }
 
+    [Fact]
+    public async Task PublishPackageAsync_MetaPackageMissingAndRepositoryCreateThrows_RollsBackOrphanMetaPackage()
+    {
+        // arrange
+        var fixture = new PackageServiceFixture();
+        var service = fixture.CreateService();
+        var user = PackageServiceFixture.CreateUser();
+        fixture.PackageRepository.ThrowOnCreate = new InvalidOperationException("create boom");
+        var request = PackageServiceFixture.CreateRequest("pkg-a", "1.0.0");
+
+        // act
+        var result = await service.PublishPackageAsync(user, request);
+
+        // assert — the new-package path's rollback-only stage (commit no-op, rollback deletes the
+        // just-generated meta-package) is only reachable when a later stage fails; this pins that it
+        // actually fires instead of leaving an orphan meta-package behind. The pipeline itself still
+        // failed (repo create threw), so the status is InternalError (see FIX 1).
+        result.Status.Is(PackageStatus.InternalError);
+        fixture.MetaPackageRepository.Created.Has(1);
+        var metaPackageId = fixture.MetaPackageRepository.Created.At(0).Id;
+        fixture.MetaPackageRepository.Deleted.Has(1);
+        fixture.MetaPackageRepository.Deleted.At(0).Is(metaPackageId);
+        fixture.PackageStorage.Contains("pkg-a", "1.0.0").IsFalse();
+        fixture.PackageRepository.Packages.IsEmpty();
+    }
+
     #endregion
 
     #region PublishPackageVersionAsync
@@ -153,7 +180,7 @@ public class PackageServiceTests : TestBase
     }
 
     [Fact]
-    public async Task PublishPackageAsync_RepositoryCreateThrows_RollsBackStorageSaveAndStillReturnsOk()
+    public async Task PublishPackageAsync_RepositoryCreateThrows_RollsBackStorageSaveAndReturnsInternalError()
     {
         // arrange
         var fixture = new PackageServiceFixture();
@@ -173,9 +200,11 @@ public class PackageServiceTests : TestBase
         // act
         var result = await service.PublishPackageAsync(user, request);
 
-        // assert — SUSPECTED DEFECT: PublishPackageVersionAsync discards the staged executor's
-        // result and unconditionally returns Ok, even though the pipeline actually failed.
-        result.Status.Is(PackageStatus.Ok);
+        // assert — the staged executor's result reports failure, so the pipeline must surface it
+        // as InternalError instead of unconditionally returning Ok.
+        result.Status.Is(PackageStatus.InternalError);
+        result.PlainErrors.Has(1);
+        result.PlainError.Is("create boom");
 
         // the storage save (stage 1) was committed, then rolled back once stage 2 (repo create) threw
         fixture.Log.Contains("Storage.Save:pkg-a:2.0.0").IsTrue();
@@ -217,6 +246,77 @@ public class PackageServiceTests : TestBase
         fixture.MetaPackageRepository.DownloadsSet.Has(1);
         // ...but the version-info stage is conditional and "1.0.0" < "2.0.0" -> skipped
         fixture.MetaPackageRepository.InfoUpdates.IsEmpty();
+    }
+
+    [Fact]
+    public async Task PublishPackageAsync_NewVersionEqualsCurrentMetaVersion_RunsMetaPackageInfoUpdate()
+    {
+        // arrange
+        var fixture = new PackageServiceFixture();
+        var service = fixture.CreateService();
+        var user = PackageServiceFixture.CreateUser();
+        var metaPackage = PackageServiceFixture.CreateMetaPackage(
+            user,
+            "pkg-a",
+            "1.0.0",
+            Permission.Read | Permission.Publish
+        );
+        fixture.MetaPackageRepository.Seed(metaPackage);
+        fixture.PackageRepository.Seed(PackageServiceFixture.CreatePackage(metaPackage, "0.5.0"));
+        // request version equals the meta-package's recorded version, and is not itself already
+        // published, so this exercises the "==" edge of the ">=" guard directly (not the ">" case
+        // covered elsewhere, nor the republish overload, which never reaches this comparison)
+        var request = PackageServiceFixture.CreateRequest("pkg-a", "1.0.0");
+
+        // act
+        var result = await service.PublishPackageAsync(user, request);
+
+        // assert — pins that ">=" (not just ">") registers the meta-package info-update stage
+        result.Status.Is(PackageStatus.Ok);
+        fixture.MetaPackageRepository.InfoUpdates.Has(1);
+        fixture.MetaPackageRepository.InfoUpdates.At(0).Id.Is(metaPackage.Id);
+    }
+
+    [Fact]
+    public async Task PublishPackageAsync_MetaPackageInfoUpdateThrows_RollsBackRepoCreateAndStorageSaveWithMatchingRecount()
+    {
+        // arrange
+        var fixture = new PackageServiceFixture();
+        var service = fixture.CreateService();
+        var user = PackageServiceFixture.CreateUser();
+        var metaPackage = PackageServiceFixture.CreateMetaPackage(
+            user,
+            "pkg-a",
+            "1.0.0",
+            Permission.Read | Permission.Publish
+        );
+        fixture.MetaPackageRepository.Seed(metaPackage);
+        fixture.PackageRepository.Seed(PackageServiceFixture.CreatePackage(metaPackage, "1.0.0", downloads: 3));
+        fixture.MetaPackageRepository.ThrowOnUpdateInfo = new InvalidOperationException("update info boom");
+        // "2.0.0" sorts above the meta-package's recorded "1.0.0" -> the info-update stage (the only
+        // stage registered after recount-downloads) is actually registered
+        var request = PackageServiceFixture.CreateRequest("pkg-a", "2.0.0");
+
+        // act
+        var result = await service.PublishPackageAsync(user, request);
+
+        // assert — the info-update stage's commit throws, so LIFO rollback undoes the recount-downloads,
+        // repo-create and storage-save stages ahead of it (the info-update stage itself never committed,
+        // so it is not rolled back).
+        result.Status.Is(PackageStatus.InternalError);
+        result.PlainErrors.Has(1);
+        result.PlainError.Is("update info boom");
+
+        fixture.PackageRepository.Packages.Any(p => p.Version == "2.0.0").IsFalse();
+        fixture.PackageStorage.Contains("pkg-a", "2.0.0").IsFalse();
+
+        // recount-downloads' commit and rollback are literally the same delegate. LIFO rollback order
+        // runs it before the repo-create rollback removes "2.0.0", so both calls recompute the exact
+        // same total from the exact same repository state — that is what makes sharing one delegate
+        // for both directions correct.
+        var setDownloadsLog = fixture.Log.Where(l => l.StartsWith("Meta.SetDownloads:")).ToArray();
+        setDownloadsLog.Has(2);
+        setDownloadsLog.At(0).Is(setDownloadsLog.At(1));
     }
 
     #endregion
@@ -289,7 +389,7 @@ public class PackageServiceTests : TestBase
     }
 
     [Fact]
-    public async Task PublishPackageAsync_RepublishRepositoryCreateThrows_LosesOldPackageDueToEmptyRollback()
+    public async Task PublishPackageAsync_RepublishRepositoryCreateThrows_RestoresOldPackageOnRollback()
     {
         // arrange
         var fixture = new PackageServiceFixture();
@@ -303,7 +403,8 @@ public class PackageServiceTests : TestBase
         );
         fixture.MetaPackageRepository.Seed(metaPackage);
         fixture.PackageRepository.Seed(PackageServiceFixture.CreatePackage(metaPackage, "1.0.0"));
-        await fixture.PackageStorage.SaveAsync("pkg-a", "1.0.0", System.IO.Stream.Null);
+        var originalBytes = new byte[] { 11, 22, 33, 44, 55 };
+        await fixture.PackageStorage.SaveAsync("pkg-a", "1.0.0", new MemoryStream(originalBytes));
         fixture.Log.Clear();
         fixture.PackageRepository.ThrowOnCreate = new InvalidOperationException("create boom");
         var request = PackageServiceFixture.CreateRequest("pkg-a", "1.0.0");
@@ -311,28 +412,100 @@ public class PackageServiceTests : TestBase
         // act
         var result = await service.PublishPackageAsync(user, request);
 
-        // assert — SUSPECTED DEFECT (data loss): RepublishPackageVersionAsync registers its
-        // delete-old-version stage with an empty rollback (`() => { }`). Its commit deletes the
-        // pre-existing storage file AND db row as a single stage, so once that stage has
-        // committed, the executor considers it "done" and there is nothing left to undo. When the
-        // later repo-create stage throws, LIFO rollback only undoes the stages that come after the
-        // delete stage (here, the storage save) — the delete-old-version stage's no-op rollback
-        // leaves the old file/row deleted. The new version was never persisted either (create
-        // threw), so the package "pkg-a" "1.0.0" is gone entirely, even though
-        // PublishPackageVersionAsync unconditionally returns Ok.
-        result.Status.Is(PackageStatus.Ok);
+        // assert — RepublishPackageVersionAsync splits the delete-old-version work into two
+        // reversible stages (storage delete with a buffered-content restore rollback, db delete
+        // with a captured-row restore rollback), so when the later repo-create stage throws, LIFO
+        // rollback restores both the old storage file and the old db row instead of leaving the
+        // package gone entirely. The pipeline still failed (repo create threw), so the status is
+        // InternalError.
+        result.Status.Is(PackageStatus.InternalError);
 
-        // old row + old file are both gone and never restored
-        fixture.PackageRepository.Packages.Any(p => p.Version == "1.0.0").IsFalse();
-        fixture.PackageStorage.Contains("pkg-a", "1.0.0").IsFalse();
+        // old row + old file are both restored by rollback, and the restored file content is the
+        // original bytes byte-for-byte (not just present, and not e.g. an empty/wrong buffer)
+        fixture.PackageRepository.Packages.Any(p => p.Version == "1.0.0").IsTrue();
+        fixture.PackageStorage.Contains("pkg-a", "1.0.0").IsTrue();
+        fixture.PackageStorage.GetBytes("pkg-a", "1.0.0").SequenceEqual(originalBytes).IsTrue();
 
-        // the delete-old-version stage committed (storage delete + repo delete both logged)...
+        // the delete-old-version stages committed (storage delete + repo delete both logged)...
         fixture.Log.Contains("Storage.Delete:pkg-a:1.0.0").IsTrue();
         fixture.Log.Contains("Repo.Delete:pkg-a:1.0.0").IsTrue();
         // ...the new save was committed then rolled back...
         fixture.Log.Contains("Storage.Save:pkg-a:1.0.0").IsTrue();
-        // ...and the new row was never created (ThrowOnCreate fired before logging)
-        fixture.Log.Contains("Repo.Create:pkg-a:1.0.0").IsFalse();
+        // ...and the sole "Repo.Create:pkg-a:1.0.0" log entry comes from the rollback restoring the
+        // old row — ThrowOnCreate fired once, on the new-row attempt, before it could log anything
+        fixture.Log.Count(l => l == "Repo.Create:pkg-a:1.0.0").Is(1);
+    }
+
+    [Fact]
+    public async Task PublishPackageAsync_RepublishNewArtifactSaveThrowsAfterPartialWrite_RestoresOldArtifactContentWithoutOrphanCollision()
+    {
+        // arrange
+        var fixture = new PackageServiceFixture();
+        var service = fixture.CreateService();
+        var user = PackageServiceFixture.CreateUser();
+        var metaPackage = PackageServiceFixture.CreateMetaPackage(
+            user,
+            "pkg-a",
+            "1.0.0",
+            Permission.Read | Permission.Publish | Permission.Unpublish
+        );
+        fixture.MetaPackageRepository.Seed(metaPackage);
+        fixture.PackageRepository.Seed(PackageServiceFixture.CreatePackage(metaPackage, "1.0.0"));
+        var originalBytes = new byte[] { 1, 2, 3, 4, 5 };
+        await fixture.PackageStorage.SaveAsync("pkg-a", "1.0.0", new MemoryStream(originalBytes));
+        fixture.Log.Clear();
+        // simulates an ecosystem-specific save (e.g. Dotnet's PackageStorage deriving a nuspec from a
+        // malformed upload, or a transient I/O error mid-CopyToAsync) that persists the new artifact's
+        // bytes before failing — the exact failure PublishPackageVersionAsync's storage-save stage must
+        // clean up after itself, and that RepublishPackageVersionAsync's stage A rollback must be able
+        // to restore over regardless.
+        fixture.PackageStorage.ThrowOnSave = new IOException("partial write boom");
+        var request = PackageServiceFixture.CreateRequest("pkg-a", "1.0.0");
+
+        // act
+        var result = await service.PublishPackageAsync(user, request);
+
+        // assert — the pipeline still failed (the new artifact's save threw), so InternalError...
+        result.Status.Is(PackageStatus.InternalError);
+        // ...but the old artifact must be restored, byte-for-byte, and not lost to a swallowed
+        // rollback IOException caused by colliding with the orphaned partially-written new artifact
+        fixture.PackageStorage.Contains("pkg-a", "1.0.0").IsTrue();
+        fixture.PackageStorage.GetBytes("pkg-a", "1.0.0").SequenceEqual(originalBytes).IsTrue();
+        fixture.PackageRepository.Packages.Any(p => p.Version == "1.0.0").IsTrue();
+    }
+
+    [Fact]
+    public async Task PublishPackageAsync_RepublishOldArtifactGetThrows_ReturnsInternalErrorLeavingRowAndArtifactUntouched()
+    {
+        // arrange
+        var fixture = new PackageServiceFixture();
+        var service = fixture.CreateService();
+        var user = PackageServiceFixture.CreateUser();
+        var metaPackage = PackageServiceFixture.CreateMetaPackage(
+            user,
+            "pkg-a",
+            "1.0.0",
+            Permission.Read | Permission.Publish | Permission.Unpublish
+        );
+        fixture.MetaPackageRepository.Seed(metaPackage);
+        fixture.PackageRepository.Seed(PackageServiceFixture.CreatePackage(metaPackage, "1.0.0"));
+        await fixture.PackageStorage.SaveAsync("pkg-a", "1.0.0", new MemoryStream(new byte[] { 9, 8, 7 }));
+        fixture.Log.Clear();
+        fixture.PackageStorage.ThrowOnGet = new InvalidOperationException("get boom");
+        var request = PackageServiceFixture.CreateRequest("pkg-a", "1.0.0");
+
+        // act
+        var result = await service.PublishPackageAsync(user, request);
+
+        // assert — stage A's commit reads the old artifact into a buffer before deleting it; when the
+        // read itself throws, the delete is never reached, so nothing committed and there's nothing
+        // for a rollback to undo. Both the pre-existing db row and storage artifact stay untouched.
+        result.Status.Is(PackageStatus.InternalError);
+        result.PlainErrors.Has(1);
+        result.PlainError.Is("get boom");
+        fixture.PackageRepository.Packages.Any(p => p.Version == "1.0.0").IsTrue();
+        fixture.PackageStorage.Contains("pkg-a", "1.0.0").IsTrue();
+        fixture.Log.IsEmpty();
     }
 
     #endregion
@@ -493,6 +666,44 @@ public class PackageServiceTests : TestBase
         fixture.MetaPackageRepository.InfoUpdates.IsEmpty();
         fixture.MetaPackageRepository.DownloadsSet.Has(1);
         fixture.MetaPackageRepository.DownloadsSet.At(0).Downloads.Is(5);
+    }
+
+    [Fact]
+    public async Task UnpublishPackageAsync_StorageDeleteThrows_StillRunsRemainingBatchStagesAndReturnsInternalError()
+    {
+        // arrange
+        var fixture = new PackageServiceFixture();
+        var service = fixture.CreateService();
+        var user = PackageServiceFixture.CreateUser();
+        var metaPackage = PackageServiceFixture.CreateMetaPackage(
+            user,
+            "pkg-a",
+            "1.0.0",
+            Permission.Read | Permission.Publish | Permission.Unpublish
+        );
+        fixture.MetaPackageRepository.Seed(metaPackage);
+        fixture.PackageRepository.Seed(PackageServiceFixture.CreatePackage(metaPackage, "1.0.0"));
+        await fixture.PackageStorage.SaveAsync("pkg-a", "1.0.0", System.IO.Stream.Null);
+        fixture.PackageStorage.ThrowOnDelete = new InvalidOperationException("delete boom");
+
+        // act
+        var result = await service.UnpublishPackageAsync(user, "pkg-a", "1.0.0");
+
+        // assert — Executor.Batch() catches each handler's exception independently and keeps going,
+        // unlike the LIFO short-circuit of Executor.Staged(): the storage-delete stage throwing does
+        // not stop the repo-delete or meta-package-delete stages (registered after it) from running.
+        // The batch result still reports the storage-delete failure, so UnpublishPackageAsync must
+        // surface it as InternalError instead of unconditionally returning Ok.
+        result.Status.Is(PackageStatus.InternalError);
+        result.PlainErrors.Has(1);
+        result.PlainError.Is("delete boom");
+        fixture.Log.Contains("Repo.Delete:pkg-a:1.0.0").IsTrue();
+        fixture.Log.Contains($"Meta.Delete:{metaPackage.Id}").IsTrue();
+        fixture.MetaPackageRepository.Deleted.Has(1);
+        fixture.MetaPackageRepository.Deleted.At(0).Is(metaPackage.Id);
+        fixture.PackageRepository.Packages.IsEmpty();
+        // the storage delete itself threw, so the file was never actually removed
+        fixture.PackageStorage.Contains("pkg-a", "1.0.0").IsTrue();
     }
 
     #endregion

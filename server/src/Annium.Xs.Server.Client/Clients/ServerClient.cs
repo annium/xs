@@ -1,7 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using System.Web;
 using Annium.Net.Http;
+using Annium.Xs.Server.Client.Internal;
 
 namespace Annium.Xs.Server.Client.Clients;
 
@@ -22,7 +22,6 @@ public class ServerClient : ClientBase
             .BearerAuthorization(token)
             .RunAsync();
 
-        if (response.IsFailure)
-            throw new Exception($"Delete package failed with {response.StatusCode} ({response.StatusText}).");
+        response.EnsureSuccess("Delete package");
     }
 }

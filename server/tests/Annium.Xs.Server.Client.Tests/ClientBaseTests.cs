@@ -31,8 +31,7 @@ public class ClientBaseTests : TestBase
     [Fact]
     public void SetUri_UriAlreadyAssignedToNonLoopbackHost_Throws()
     {
-        // arrange — the guard is `if (!Uri.IsLoopback) throw`, so it only fires once the
-        // currently-assigned uri is non-loopback.
+        // arrange
         var client = new ProbeClient();
         client.SetUri(new Uri("http://example.com/"));
 
@@ -45,21 +44,20 @@ public class ClientBaseTests : TestBase
     }
 
     [Fact]
-    public void SetUri_UriAlreadyAssignedToLoopbackHost_DoesNotThrow()
+    public void SetUri_UriAlreadyAssignedToLoopbackHost_Throws()
     {
-        // arrange — SUSPECTED DEFECT: the guard checks whether the *currently assigned* uri is
-        // loopback, not whether SetUri was already called. Assigning a loopback uri (e.g. the
-        // loopback test servers used throughout this suite) leaves the guard permanently open,
-        // so a second SetUri call silently reassigns instead of throwing.
+        // arrange — assignment must be tracked explicitly, not inferred from whether the
+        // currently-assigned uri happens to be loopback (e.g. the loopback test servers used
+        // throughout this suite), so a second SetUri call always throws regardless of host.
         var client = new ProbeClient();
         client.SetUri(new Uri("http://127.0.0.1:12345/"));
         var secondUri = new Uri("http://127.0.0.1:54321/");
 
         // act
-        client.SetUri(secondUri);
+        var exception = Wrap.It(() => client.SetUri(secondUri)).Throws<InvalidOperationException>();
 
         // assert
-        client.CurrentUri.Is(secondUri);
+        exception.Message.Is("Uri already assigned.");
     }
 
     [Fact]

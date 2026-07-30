@@ -57,7 +57,7 @@ public class PackageConsumptionController : ServerController<User>
                 return new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError };
         }
 
-        var content = await _packageStorage.GetPackageAsync(name, version);
+        var content = await _packageStorage.GetAsync(name, version);
 
         return File(content, "application/octet-stream");
     }

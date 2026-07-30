@@ -12,4 +12,5 @@ public interface IPackageStorage<TPackage, TPackageDependency>
     Task<bool> ExistsAsync(string name, string version);
     Task SaveAsync(string name, string version, Stream stream);
     Task DeleteAsync(string name, string version);
+    Task<Stream> GetAsync(string name, string version);
 }

@@ -7,6 +7,5 @@ namespace Annium.Xs.Server.Dotnet.Services;
 
 public interface IPackageStorage : IPackageStorage<Package, PackageDependency>
 {
-    Task<Stream> GetPackageAsync(string name, string version);
     Task<Stream> GetNuspecAsync(string name, string version);
 }

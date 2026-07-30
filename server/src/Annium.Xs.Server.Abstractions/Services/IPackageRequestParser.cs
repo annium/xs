@@ -5,9 +5,9 @@ using Annium.Xs.Server.Shared.Domain.Models;
 namespace Annium.Xs.Server.Abstractions.Services;
 
 public interface IPackageRequestParser<TPackage, TPackageDependency, TPackageRequest>
-    where TPackage : IPackage<TPackageDependency>
-    where TPackageDependency : IPackageDependency
-    where TPackageRequest : IPackageRequest
+    where TPackage : class, IPackage<TPackageDependency>
+    where TPackageDependency : class, IPackageDependency
+    where TPackageRequest : class, IPackageRequest
 {
     TPackage Parse(MetaPackage metaPackage, TPackageRequest request);
 }

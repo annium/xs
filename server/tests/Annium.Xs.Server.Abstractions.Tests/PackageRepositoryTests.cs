@@ -24,6 +24,39 @@ public class PackageRepositoryTests : TestBase, IClassFixture<PostgresFixture>
         _fixture = fixture;
     }
 
+    #region CreateAsync dual-write atomicity
+
+    [Fact]
+    public async Task CreateAsync_DependencyBulkCopyFails_SUSPECTED_DEFECT_LeavesPackageRowPersisted()
+    {
+        // arrange — SUSPECTED DEFECT: CreateAsync inserts the package row, then bulk-copies its
+        // dependencies as two independent statements with no surrounding transaction. If the bulk copy
+        // fails, the already-inserted package row is never rolled back.
+        await using var repo = _fixture.CreateRepository(Logger);
+        var name = UniqueName("pkg");
+        var metaPackageId = await SeedMetaPackageAsync(name);
+        var package = CreatePackage(metaPackageId, name, "1.0.0");
+        var dependency = new RepoPackageDependency
+        {
+            PackageId = package.Id,
+            Framework = "net10.0",
+            Name = "dep-a",
+            Version = "1.2.3",
+        };
+        // two identical rows violate pk_package_dependencies (package_id, framework, name, version) during bulk copy
+        package.Dependencies = new[] { dependency, dependency };
+
+        // act
+        await Wrap.It(async () => await repo.CreateAsync(package)).ThrowsAsync<PostgresException>();
+
+        // assert — current (defective) behaviour: the package row survives the failed dependency write
+        var persisted = await repo.TryFindByNameVersionAsync(name, "1.0.0");
+        persisted.IsNotNull();
+        persisted!.Dependencies.IsEmpty();
+    }
+
+    #endregion
+
     #region FindAllByNameAsync
 
     [Fact]
@@ -208,11 +241,11 @@ public class PackageRepositoryTests : TestBase, IClassFixture<PostgresFixture>
     }
 
     [Fact]
-    public async Task CountAllDownloadsAsync_NameDiffersInCase_SUSPECTED_DEFECT_ExcludesFromSum()
+    public async Task CountAllDownloadsAsync_NameDiffersInCase_MatchesCaseInsensitively()
     {
-        // arrange — SUSPECTED DEFECT: unlike FindAllByNameAsync/TryFindByNameVersionAsync/
-        // DeleteByNameVersionAsync (all of which compare Name.ToUpper()), CountAllDownloadsAsync compares
-        // Name directly, so a differently-cased row for the "same" package is silently excluded from the sum.
+        // arrange — like FindAllByNameAsync/TryFindByNameVersionAsync/DeleteByNameVersionAsync (all of
+        // which compare Name.ToUpper()), CountAllDownloadsAsync must also match case-insensitively, so a
+        // differently-cased query for the same package still sums its downloads.
         await using var repo = _fixture.CreateRepository(Logger);
         var name = UniqueName("pkg");
         var metaPackageId = await SeedMetaPackageAsync(name);
@@ -221,8 +254,8 @@ public class PackageRepositoryTests : TestBase, IClassFixture<PostgresFixture>
         // act — querying with a differently-cased name than what was stored
         var total = await repo.CountAllDownloadsAsync(name.ToUpperInvariant());
 
-        // assert — current (exact-case) behaviour: the differently-cased query matches nothing
-        total.Is(0);
+        // assert
+        total.Is(3);
     }
 
     [Fact]

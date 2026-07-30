@@ -1,8 +1,8 @@
 using System;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Annium.Testing;
+using Annium.Xs.Server.Client.Models;
 using Xunit;
 
 namespace Annium.Xs.Server.Client.Tests;
@@ -20,18 +20,7 @@ public class MainClientTests : ClientTestBase
     public async Task LoginAsync_Success_ReturnsToken()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.ContentType = "application/json";
-                ctx.Response.StatusCode = 200;
-                var data = Encoding.UTF8.GetBytes("\"secret-token\"");
-                ctx.Response.OutputStream.Write(data);
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunJsonServer("\"secret-token\"");
         var client = CreateMainClient(server);
 
         // act
@@ -45,16 +34,7 @@ public class MainClientTests : ClientTestBase
     public async Task LoginAsync_NonSuccessResponse_ThrowsWithStatusCodeAndText()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                ctx.Response.StatusDescription = "Unauthorized";
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunErrorServer(HttpStatusCode.Unauthorized, "Unauthorized");
         var client = CreateMainClient(server);
 
         // act
@@ -69,18 +49,7 @@ public class MainClientTests : ClientTestBase
     public async Task GetRegistryInfoAsync_Success_ReturnsRegistry()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.ContentType = "application/json";
-                ctx.Response.StatusCode = 200;
-                var data = Encoding.UTF8.GetBytes("""{"Servers":{"main":"http://main.example.com/"}}""");
-                ctx.Response.OutputStream.Write(data);
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunJsonServer("""{"Servers":{"main":"http://main.example.com/"}}""");
         var client = CreateMainClient(server);
 
         // act
@@ -95,16 +64,7 @@ public class MainClientTests : ClientTestBase
     public async Task GetRegistryInfoAsync_NonSuccessResponse_ThrowsWithStatusCodeAndText()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                ctx.Response.StatusDescription = "Internal Server Error";
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunErrorServer(HttpStatusCode.InternalServerError, "Internal Server Error");
         var client = CreateMainClient(server);
 
         // act
@@ -118,18 +78,7 @@ public class MainClientTests : ClientTestBase
     public async Task SearchAsync_Success_ReturnsMetaPackages()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.ContentType = "application/json";
-                ctx.Response.StatusCode = 200;
-                var data = Encoding.UTF8.GetBytes("[]");
-                ctx.Response.OutputStream.Write(data);
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunJsonServer("[]");
         var client = CreateMainClient(server);
 
         // act
@@ -140,19 +89,62 @@ public class MainClientTests : ClientTestBase
     }
 
     [Fact]
+    public async Task SearchAsync_Success_ReturnsPopulatedMetaPackage()
+    {
+        // arrange — exercises the MetaPackage DTO's field-by-field JSON mapping. Payload casing was
+        // derived empirically from the actual serializer configured via AddSerializers().WithJson(true)
+        // (default naming policy preserves C# property names verbatim; enums serialize as their member
+        // name strings). NOTE: `Published` always round-trips to the Unix epoch — no NodaTime
+        // System.Text.Json converter is registered for this pipeline, so an `Instant` serializes as `{}`
+        // and deserializes back to `default(Instant)` regardless of the value assigned server-side.
+        var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var ownerId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+        await using var server = RunJsonServer(
+            $$"""
+            [
+                {
+                    "Id": "{{id}}",
+                    "Type": "npm",
+                    "Name": "pkg-a",
+                    "Version": "1.0.0",
+                    "Description": "desc",
+                    "Published": {},
+                    "Downloads": 42,
+                    "OwnerId": "{{ownerId}}",
+                    "Owner": "owner",
+                    "Permissions": [{ "Category": "Owner", "Permission": "Read" }]
+                }
+            ]
+            """
+        );
+        var client = CreateMainClient(server);
+
+        // act
+        var results = await client.SearchAsync("token", "npm", "query");
+
+        // assert
+        results.Has(1);
+        var pkg = results.At(0);
+        pkg.Id.Is(id);
+        pkg.Type.Is("npm");
+        pkg.Name.Is("pkg-a");
+        pkg.Version.Is("1.0.0");
+        pkg.Description.Is("desc");
+        pkg.Published.Is(default);
+        pkg.Downloads.Is(42);
+        pkg.OwnerId.Is(ownerId);
+        pkg.Owner.Is("owner");
+        pkg.Permissions.Has(1);
+        var permission = pkg.Permissions.At(0);
+        permission.Category.Is(PermissionCategory.Owner);
+        permission.Permission.Is(Permission.Read);
+    }
+
+    [Fact]
     public async Task SearchAsync_NonSuccessResponse_ThrowsWithStatusCodeAndText()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                ctx.Response.StatusDescription = "Bad Request";
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunErrorServer(HttpStatusCode.BadRequest, "Bad Request");
         var client = CreateMainClient(server);
 
         // act

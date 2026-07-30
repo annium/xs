@@ -10,10 +10,12 @@ internal class FileStorage : IStorage
     private const int CopyBufferSize = 81920;
 
     private readonly string _root;
+    private readonly string _rootPrefix;
 
     public FileStorage(string root)
     {
         _root = Path.GetFullPath(root);
+        _rootPrefix = _root.EndsWith(Path.DirectorySeparatorChar) ? _root : _root + Path.DirectorySeparatorChar;
         Directory.CreateDirectory(_root);
     }
 
@@ -47,10 +49,17 @@ internal class FileStorage : IStorage
         var path = GetPath(name);
         var dir = Path.GetDirectoryName(path)!;
 
+        // deleting an absent artifact is a no-op. File.Delete alone doesn't give that guarantee -
+        // it only tolerates a missing file while its directory still exists, and the cleanup below
+        // removes emptied directories. A caller replaying a delete (e.g. a rollback restoring an
+        // artifact) would otherwise hit DirectoryNotFoundException.
+        if (!Directory.Exists(dir))
+            return Task.CompletedTask;
+
         File.Delete(path);
 
         // recursively cleanup
-        while (dir != _root)
+        while (dir != _root && Directory.Exists(dir))
         {
             // if any files - no need to delete dir
             if (Directory.GetFileSystemEntries(dir).Length > 0)
@@ -69,8 +78,17 @@ internal class FileStorage : IStorage
     private string GetPath(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException($"Given {name} is empty.");
+            throw new ArgumentException("Artifact name is empty.", nameof(name));
 
-        return Path.GetFullPath(Path.Combine(_root, name));
+        var path = Path.GetFullPath(Path.Combine(_root, name));
+
+        // `name` is built from request-supplied package id/version, so a traversal segment would
+        // otherwise resolve outside the storage root and turn Save/Get/Delete into arbitrary
+        // file access. Compare against the root plus a separator so a sibling directory sharing
+        // the root's prefix (e.g. "<root>-other") is not accepted either.
+        if (!path.StartsWith(_rootPrefix, StringComparison.Ordinal))
+            throw new ArgumentException($"Artifact name '{name}' resolves outside the storage root.", nameof(name));
+
+        return path;
     }
 }

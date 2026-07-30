@@ -40,7 +40,7 @@ internal class PackageStorage : IPackageStorage
         await _storage.DeleteAsync(GetNuspecPath(name, version));
     }
 
-    public Task<Stream> GetPackageAsync(string name, string version)
+    public Task<Stream> GetAsync(string name, string version)
     {
         return _storage.GetAsync(GetPackagePath(name, version));
     }

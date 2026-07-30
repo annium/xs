@@ -1,6 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using Annium.Net.Http;
+using Annium.Xs.Server.Client.Internal;
 using Annium.Xs.Server.Client.Models;
 
 namespace Annium.Xs.Server.Client.Clients;
@@ -22,8 +22,7 @@ public class MainClient : ClientBase
             .JsonContent(new { login, password })
             .AsResponseAsync<string>();
 
-        if (response.IsFailure)
-            throw new Exception($"User login failed with {response.StatusCode} ({response.StatusText}).");
+        response.EnsureSuccess("User login");
 
         return response.Data.NotNull();
     }
@@ -32,8 +31,7 @@ public class MainClient : ClientBase
     {
         var response = await _httpRequestFactory.New(Uri).Get("registry").AsResponseAsync<Registry>();
 
-        if (response.IsFailure)
-            throw new Exception($"Registry info fetch failed with {response.StatusCode} ({response.StatusText}).");
+        response.EnsureSuccess("Registry info fetch");
 
         return response.Data.NotNull();
     }
@@ -48,8 +46,7 @@ public class MainClient : ClientBase
             .Param("query", query)
             .AsResponseAsync<MetaPackage[]>();
 
-        if (response.IsFailure)
-            throw new Exception($"Search failed with {response.StatusCode} ({response.StatusText}).");
+        response.EnsureSuccess("Search");
 
         return response.Data.NotNull();
     }

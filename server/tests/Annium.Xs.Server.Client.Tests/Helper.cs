@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Annium.Core.DependencyInjection;
@@ -81,6 +82,38 @@ public abstract class ClientTestBase : TestBase
 
         return server.NotNull();
     }
+
+    /// <summary>
+    /// Starts a loopback server that responds to every request with a 200 status and the given JSON body.
+    /// </summary>
+    protected IServer RunJsonServer(string json) =>
+        RunServer(
+            (ctx, _) =>
+            {
+                ctx.Response.ContentType = "application/json";
+                ctx.Response.StatusCode = 200;
+                var data = Encoding.UTF8.GetBytes(json);
+                ctx.Response.OutputStream.Write(data);
+                ctx.Response.Close();
+
+                return Task.CompletedTask;
+            }
+        );
+
+    /// <summary>
+    /// Starts a loopback server that responds to every request with the given non-success status code and description.
+    /// </summary>
+    protected IServer RunErrorServer(HttpStatusCode code, string description) =>
+        RunServer(
+            (ctx, _) =>
+            {
+                ctx.Response.StatusCode = (int)code;
+                ctx.Response.StatusDescription = description;
+                ctx.Response.Close();
+
+                return Task.CompletedTask;
+            }
+        );
 }
 
 /// <summary>

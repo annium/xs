@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Annium.Data.Operations;
@@ -22,6 +23,8 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
     where TPackageDependency : class, IPackageDependency
     where TPackageRequest : class, IPackageRequest
 {
+    private const string ReadPermissionRequiredError = "You need read permission to get this package.";
+
     private readonly IMetaPackageRepository _metaPackageRepository;
     private readonly IMetaPackageTool _metaPackageTool;
     private readonly IPackageRepository<TPackage, TPackageDependency> _packageRepository;
@@ -54,9 +57,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
 
         var access = await _metaPackageRepository.TryGetAccessByIdAsync(packages.ElementAt(0).MetaPackageId);
         if (access is null || !access.ForUser(user).Has(Permission.Read))
-            return Result
-                .Status(PackageStatus.Forbidden, packages)
-                .Error("You need read permission to get this package.");
+            return Result.Status(PackageStatus.Forbidden, packages).Error(ReadPermissionRequiredError);
 
         return Result.Status(PackageStatus.Ok, packages);
     }
@@ -152,9 +153,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
             );
         }
 
-        await executor.RunAsync();
-
-        return Result.Status(PackageStatus.Ok);
+        return await ToStatusResultAsync(executor.RunAsync);
     }
 
     public async Task<IStatusResult<PackageStatus>> ProcessDownloadAsync(
@@ -170,7 +169,7 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
 
         var access = await _metaPackageRepository.TryGetAccessByIdAsync(package.MetaPackageId);
         if (access is null || !access.ForUser(user).Has(Permission.Read))
-            return Result.Status(PackageStatus.Forbidden).Error("You need read permission to get this package.");
+            return Result.Status(PackageStatus.Forbidden).Error(ReadPermissionRequiredError);
 
         if (!await _packageStorage.ExistsAsync(name, version))
             return Result.Status(PackageStatus.InternalError).Error("Package file missing");
@@ -212,16 +211,64 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
                     $"Package {request.Name} {request.Version} already exists. You need unpublish permission to overwrite it."
                 );
 
+        MemoryStream? oldPackageStream = null;
+        TPackage? oldPackage = null;
+
+        // stage A (storage): buffer the old artifact fully before deleting it (it's about to be
+        // deleted, so a lazy stream is not enough), then restore the buffered bytes on rollback.
         executor.Stage(
             async () =>
             {
+                await using (var stream = await _packageStorage.GetAsync(request.Name, request.Version))
+                {
+                    oldPackageStream = new MemoryStream();
+                    await stream.CopyToAsync(oldPackageStream);
+                }
+
                 await _packageStorage.DeleteAsync(request.Name, request.Version);
-                await _packageRepository.DeleteByNameVersionAsync(request.Name, request.Version);
             },
-            () => { }
+            async () =>
+            {
+                if (oldPackageStream is null)
+                    return;
+
+                // a later stage's own commit can fail after partially writing a new artifact at this
+                // same (name, version) key without cleaning up after itself, orphaning a file here;
+                // FileStorage.SaveAsync uses FileMode.CreateNew, so re-saving over that orphan would
+                // throw and silently drop the restore. DeleteAsync no-ops when nothing is there, so
+                // this is safe unconditionally.
+                await _packageStorage.DeleteAsync(request.Name, request.Version);
+
+                oldPackageStream.Position = 0;
+                await _packageStorage.SaveAsync(request.Name, request.Version, oldPackageStream);
+            }
         );
 
-        return await PublishPackageVersionAsync(executor, metaPackage, access, request);
+        // stage B (db): capture the old row before deleting it, then restore it on rollback. The db
+        // delete must still precede the later db create (republish only runs when name+version
+        // already match, and ix_packages_name_version is a unique index).
+        executor.Stage(
+            async () =>
+            {
+                oldPackage = await _packageRepository.TryFindByNameVersionAsync(request.Name, request.Version);
+                await _packageRepository.DeleteByNameVersionAsync(request.Name, request.Version);
+            },
+            async () =>
+            {
+                if (oldPackage is not null)
+                    await _packageRepository.CreateAsync(oldPackage);
+            }
+        );
+
+        try
+        {
+            return await PublishPackageVersionAsync(executor, metaPackage, access, request);
+        }
+        finally
+        {
+            if (oldPackageStream is not null)
+                await oldPackageStream.DisposeAsync();
+        }
     }
 
     private async Task<IStatusResult<PackageStatus>> PublishPackageVersionAsync(
@@ -239,7 +286,23 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
         var pkg = _packageRequestParser.Parse(metaPackage, request);
 
         executor.Stage(
-            async () => await _packageStorage.SaveAsync(pkg.Name, pkg.Version, request.Stream),
+            async () =>
+            {
+                try
+                {
+                    await _packageStorage.SaveAsync(pkg.Name, pkg.Version, request.Stream);
+                }
+                catch
+                {
+                    // the save can throw after partially writing the artifact (e.g. an ecosystem-specific
+                    // save that persists the file before failing to derive its manifest); the executor
+                    // only counts a stage as committed - and therefore only rolls it back - once its
+                    // commit returns without throwing, so a failure here would otherwise never trigger
+                    // this stage's own rollback. Clean up the partial write ourselves before rethrowing.
+                    await _packageStorage.DeleteAsync(pkg.Name, pkg.Version);
+                    throw;
+                }
+            },
             async () => await _packageStorage.DeleteAsync(pkg.Name, pkg.Version)
         );
 
@@ -248,18 +311,15 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
             async () => await _packageRepository.DeleteByNameVersionAsync(pkg.Name, pkg.Version)
         );
 
-        executor.Stage(
-            async () =>
-                await _metaPackageRepository.SetDownloadsAsync(
-                    metaPackage.Id,
-                    await _packageRepository.CountAllDownloadsAsync(pkg.Name)
-                ),
-            async () =>
-                await _metaPackageRepository.SetDownloadsAsync(
-                    metaPackage.Id,
-                    await _packageRepository.CountAllDownloadsAsync(pkg.Name)
-                )
-        );
+        // recounting downloads from the repository yields the pre-stage total when replayed,
+        // so the same action serves as both commit and rollback
+        Func<ValueTask> recountDownloads = async () =>
+            await _metaPackageRepository.SetDownloadsAsync(
+                metaPackage.Id,
+                await _packageRepository.CountAllDownloadsAsync(pkg.Name)
+            );
+
+        executor.Stage(recountDownloads, recountDownloads);
 
         if (string.Compare(pkg.Version, metaPackage.Version, StringComparison.Ordinal) >= 0)
             executor.Stage(
@@ -267,7 +327,23 @@ internal class PackageService<TPackage, TPackageDependency, TPackageRequest>
                 async () => await _metaPackageRepository.UpdateInfoAsync(metaPackage.Id, metaPackage)
             );
 
-        await executor.RunAsync();
+        return await ToStatusResultAsync(executor.RunAsync);
+    }
+
+    /// <summary>
+    /// Runs an executor and maps its result to the shared publish/unpublish status contract: any
+    /// failure becomes <see cref="PackageStatus.InternalError"/> joined with the executor's errors,
+    /// otherwise <see cref="PackageStatus.Ok"/>. Takes a delegate rather than the executor itself so it
+    /// works for both <see cref="IStageExecutor.RunAsync"/> and <see cref="IBatchExecutor.RunAsync"/>,
+    /// which share this shape but no common interface, and so the run starts inside this method's own
+    /// async context.
+    /// </summary>
+    /// <param name="run">The executor's <c>RunAsync</c> method, passed as a delegate.</param>
+    private static async Task<IStatusResult<PackageStatus>> ToStatusResultAsync(Func<Task<IResult>> run)
+    {
+        var runResult = await run();
+        if (!runResult.IsOk)
+            return Result.Status(PackageStatus.InternalError).Join(runResult);
 
         return Result.Status(PackageStatus.Ok);
     }

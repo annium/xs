@@ -8,6 +8,8 @@ public abstract class ClientBase
 
     protected Uri Uri = new("http://localhost");
 
+    private bool _isUriAssigned;
+
     public ClientBase(params ClientBase[] clients)
     {
         _clients = clients;
@@ -15,11 +17,12 @@ public abstract class ClientBase
 
     public void SetUri(Uri uri)
     {
-        if (!Uri.IsLoopback)
+        if (_isUriAssigned)
             throw new InvalidOperationException("Uri already assigned.");
 
         foreach (var client in _clients)
             client.SetUri(uri);
         Uri = uri;
+        _isUriAssigned = true;
     }
 }

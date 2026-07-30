@@ -36,6 +36,7 @@ public class FileStorageTests : TestBase
         await storage.DeleteAsync("a/b/c/file.txt");
 
         // assert
+        File.Exists(Path.Combine(root, "a", "b", "c", "file.txt")).IsFalse();
         Directory.Exists(root).IsTrue();
         Directory.Exists(Path.Combine(root, "a")).IsFalse();
         Directory.Exists(Path.Combine(root, "a", "b")).IsFalse();
@@ -54,6 +55,7 @@ public class FileStorageTests : TestBase
         await storage.DeleteAsync("a/b/file.txt");
 
         // assert
+        File.Exists(Path.Combine(root, "a", "b", "file.txt")).IsFalse();
         // "a/b" became empty after the delete -> removed
         Directory.Exists(Path.Combine(root, "a", "b")).IsFalse();
         // "a" still contains "other.txt" -> preserved
@@ -72,8 +74,85 @@ public class FileStorageTests : TestBase
         await storage.DeleteAsync("a/file.txt");
 
         // assert
+        File.Exists(Path.Combine(root, "a", "file.txt")).IsFalse();
         Directory.Exists(Path.Combine(root, "a")).IsFalse();
         Directory.Exists(root).IsTrue();
+    }
+
+    /// <summary>
+    /// Deleting an absent artifact must be a no-op, including after the first delete removed the
+    /// containing directory. Compensating logic (e.g. a publish rollback restoring an artifact)
+    /// replays a delete before re-saving, and must not fault on the vanished directory.
+    /// </summary>
+    [Fact]
+    public async Task DeleteAsync_AlreadyDeletedAndDirectoryCleanedUp_IsNoOp()
+    {
+        // arrange
+        var (storage, root) = CreateStorage();
+        await storage.SaveAsync("a/file.txt", ToStream("content"));
+        await storage.DeleteAsync("a/file.txt");
+        Directory.Exists(Path.Combine(root, "a")).IsFalse();
+
+        // act
+        await storage.DeleteAsync("a/file.txt");
+
+        // assert — and the path is still writable afterwards, which is what a restore needs
+        await storage.SaveAsync("a/file.txt", ToStream("restored"));
+        (await storage.ExistsAsync("a/file.txt")).IsTrue();
+    }
+
+    /// <summary>
+    /// The artifact name is built from request-supplied package id/version, so a traversal segment
+    /// must be rejected rather than resolving outside the storage root.
+    /// </summary>
+    [Theory]
+    [InlineData("../escaped.bin")]
+    [InlineData("../../etc/escaped.bin")]
+    [InlineData("a/../../escaped.bin")]
+    public async Task SaveAsync_NameEscapesRoot_Throws(string name)
+    {
+        // arrange
+        var (storage, root) = CreateStorage();
+
+        // act & assert
+        await Wrap.It(async () => await storage.SaveAsync(name, ToStream("payload"))).ThrowsAsync<ArgumentException>();
+
+        // nothing was written anywhere under the root. Asserting on the escaped path itself would
+        // depend on state outside the root that this test cannot own or clean up.
+        Directory.GetFileSystemEntries(root).IsEmpty();
+    }
+
+    [Theory]
+    [InlineData("../escaped.bin")]
+    [InlineData("../../etc/escaped.bin")]
+    public async Task GetAsync_NameEscapesRoot_Throws(string name)
+    {
+        var (storage, _) = CreateStorage();
+
+        await Wrap.It(async () => await storage.GetAsync(name)).ThrowsAsync<ArgumentException>();
+    }
+
+    [Theory]
+    [InlineData("../escaped.bin")]
+    [InlineData("../../etc/escaped.bin")]
+    public async Task DeleteAsync_NameEscapesRoot_Throws(string name)
+    {
+        var (storage, _) = CreateStorage();
+
+        await Wrap.It(async () => await storage.DeleteAsync(name)).ThrowsAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task DeleteAsync_NeverSaved_IsNoOp()
+    {
+        // arrange
+        var (storage, _) = CreateStorage();
+
+        // act
+        await storage.DeleteAsync("never/saved.txt");
+
+        // assert
+        (await storage.ExistsAsync("never/saved.txt")).IsFalse();
     }
 
     #endregion
@@ -112,6 +191,32 @@ public class FileStorageTests : TestBase
         exists.IsFalse();
     }
 
+    [Fact]
+    public async Task GetAsync_FileNotSaved_ThrowsFileNotFoundException()
+    {
+        // arrange — the parent directory exists (another file was saved into it) so the guard that
+        // trips is specifically "file missing", not "directory missing"
+        var (storage, _) = CreateStorage();
+        await storage.SaveAsync("pkg/other.bin", ToStream("content"));
+
+        // act & assert — GetAsync opens with FileMode.Open and performs no existence check of its own,
+        // so a missing file surfaces as the underlying FileStream's own exception
+        await Wrap.It(async () => await storage.GetAsync("pkg/missing.bin")).ThrowsAsync<FileNotFoundException>();
+    }
+
+    [Fact]
+    public async Task SaveAsync_NameAlreadySaved_ThrowsIOException()
+    {
+        // arrange
+        var (storage, _) = CreateStorage();
+        await storage.SaveAsync("pkg/1.0.0/file.bin", ToStream("first"));
+
+        // act & assert — SaveAsync opens with FileMode.CreateNew, so re-saving the same name conflicts
+        // with the file left behind by the first save
+        await Wrap.It(async () => await storage.SaveAsync("pkg/1.0.0/file.bin", ToStream("second")))
+            .ThrowsAsync<IOException>();
+    }
+
     #endregion
 
     #region GetPath validation guard
@@ -126,7 +231,8 @@ public class FileStorageTests : TestBase
         var exception = Wrap.It(() => _ = storage.ExistsAsync(null!)).Throws<ArgumentException>();
 
         // assert
-        exception.Message.Is("Given  is empty.");
+        exception.ParamName.Is("name");
+        exception.Message.Is("Artifact name is empty. (Parameter 'name')");
     }
 
     [Fact]
@@ -139,7 +245,8 @@ public class FileStorageTests : TestBase
         var exception = Wrap.It(() => _ = storage.ExistsAsync(string.Empty)).Throws<ArgumentException>();
 
         // assert
-        exception.Message.Is("Given  is empty.");
+        exception.ParamName.Is("name");
+        exception.Message.Is("Artifact name is empty. (Parameter 'name')");
     }
 
     [Fact]
@@ -152,7 +259,8 @@ public class FileStorageTests : TestBase
         var exception = Wrap.It(() => _ = storage.ExistsAsync("   ")).Throws<ArgumentException>();
 
         // assert
-        exception.Message.Is("Given     is empty.");
+        exception.ParamName.Is("name");
+        exception.Message.Is("Artifact name is empty. (Parameter 'name')");
     }
 
     #endregion

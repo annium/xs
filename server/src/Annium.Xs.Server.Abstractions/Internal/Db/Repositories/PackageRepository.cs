@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Annium.linq2db.Extensions;
 using Annium.Xs.Server.Shared.Domain.Interfaces;
@@ -26,11 +27,20 @@ internal class PackageRepository<TPackage, TPackageDependency>
         await Db.BulkCopyAsync(package.Dependencies);
     }
 
-    public async Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
+    /// <summary>
+    /// Case-insensitive name match. Returned as an expression so linq2db keeps translating it to SQL.
+    /// </summary>
+    private static Expression<Func<TPackage, bool>> ByName(string name)
     {
         var upperName = name.ToUpperInvariant();
+
+        return x => x.Name.ToUpper() == upperName;
+    }
+
+    public async Task<IReadOnlyCollection<TPackage>> FindAllByNameAsync(string name)
+    {
         var entities = await Db
-            .Packages.Where(x => x.Name.ToUpper() == upperName)
+            .Packages.Where(ByName(name))
             .LoadWith(x => x.Dependencies)
             .OrderByDescending(p => p.Version)
             .ToArrayAsync();
@@ -40,9 +50,9 @@ internal class PackageRepository<TPackage, TPackageDependency>
 
     public async Task<TPackage?> TryFindByNameVersionAsync(string name, string version)
     {
-        var upperName = name.ToUpperInvariant();
         var entity = await Db
-            .Packages.Where(x => x.Name.ToUpper() == upperName && x.Version == version)
+            .Packages.Where(ByName(name))
+            .Where(x => x.Version == version)
             .LoadWith(x => x.Dependencies)
             .AsQueryable()
             .FirstOrDefaultAsync();
@@ -52,7 +62,7 @@ internal class PackageRepository<TPackage, TPackageDependency>
 
     public async Task<int> CountAllDownloadsAsync(string name)
     {
-        return await Db.Packages.Where(x => x.Name == name).SumAsync(p => p.Downloads);
+        return await Db.Packages.Where(ByName(name)).SumAsync(p => p.Downloads);
     }
 
     public async Task IncrementDownloadsAsync(Guid id)
@@ -62,7 +72,6 @@ internal class PackageRepository<TPackage, TPackageDependency>
 
     public async Task DeleteByNameVersionAsync(string name, string version)
     {
-        var upperName = name.ToUpperInvariant();
-        await Db.Packages.DeleteAsync(x => x.Name.ToUpper() == upperName && x.Version == version);
+        await Db.Packages.Where(ByName(name)).Where(x => x.Version == version).DeleteAsync();
     }
 }
