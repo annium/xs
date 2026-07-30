@@ -32,10 +32,19 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
         int count
     )
     {
+        // pages are 1-based. Without this the offset goes negative and Postgres rejects the query with an
+        // opaque 2201X, surfacing as a 500 instead of a clear contract violation at the call site.
+        ArgumentOutOfRangeException.ThrowIfLessThan(page, 1);
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+
+        // visible = yours, or explicitly published to the world. The World grant is what an owner sets via
+        // POST /{type}/{name}/permissions; packages start at World: None (MetaPackageTool.Generate), i.e.
+        // private. Matching on the Owner category instead would match nearly every row, since every package
+        // is created with an Owner Read|Publish grant — mirrors MetaPackageAccess.ForUser's own resolution.
         var request = Db.MetaPackages.Where(x =>
             x.OwnerId == userId
             || x.Permissions.Any(p =>
-                p.Category == PermissionCategory.Owner && (p.Permission & Permission.Read) == Permission.Read
+                p.Category == PermissionCategory.World && (p.Permission & Permission.Read) == Permission.Read
             )
         );
 
@@ -52,6 +61,9 @@ internal class MetaPackageRepository : RepositoryBase<Connection>, IMetaPackageR
             .LoadWith(x => x.Owner)
             .LoadWith(x => x.Permissions)
             .AsQueryable()
+            // Skip/Take without an ORDER BY leaves row order undefined, so successive pages could overlap
+            // or drop entries. Id is unique, which makes the ordering total and pagination stable.
+            .OrderBy(x => x.Id)
             .Skip((page - 1) * count)
             .Take(count)
             .ToArrayAsync();

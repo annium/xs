@@ -6,6 +6,7 @@ using Annium.Core.Runtime;
 using Annium.DbUp.Core;
 using Annium.DbUp.PostgreSql;
 using Annium.linq2db.PostgreSql;
+using Annium.Xs.Server.Shared.Auth.TokenAccessors;
 using Annium.Xs.Server.Shared.Internal;
 using Annium.Xs.Server.Shared.Internal.Auth;
 using Annium.Xs.Server.Shared.Internal.Tools;
@@ -23,6 +24,11 @@ public class ServicePack : ServicePackBase
         // auth
         container.Add<IApplicationModelProvider, AuthorizationApplicationModelProvider>().Singleton();
         container.Add<AuthorizationFilter>().AsSelf().Singleton();
+
+        // the bearer accessor is stateless and takes no configuration, so it is registered once here
+        // rather than re-constructed by each ecosystem's ServicePack. Ecosystems still add their own
+        // extra accessors (e.g. Dotnet's header-based NuGet key) on top of this one.
+        container.Add<ITokenAccessor, BearerTokenAccessor>().Singleton();
 
         // tools
         container.Add<IMetaPackageTool, MetaPackageTool>().Singleton();

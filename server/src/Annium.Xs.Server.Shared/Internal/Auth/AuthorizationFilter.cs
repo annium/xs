@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Annium.Xs.Server.Shared.Internal.Auth;
 
-public class AuthorizationFilter : IAsyncAuthorizationFilter
+internal class AuthorizationFilter : IAsyncAuthorizationFilter
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -39,12 +39,21 @@ public class AuthorizationFilter : IAsyncAuthorizationFilter
         // try get token
         Guid token = default;
         IActionResult? result = null;
+        var accessorRan = false;
         foreach (var tokenAccessor in tokenAccessors)
         {
+            accessorRan = true;
             (token, result) = tokenAccessor.GetToken(context.HttpContext.Request);
             if (result is null)
                 break;
         }
+
+        // fail closed when no accessor ran at all: without this the loop leaves `result` null and `token`
+        // at its default, and the lookup below would proceed as though an all-zero token had been legitimately
+        // presented. Reachable only if the ITokenAccessor registration in ServicePack is ever lost, which is
+        // exactly the case worth failing loudly on.
+        if (!accessorRan)
+            return GetForbiddenResult("No token accessor is registered; cannot authenticate the request.");
 
         if (result is not null)
             return result;

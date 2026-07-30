@@ -29,16 +29,20 @@ internal class AuthorizationApplicationModelProvider : IApplicationModelProvider
 
     private void ProcessControllerModel(ControllerModel controllerModel)
     {
+        // AuthorizeAttribute permits AttributeTargets.Class, so a controller-level [Authorize] covers every
+        // action on it. ActionModel.Attributes only carries the action's own attributes, never the declaring
+        // controller's, so the controller has to be inspected here or a class-level attribute would leave
+        // every action silently unauthorized.
+        var controllerIsAuthorized = controllerModel.Attributes.OfType<AuthorizeAttribute>().Any();
+
         foreach (var actionModel in controllerModel.Actions)
-            ProcessActionModel(actionModel);
+            ProcessActionModel(actionModel, controllerIsAuthorized);
     }
 
-    private void ProcessActionModel(ActionModel actionModel)
+    private void ProcessActionModel(ActionModel actionModel, bool controllerIsAuthorized)
     {
-        var attribute = actionModel.Attributes.OfType<AuthorizeAttribute>().FirstOrDefault();
-
-        //if no Authorize attribute - no filter needed
-        if (attribute is null)
+        //if no Authorize attribute on either the action or its controller - no filter needed
+        if (!controllerIsAuthorized && !actionModel.Attributes.OfType<AuthorizeAttribute>().Any())
             return;
 
         actionModel.Filters.Add(_sp.Resolve<AuthorizationFilter>());

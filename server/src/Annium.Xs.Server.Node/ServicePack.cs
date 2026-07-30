@@ -11,7 +11,6 @@ using Annium.Xs.Server.Node.Domain;
 using Annium.Xs.Server.Node.Internal;
 using Annium.Xs.Server.Node.Internal.Services;
 using Annium.Xs.Server.Node.Views.Requests;
-using Annium.Xs.Server.Shared.Auth.TokenAccessors;
 using Annium.Xs.Server.Shared.Domain.Models;
 
 namespace Annium.Xs.Server.Node;
@@ -34,9 +33,6 @@ public class ServicePack : PackageServicePackBase<Package, PackageDependency, Pa
     )
     {
         // TODO: setup with index
-
-        // auth
-        container.Add<ITokenAccessor>(new BearerTokenAccessor()).AsSelf().Singleton();
 
         // packages
         await base.RegisterAsync(container, provider, ct);

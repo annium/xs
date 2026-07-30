@@ -36,9 +36,9 @@ public class ServicePack : PackageServicePackBase<Package, PackageDependency, Pa
     {
         // TODO: setup with index
 
-        // auth
+        // auth — the shared bearer accessor is registered by Shared.ServicePack; this adds the
+        // NuGet-specific header accessor on top of it
         container.Add(new HeaderTokenAccessor("X-NuGet-ApiKey")).AsInterfaces().Singleton();
-        container.Add(new BearerTokenAccessor()).AsInterfaces().Singleton();
 
         // packages
         await base.RegisterAsync(container, provider, ct);
