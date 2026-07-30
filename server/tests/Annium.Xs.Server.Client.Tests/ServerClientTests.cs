@@ -19,15 +19,7 @@ public class ServerClientTests : ClientTestBase
     public async Task DeletePackageAsync_Success_DoesNotThrow()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.StatusCode = 200;
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunSuccessServer();
         var client = CreateServerClient(server);
 
         // act

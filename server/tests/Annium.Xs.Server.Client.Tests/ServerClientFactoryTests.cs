@@ -23,15 +23,7 @@ public class ServerClientFactoryTests : ClientTestBase
     public async Task Create_Uri_ResolvesClientWithUriAssigned()
     {
         // arrange
-        await using var server = RunServer(
-            (ctx, _) =>
-            {
-                ctx.Response.StatusCode = 200;
-                ctx.Response.Close();
-
-                return Task.CompletedTask;
-            }
-        );
+        await using var server = RunSuccessServer();
         var factory = Get<ServerClientFactory>();
 
         // act

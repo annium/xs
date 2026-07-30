@@ -103,6 +103,20 @@ public abstract class ClientTestBase : TestBase
     /// <summary>
     /// Starts a loopback server that responds to every request with the given non-success status code and description.
     /// </summary>
+    /// <summary>
+    /// Starts a loopback server answering 200 with an empty body.
+    /// </summary>
+    protected IServer RunSuccessServer() =>
+        RunServer(
+            (ctx, _) =>
+            {
+                ctx.Response.StatusCode = 200;
+                ctx.Response.Close();
+
+                return Task.CompletedTask;
+            }
+        );
+
     protected IServer RunErrorServer(HttpStatusCode code, string description) =>
         RunServer(
             (ctx, _) =>
