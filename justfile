@@ -3,7 +3,7 @@ set positional-arguments
 
 project_name := "pkg"
 tag_prefix := "registry.annium.com/" + project_name
-tfm := "net9.0"
+tfm := "net10.0"
 bin_release := "bin/Release/" + tfm
 
 [private]
@@ -64,9 +64,9 @@ pack:
     packageVersion=$(dotnet tool run versioning get-version -v $(cat version))
     dotnet pack --no-build -o . -c Release -p:SymbolPackageFormat=snupkg -p:PackageVersion=$packageVersion
 
-publish apiKey:
+publish:
     @echo "=== $0 ==="
-    dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "$1"
+    dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key $(cat .xs.credentials)
     find . -type f -name '*.nupkg' | xargs -I% rm %
 
 # cli
@@ -164,7 +164,7 @@ ci-merge-request-full:
     just test
     # just docs-build
 
-ci-release repository githubToken:
+ci-release:
     #!/usr/bin/env bash
     set -e
     echo "=== ci-release ==="
@@ -176,15 +176,15 @@ ci-release repository githubToken:
     just build
     just pack
     # just docs-build
-    just publish "$(cat .xs.credentials)"
-    just ci-push-tag "$1" "$2"
+    just publish
+    just ci-push-tag
     echo "Release complete"
 
 ci-set-package-version:
     @echo "=== $0 ==="
     dotnet tool run versioning set-version -v $(cat version)
 
-ci-push-tag repository githubToken:
+ci-push-tag:
     #!/usr/bin/env bash
     set -e
     echo "=== ci-push-tag ==="
