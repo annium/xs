@@ -29,7 +29,6 @@ internal class WatchCommand
     private readonly ProjectsRunner _runner;
     private readonly Watcher _watcher;
     private readonly IShell _shell;
-    private readonly LoggerConfiguration _loggerConfiguration;
     private string _mask = string.Empty;
     private ProjectType _type = ProjectType.None;
     private string _command = string.Empty;
@@ -46,8 +45,7 @@ internal class WatchCommand
         ProjectsRunner runner,
         Watcher watcher,
         IShell shell,
-        ILogger logger,
-        LoggerConfiguration loggerConfiguration
+        ILogger logger
     )
     {
         _projectFactory = projectFactory;
@@ -56,7 +54,6 @@ internal class WatchCommand
         _watcher = watcher;
         _shell = shell;
         Logger = logger;
-        _loggerConfiguration = loggerConfiguration;
     }
 
     public override async Task HandleAsync(
@@ -178,21 +175,12 @@ internal class WatchCommand
 
     private Task CallCommandAsync(string path)
     {
-        var result = _shell
-            .Cmd(_command.Replace("%", path))
-            .Print((LogLevel)_loggerConfiguration <= LogLevel.Debug)
-            .Start();
-
-        Task.Run(() => Pipe(result.Output)).GetAwaiter();
-        Task.Run(() => Pipe(result.Error)).GetAwaiter();
+        // the shell drains the command's output itself and writes it through as it arrives; reading those
+        // streams here as well left two readers racing for the same bytes, which is why they are no longer
+        // handed out. Printing was already happening twice at debug level - once here, once in the shell
+        var result = _shell.Cmd(_command.Replace("%", path)).Print(true).Start();
 
         return result.Result;
-
-        static void Pipe(StreamReader src)
-        {
-            while (!src.EndOfStream)
-                Console.WriteLine(src.ReadLine());
-        }
     }
 
     private async Task DiscoverAsync()
