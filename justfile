@@ -1,73 +1,22 @@
 set shell := ["bash", "-cu"]
 set positional-arguments
+# lib.just is copied in by the umbrella repo's `just copy-ci`; recipes redefined below
+# override the shared ones.
+set allow-duplicate-recipes := true
+
+import 'lib.just'
 
 project_name := "pkg"
 tag_prefix := "registry.annium.com/" + project_name
 tfm := "net10.0"
 bin_release := "bin/Release/" + tfm
 
-[private]
-default:
-    @just --list
-
-# base
-
-setup:
-    @echo "=== $0 ==="
-    dotnet tool restore
-
-format:
-    @echo "=== $0 ==="
-    dotnet tool run csharpier format . --config-path $(pwd)/.editorconfig
-    dotnet tool run xs format -sc -ic
-
-format-full: format
-    @echo "=== $0 ==="
-    dotnet format style
-    dotnet format analyzers
-
-ensure-no-changes:
-    #!/usr/bin/env bash
-    set -e
-    echo "=== ensure-no-changes ==="
-    if [[ -n "$(git status --porcelain)" ]]; then
-        echo "Changes detected:"
-        git status
-        git --no-pager diff --no-color --exit-code
-    fi
+# base - only what differs from the shared recipes
 
 update:
     @echo "=== $0 ==="
     dotnet tool list --format json | jq -r '.data[] | "\(.packageId)"' | xargs -I% dotnet tool install %
     dotnet tool run xs update all dotnet -sc -ic
-
-clean:
-    @echo "=== $0 ==="
-    dotnet tool run xs clean -sc -ic
-    find . -type f -name '*.nupkg' | xargs -I% rm %
-
-build:
-    #!/usr/bin/env bash
-    set -e
-    echo "=== build ==="
-    packageVersion=$(dotnet tool run versioning get-version -v $(cat version))
-    dotnet build -c Release --nologo -v q -p:PackageVersion=$packageVersion
-
-test:
-    @echo "=== $0 ==="
-    dotnet test -c Release --no-build --report-xunit-trx
-
-pack:
-    #!/usr/bin/env bash
-    set -e
-    echo "=== pack ==="
-    packageVersion=$(dotnet tool run versioning get-version -v $(cat version))
-    dotnet pack --no-build -o . -c Release -p:SymbolPackageFormat=snupkg -p:PackageVersion=$packageVersion
-
-publish:
-    @echo "=== $0 ==="
-    dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key $(cat .xs.credentials)
-    find . -type f -name '*.nupkg' | xargs -I% rm %
 
 # cli
 
@@ -139,7 +88,7 @@ unlink:
     @echo "=== $0 ==="
     @./cli/scripts/unlink.js ../backend
 
-# ci
+# ci - the shared recipes run a docs step this repo has no tooling for
 
 ci-merge-request-short:
     #!/usr/bin/env bash
@@ -158,13 +107,11 @@ ci-merge-request-full:
     just setup
     just format
     just ensure-no-changes
-    # just docs-lint
     just clean
     just build
     just test
-    # just docs-build
 
-ci-release:
+ci-release apiKey repository githubToken:
     #!/usr/bin/env bash
     set -e
     echo "=== ci-release ==="
@@ -174,22 +121,11 @@ ci-release:
     just ci-set-package-version
     just clean
     just build
+    just test
     just pack
-    # just docs-build
-    just publish
-    just ci-push-tag
+    just publish "$1"
+    just ci-push-tag "$2" "$3"
     echo "Release complete"
-
-ci-set-package-version:
-    @echo "=== $0 ==="
-    dotnet tool run versioning set-version -v $(cat version)
-
-ci-push-tag:
-    #!/usr/bin/env bash
-    set -e
-    echo "=== ci-push-tag ==="
-    packageVersion=$(dotnet tool run versioning get-version -v $(cat version))
-    git push origin v$packageVersion
 
 # private helpers
 
