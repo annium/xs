@@ -1,4 +1,4 @@
-FROM registry.annium.com/dotnet/sdk:10.0-alpine as builder
+FROM annium/dotnet-sdk:10.0-alpine as builder
 COPY . /code
 RUN dotnet publish -c Release -o /dist /code
 

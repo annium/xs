@@ -1,8 +1,8 @@
-FROM registry.annium.com/dotnet/sdk:10.0-alpine AS builder
+FROM annium/dotnet-sdk:10.0-alpine AS builder
 COPY . /src
 RUN dotnet publish -c release -o /app /src/xs/server/src/Annium.Xs.Server.Host
 
-FROM registry.annium.com/dotnet/aspnet:10.0-alpine
+FROM annium/dotnet-aspnet:10.0-alpine
 WORKDIR /app
 COPY --from=builder /app /app
 VOLUME [ "/app/certs", "/app/configuration", "/app/data" ]
