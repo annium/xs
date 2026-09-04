@@ -18,12 +18,13 @@ services:
       - './run/server/data:/app/data'
   db:
     <<: *base
-    image: registry.annium.com/postgres:17-alpine
+    image: annium/postgres:17-alpine
     container_name: xs_db
     ports:
       - '9991:5432'
     volumes:
       - 'db:/var/lib/postgresql/data'
+      - 'tls:/etc/postgresql/tls'
     env_file: ./run/db/db.env
   site:
     <<: *base
@@ -36,3 +37,4 @@ services:
       - '9900:80'
 volumes:
   db:
+  tls:
