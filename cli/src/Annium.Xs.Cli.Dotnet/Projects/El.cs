@@ -23,4 +23,5 @@ internal static class El
     public const string PrivateAssets = nameof(PrivateAssets);
     public const string Include = nameof(Include);
     public const string Version = nameof(Version);
+    public const string ManagePackageVersionsCentrally = nameof(ManagePackageVersionsCentrally);
 }

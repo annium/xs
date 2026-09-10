@@ -208,17 +208,12 @@ internal class ProjectMapper(IPropsFilesManager propsFilesManager) : IProjectMap
 
     private XElement SavePackages(XElement info, string directory, IReadOnlyCollection<Dependency<Package>> packages)
     {
+        var isCentrallyManaged = propsFilesManager.IsCentrallyManaged(directory);
+
         // collect target refs
         var refs = packages
             .OrderBy(x => x.Value.Name)
-            .ToDictionary(
-                x => x.Value.Name,
-                x => new XElement(
-                    El.PackageReference,
-                    new XAttribute(El.Include, x.Value.Name),
-                    new XAttribute(El.Version, x.Value.Version)
-                )
-            );
+            .ToDictionary(x => x.Value.Name, x => BuildPackageReference(directory, isCentrallyManaged, x.Value));
 
         // collect existing package references
         var existingRefs = info.GetElements(El.ItemGroup)
@@ -253,6 +248,31 @@ internal class ProjectMapper(IPropsFilesManager propsFilesManager) : IProjectMap
             group.Add(pair.Value);
 
         return group;
+    }
+
+    /// <summary>
+    /// Builds the element for a package the project does not reference yet - which is what unlink produces
+    /// when it turns a project reference back into a package one.
+    /// </summary>
+    private XElement BuildPackageReference(string directory, bool isCentrallyManaged, Package package)
+    {
+        var element = new XElement(El.PackageReference, new XAttribute(El.Include, package.Name));
+
+        if (!isCentrallyManaged)
+        {
+            element.Add(new XAttribute(El.Version, package.Version));
+            return element;
+        }
+
+        // under central package management the version belongs to a PackageVersion item, and a Version here
+        // is an error rather than an override. Where the item is already declared - the usual case, since
+        // unlink is restoring a reference that link took away and link never touched the props file - leave
+        // it alone: what is declared there is the version the project actually built against, and the one
+        // passed to unlink is a fallback for a package nothing has heard of yet.
+        if (propsFilesManager.ResolveVersion(directory, package.Name) is null)
+            propsFilesManager.SaveVersion(directory, package.Name, package.Version.ToString());
+
+        return element;
     }
 
     private static void ValidateProperties(string path, XElement properties)
