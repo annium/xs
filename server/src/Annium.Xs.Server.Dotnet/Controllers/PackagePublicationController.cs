@@ -80,6 +80,8 @@ public class PackagePublicationController : ServerController<User>
             })
             .ToArray();
 
+        var nuspecStream = await packageReader.GetNuspecAsync(CancellationToken.None);
+
         return new PackageRequest(
             packageId,
             nuspec.GetId(),
@@ -88,7 +90,7 @@ public class PackagePublicationController : ServerController<User>
             _timeProvider.Now,
             dependencies,
             packageStream,
-            packageReader.GetNuspec()
+            nuspecStream
         );
     }
 }

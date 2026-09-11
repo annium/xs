@@ -55,7 +55,7 @@ public class SymbolPublicationController : ServerController<User>
 
         foreach (var file in files)
         {
-            var _ = packageReader.GetStream(file);
+            var _ = await packageReader.GetStreamAsync(file, CancellationToken.None);
             // TODO: write symbol's content to disk. Need consuming flow to understand how to do this
         }
 

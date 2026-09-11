@@ -63,10 +63,12 @@ internal class ConfigurationManager : IConfigurationManager, ILogSubject
 
         this.Trace<string>("Configuration loaded from {folder}", folder);
 
+        var credentials = File.Exists(credFile) ? await File.ReadAllTextAsync(credFile, ct) : string.Empty;
+
         return new SolutionConfiguration(
             directory.FullName,
             config.Registry,
-            File.Exists(credFile) ? File.ReadAllText(credFile) : string.Empty,
+            credentials,
             config.Servers,
             config.Types
         );

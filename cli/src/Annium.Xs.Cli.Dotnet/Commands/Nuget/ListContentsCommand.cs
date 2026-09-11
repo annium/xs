@@ -34,7 +34,7 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommandConfiguration
             await using var fileStream = File.OpenRead(cfg.Path);
             using var packageReader = new PackageArchiveReader(fileStream);
 
-            var files = packageReader.GetFiles().OrderBy(x => x).ToArray();
+            var files = (await packageReader.GetFilesAsync(ct)).OrderBy(x => x).ToArray();
 
             Console.WriteLine($"{files.Length} files found:");
             foreach (var file in files)
