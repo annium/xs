@@ -210,10 +210,13 @@ internal class ProjectMapper(IPropsFilesManager propsFilesManager) : IProjectMap
     {
         var isCentrallyManaged = propsFilesManager.IsCentrallyManaged(directory);
 
-        // collect target refs
+        // collect target refs, each alongside the version it is meant to end up at
         var refs = packages
             .OrderBy(x => x.Value.Name)
-            .ToDictionary(x => x.Value.Name, x => BuildPackageReference(directory, isCentrallyManaged, x.Value));
+            .ToDictionary(
+                x => x.Value.Name,
+                x => (x.Value.Version, Element: BuildPackageReference(directory, isCentrallyManaged, x.Value))
+            );
 
         // collect existing package references
         var existingRefs = info.GetElements(El.ItemGroup)
@@ -227,27 +230,42 @@ internal class ProjectMapper(IPropsFilesManager propsFilesManager) : IProjectMap
         foreach (var existingRef in existingRefs)
             existingRef.Value.Remove();
 
-        // replace refs with existing refs (thus preserving attributes and inner structure)
+        // replace refs with existing refs (thus preserving attributes and inner structure), then carry the
+        // target version over to wherever this project keeps it
         foreach (var (include, existingRef) in existingRefs)
-            if (refs.TryGetValue(include, out var newRef))
+            if (refs.TryGetValue(include, out var target))
             {
-                refs[include] = existingRef;
-                var newVersion = newRef.Attribute(El.Version);
-                if (newVersion is null)
-                    continue;
-
-                // update inline version if defined
-                if (existingRef.Attribute(El.Version) is not null)
-                    existingRef.SetAttributeValue(El.Version, newVersion.Value);
-                else
-                    propsFilesManager.SaveVersion(directory, include, newVersion.Value);
+                refs[include] = (target.Version, existingRef);
+                SaveVersion(directory, include, existingRef, target.Version);
             }
 
         var sortedRefs = refs.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase).ToArray();
         foreach (var pair in sortedRefs)
-            group.Add(pair.Value);
+            group.Add(pair.Value.Element);
 
         return group;
+    }
+
+    /// <summary>
+    /// Writes a package's version where this project keeps it: onto the reference when the reference carries
+    /// one, into the Directory.Packages.props entry otherwise. Reading the version back off the built element
+    /// is what this replaces - under central package management that element deliberately has none, so an
+    /// update resolved a newer version, wrote it nowhere, and reported success.
+    /// </summary>
+    /// <remarks>
+    /// The props file is shared by every project in the tree and Save runs on all of them, so it is only
+    /// touched when the version actually changes - otherwise a plain format would rewrite it once per project.
+    /// </remarks>
+    private void SaveVersion(string directory, string name, XElement reference, Version version)
+    {
+        if (reference.Attribute(El.Version) is not null)
+        {
+            reference.SetAttributeValue(El.Version, version.ToString());
+            return;
+        }
+
+        if (propsFilesManager.ResolveVersion(directory, name) != version)
+            propsFilesManager.SaveVersion(directory, name, version.ToString());
     }
 
     /// <summary>
